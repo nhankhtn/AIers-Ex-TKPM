@@ -14,11 +14,113 @@ namespace StudentManagement.API.Controllers
             _studentService = studentService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudents()
+        [HttpGet()]
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents()
         {
-            var students = await _studentService.GetAllStudentsAsync();
-            return Ok(students);
+            var result = await _studentService.GetAllStudentsAsync();
+            if (result.Success) return Ok(result.Data);
+            return BadRequest(new
+            {
+                title = "Bad Request",
+                status = 400,
+                code = result.ErrorCode
+            });
         }
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<StudentDTO>> GetStudentById(string id)
+        {
+            var result = await _studentService.GetStudentByIdAsync(id);
+            if (result.Success) return Ok(result.Data);
+            return BadRequest(new
+            {
+                title = "Bad Request",
+                status = 400,
+                code = result.ErrorCode
+            });
+        }
+
+
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudentsByName(string name)
+        {
+            var result = await _studentService.GetStudentsByNameAsync(name);
+            if (result.Success) return Ok(result.Data);
+            return BadRequest(new
+            {
+                title = "Bad Request",
+                status = 400,
+                code = result.ErrorCode
+            });
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult<StudentDTO>> AddStudent(StudentDTO studentDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(e => e.ErrorMessage)
+                .FirstOrDefault();
+
+                return BadRequest(new
+                {
+                    title = "Bad Request",
+                    status = 400,
+                    code = firstError
+                });
+            }
+            var result = await _studentService.AddStudentAsync(studentDTO);
+
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(new
+            {
+                title = "Bad Request",
+                status = 400,
+                code = result.ErrorCode
+            });
+        }
+
+
+
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<StudentDTO>> UpdateStudent(string id, UpdateStudentDTO updateStudentDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                Console.WriteLine("Model is not valid");
+                var firstError = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(e => e.ErrorMessage)
+                .FirstOrDefault();
+
+                return BadRequest(new
+                {
+                    title = "Bad Request",
+                    status = 400,
+                    code = firstError
+                });
+            }
+            var result = await _studentService.UpdateStudentAsync(id, updateStudentDTO);
+            if (result.Success)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest(new
+            {
+                title = "Bad Request",
+                status = 400,
+                code = result.ErrorCode
+            });
+        }
+
+        
     }
 }

@@ -13,11 +13,11 @@ namespace StudentManagement.Domain.Models
     {
         [Key]
         [Column("student_id", TypeName = "varchar(8)")]
-        public string? Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [Required]
         [Column("student_name", TypeName = "nvarchar(50)")]
-        public string? Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [Column("date_of_birth", TypeName = "date")]

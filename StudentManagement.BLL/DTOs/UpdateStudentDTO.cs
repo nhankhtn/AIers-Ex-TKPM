@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -8,11 +7,10 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.BLL.DTOs
 {
-    public class StudentDTO
+    public class UpdateStudentDTO
     {
-        public string? Id { get; set; }
         public string? Name { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         public string? Gender { get; set; }
 
@@ -34,7 +32,8 @@ namespace StudentManagement.BLL.DTOs
         [RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "INVALID_EMAIL")]
         public string? Email { get; set; }
 
-  
         public string? Address { get; set; }
+
+
     }
 }
