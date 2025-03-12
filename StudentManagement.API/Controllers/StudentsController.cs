@@ -15,45 +15,45 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents()
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents(int page, int pageSize, string? name, string? id)
         {
-            var result = await _studentService.GetAllStudentsAsync();
+            var result = await _studentService.GetAllStudentsAsync(page, pageSize, name, id);
             if (result.Success) return Ok(result.Data);
-            return BadRequest(new
+            return NotFound(new
             {
-                title = "Bad Request",
-                status = 400,
+                title = "Not Found",
+                status = 404,
                 code = result.ErrorCode
             });
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<StudentDTO>> GetStudentById(string id)
-        {
-            var result = await _studentService.GetStudentByIdAsync(id);
-            if (result.Success) return Ok(result.Data);
-            return BadRequest(new
-            {
-                title = "Bad Request",
-                status = 400,
-                code = result.ErrorCode
-            });
-        }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<StudentDTO>> GetStudentById(string id)
+        //{
+        //    var result = await _studentService.GetStudentByIdAsync(id);
+        //    if (result.Success) return Ok(result.Data);
+        //    return NotFound(new
+        //    {
+        //        title = "Not Found",
+        //        status = 404,
+        //        code = result.ErrorCode
+        //    });
+        //}
 
 
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudentsByName(string name)
-        {
-            var result = await _studentService.GetStudentsByNameAsync(name);
-            if (result.Success) return Ok(result.Data);
-            return BadRequest(new
-            {
-                title = "Bad Request",
-                status = 400,
-                code = result.ErrorCode
-            });
-        }
+        //[HttpGet("search")]
+        //public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudentsByName(string name)
+        //{
+        //    var result = await _studentService.GetStudentsByNameAsync(name);
+        //    if (result.Success) return Ok(result.Data);
+        //    return NotFound(new
+        //    {
+        //        title = "Not Found",
+        //        status = 404,
+        //        code = result.ErrorCode
+        //    });
+        //}
 
 
         [HttpPost]

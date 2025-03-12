@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
 using StudentManagement.Domain.Enums;
@@ -54,9 +55,9 @@ namespace StudentManagement.BLL.Services
 
 
         // Get all students
-        public async Task<Result<IEnumerable<StudentDTO>>> GetAllStudentsAsync()
+        public async Task<Result<IEnumerable<StudentDTO>>> GetAllStudentsAsync(int page, int pageSize, string? name, string? id)
         {
-            var students = await _studentRepository.GetAllStudentsAsync();
+            var students = await _studentRepository.GetAllStudentsAsync(page, pageSize, name, id);
             return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
         }
 
@@ -64,9 +65,6 @@ namespace StudentManagement.BLL.Services
         // Add a new student
         public async Task<Result<string>> AddStudentAsync(StudentDTO studentDTO)
         {
-            var maxId = _studentRepository.GetAllStudentsAsync().Result.Max(s => s.Id);
-            if (maxId == null) maxId = "0";
-
             var newStudent = new Student();
             foreach (var setter in SpecialSetters)
             {
@@ -99,7 +97,6 @@ namespace StudentManagement.BLL.Services
                 }
             }
             
-            newStudent.Id = (int.Parse(maxId) + 1).ToString();
             var result = await _studentRepository.AddStudentAsync(newStudent);
             return result ? Result<string>.Ok("ADD_SUCCESS") : Result<string>.Fail("ADD_FAIL");
         }

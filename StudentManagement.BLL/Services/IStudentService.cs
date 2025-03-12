@@ -11,7 +11,7 @@ namespace StudentManagement.BLL.Services
 {
     public interface IStudentService
     {
-        Task<Result<IEnumerable<StudentDTO>>> GetAllStudentsAsync();
+        Task<Result<IEnumerable<StudentDTO>>> GetAllStudentsAsync(int page, int pageSize, string? name, string? id);
 
         Task<Result<string>> AddStudentAsync(StudentDTO studentDTO);
 
