@@ -15,9 +15,9 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents(int page, int pageSize, string? name, string? id)
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents(int page, int limit, string? key)
         {
-            var result = await _studentService.GetAllStudentsAsync(page, pageSize, name, id);
+            var result = await _studentService.GetAllStudentsAsync(page, limit, key);
             if (result.Success) return Ok(result.Data);
             return NotFound(new
             {

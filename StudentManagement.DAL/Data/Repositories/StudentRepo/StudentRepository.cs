@@ -20,8 +20,14 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
         {
             try
             {
-                var maxId = await _context.Students.MaxAsync(s => s.Id);
-                student.Id = (int.Parse(maxId) + 1).ToString();
+                var latestStudent = await _context.Students
+                    .OrderByDescending(s => s.Id)
+                    .FirstOrDefaultAsync(s => s.Id.StartsWith("22120"));
+
+                int nextId = latestStudent == null ? 1 : int.Parse(latestStudent.Id[^3..]) + 1;
+
+                student.Id = $"22120{nextId:D3}";
+
                 await _context.Students.AddAsync(student);
                 await _context.SaveChangesAsync();
                 return true;
@@ -52,12 +58,12 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             }
         }
 
-        public async Task<IEnumerable<Student>> GetAllStudentsAsync(int page, int pageSize, string? name, string? id)
+        public async Task<IEnumerable<Student>> GetAllStudentsAsync(int page, int pageSize, string? key)
         {
             try
             {
                 var students = await _context.Students
-                    .Where(s => (name == null || s.Name.Contains(name)) && (id == null || s.Id == id))
+                    .Where(s => key == null || s.Name.Contains(key) || s.Id.Contains(key))
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();

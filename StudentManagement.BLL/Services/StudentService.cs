@@ -55,9 +55,9 @@ namespace StudentManagement.BLL.Services
 
 
         // Get all students
-        public async Task<Result<IEnumerable<StudentDTO>>> GetAllStudentsAsync(int page, int pageSize, string? name, string? id)
+        public async Task<Result<IEnumerable<StudentDTO>>> GetAllStudentsAsync(int page, int pageSize, string? key)
         {
-            var students = await _studentRepository.GetAllStudentsAsync(page, pageSize, name, id);
+            var students = await _studentRepository.GetAllStudentsAsync(page, pageSize, key);
             return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
         }
 
