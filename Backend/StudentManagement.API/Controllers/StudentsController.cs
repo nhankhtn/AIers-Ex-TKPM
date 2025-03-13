@@ -24,7 +24,10 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Not Found",
                     status = 404,
-                    code = "STUDENT_NOT_FOUND"
+                    error = new
+                    {
+                        code = "STUDENT_NOT_FOUND",
+                    }
                 });
                 return Ok(new
                 {
@@ -43,7 +46,10 @@ namespace StudentManagement.API.Controllers
             {
                 title = "Not Found",
                 status = 404,
-                code = result.ErrorCode
+                error = new
+                {
+                    code = result.ErrorCode,
+                }
             });
         }
 
@@ -90,7 +96,10 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Bad Request",
                     status = 400,
-                    code = firstError
+                    error = new
+                    {
+                        code = firstError
+                    }
                 });
             }
             var result = await _studentService.AddStudentAsync(studentDTO);
@@ -111,7 +120,10 @@ namespace StudentManagement.API.Controllers
             {
                 title = "Bad Request",
                 status = 400,
-                code = result.ErrorCode
+                error = new
+                {
+                    code = result.ErrorCode
+                }
             });
         }
 
@@ -133,7 +145,10 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Bad Request",
                     status = 400,
-                    code = firstError
+                    error = new
+                    {
+                        code = firstError
+                    }
                 });
             }
             var result = await _studentService.UpdateStudentAsync(id, updateStudentDTO);
@@ -150,7 +165,10 @@ namespace StudentManagement.API.Controllers
             {
                 title = "Bad Request",
                 status = 400,
-                code = result.ErrorCode
+                error = new
+                {
+                    code = result.ErrorCode
+                }
             });
         }
 
@@ -174,7 +192,10 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Not Found",
                     status = 404,
-                    code = res.ErrorCode
+                    error = new
+                    {
+                        code = res.ErrorCode
+                    }
                 });
             }
         }

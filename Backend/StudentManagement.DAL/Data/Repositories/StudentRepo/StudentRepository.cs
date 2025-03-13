@@ -28,6 +28,13 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
                 student.Id = $"22120{nextId:D3}";
 
+                // check unique email 
+                var studentEmail = await _context.Students.FirstOrDefaultAsync(s => s.Email == student.Email);
+                if (studentEmail != null)
+                {
+                    return false;
+                }
+
                 await _context.Students.AddAsync(student);
                 await _context.SaveChangesAsync();
                 return true;
@@ -113,6 +120,20 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                 _context.Students.Update(student);
                 await _context.SaveChangesAsync();
                 return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+
+        public async Task<bool> IsEmailExistAsync(string email)
+        {
+            try
+            {
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
+                return student != null;
             }
             catch (Exception)
             {

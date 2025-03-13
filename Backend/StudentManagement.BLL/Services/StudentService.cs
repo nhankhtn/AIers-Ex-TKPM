@@ -104,6 +104,11 @@ namespace StudentManagement.BLL.Services
                 }
             }
 
+            if (newStudent.Email is not null && await _studentRepository.IsEmailExistAsync(newStudent.Email))
+            {
+                return Result<StudentDTO>.Fail("EMAIL_EXISTED");
+            }
+
             var result = await _studentRepository.AddStudentAsync(newStudent);
             return result ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(newStudent)) : Result<StudentDTO>.Fail("ADD_FAIL");
         }
@@ -175,6 +180,11 @@ namespace StudentManagement.BLL.Services
                 {
                     return Result<string>.Fail("INVALID_" + prop.Name.ToUpper());
                 }
+            }
+
+            if (student.Email is not null && await _studentRepository.IsEmailExistAsync(student.Email))
+            {
+                return Result<string>.Fail("EMAIL_EXISTED");
             }
 
             var result = await _studentRepository.UpdateStudentAsync(student);
