@@ -25,7 +25,7 @@ namespace StudentManagement.BLL.Services
                 {
                     if (value is string genderStr && (new[] {"Male", "Female"}).Contains(value))
                     {
-                        student.Gender = genderStr == "Male"; 
+                        student.Gender = genderStr == "Male";
                         return true;
                     }
                     return false;
@@ -59,7 +59,8 @@ namespace StudentManagement.BLL.Services
         {
             var students = await _studentRepository.GetAllStudentsAsync(page, pageSize, key);
 
-            return Result<GetStudentsDto>.Ok(new GetStudentsDto() {
+            return Result<GetStudentsDto>.Ok(new GetStudentsDto()
+            {
                 Students = _mapper.Map<IEnumerable<StudentDTO>>(students.students),
                 Total = students.total,
                 PageIndex = page,
@@ -102,7 +103,7 @@ namespace StudentManagement.BLL.Services
                     return Result<StudentDTO>.Fail("INVALID_" + prop.Name.ToUpper());
                 }
             }
-            
+
             var result = await _studentRepository.AddStudentAsync(newStudent);
             return result ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(newStudent)) : Result<StudentDTO>.Fail("ADD_FAIL");
         }
@@ -190,7 +191,7 @@ namespace StudentManagement.BLL.Services
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static bool SetEnumValue<T, TEnum>(T obj, string propertyName, object value) where TEnum: struct, Enum
+        private static bool SetEnumValue<T, TEnum>(T obj, string propertyName, object value) where TEnum : struct, Enum
         {
             if (value is string strValue && Enum.TryParse(strValue, out TEnum enumValue))
             {

@@ -97,7 +97,8 @@ namespace StudentManagement.API.Controllers
 
             if (result.Success)
             {
-                return Ok(new { 
+                return Ok(new
+                {
                     title = "Success",
                     status = 200,
                     data = new
