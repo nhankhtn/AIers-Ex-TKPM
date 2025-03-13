@@ -18,7 +18,27 @@ namespace StudentManagement.API.Controllers
         public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents(int page, int limit, string? key)
         {
             var result = await _studentService.GetAllStudentsAsync(page, limit, key);
-            if (result.Success) return Ok(result.Data);
+            if (result.Success)
+            {
+                if (result.Data is null) return NotFound(new
+                {
+                    title = "Not Found",
+                    status = 404,
+                    code = "STUDENT_NOT_FOUND"
+                });
+                return Ok(new
+                {
+                    title = "Success",
+                    status = 200,
+                    data = new
+                    {
+                        students = result.Data.Students,
+                        total = result.Data.Total,
+                        pageIndex = result.Data.PageIndex,
+                        pageSize = result.Data.PageSize
+                    }
+                });
+            }
             return NotFound(new
             {
                 title = "Not Found",
@@ -77,7 +97,14 @@ namespace StudentManagement.API.Controllers
 
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(new { 
+                    title = "Success",
+                    status = 200,
+                    data = new
+                    {
+                        Student = result.Data
+                    }
+                });
             }
             return BadRequest(new
             {
@@ -111,7 +138,12 @@ namespace StudentManagement.API.Controllers
             var result = await _studentService.UpdateStudentAsync(id, updateStudentDTO);
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(new
+                {
+                    title = "Success",
+                    status = 200,
+                    data = new { }
+                });
             }
             return BadRequest(new
             {
@@ -121,6 +153,29 @@ namespace StudentManagement.API.Controllers
             });
         }
 
-        
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteStudentAsync(string id)
+        {
+            var res = await _studentService.DeleteStudentByIdAsync(id);
+            if (res.Success)
+            {
+                return Ok(new
+                {
+                    title = "Success",
+                    status = 200,
+                    data = res.Data
+                });
+            }
+            else
+            {
+                return NotFound(new
+                {
+                    title = "Not Found",
+                    status = 404,
+                    code = res.ErrorCode
+                });
+            }
+        }
     }
 }

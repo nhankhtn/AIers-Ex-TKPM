@@ -58,21 +58,24 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             }
         }
 
-        public async Task<IEnumerable<Student>> GetAllStudentsAsync(int page, int pageSize, string? key)
+        public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int page, int pageSize, string? key)
         {
             try
             {
-                var students = await _context.Students
-                    .Where(s => key == null || s.Name.Contains(key) || s.Id.Contains(key))
-                    .Skip((page - 1) * pageSize)
+                var students = _context.Students
+                    .Where(s => key == null || s.Name.Contains(key) || s.Id.Contains(key));
+
+                var total = await students.CountAsync();
+
+                var studentPage = await students.Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
 
-                return students;
+                return (studentPage, total);
             }
             catch (Exception)
             {
-                return new List<Student>();
+                return (new List<Student>(), 0);
             }
         }
 
