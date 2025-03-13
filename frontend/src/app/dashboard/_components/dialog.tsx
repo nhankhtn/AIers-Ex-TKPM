@@ -13,7 +13,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { Faculty, Gender, Status, Student } from "../../types/student";
+import { Faculty, Gender, Status, Student } from "../../../types/student";
 
 interface DialogProps {
   student: Student | null;
@@ -42,6 +42,7 @@ function Dialog({
     program: "",
     phone: "",
     status: Status.Studying,
+    academicYear: "",
   });
 
   useEffect(() => {
@@ -59,6 +60,7 @@ function Dialog({
         program: "",
         phone: "",
         status: Status.Studying,
+        academicYear: "",
       });
     }
   }, [student]);
@@ -170,7 +172,7 @@ function Dialog({
             onChange={handleChangeSelect}
           >
             <MenuItem value={Faculty.Law}>Khoa Luật</MenuItem>
-            <MenuItem value={Faculty.English}>
+            <MenuItem value={Faculty.BusinessEnglish}>
               Khoa Tiếng Anh thương mại
             </MenuItem>
             <MenuItem value={Faculty.Japanese}>Khoa Tiếng Nhật</MenuItem>
@@ -226,8 +228,8 @@ function Dialog({
           >
             <MenuItem value={Status.Studying}>Đang học</MenuItem>
             <MenuItem value={Status.Graduated}>Đã tốt nghiệp</MenuItem>
-            <MenuItem value={Status.DroppedOut}>Đã thôi học</MenuItem>
-            <MenuItem value={Status.Suspended}>Tạm dừng học</MenuItem>
+            <MenuItem value={Status.Droppedout}>Đã thôi học</MenuItem>
+            <MenuItem value={Status.Paused}>Tạm dừng học</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>

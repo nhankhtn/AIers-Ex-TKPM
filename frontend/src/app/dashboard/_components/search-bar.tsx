@@ -1,20 +1,21 @@
 "use client";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
-function SearchBar({ search }: { search: (query: string) => void }) {
+function SearchBar({ onSearch }: { onSearch: (value: string) => void }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-    if (event.target.value === "") {
-      search("");
-    }
-  };
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(event.target.value);
+    },
+    []
+  );
 
-  const handleSearchClick = () => {
-    search(searchQuery);
-  };
+  const handleSearchClick = useCallback(() => {
+    onSearch(searchQuery);
+  }, [searchQuery, onSearch]);
+
   return (
     <TextField
       fullWidth

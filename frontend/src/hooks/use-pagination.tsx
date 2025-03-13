@@ -21,13 +21,15 @@ export interface UsePaginationResult {
       | number
       | SelectChangeEvent
   ) => void;
+  setTotal: (newCount: number) => void;
 }
 
 function usePagination({
-  count,
+  count: initCount,
   initialRowsPerPage,
 }: UsePaginationProps): UsePaginationResult {
   const [page, setPage] = useState(0);
+  const [count, setCount] = useState(initCount);
   const [rowsPerPage, setRowsPerPage] = useState(initialRowsPerPage || 10);
 
   const totalPages = Math.ceil(count / rowsPerPage);
@@ -54,6 +56,13 @@ function usePagination({
     []
   );
 
+  const setTotal = useCallback(
+    (newCount: number) => {
+      setCount(newCount);
+    },
+    [setCount]
+  );
+
   return {
     count,
     page,
@@ -61,6 +70,7 @@ function usePagination({
     totalPages,
     onPageChange,
     onRowsPerPageChange,
+    setTotal,
   };
 }
 

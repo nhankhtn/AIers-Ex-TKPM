@@ -6,51 +6,89 @@ import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
 import Table from "@/components/table";
 import { StudentCols } from "@/constants";
-import SearchBar from "@/app/_components/search-bar";
-import Dialog from "@/app/_components/dialog";
+import SearchBar from "@/app/dashboard/_components/search-bar";
+import Dialog from "@/app/dashboard/_components/dialog";
 import RowStack from "@/components/row-stack";
 import { useDialog } from "@/hooks/use-dialog";
 import usePagination from "@/hooks/use-pagination";
 import DialogConfirmDelete from "../_components/dialog-confirm-delete";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { StudentApi, StudentResponse } from "@/api/students";
 
 const Content = () => {
-  const [total, setTotal] = useState(10);
+  const [filter, setFilter] = useState<{
+    key: string;
+  }>({
+    key: "",
+  });
   const pagination = usePagination({
-    count: total,
+    count: 0,
     initialRowsPerPage: 10,
   });
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["students", pagination.page, pagination.rowsPerPage, filter.key],
+    queryFn: () =>
+      StudentApi.getStudents({
+        page: pagination.page + 1,
+        limit: pagination.rowsPerPage,
+        ...(filter.key && { key: filter.key }),
+      }),
+  });
   useEffect(() => {
-    getStudents(pagination.page, pagination.rowsPerPage);
-  }, [pagination.page, pagination.rowsPerPage]);
-  const [students, setStudents] = useState<Student[]>([]);
+    if (data) {
+      pagination.setTotal(data.total || 0);
+    }
+  }, [data, pagination]);
+
+  const queryClient = useQueryClient();
+  const mutationCreate = useMutation({
+    mutationFn: StudentApi.createStudent,
+    onSuccess: (newStudent) => {
+      queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
+        if (!oldData) return { total: 1, data: [newStudent] };
+        return {
+          ...oldData,
+          data: [...oldData.data, newStudent],
+          total: (oldData.total || 0) + 1,
+        };
+      });
+    },
+  });
+
+  const mutationUpdate = useMutation({
+    mutationFn: (student: Student) =>
+      StudentApi.updateStudent(student.id, student),
+    onSuccess: (_, updatedStudent) => {
+      queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
+        if (!oldData) return { total: 1, data: [updatedStudent] };
+        return {
+          ...oldData,
+          data: oldData.data.map((student) =>
+            student.id === updatedStudent.id ? updatedStudent : student
+          ),
+        };
+      });
+    },
+  });
+
+  const mutationDelete = useMutation({
+    mutationFn: (id: string) => StudentApi.deleteStudent(id),
+    onSuccess: (_, deletedId) => {
+      queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          total: (oldData.total || 0) - 1,
+          data: oldData.data.filter((student) => student.id !== deletedId),
+        };
+      });
+    },
+  });
 
   const dialog = useDialog<Student>();
   const dialogConfirmDelete = useDialog<Student>();
 
-  const addStudent = (student: Student) => {
-    setStudents([...students, student]);
-    setTotal(total + 1);
-  };
-  const deleteStudent = (id: string) => {
-    setStudents(students.filter((student) => student.id !== id));
-    setTotal(total - 1);
-  };
-  const updateStudent = (student: Student) => {
-    setStudents(students.map((s) => (s.id === student.id ? student : s)));
-  };
-  const getStudents = async (page: number, rowsPerPage: number) => {
-    console.log(page, rowsPerPage);
-    await setTimeout(() => {}, 1000);
-    setStudents(mockData.slice(page * rowsPerPage, (page + 1) * rowsPerPage));
-  };
-  const searchStudent = async (query: string) => {
-    await setTimeout(() => {}, 1000);
-    setStudents(
-      mockData.filter(
-        (student) => student.id.includes(query) || student.name.includes(query)
-      )
-    );
-  };
   return (
     <Box sx={{ p: 3, maxWidth: "100%" }}>
       <RowStack
@@ -107,19 +145,26 @@ const Content = () => {
               Tổng số sinh viên
             </Typography>
             <Typography variant='h5' fontWeight='bold'>
-              {total}
+              {data?.total}
             </Typography>
           </Box>
         </Paper>
         <Grid size={{ xs: 4, md: 2 }}>
-          <SearchBar search={searchStudent} />
+          <SearchBar
+            onSearch={(value: string) =>
+              setFilter((prev) => ({
+                ...prev,
+                key: value,
+              }))
+            }
+          />
         </Grid>
       </Grid>
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid size={{ xs: 12, sm: 6, md: 2 }}></Grid>
       </Grid>
       <Table
-        data={students}
+        data={data?.data || []}
         fieldCols={StudentCols}
         onClickEdit={dialog.handleOpen}
         deleteStudent={dialogConfirmDelete.handleOpen}
@@ -129,15 +174,15 @@ const Content = () => {
         isOpen={dialog.open}
         student={dialog.data || null}
         onClose={dialog.handleClose}
-        addStudent={addStudent}
-        updateStudent={updateStudent}
+        addStudent={mutationCreate.mutate}
+        updateStudent={mutationUpdate.mutate}
       />
       {dialogConfirmDelete.data && (
         <DialogConfirmDelete
           open={dialogConfirmDelete.open}
           onClose={dialogConfirmDelete.handleClose}
           onConfirm={() => {
-            deleteStudent(dialogConfirmDelete.data?.id as string);
+            mutationDelete.mutate(dialogConfirmDelete.data?.id as string);
             dialogConfirmDelete.handleClose();
           }}
           data={dialogConfirmDelete.data}

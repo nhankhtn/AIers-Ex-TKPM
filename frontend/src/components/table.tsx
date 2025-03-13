@@ -49,14 +49,14 @@ function Table({
             sx={{ bgcolor: "#e8f5e9", color: "#2e7d32" }}
           />
         );
-      case Status.DroppedOut:
+      case Status.Droppedout:
         return (
           <Chip
             label='Đã thôi học'
             sx={{ bgcolor: "#ffebee", color: "#c62828" }}
           />
         );
-      case Status.Suspended:
+      case Status.Paused:
         return (
           <Chip
             label='Tạm dừng học'

@@ -10,9 +10,9 @@ export interface Student {
   program: string;
   phone: string;
   status: Status;
-  [key: string]: any; // Add this line
+  academicYear: string;
+  [key: string]: any;
 }
-
 export enum Gender {
   Man,
   Woman,
@@ -20,15 +20,15 @@ export enum Gender {
 }
 export enum Faculty {
   Law,
-  English,
+  BusinessEnglish,
   Japanese,
   French,
 }
 export enum Status {
   Studying,
   Graduated,
-  DroppedOut,
-  Suspended,
+  Droppedout,
+  Paused,
 }
 
 export const mockData: Student[] = [
@@ -44,6 +44,7 @@ export const mockData: Student[] = [
     program: "Cử nhân Luật",
     phone: "0123456789",
     status: Status.Studying,
+    academicYear: "2021-2022",
   },
   {
     id: "SV002",
@@ -52,11 +53,12 @@ export const mockData: Student[] = [
     gender: Gender.Woman,
     email: "tranthib@example.com",
     address: "456 Đường DEF, Quận 2, TP.HCM",
-    faculty: Faculty.English,
+    faculty: Faculty.BusinessEnglish,
     course: 2020,
     program: "Cử nhân Tiếng Anh thương mại",
     phone: "0987654321",
     status: Status.Graduated,
+    academicYear: "2020-2021",
   },
   {
     id: "SV003",
@@ -70,6 +72,7 @@ export const mockData: Student[] = [
     program: "Cử nhân Tiếng Nhật",
     phone: "0123987654",
     status: Status.Studying,
+    academicYear: "2022-2023",
   },
   {
     id: "SV004",
@@ -82,7 +85,8 @@ export const mockData: Student[] = [
     course: 2019,
     program: "Cử nhân Tiếng Pháp",
     phone: "0987123456",
-    status: Status.Suspended,
+    status: Status.Paused,
+    academicYear: "2019-2020",
   },
   {
     id: "SV005",
@@ -95,7 +99,8 @@ export const mockData: Student[] = [
     course: 2023,
     program: "Cử nhân Luật",
     phone: "0123456780",
-    status: Status.DroppedOut,
+    status: Status.Droppedout,
+    academicYear: "2023-2024",
   },
   {
     id: "SV001",
@@ -109,6 +114,7 @@ export const mockData: Student[] = [
     program: "Cử nhân Luật",
     phone: "0123456789",
     status: Status.Studying,
+    academicYear: "2021-2022",
   },
   {
     id: "SV002",
@@ -117,11 +123,12 @@ export const mockData: Student[] = [
     gender: Gender.Woman,
     email: "tranthib@example.com",
     address: "456 Đường DEF, Quận 2, TP.HCM",
-    faculty: Faculty.English,
+    faculty: Faculty.BusinessEnglish,
     course: 2020,
     program: "Cử nhân Tiếng Anh thương mại",
     phone: "0987654321",
     status: Status.Graduated,
+    academicYear: "2020-2021",
   },
   {
     id: "SV003",
@@ -135,6 +142,7 @@ export const mockData: Student[] = [
     program: "Cử nhân Tiếng Nhật",
     phone: "0123987654",
     status: Status.Studying,
+    academicYear: "2022-2023",
   },
   {
     id: "SV004",
@@ -147,7 +155,8 @@ export const mockData: Student[] = [
     course: 2019,
     program: "Cử nhân Tiếng Pháp",
     phone: "0987123456",
-    status: Status.Suspended,
+    status: Status.Paused,
+    academicYear: "2019-2020",
   },
   {
     id: "SV005",
@@ -160,6 +169,7 @@ export const mockData: Student[] = [
     course: 2023,
     program: "Cử nhân Luật",
     phone: "0123456780",
-    status: Status.DroppedOut,
+    status: Status.Droppedout,
+    academicYear: "2023-2024",
   },
 ];

@@ -158,7 +158,8 @@ export const createComponents = ({ palette }: Config): Components => {
         },
       },
     },
-    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     MuiTimelineConnector: {
       styleOverrides: {
         root: {
