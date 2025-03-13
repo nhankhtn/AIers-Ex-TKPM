@@ -8,7 +8,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo;
 
 public interface IStudentRepository
 {
-    Task<IEnumerable<Student>> GetAllStudentsAsync();
+    Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int page, int pageSize, string? key);
 
     Task<Student?> GetStudentByIdAsync(string studentId);
     Task<IEnumerable<Student?>> GetStudentsByNameAsync(string name);
