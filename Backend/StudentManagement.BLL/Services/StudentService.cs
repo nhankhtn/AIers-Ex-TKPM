@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
 using StudentManagement.Domain.Enums;
@@ -24,7 +25,7 @@ namespace StudentManagement.BLL.Services
                 {
                     if (value is string genderStr && (new[] {"Male", "Female"}).Contains(value))
                     {
-                        student.Gender = genderStr == "Male"; 
+                        student.Gender = genderStr == "Male";
                         return true;
                     }
                     return false;
@@ -54,30 +55,34 @@ namespace StudentManagement.BLL.Services
 
 
         // Get all students
-        public async Task<Result<IEnumerable<StudentDTO>>> GetAllStudentsAsync()
+        public async Task<Result<GetStudentsDto>> GetAllStudentsAsync(int page, int pageSize, string? key)
         {
-            var students = await _studentRepository.GetAllStudentsAsync();
-            return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+            var students = await _studentRepository.GetAllStudentsAsync(page, pageSize, key);
+
+            return Result<GetStudentsDto>.Ok(new GetStudentsDto()
+            {
+                Students = _mapper.Map<IEnumerable<StudentDTO>>(students.students),
+                Total = students.total,
+                PageIndex = page,
+                PageSize = pageSize
+            });
         }
 
 
         // Add a new student
-        public async Task<Result<string>> AddStudentAsync(StudentDTO studentDTO)
+        public async Task<Result<StudentDTO>> AddStudentAsync(StudentDTO studentDTO)
         {
-            var maxId = _studentRepository.GetAllStudentsAsync().Result.Max(s => s.Id);
-            if (maxId == null) maxId = "0";
-
             var newStudent = new Student();
             foreach (var setter in SpecialSetters)
             {
                 var prop = typeof(StudentDTO).GetProperty(setter.Key);
-                if (prop is null) return Result<string>.Fail("INVALID_" + setter.Key.ToUpper());
+                if (prop is null) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
 
                 var value = prop.GetValue(studentDTO);
-                if (value is null) return Result<string>.Fail("INVALID_" + setter.Key.ToUpper());
+                if (value is null) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
 
                 var res = setter.Value(newStudent, value);
-                if (!res) return Result<string>.Fail("INVALID_" + setter.Key.ToUpper());
+                if (!res) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
             }
 
             foreach (var prop in typeof(StudentDTO).GetProperties())
@@ -95,22 +100,19 @@ namespace StudentManagement.BLL.Services
                 }
                 else
                 {
-                    return Result<string>.Fail("INVALID_" + prop.Name.ToUpper());
+                    return Result<StudentDTO>.Fail("INVALID_" + prop.Name.ToUpper());
                 }
             }
-            
-            newStudent.Id = (int.Parse(maxId) + 1).ToString();
+
+            if (newStudent.Email is not null && await _studentRepository.IsEmailExistAsync(newStudent.Email))
+            {
+                return Result<StudentDTO>.Fail("EMAIL_EXISTED");
+            }
+
             var result = await _studentRepository.AddStudentAsync(newStudent);
-            return result ? Result<string>.Ok("ADD_SUCCESS") : Result<string>.Fail("ADD_FAIL");
+            return result ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(newStudent)) : Result<StudentDTO>.Fail("ADD_FAIL");
         }
 
-
-        // Delete a student
-        public async Task<Result<string>> DeleteStudentAsync(string studentId)
-        {
-            var res = await _studentRepository.DeleteStudentAsync(studentId);
-            return res ? Result<string>.Ok("DELETE_SUCCESS") : Result<string>.Fail("DELETE_FAIL");
-        }
 
 
         // Get student by id
@@ -128,6 +130,18 @@ namespace StudentManagement.BLL.Services
         {
             var students = await _studentRepository.GetStudentsByNameAsync(name);
             return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+        }
+
+
+        /// <summary>
+        /// Delete a student by id
+        /// </summary>
+        /// <param name="studentId"></param>
+        /// <returns></returns>
+        public async Task<Result<string>> DeleteStudentByIdAsync(string studentId)
+        {
+            var res = await _studentRepository.DeleteStudentAsync(studentId);
+            return res ? Result<string>.Ok("DELETE_SUCCESS") : Result<string>.Fail("DELETE_FAIL");
         }
 
 
@@ -168,6 +182,11 @@ namespace StudentManagement.BLL.Services
                 }
             }
 
+            if (student.Email is not null && await _studentRepository.IsEmailExistAsync(student.Email))
+            {
+                return Result<string>.Fail("EMAIL_EXISTED");
+            }
+
             var result = await _studentRepository.UpdateStudentAsync(student);
             return result ? Result<string>.Ok("UPDATE_SUCCESS") : Result<string>.Fail("UPDATE_FAIL");
         }
@@ -182,7 +201,7 @@ namespace StudentManagement.BLL.Services
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static bool SetEnumValue<T, TEnum>(T obj, string propertyName, object value) where TEnum: struct, Enum
+        private static bool SetEnumValue<T, TEnum>(T obj, string propertyName, object value) where TEnum : struct, Enum
         {
             if (value is string strValue && Enum.TryParse(strValue, out TEnum enumValue))
             {
