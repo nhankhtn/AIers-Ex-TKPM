@@ -39,19 +39,10 @@ namespace StudentManagement.API
                 options.AddPolicy("AllowAll", builder =>
                 {
                     builder.AllowAnyOrigin()
-<<<<<<< HEAD
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });
             });
-=======
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
-                });
-            });
-            var app = builder.Build();
-            app.UseCors("AllowAll");
->>>>>>> 30e082f1a4ff67487d82c6cb24c1814fc4ec9f43
 
 
             var app = builder.Build();

@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { mockData, Student } from "@/types/student";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Student } from "@/types/student";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
@@ -12,12 +12,20 @@ import RowStack from "@/components/row-stack";
 import { useDialog } from "@/hooks/use-dialog";
 import usePagination from "@/hooks/use-pagination";
 import DialogConfirmDelete from "../_components/dialog-confirm-delete";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { StudentApi, StudentResponse } from "@/api/students";
+import { StudentApi } from "@/api/students";
+import useFunction from "@/hooks/use-function";
 
 const Content = () => {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [total, setTotal] = useState(0);
+  const getStudentsApi = useFunction(StudentApi.getStudents);
+  const deleteStudentsApi = useFunction(StudentApi.deleteStudent);
+  const createStudentsApi = useFunction(StudentApi.createStudent);
+  const updatetudentsApi = useFunction(StudentApi.updateStudent);
+
+  const students = useMemo(
+    () => getStudentsApi.data?.data || [],
+    [getStudentsApi.data]
+  );
+
   const [filter, setFilter] = useState<{
     key: string;
   }>({
@@ -27,81 +35,57 @@ const Content = () => {
     count: 0,
     initialRowsPerPage: 10,
   });
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["students", pagination.page, pagination.rowsPerPage, filter.key],
-    queryFn: () =>
-      StudentApi.getStudents({
-        page: pagination.page + 1,
-        limit: pagination.rowsPerPage,
-        ...(filter.key && { key: filter.key }),
-      }),
-  });
-  console.log("data", data);
+
   useEffect(() => {
-    if (data) {
-      pagination.setTotal(data.total || 0);
-      setStudents(data.data);
-      setTotal(data.total || 0);
-    }
-  }, [data, pagination]);
+    getStudentsApi.call({
+      page: pagination.page + 1,
+      limit: pagination.rowsPerPage,
+      key: filter.key,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination.page, pagination.rowsPerPage, filter.key]);
 
-  const queryClient = useQueryClient();
-  const mutationCreate = useMutation({
-    mutationFn: StudentApi.createStudent,
-    onSuccess: (newStudent) => {
-      console.log("newStudent: ", newStudent);
-      setStudents((prev) => [...prev, newStudent]);
-      setTotal((prev) => prev + 1);
-      // queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
-      //   if (!oldData) return { total: 1, data: [newStudent] };
-      //   return {
-      //     ...oldData,
-      //     data: [...oldData.data, newStudent],
-      //     total: (oldData.total || 0) + 1,
-      //   };
-      // });
+  const handleAddStudent = useCallback(
+    async (student: Student) => {
+      await createStudentsApi.call(student);
+      if (!createStudentsApi.error && !createStudentsApi.loading) {
+        getStudentsApi.setData({
+          data: [...students, student],
+          total: getStudentsApi.data?.total ? getStudentsApi.data.total + 1 : 1,
+        });
+      }
     },
-  });
+    [createStudentsApi, getStudentsApi, students]
+  );
 
-  const mutationUpdate = useMutation({
-    mutationFn: (student: Student) =>
-      StudentApi.updateStudent(student.id, student),
-    onSuccess: (_, updatedStudent) => {
-      setStudents((prev) =>
-        prev.map((stu) =>
-          stu.id === updatedStudent.id ? updatedStudent : stu
-        )
-      );
-
-      // queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
-      //   if (!oldData) return { total: 1, data: [updatedStudent] };
-      //   return {
-      //     ...oldData,
-      //     data: oldData.data.map((student) =>
-      //       student.id === updatedStudent.id ? updatedStudent : student
-      //     ),
-      //   };
-      // });
+  const handleUpdateStudent = useCallback(
+    async (student: Student) => {
+      await updatetudentsApi.call({
+        id: student.id as string,
+        student,
+      });
+      if (!updatetudentsApi.error && !updatetudentsApi.loading) {
+        getStudentsApi.setData({
+          data: students.map((s) => (s.id === student.id ? student : s)),
+          total: getStudentsApi.data?.total || 0,
+        });
+      }
     },
-  });
+    [updatetudentsApi, getStudentsApi, students]
+  );
 
-  const mutationDelete = useMutation({
-    mutationFn: (id: string) => StudentApi.deleteStudent(id),
-    onSuccess: (_, deletedId) => {
-      console.log("deletedId: ", deletedId);
-      setStudents((prev) => prev.filter((student) => student.id !== deletedId));
-      setTotal((prev) => prev - 1);
-      // queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
-      //   console.log("oldData: ", oldData);
-      //   if (!oldData) return oldData;
-      //   return {
-      //     ...oldData,
-      //     total: (oldData.total || 0) - 1,
-      //     data: oldData.data.filter((student) => student.id !== deletedId),
-      //   };
-      // });
+  const handleDeleteStudent = useCallback(
+    async (studentId: string) => {
+      await deleteStudentsApi.call(studentId);
+      if (!deleteStudentsApi.error && !deleteStudentsApi.loading) {
+        getStudentsApi.setData({
+          data: students.filter((s) => s.id !== studentId),
+          total: getStudentsApi.data?.total ? getStudentsApi.data.total - 1 : 0,
+        });
+      }
     },
-  });
+    [deleteStudentsApi, getStudentsApi, students]
+  );
 
   const dialog = useDialog<Student>();
   const dialogConfirmDelete = useDialog<Student>();
@@ -162,7 +146,7 @@ const Content = () => {
               Tổng số sinh viên
             </Typography>
             <Typography variant='h5' fontWeight='bold'>
-              {total}
+              {getStudentsApi.data?.total || 0}
             </Typography>
           </Box>
         </Paper>
@@ -191,15 +175,15 @@ const Content = () => {
         isOpen={dialog.open}
         student={dialog.data || null}
         onClose={dialog.handleClose}
-        addStudent={mutationCreate.mutate}
-        updateStudent={mutationUpdate.mutate}
+        addStudent={handleAddStudent}
+        updateStudent={handleUpdateStudent}
       />
       {dialogConfirmDelete.data && (
         <DialogConfirmDelete
           open={dialogConfirmDelete.open}
           onClose={dialogConfirmDelete.handleClose}
           onConfirm={() => {
-            mutationDelete.mutate(dialogConfirmDelete.data?.id as string);
+            handleDeleteStudent(dialogConfirmDelete.data?.id as string);
             dialogConfirmDelete.handleClose();
           }}
           data={dialogConfirmDelete.data}

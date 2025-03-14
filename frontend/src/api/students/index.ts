@@ -28,25 +28,23 @@ export class StudentApi {
   }
 
   static async createStudent(student: Omit<Student, "id">): Promise<Student> {
-    console.log("createStudent ", student);
     const res = await apiPost("/students", student);
-    console.log("createStudent res: ", res);
     return res.data;
   }
 
-  static async updateStudent(
-    id: Student["id"],
-    student: Partial<Student>
-  ): Promise<void> {
-    //console.log("updateStudent ", id, student);
-    const res= await apiPut(`/students/${id}`, student);
-    console.log("updateStudent res: ", res);
+  static async updateStudent({
+    id,
+    student,
+  }: {
+    id: Student["id"];
+    student: Partial<Student>;
+  }): Promise<void> {
+    const res = await apiPut(`/students/${id}`, student);
     return res.data;
   }
 
   static async deleteStudent(id: Student["id"]): Promise<void> {
-    const res= await apiDelete(`/students/${id}`, {});
-    console.log("deleteStudent res: ", res);
+    const res = await apiDelete(`/students/${id}`, {});
     return res.data;
   }
 }
