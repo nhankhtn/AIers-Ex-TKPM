@@ -15,45 +15,71 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents()
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents(int page, int limit, string? key)
         {
-            var result = await _studentService.GetAllStudentsAsync();
-            if (result.Success) return Ok(result.Data);
-            return BadRequest(new
+            var result = await _studentService.GetAllStudentsAsync(page, limit, key);
+            if (result.Success)
             {
-                title = "Bad Request",
-                status = 400,
-                code = result.ErrorCode
+                if (result.Data is null) return NotFound(new
+                {
+                    title = "Not Found",
+                    status = 404,
+                    error = new
+                    {
+                        code = "STUDENT_NOT_FOUND",
+                    }
+                });
+                return Ok(new
+                {
+                    title = "Success",
+                    status = 200,
+                    data = new
+                    {
+                        students = result.Data.Students,
+                        total = result.Data.Total,
+                        pageIndex = result.Data.PageIndex,
+                        pageSize = result.Data.PageSize
+                    }
+                });
+            }
+            return NotFound(new
+            {
+                title = "Not Found",
+                status = 404,
+                error = new
+                {
+                    code = result.ErrorCode,
+                }
             });
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<StudentDTO>> GetStudentById(string id)
-        {
-            var result = await _studentService.GetStudentByIdAsync(id);
-            if (result.Success) return Ok(result.Data);
-            return BadRequest(new
-            {
-                title = "Bad Request",
-                status = 400,
-                code = result.ErrorCode
-            });
-        }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<StudentDTO>> GetStudentById(string id)
+        //{
+        //    var result = await _studentService.GetStudentByIdAsync(id);
+        //    if (result.Success) return Ok(result.Data);
+        //    return NotFound(new
+        //    {
+        //        title = "Not Found",
+        //        status = 404,
+        //        code = result.ErrorCode
+        //    });
+        //}
 
 
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudentsByName(string name)
-        {
-            var result = await _studentService.GetStudentsByNameAsync(name);
-            if (result.Success) return Ok(result.Data);
-            return BadRequest(new
-            {
-                title = "Bad Request",
-                status = 400,
-                code = result.ErrorCode
-            });
-        }
+        //[HttpGet("search")]
+        //public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudentsByName(string name)
+        //{
+        //    var result = await _studentService.GetStudentsByNameAsync(name);
+        //    if (result.Success) return Ok(result.Data);
+        //    return NotFound(new
+        //    {
+        //        title = "Not Found",
+        //        status = 404,
+        //        code = result.ErrorCode
+        //    });
+        //}
 
 
         [HttpPost]
@@ -70,20 +96,34 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Bad Request",
                     status = 400,
-                    code = firstError
+                    error = new
+                    {
+                        code = firstError
+                    }
                 });
             }
             var result = await _studentService.AddStudentAsync(studentDTO);
 
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(new
+                {
+                    title = "Success",
+                    status = 200,
+                    data = new
+                    {
+                        Student = result.Data
+                    }
+                });
             }
             return BadRequest(new
             {
                 title = "Bad Request",
                 status = 400,
-                code = result.ErrorCode
+                error = new
+                {
+                    code = result.ErrorCode
+                }
             });
         }
 
@@ -105,22 +145,59 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Bad Request",
                     status = 400,
-                    code = firstError
+                    error = new
+                    {
+                        code = firstError
+                    }
                 });
             }
             var result = await _studentService.UpdateStudentAsync(id, updateStudentDTO);
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Ok(new
+                {
+                    title = "Success",
+                    status = 200,
+                    data = new { }
+                });
             }
             return BadRequest(new
             {
                 title = "Bad Request",
                 status = 400,
-                code = result.ErrorCode
+                error = new
+                {
+                    code = result.ErrorCode
+                }
             });
         }
 
-        
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteStudentAsync(string id)
+        {
+            var res = await _studentService.DeleteStudentByIdAsync(id);
+            if (res.Success)
+            {
+                return Ok(new
+                {
+                    title = "Success",
+                    status = 200,
+                    data = res.Data
+                });
+            }
+            else
+            {
+                return NotFound(new
+                {
+                    title = "Not Found",
+                    status = 404,
+                    error = new
+                    {
+                        code = res.ErrorCode
+                    }
+                });
+            }
+        }
     }
 }
