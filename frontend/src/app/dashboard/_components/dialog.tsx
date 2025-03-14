@@ -42,7 +42,6 @@ function Dialog({
     program: "",
     phone: "",
     status: Status.Studying,
-    academicYear: "",
   });
 
   useEffect(() => {
@@ -60,7 +59,6 @@ function Dialog({
         program: "",
         phone: "",
         status: Status.Studying,
-        academicYear: "",
       });
     }
   }, [student]);
@@ -83,6 +81,28 @@ function Dialog({
   };
 
   const handleSubmit = () => {
+    //Cần thực hiện kiểm tra tính hợp lệ đối với định dạng email, số điện thoại
+    if
+      (!formData.name ||
+      !formData.dateOfBirth ||
+      !formData.email ||
+      !formData.address ||
+      !formData.phone ||
+      !formData.program ||
+      !formData.course 
+    ) {
+      console.log(formData);
+      alert("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      alert("Email không hợp lệ");
+      return;
+    }
+    else if (!/((09|03|07|08|05)+([0-9]{8})\b)/g.test(formData.phone)) {
+      alert("Số điện thoại không hợp lệ");
+      return;
+    }
     if (student) {
       updateStudent(formData);
     } else {

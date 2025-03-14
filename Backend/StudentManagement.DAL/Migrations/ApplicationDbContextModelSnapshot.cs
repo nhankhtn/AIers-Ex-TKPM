@@ -28,15 +28,15 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("varchar(8)")
                         .HasColumnName("student_id");
 
-                    b.Property<string>("AcademicYear")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)")
-                        .HasColumnName("academic_year");
-
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("address");
+
+                    b.Property<string>("Course")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("academic_year");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("date")
@@ -52,8 +52,8 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("faculty");
 
-                    b.Property<bool>("Gender")
-                        .HasColumnType("bit")
+                    b.Property<int>("Gender")
+                        .HasColumnType("int")
                         .HasColumnName("gender");
 
                     b.Property<string>("Name")

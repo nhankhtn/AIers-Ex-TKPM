@@ -10,7 +10,6 @@ export interface Student {
   program: string;
   phone: string;
   status: Status;
-  academicYear: string;
   [key: string]: any;
 }
 export enum Gender {

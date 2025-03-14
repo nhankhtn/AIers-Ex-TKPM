@@ -15,7 +15,7 @@ namespace StudentManagement.BLL.Services
 
         Task<Result<StudentDTO>> AddStudentAsync(StudentDTO studentDTO);
 
-        Task<Result<string>> UpdateStudentAsync(string userId, UpdateStudentDTO studentDTO);
+        Task<Result<StudentDTO>> UpdateStudentAsync(string userId, UpdateStudentDTO studentDTO);
 
         Task<Result<StudentDTO?>> GetStudentByIdAsync(string studentId);
 
