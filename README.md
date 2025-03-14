@@ -43,7 +43,7 @@
 ## Hướng dẫn cài đặt & chạy chương trình
 ### Backend:
 
-#### Cấu hình file `appsettings.json` với cấu hình database đã tạo
+#### Cấu hình file `appsettings.json` trong thư mục `StudentManagement.API` với cấu hình database đã tạo
 
 ```json
 {
@@ -53,11 +53,16 @@
 }
 ```
 
-#### Vào đúng thư mục chứa dự án StudentManagement
-Chạy terminal và nhập lệnh:</br>
-`dotnet ef database update -s ../StudentManagement.API -p ../StudentManagement.DAL`
-
-để tạo table cho Database
+#### Chạy các migrations
+- Vào thư mục `Backend`
+```sh
+cd Backend
+```
+- Mở terminal và nhập lệnh sau để tạo table cho Database
+:
+```sh
+dotnet ef database update -s ./StudentManagement.API -p ./StudentManagement.DAL
+```
 
 
 #### Chạy Ctrl + F5 để Run Server
