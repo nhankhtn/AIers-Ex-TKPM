@@ -1,12 +1,18 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Student } from "@/types/student";
-import { Box, Typography, Paper, Button } from "@mui/material";
+import { Box, Typography, Paper, Button, DialogTitle } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
 import Table from "@/components/table";
 import { StudentCols } from "@/constants";
 import SearchBar from "@/app/dashboard/_components/search-bar";
+import {
+  Dialog as MuiDialog ,
+  DialogContent,
+  DialogActions,
+
+} from "@mui/material";
 import Dialog from "@/app/dashboard/_components/dialog";
 import RowStack from "@/components/row-stack";
 import { useDialog } from "@/hooks/use-dialog";
@@ -49,8 +55,7 @@ const Content = () => {
     async (student: Student) => {
       for (let i = 0; i < students.length; i++) {
         if (students[i].email === student.email) {
-          alert("Email đã tồn tại");
-          return;
+          return "Email đã tồn tại";
         }
       }
       const res = await createStudentsApi.call(student);
@@ -104,13 +109,13 @@ const Content = () => {
           mb: 3,
         }}
       >
-        <Typography variant='h5' fontWeight='bold'>
+        <Typography variant="h5" fontWeight="bold">
           Danh sách sinh viên
         </Typography>
         <RowStack sx={{ gap: 1 }}>
           <Button
-            variant='contained'
-            color='success'
+            variant="contained"
+            color="success"
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
             onClick={() => dialog.handleOpen()}
@@ -121,7 +126,7 @@ const Content = () => {
       </RowStack>
       <Grid
         container
-        direction='row'
+        direction="row"
         sx={{
           justifyContent: "space-between",
           alignItems: "center",
@@ -148,10 +153,10 @@ const Content = () => {
             <PeopleIcon sx={{ color: "#1976d2", fontSize: 30 }} />
           </RowStack>
           <Box>
-            <Typography variant='body2' color='text.secondary'>
+            <Typography variant="body2" color="text.secondary">
               Tổng số sinh viên
             </Typography>
-            <Typography variant='h5' fontWeight='bold'>
+            <Typography variant="h5" fontWeight="bold">
               {getStudentsApi.data?.total || 0}
             </Typography>
           </Box>
