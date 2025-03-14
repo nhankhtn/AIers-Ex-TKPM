@@ -47,10 +47,16 @@ const Content = () => {
 
   const handleAddStudent = useCallback(
     async (student: Student) => {
-      await createStudentsApi.call(student);
+      for (let i = 0; i < students.length; i++) {
+        if (students[i].email === student.email) {
+          alert("Email đã tồn tại");
+          return;
+        }
+      }
+      const res = await createStudentsApi.call(student);
       if (!createStudentsApi.error && !createStudentsApi.loading) {
         getStudentsApi.setData({
-          data: [...students, student],
+          data: [...students, res?.data ? res.data : student],
           total: getStudentsApi.data?.total ? getStudentsApi.data.total + 1 : 1,
         });
       }

@@ -95,7 +95,9 @@ function Dialog({
       alert("Vui lòng nhập đầy đủ thông tin");
       return;
     }
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    //  @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    else if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+      // check if email
       alert("Email không hợp lệ");
       return;
     }
@@ -103,7 +105,15 @@ function Dialog({
       alert("Số điện thoại không hợp lệ");
       return;
     }
+    else if( /^20\d{2}$/.test(formData.course.toString()) == false){
+      alert("Khóa học không hợp lệ");
+      return;
+    }
     if (student) {
+      if(student.email == formData.email){
+        alert("Email đã tồn tại");
+        return;
+      }
       updateStudent(formData);
     } else {
       addStudent(formData);
@@ -137,7 +147,7 @@ function Dialog({
           type='date'
           fullWidth
           variant='outlined'
-          value={formData.dateOfBirth}
+          value={typeof formData.dateOfBirth === 'string' ? formData.dateOfBirth.split('T')[0] : ''}
           onChange={handleChange}
         />
         <FormControl fullWidth>
