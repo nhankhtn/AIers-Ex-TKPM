@@ -34,6 +34,7 @@ const Content = () => {
         ...(filter.key && { key: filter.key }),
       }),
   });
+  console.log("data", data);
   useEffect(() => {
     if (data) {
       pagination.setTotal(data.total || 0);
