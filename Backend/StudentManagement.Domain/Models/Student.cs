@@ -25,7 +25,7 @@ namespace StudentManagement.Domain.Models
 
         [Required]
         [Column("gender")]
-        public bool Gender { get; set; } // true: male, false: female
+        public Gender Gender { get; set; } // true: male, false: female
 
         [Required]
         [Column("faculty")]
@@ -33,7 +33,7 @@ namespace StudentManagement.Domain.Models
 
         [Required]
         [Column("academic_year", TypeName = "varchar(10)")]
-        public string? AcademicYear { get; set; }
+        public string? Course{ get; set; }
 
         [Required]
         [Column("program", TypeName = "nvarchar(50)")]

@@ -33,13 +33,10 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Success",
                     status = 200,
-                    data = new
-                    {
-                        students = result.Data.Students,
-                        total = result.Data.Total,
-                        pageIndex = result.Data.PageIndex,
-                        pageSize = result.Data.PageSize
-                    }
+                    data = result.Data.Students,
+                    total = result.Data.Total,
+                    pageIndex = result.Data.PageIndex,
+                    pageSize = result.Data.PageSize
                 });
             }
             return NotFound(new
@@ -110,10 +107,7 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Success",
                     status = 200,
-                    data = new
-                    {
-                        Student = result.Data
-                    }
+                    data = result.Data
                 });
             }
             return BadRequest(new

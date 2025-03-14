@@ -158,6 +158,7 @@ function Dialog({
           fullWidth
           variant='outlined'
           value={formData.address}
+          onChange={handleChange}
         />
         <FormControl fullWidth>
           <InputLabel>Khoa</InputLabel>

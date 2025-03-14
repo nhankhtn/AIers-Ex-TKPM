@@ -8,6 +8,7 @@ using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,32 +21,22 @@ namespace StudentManagement.BLL.Services
 
         private readonly Dictionary<string, Func<Student, object, bool>> SpecialSetters = new()
         {
-            {
-                "Gender", (student, value) =>
-                {
-                    if (value is string genderStr && (new[] {"Male", "Female"}).Contains(value))
-                    {
-                        student.Gender = genderStr == "Male";
-                        return true;
-                    }
-                    return false;
-                }
-            },
-            {
-                "Faculty", (student, value) =>
-                {
-                    var res = SetEnumValue<Student, Faculty>(student, "Faculty", value);
-                    return res;
-                }
-            },
-            {
-                "Status", (student, value) =>
-                {
-                    var res = SetEnumValue<Student, StudentStatus>(student, "Status", value);
-                    return res;
-                }
-            }
+            { "Gender", (student, value) => SetEnumValue(value, out Gender gender) && (student.Gender = gender) == gender },
+            { "Faculty", (student, value) => SetEnumValue(value, out Faculty faculty) && (student.Faculty = faculty) == faculty },
+            { "Status", (student, value) => SetEnumValue(value, out StudentStatus status) && (student.Status = status) == status }
         };
+
+        private static bool SetEnumValue<T>(object value, out T result) where T : struct, Enum
+        {
+            if (value is int intValue && Enum.IsDefined(typeof(T), intValue))
+            {
+                result = (T)(object)intValue;
+                return true;
+            }
+            result = default;
+            return false;
+        }
+
 
         public StudentService(IStudentRepository studentRepository, IMapper mapper)
         {
@@ -80,6 +71,12 @@ namespace StudentManagement.BLL.Services
 
                 var value = prop.GetValue(studentDTO);
                 if (value is null) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
+
+                //// Nếu là string, cố gắng chuyển đổi thành int
+                //if (value is string strValue && int.TryParse(strValue, out var intValue))
+                //{
+                //    value = intValue; // Chuyển thành int để xử lý tiếp
+                //}
 
                 var res = setter.Value(newStudent, value);
                 if (!res) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
