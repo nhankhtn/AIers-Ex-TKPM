@@ -16,6 +16,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { StudentApi, StudentResponse } from "@/api/students";
 
 const Content = () => {
+  const [students, setStudents] = useState<Student[]>([]);
+  const [total, setTotal] = useState(0);
   const [filter, setFilter] = useState<{
     key: string;
   }>({
@@ -37,6 +39,8 @@ const Content = () => {
   useEffect(() => {
     if (data) {
       pagination.setTotal(data.total || 0);
+      setStudents(data.data);
+      setTotal(data.total || 0);
     }
   }, [data, pagination]);
 
@@ -44,14 +48,17 @@ const Content = () => {
   const mutationCreate = useMutation({
     mutationFn: StudentApi.createStudent,
     onSuccess: (newStudent) => {
-      queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
-        if (!oldData) return { total: 1, data: [newStudent] };
-        return {
-          ...oldData,
-          data: [...oldData.data, newStudent],
-          total: (oldData.total || 0) + 1,
-        };
-      });
+      console.log("newStudent: ", newStudent);
+      setStudents((prev) => [...prev, newStudent]);
+      setTotal((prev) => prev + 1);
+      // queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
+      //   if (!oldData) return { total: 1, data: [newStudent] };
+      //   return {
+      //     ...oldData,
+      //     data: [...oldData.data, newStudent],
+      //     total: (oldData.total || 0) + 1,
+      //   };
+      // });
     },
   });
 
@@ -59,30 +66,39 @@ const Content = () => {
     mutationFn: (student: Student) =>
       StudentApi.updateStudent(student.id, student),
     onSuccess: (_, updatedStudent) => {
-      queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
-        if (!oldData) return { total: 1, data: [updatedStudent] };
-        return {
-          ...oldData,
-          data: oldData.data.map((student) =>
-            student.id === updatedStudent.id ? updatedStudent : student
-          ),
-        };
-      });
+      setStudents((prev) =>
+        prev.map((stu) =>
+          stu.id === updatedStudent.id ? updatedStudent : stu
+        )
+      );
+
+      // queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
+      //   if (!oldData) return { total: 1, data: [updatedStudent] };
+      //   return {
+      //     ...oldData,
+      //     data: oldData.data.map((student) =>
+      //       student.id === updatedStudent.id ? updatedStudent : student
+      //     ),
+      //   };
+      // });
     },
   });
 
   const mutationDelete = useMutation({
     mutationFn: (id: string) => StudentApi.deleteStudent(id),
     onSuccess: (_, deletedId) => {
-      queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
-        if (!oldData) return oldData;
-
-        return {
-          ...oldData,
-          total: (oldData.total || 0) - 1,
-          data: oldData.data.filter((student) => student.id !== deletedId),
-        };
-      });
+      console.log("deletedId: ", deletedId);
+      setStudents((prev) => prev.filter((student) => student.id !== deletedId));
+      setTotal((prev) => prev - 1);
+      // queryClient.setQueryData<StudentResponse>(["students"], (oldData) => {
+      //   console.log("oldData: ", oldData);
+      //   if (!oldData) return oldData;
+      //   return {
+      //     ...oldData,
+      //     total: (oldData.total || 0) - 1,
+      //     data: oldData.data.filter((student) => student.id !== deletedId),
+      //   };
+      // });
     },
   });
 
@@ -145,7 +161,7 @@ const Content = () => {
               Tổng số sinh viên
             </Typography>
             <Typography variant='h5' fontWeight='bold'>
-              {data?.total}
+              {total}
             </Typography>
           </Box>
         </Paper>
@@ -164,7 +180,7 @@ const Content = () => {
         <Grid size={{ xs: 12, sm: 6, md: 2 }}></Grid>
       </Grid>
       <Table
-        data={data?.data || []}
+        data={students || []}
         fieldCols={StudentCols}
         onClickEdit={dialog.handleOpen}
         deleteStudent={dialogConfirmDelete.handleOpen}

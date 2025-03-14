@@ -152,7 +152,7 @@ namespace StudentManagement.API.Controllers
                 {
                     title = "Success",
                     status = 200,
-                    data = new { }
+                    data = result.Data
                 });
             }
             return BadRequest(new
