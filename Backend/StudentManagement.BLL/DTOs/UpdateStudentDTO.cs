@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,17 +13,17 @@ namespace StudentManagement.BLL.DTOs
         public string? Name { get; set; }
         public DateTime? DateOfBirth { get; set; }
 
-        public string? Gender { get; set; }
+        public int? Gender { get; set; }
 
-        public string? Faculty { get; set; }
+        public int? Faculty { get; set; }
 
         [RegularExpression(@"^20\d{2}$", ErrorMessage = "INVALID_ACADEMIC_YEAR")]
-        public string? AcademicYear { get; set; }
+        public string? Course { get; set; }
 
         public string? Program { get; set; }
 
 
-        public string? Status { get; set; }
+        public int? Status { get; set; }
 
 
         [RegularExpression(@"^0\d{9,10}$", ErrorMessage = "INVALID_PHONE")]

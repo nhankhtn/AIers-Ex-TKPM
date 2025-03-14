@@ -8,6 +8,7 @@ using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,32 +21,22 @@ namespace StudentManagement.BLL.Services
 
         private readonly Dictionary<string, Func<Student, object, bool>> SpecialSetters = new()
         {
-            {
-                "Gender", (student, value) =>
-                {
-                    if (value is string genderStr && (new[] {"Male", "Female"}).Contains(value))
-                    {
-                        student.Gender = genderStr == "Male";
-                        return true;
-                    }
-                    return false;
-                }
-            },
-            {
-                "Faculty", (student, value) =>
-                {
-                    var res = SetEnumValue<Student, Faculty>(student, "Faculty", value);
-                    return res;
-                }
-            },
-            {
-                "Status", (student, value) =>
-                {
-                    var res = SetEnumValue<Student, StudentStatus>(student, "Status", value);
-                    return res;
-                }
-            }
+            { "Gender", (student, value) => SetEnumValue(value, out Gender gender) && (student.Gender = gender) == gender },
+            { "Faculty", (student, value) => SetEnumValue(value, out Faculty faculty) && (student.Faculty = faculty) == faculty },
+            { "Status", (student, value) => SetEnumValue(value, out StudentStatus status) && (student.Status = status) == status }
         };
+
+        private static bool SetEnumValue<T>(object value, out T result) where T : struct, Enum
+        {
+            if (value is int intValue && Enum.IsDefined(typeof(T), intValue))
+            {
+                result = (T)(object)intValue;
+                return true;
+            }
+            result = default;
+            return false;
+        }
+
 
         public StudentService(IStudentRepository studentRepository, IMapper mapper)
         {
@@ -80,6 +71,12 @@ namespace StudentManagement.BLL.Services
 
                 var value = prop.GetValue(studentDTO);
                 if (value is null) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
+
+                //// Nếu là string, cố gắng chuyển đổi thành int
+                //if (value is string strValue && int.TryParse(strValue, out var intValue))
+                //{
+                //    value = intValue; // Chuyển thành int để xử lý tiếp
+                //}
 
                 var res = setter.Value(newStudent, value);
                 if (!res) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
@@ -141,26 +138,26 @@ namespace StudentManagement.BLL.Services
         public async Task<Result<string>> DeleteStudentByIdAsync(string studentId)
         {
             var res = await _studentRepository.DeleteStudentAsync(studentId);
-            return res ? Result<string>.Ok("DELETE_SUCCESS") : Result<string>.Fail("DELETE_FAIL");
+            return res ? Result<string>.Ok(studentId) : Result<string>.Fail("DELETE_FAIL");
         }
 
 
         // Update a student
-        public async Task<Result<string>> UpdateStudentAsync(string studentId, UpdateStudentDTO updateStudentDTO)
+        public async Task<Result<StudentDTO>> UpdateStudentAsync(string studentId, UpdateStudentDTO updateStudentDTO)
         {
             var student = await _studentRepository.GetStudentByIdAsync(studentId);
-            if (student == null) return Result<string>.Fail("STUDENT_NOT_FOUND");
+            if (student == null) return Result<StudentDTO>.Fail("STUDENT_NOT_FOUND");
 
             foreach (var setter in SpecialSetters)
             {
                 var prop = typeof(UpdateStudentDTO).GetProperty(setter.Key);
-                if (prop is null) return Result<string>.Fail("INVALID_" + setter.Key.ToUpper());
+                if (prop is null) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
 
                 var value = prop.GetValue(updateStudentDTO);
                 if (value is null) continue;
 
                 var res = setter.Value(student, value);
-                if (!res) return Result<string>.Fail("INVALID_" + setter.Key.ToUpper());
+                if (!res) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
             }
 
             foreach (var prop in typeof(UpdateStudentDTO).GetProperties())
@@ -178,17 +175,17 @@ namespace StudentManagement.BLL.Services
                 }
                 else
                 {
-                    return Result<string>.Fail("INVALID_" + prop.Name.ToUpper());
+                    return Result<StudentDTO>.Fail("INVALID_" + prop.Name.ToUpper());
                 }
             }
 
             if (student.Email is not null && await _studentRepository.IsEmailExistAsync(student.Email))
             {
-                return Result<string>.Fail("EMAIL_EXISTED");
+                return Result<StudentDTO>.Fail("EMAIL_EXISTED");
             }
 
             var result = await _studentRepository.UpdateStudentAsync(student);
-            return result ? Result<string>.Ok("UPDATE_SUCCESS") : Result<string>.Fail("UPDATE_FAIL");
+            return result ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(student)) : Result<StudentDTO>.Fail("UPDATE_FAIL");
         }
 
 

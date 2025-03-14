@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentManagement.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialState : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,7 @@ namespace StudentManagement.DAL.Migrations
                     student_id = table.Column<string>(type: "varchar(8)", nullable: false),
                     student_name = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     date_of_birth = table.Column<DateTime>(type: "date", nullable: false),
-                    gender = table.Column<bool>(type: "bit", nullable: false),
+                    gender = table.Column<int>(type: "int", nullable: false),
                     faculty = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     academic_year = table.Column<string>(type: "varchar(10)", nullable: false),
                     program = table.Column<string>(type: "nvarchar(50)", nullable: false),
