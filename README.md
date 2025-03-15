@@ -76,6 +76,8 @@ Server hoạt động ở </br>
 
 ```sh
 cd frontend                # Di chuyển vào thư mục frontend
+touch .env                 # Tạo file .env
+Trong file .env, định nghĩa biến 'NEXT_PUBLIC_HOST=http://localhost:5231' để gọi API với http
 npm install                # Cài đặt các dependencies cần thiết
 npm run build              # Biên dịch mã nguồn frontend
 npm start                  # Khởi chạy ứng dụng
