@@ -13,6 +13,7 @@ namespace StudentManagement.Domain.Models
     {
         [Key]
         [Column("identity_id", TypeName = "int")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]

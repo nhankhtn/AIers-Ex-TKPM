@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentManagement.BLL.DTOs;
-using StudentManagement.BLL.Services;
+using StudentManagement.BLL.Services.StudentService;
 
 namespace StudentManagement.API.Controllers
 {

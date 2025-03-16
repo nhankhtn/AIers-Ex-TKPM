@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL;
-using StudentManagement.BLL.Services;
+using StudentManagement.BLL.Services.StudentService;
 using StudentManagement.DAL.Data;
+using StudentManagement.DAL.Data.Repositories.FacultyRepo;
+using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
+using StudentManagement.DAL.Data.Repositories.StudentStatusRepo;
 
 namespace StudentManagement.API
 {
@@ -21,8 +24,16 @@ namespace StudentManagement.API
             );
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+            // Services
             builder.Services.AddScoped<IStudentService, StudentService>();
+
+            // Repo
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+            builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
+            builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
+            builder.Services.AddScoped<IStudentStatusRepository, StudentStatusRepository>();
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

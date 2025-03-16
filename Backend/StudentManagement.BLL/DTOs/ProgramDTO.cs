@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.BLL.DTOs
 {
-    internal class ProgramDTO
+    public class ProgramDTO
     {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

@@ -2,17 +2,18 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.Services.StudentService;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
+using StudentManagement.DAL.Utils;
 using StudentManagement.Domain.Enums;
 using StudentManagement.Domain.Models;
-using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StudentManagement.BLL.Services
+namespace StudentManagement.BLL.Services.StudentService
 {
     public class StudentService : IStudentService
     {

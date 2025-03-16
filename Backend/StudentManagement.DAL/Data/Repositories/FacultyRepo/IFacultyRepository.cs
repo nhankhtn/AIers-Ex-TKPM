@@ -9,10 +9,14 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
 {
     public interface IFacultyRepository
     {
-        Task<Faculty?> GetFacultyByIdAsync(string id);
+        Task<Faculty?> GetFacultyByIdAsync(int id);
 
         Task<Faculty?> GetFacultyByNameAsync(string name);
 
         Task<IEnumerable<Faculty>> GetAllFacultiesAsync();
+
+        Task<bool> AddFacultyAsync(Faculty faculty);
+
+        Task<bool> UpdateFacultyAsync(Faculty faculty);
     }
 }
