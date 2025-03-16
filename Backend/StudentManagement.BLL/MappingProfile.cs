@@ -15,6 +15,9 @@ namespace StudentManagement.BLL
         public MappingProfile() 
         {
             CreateMap<Student, StudentDTO>();
+            CreateMap<Faculty, FacultyDTO>();
+            CreateMap<StudentStatus, StudentStatusDTO>();
+            CreateMap<Program, ProgramDTO>();
         }
     }
 }

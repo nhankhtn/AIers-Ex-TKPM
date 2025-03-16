@@ -24,24 +24,12 @@ namespace StudentManagement.Domain.Models
         public DateTime DateOfBirth { get; set; }
 
         [Required]
-        [Column("gender")]
-        public Gender Gender { get; set; } // true: male, false: female
+        [Column("gender", TypeName = "nvarchar(20)")]
+        public Gender Gender { get; set; } 
 
         [Required]
-        [Column("faculty")]
-        public Faculty Faculty { get; set; }
-
-        [Required]
-        [Column("academic_year", TypeName = "varchar(10)")]
+        [Column("course", TypeName = "varchar(10)")]
         public string? Course{ get; set; }
-
-        [Required]
-        [Column("program", TypeName = "nvarchar(50)")]
-        public string? Program { get; set; }
-
-        [Required]
-        [Column("status")]
-        public StudentStatus Status { get; set; }
 
         [Required]
         [Column("phone", TypeName = "varchar(10)")]
@@ -51,8 +39,39 @@ namespace StudentManagement.Domain.Models
         [Column("email", TypeName = "varchar(50)")]
         public string? Email { get; set; }
 
+        // Foreign key
+
         [Required]
-        [Column("address", TypeName = "nvarchar(100)")]
-        public string? Address { get; set; }
+        [Column("program_id", TypeName = "int")]
+        public int ProgramId { get; set; }
+
+        [Required]
+        [Column("status_id", TypeName = "int")]
+        public int StatusId { get; set; }
+
+        [Required]
+        [Column("address_id", TypeName = "int")]
+        public int AddressId { get; set; }
+
+        [Required]
+        [Column("faculty_id", TypeName = "int")]
+        public int FacultyId { get; set; } 
+
+        [Required]
+        [Column("identity_id", TypeName = "int")]
+        public int IdentityId { get; set; }
+
+        // Navigation properties
+
+        public Faculty Faculty { get; set; } = null!;
+
+        public Program Program { get; set; } = null!;
+
+        public StudentStatus Status { get; set; } = null!;
+
+        public Address? Address { get; set; } = null!;
+
+        public Identity? Identity { get; set; } = null!;
+
     }
 }

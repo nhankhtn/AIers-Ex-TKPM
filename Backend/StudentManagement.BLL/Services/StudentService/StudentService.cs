@@ -22,8 +22,6 @@ namespace StudentManagement.BLL.Services
         private readonly Dictionary<string, Func<Student, object, bool>> SpecialSetters = new()
         {
             { "Gender", (student, value) => SetEnumValue(value, out Gender gender) && (student.Gender = gender) == gender },
-            { "Faculty", (student, value) => SetEnumValue(value, out Faculty faculty) && (student.Faculty = faculty) == faculty },
-            { "Status", (student, value) => SetEnumValue(value, out StudentStatus status) && (student.Status = status) == status }
         };
 
         private static bool SetEnumValue<T>(object value, out T result) where T : struct, Enum

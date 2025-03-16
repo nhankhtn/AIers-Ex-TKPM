@@ -1,4 +1,5 @@
-﻿using StudentManagement.Domain.Enums;
+﻿using StudentManagement.Application.DTOs;
+using StudentManagement.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,11 +18,10 @@ namespace StudentManagement.BLL.DTOs
 
         public int? Faculty { get; set; }
 
-        [RegularExpression(@"^20\d{2}$", ErrorMessage = "INVALID_ACADEMIC_YEAR")]
+        [RegularExpression(@"^20\d{2}$", ErrorMessage = "INVALID_COURSE")]
         public string? Course { get; set; }
 
-        public string? Program { get; set; }
-
+        public int? Program { get; set; }
 
         public int? Status { get; set; }
 
@@ -33,8 +33,8 @@ namespace StudentManagement.BLL.DTOs
         [RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "INVALID_EMAIL")]
         public string? Email { get; set; }
 
-        public string? Address { get; set; }
+        public AddressDTO? Address { get; set; }
 
-
+        public IdentityDTO? Identity { get; set; }
     }
 }
