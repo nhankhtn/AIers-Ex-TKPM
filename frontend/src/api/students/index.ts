@@ -28,8 +28,7 @@ export class StudentApi {
   }
 
   static async createStudent(student: Omit<Student, "id">): Promise<Student> {
-    const res = await apiPost("/students", student);
-    return res.data;
+    return await apiPost("/students", student);
   }
 
   static async updateStudent({
@@ -39,12 +38,10 @@ export class StudentApi {
     id: Student["id"];
     student: Partial<Student>;
   }): Promise<void> {
-    const res = await apiPut(`/students/${id}`, student);
-    return res.data;
+    return await apiPut(`/students/${id}`, student);
   }
 
   static async deleteStudent(id: Student["id"]): Promise<void> {
-    const res = await apiDelete(`/students/${id}`, {});
-    return res.data;
+    return await apiDelete(`/students/${id}`, {});
   }
 }

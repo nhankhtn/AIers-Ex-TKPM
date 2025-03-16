@@ -1,18 +1,12 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Student } from "@/types/student";
-import { Box, Typography, Paper, Button, DialogTitle } from "@mui/material";
+import { Box, Typography, Paper, Button } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
 import Table from "@/components/table";
 import { StudentCols } from "@/constants";
 import SearchBar from "@/app/dashboard/_components/search-bar";
-import {
-  Dialog as MuiDialog ,
-  DialogContent,
-  DialogActions,
-
-} from "@mui/material";
 import Dialog from "@/app/dashboard/_components/dialog";
 import RowStack from "@/components/row-stack";
 import { useDialog } from "@/hooks/use-dialog";
@@ -22,10 +16,50 @@ import { StudentApi } from "@/api/students";
 import useFunction from "@/hooks/use-function";
 
 const Content = () => {
+  const dialog = useDialog<Student>();
+  const dialogConfirmDelete = useDialog<Student>();
+
   const getStudentsApi = useFunction(StudentApi.getStudents);
-  const deleteStudentsApi = useFunction(StudentApi.deleteStudent);
-  const createStudentsApi = useFunction(StudentApi.createStudent);
-  const updatetudentsApi = useFunction(StudentApi.updateStudent);
+  const deleteStudentsApi = useFunction(StudentApi.deleteStudent, {
+    onSuccess: ({ payload }) => {
+      getStudentsApi.setData({
+        data: students.filter((s) => s.id !== payload),
+        total: getStudentsApi.data?.total ? getStudentsApi.data.total - 1 : 0,
+      });
+    },
+  });
+  const createStudentsApi = useFunction(StudentApi.createStudent, {
+    onSuccess: ({ result }: { result: Student }) => {
+      getStudentsApi.setData({
+        data: [...students, result],
+        total: getStudentsApi.data?.total ? getStudentsApi.data.total + 1 : 1,
+      });
+      dialog.handleClose();
+    },
+  });
+  const updateStudentsApi = useFunction(StudentApi.updateStudent, {
+    onSuccess: ({
+      payload,
+    }: {
+      payload: {
+        id: Student["id"];
+        student: Partial<Student>;
+      };
+    }) => {
+      getStudentsApi.setData({
+        data: students.map((s) =>
+          s.id === payload.id
+            ? {
+                ...s,
+                ...payload.student,
+              }
+            : s
+        ),
+        total: getStudentsApi.data?.total || 0,
+      });
+      dialog.handleClose();
+    },
+  });
 
   const students = useMemo(
     () => getStudentsApi.data?.data || [],
@@ -52,54 +86,28 @@ const Content = () => {
   }, [pagination.page, pagination.rowsPerPage, filter.key]);
 
   const handleAddStudent = useCallback(
-    async (student: Student) => {
-      for (let i = 0; i < students.length; i++) {
-        if (students[i].email === student.email) {
-          return "Email đã tồn tại";
-        }
-      }
-      const res = await createStudentsApi.call(student);
-      if (!createStudentsApi.error && !createStudentsApi.loading) {
-        getStudentsApi.setData({
-          data: [...students, res?.data ? res.data : student],
-          total: getStudentsApi.data?.total ? getStudentsApi.data.total + 1 : 1,
-        });
-      }
+    (student: Student) => {
+      createStudentsApi.call(student);
     },
-    [createStudentsApi, getStudentsApi, students]
+    [createStudentsApi]
   );
 
   const handleUpdateStudent = useCallback(
-    async (student: Student) => {
-      await updatetudentsApi.call({
+    (student: Student) => {
+      updateStudentsApi.call({
         id: student.id as string,
         student,
       });
-      if (!updatetudentsApi.error && !updatetudentsApi.loading) {
-        getStudentsApi.setData({
-          data: students.map((s) => (s.id === student.id ? student : s)),
-          total: getStudentsApi.data?.total || 0,
-        });
-      }
     },
-    [updatetudentsApi, getStudentsApi, students]
+    [updateStudentsApi]
   );
 
   const handleDeleteStudent = useCallback(
-    async (studentId: string) => {
-      await deleteStudentsApi.call(studentId);
-      if (!deleteStudentsApi.error && !deleteStudentsApi.loading) {
-        getStudentsApi.setData({
-          data: students.filter((s) => s.id !== studentId),
-          total: getStudentsApi.data?.total ? getStudentsApi.data.total - 1 : 0,
-        });
-      }
+    (studentId: string) => {
+      deleteStudentsApi.call(studentId);
     },
-    [deleteStudentsApi, getStudentsApi, students]
+    [deleteStudentsApi]
   );
-
-  const dialog = useDialog<Student>();
-  const dialogConfirmDelete = useDialog<Student>();
 
   return (
     <Box sx={{ p: 3, maxWidth: "100%" }}>
@@ -109,13 +117,13 @@ const Content = () => {
           mb: 3,
         }}
       >
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant='h5' fontWeight='bold'>
           Danh sách sinh viên
         </Typography>
         <RowStack sx={{ gap: 1 }}>
           <Button
-            variant="contained"
-            color="success"
+            variant='contained'
+            color='success'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
             onClick={() => dialog.handleOpen()}
@@ -126,7 +134,7 @@ const Content = () => {
       </RowStack>
       <Grid
         container
-        direction="row"
+        direction='row'
         sx={{
           justifyContent: "space-between",
           alignItems: "center",
@@ -153,10 +161,10 @@ const Content = () => {
             <PeopleIcon sx={{ color: "#1976d2", fontSize: 30 }} />
           </RowStack>
           <Box>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant='body2' color='text.secondary'>
               Tổng số sinh viên
             </Typography>
-            <Typography variant="h5" fontWeight="bold">
+            <Typography variant='h5' fontWeight='bold'>
               {getStudentsApi.data?.total || 0}
             </Typography>
           </Box>

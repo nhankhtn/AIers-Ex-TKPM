@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -36,7 +36,7 @@ function Dialog({
       id: student?.id || "",
       name: student?.name || "",
       dateOfBirth: student?.dateOfBirth || "",
-      gender: student?.gender || Gender.Man,
+      gender: student?.gender || Gender.Male,
       email: student?.email || "",
       address: student?.address || "",
       faculty: student?.faculty || Faculty.Law,
@@ -57,22 +57,26 @@ function Dialog({
       course: Yup.number().required("Vui lòng nhập khóa học"),
     }),
     onSubmit: async (values) => {
-      if (student) {
-        updateStudent(values);
-      } else {
-        addStudent(values);
+      try {
+        if (student) {
+          updateStudent(values);
+        } else {
+          addStudent(values);
+        }
+      } catch (e) {
+        console.error(e);
       }
-      onClose();
     },
   });
 
-  const handleClose = useCallback(() => {
-    onClose();
-    formik.resetForm();
-  }, [onClose, formik]);
+  useEffect(() => {
+    if (!open) {
+      formik.resetForm();
+    }
+  }, [formik]);
 
   return (
-    <MuiDialog open={isOpen} onClose={handleClose}>
+    <MuiDialog open={isOpen} onClose={onClose}>
       <DialogTitle>
         {student ? "Cập nhật sinh viên" : "Thêm sinh viên"}
       </DialogTitle>
@@ -112,8 +116,8 @@ function Dialog({
             variant='outlined'
             {...formik.getFieldProps("gender")}
           >
-            <MenuItem value={Gender.Man}>Nam</MenuItem>
-            <MenuItem value={Gender.Woman}>Nữ</MenuItem>
+            <MenuItem value={Gender.Male}>Nam</MenuItem>
+            <MenuItem value={Gender.Female}>Nữ</MenuItem>
             <MenuItem value={Gender.Other}>Khác</MenuItem>
           </Select>
         </FormControl>
@@ -211,7 +215,7 @@ function Dialog({
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color='secondary' variant='contained'>
+        <Button onClick={onClose} color='secondary' variant='contained'>
           Hủy
         </Button>
         <Button
