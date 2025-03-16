@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useCallback } from "react";
 import {
   Button,
   TextField,
@@ -9,11 +9,12 @@ import {
   DialogTitle,
   Select,
   MenuItem,
-  SelectChangeEvent,
   FormControl,
   InputLabel,
 } from "@mui/material";
 import { Faculty, Gender, Status, Student } from "../../../types/student";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 interface DialogProps {
   student: Student | null;
@@ -30,99 +31,48 @@ function Dialog({
   addStudent,
   updateStudent,
 }: DialogProps) {
-  const [formData, setFormData] = useState<Student>({
-    id: "",
-    name: "",
-    dateOfBirth: "",
-    gender: Gender.Man,
-    email: "",
-    address: "",
-    faculty: Faculty.Law,
-    course: 0,
-    program: "",
-    phone: "",
-    status: Status.Studying,
+  const formik = useFormik({
+    initialValues: {
+      id: student?.id || "",
+      name: student?.name || "",
+      dateOfBirth: student?.dateOfBirth || "",
+      gender: student?.gender || Gender.Man,
+      email: student?.email || "",
+      address: student?.address || "",
+      faculty: student?.faculty || Faculty.Law,
+      course: student?.course || 0,
+      program: student?.program || "",
+      phone: student?.phone || "",
+      status: student?.status || Status.Studying,
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required("Vui lòng nhập họ và tên"),
+      dateOfBirth: Yup.string().required("Vui lòng nhập ngày tháng năm sinh"),
+      email: Yup.string()
+        .email("Email không hợp lệ")
+        .required("Vui lòng nhập email"),
+      address: Yup.string().required("Vui lòng nhập địa chỉ"),
+      phone: Yup.string().required("Vui lòng nhập số điện thoại"),
+      program: Yup.string().required("Vui lòng nhập chương trình"),
+      course: Yup.number().required("Vui lòng nhập khóa học"),
+    }),
+    onSubmit: async (values) => {
+      if (student) {
+        updateStudent(values);
+      } else {
+        addStudent(values);
+      }
+      handleClose();
+    },
   });
 
-  useEffect(() => {
-    if (student) setFormData(student);
-    else {
-      setFormData({
-        id: "",
-        name: "",
-        dateOfBirth: "",
-        gender: Gender.Man,
-        email: "",
-        address: "",
-        faculty: Faculty.Law,
-        course: 0,
-        program: "",
-        phone: "",
-        status: Status.Studying,
-      });
-    }
-  }, [student]);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name as string]: value,
-    }));
-  };
-  const handleChangeSelect = (event: SelectChangeEvent<string>) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name as string]: value,
-    }));
-  };
-
-  const handleSubmit = () => {
-    //Cần thực hiện kiểm tra tính hợp lệ đối với định dạng email, số điện thoại
-    if
-      (!formData.name ||
-      !formData.dateOfBirth ||
-      !formData.email ||
-      !formData.address ||
-      !formData.phone ||
-      !formData.program ||
-      !formData.course 
-    ) {
-      console.log(formData);
-      alert("Vui lòng nhập đầy đủ thông tin");
-      return;
-    }
-    //  @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    else if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
-      // check if email
-      alert("Email không hợp lệ");
-      return;
-    }
-    else if (!/((09|03|07|08|05)+([0-9]{8})\b)/g.test(formData.phone)) {
-      alert("Số điện thoại không hợp lệ");
-      return;
-    }
-    else if( /^20\d{2}$/.test(formData.course.toString()) == false){
-      alert("Khóa học không hợp lệ");
-      return;
-    }
-    if (student) {
-      if(student.email == formData.email){
-        alert("Email đã tồn tại");
-        return;
-      }
-      updateStudent(formData);
-    } else {
-      addStudent(formData);
-    }
+  const handleClose = useCallback(() => {
     onClose();
-  };
+    formik.resetForm();
+  }, [onClose, formik]);
 
   return (
-    <MuiDialog open={isOpen} onClose={onClose}>
+    <MuiDialog open={isOpen} onClose={handleClose}>
       <DialogTitle>
         {student ? "Cập nhật sinh viên" : "Thêm sinh viên"}
       </DialogTitle>
@@ -131,36 +81,36 @@ function Dialog({
           autoFocus
           margin='dense'
           id='name'
-          name='name'
           label='Họ và tên'
           type='text'
           fullWidth
           variant='outlined'
-          value={formData.name}
-          onChange={handleChange}
+          {...formik.getFieldProps("name")}
+          error={formik.touched.name && Boolean(formik.errors.name)}
+          helperText={formik.touched.name && formik.errors.name}
         />
         <TextField
           margin='dense'
           id='dateOfBirth'
-          name='dateOfBirth'
           label='Ngày tháng năm sinh'
           type='date'
           fullWidth
           variant='outlined'
-          value={typeof formData.dateOfBirth === 'string' ? formData.dateOfBirth.split('T')[0] : ''}
-          onChange={handleChange}
+          {...formik.getFieldProps("dateOfBirth")}
+          error={
+            formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)
+          }
+          helperText={formik.touched.dateOfBirth && formik.errors.dateOfBirth}
         />
         <FormControl fullWidth>
           <InputLabel>Giới tính</InputLabel>
           <Select
             margin='dense'
             id='gender'
-            name='gender'
             label='Giới tính'
             fullWidth
             variant='outlined'
-            value={formData.gender as unknown as string}
-            onChange={handleChangeSelect}
+            {...formik.getFieldProps("gender")}
           >
             <MenuItem value={Gender.Man}>Nam</MenuItem>
             <MenuItem value={Gender.Woman}>Nữ</MenuItem>
@@ -171,36 +121,34 @@ function Dialog({
         <TextField
           margin='dense'
           id='email'
-          name='email'
           label='Email'
           type='email'
           fullWidth
           variant='outlined'
-          value={formData.email}
-          onChange={handleChange}
+          {...formik.getFieldProps("email")}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
         />
         <TextField
           margin='dense'
           id='address'
-          name='address'
           label='Địa chỉ'
           type='text'
           fullWidth
           variant='outlined'
-          value={formData.address}
-          onChange={handleChange}
+          {...formik.getFieldProps("address")}
+          error={formik.touched.address && Boolean(formik.errors.address)}
+          helperText={formik.touched.address && formik.errors.address}
         />
         <FormControl fullWidth>
           <InputLabel>Khoa</InputLabel>
           <Select
             margin='dense'
             id='faculty'
-            name='faculty'
             label='Khoa'
             fullWidth
             variant='outlined'
-            value={formData.faculty as unknown as string}
-            onChange={handleChangeSelect}
+            {...formik.getFieldProps("faculty")}
           >
             <MenuItem value={Faculty.Law}>Khoa Luật</MenuItem>
             <MenuItem value={Faculty.BusinessEnglish}>
@@ -214,35 +162,35 @@ function Dialog({
         <TextField
           margin='dense'
           id='course'
-          name='course'
           label='Khóa'
           type='number'
           fullWidth
           variant='outlined'
-          value={formData.course}
-          onChange={handleChange}
+          {...formik.getFieldProps("course")}
+          error={formik.touched.course && Boolean(formik.errors.course)}
+          helperText={formik.touched.course && formik.errors.course}
         />
         <TextField
           margin='dense'
           id='program'
-          name='program'
           label='Chương trình'
           type='text'
           fullWidth
           variant='outlined'
-          value={formData.program}
-          onChange={handleChange}
+          {...formik.getFieldProps("program")}
+          error={formik.touched.program && Boolean(formik.errors.program)}
+          helperText={formik.touched.program && formik.errors.program}
         />
         <TextField
           margin='dense'
           id='phone'
-          name='phone'
           label='Số điện thoại liên hệ'
           type='text'
           fullWidth
           variant='outlined'
-          value={formData.phone}
-          onChange={handleChange}
+          {...formik.getFieldProps("phone")}
+          error={formik.touched.phone && Boolean(formik.errors.phone)}
+          helperText={formik.touched.phone && formik.errors.phone}
         />
 
         <FormControl fullWidth>
@@ -250,12 +198,10 @@ function Dialog({
           <Select
             margin='dense'
             id='status'
-            name='status'
             label='Tình trạng sinh viên'
             fullWidth
             variant='outlined'
-            onChange={handleChangeSelect}
-            value={formData.status as unknown as string}
+            {...formik.getFieldProps("status")}
           >
             <MenuItem value={Status.Studying}>Đang học</MenuItem>
             <MenuItem value={Status.Graduated}>Đã tốt nghiệp</MenuItem>
@@ -265,10 +211,14 @@ function Dialog({
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color='secondary' variant='contained'>
+        <Button onClick={handleClose} color='secondary' variant='contained'>
           Hủy
         </Button>
-        <Button onClick={handleSubmit} color='primary' variant='contained'>
+        <Button
+          onClick={() => formik.handleSubmit()}
+          color='primary'
+          variant='contained'
+        >
           {student ? "Cập nhật" : "Thêm"}
         </Button>
       </DialogActions>
