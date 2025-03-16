@@ -62,7 +62,7 @@ function Dialog({
       } else {
         addStudent(values);
       }
-      handleClose();
+      onClose();
     },
   });
 
