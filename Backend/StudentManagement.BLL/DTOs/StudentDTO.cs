@@ -20,7 +20,7 @@ namespace StudentManagement.BLL.DTOs
 
         public int? Gender { get; set; }
 
-        public int? Faculty { get; set; }
+        public int? FacultyId { get; set; }
 
         [RegularExpression(@"^20\d{2}$", ErrorMessage = "INVALID_COURSE")]
         public string? Course { get; set; }
@@ -36,5 +36,7 @@ namespace StudentManagement.BLL.DTOs
         public string? Email { get; set; }
 
         public AddressDTO? Address { get; set; }
+
+        public IdentityDTO? Identity { get; set; }
     }
 }

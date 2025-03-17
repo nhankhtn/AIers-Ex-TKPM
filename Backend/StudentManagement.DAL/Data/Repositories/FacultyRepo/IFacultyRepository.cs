@@ -1,4 +1,5 @@
 ﻿using StudentManagement.Domain.Models;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,14 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
 {
     public interface IFacultyRepository
     {
-        Task<Faculty?> GetFacultyByIdAsync(int id);
+        Task<Result<Faculty?>> GetFacultyByIdAsync(int id);
 
-        Task<Faculty?> GetFacultyByNameAsync(string name);
+        Task<Result<Faculty?>> GetFacultyByNameAsync(string name);
 
-        Task<IEnumerable<Faculty>> GetAllFacultiesAsync();
+        Task<Result<IEnumerable<Faculty>>> GetAllFacultiesAsync();
 
-        Task<bool> AddFacultyAsync(Faculty faculty);
+        Task<Result<Faculty>> AddFacultyAsync(Faculty faculty);
 
-        Task<bool> UpdateFacultyAsync(Faculty faculty);
+        Task<Result<Faculty>> UpdateFacultyAsync(Faculty faculty);
     }
 }

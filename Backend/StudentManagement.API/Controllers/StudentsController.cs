@@ -34,9 +34,7 @@ namespace StudentManagement.API.Controllers
                     title = "Success",
                     status = 200,
                     data = result.Data.Students,
-                    total = result.Data.Total,
-                    pageIndex = result.Data.PageIndex,
-                    pageSize = result.Data.PageSize
+                    total = result.Data.Total
                 });
             }
             return NotFound(new

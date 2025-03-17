@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using StudentManagement.BLL.DTOs;
-using StudentManagement.DAL.Utils;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace StudentManagement.BLL.Services.StudentService
 
         Task<Result<StudentDTO>> UpdateStudentAsync(string userId, UpdateStudentDTO studentDTO);
 
-        Task<Result<StudentDTO?>> GetStudentByIdAsync(string studentId);
+        Task<Result<StudentDTO>> GetStudentByIdAsync(string studentId);
 
         Task<Result<string>> DeleteStudentByIdAsync(string studentId);
 

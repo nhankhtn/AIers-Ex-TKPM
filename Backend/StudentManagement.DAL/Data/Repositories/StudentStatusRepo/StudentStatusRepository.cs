@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudentManagement.Domain.Models;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,70 +18,98 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             _context = context;
         }
 
-        public async Task<bool> AddStudentStatusAsync(StudentStatus studentStatus)
+        public async Task<Result<StudentStatus>> AddStudentStatusAsync(StudentStatus studentStatus)
         {
             try
             {
                 await _context.StudentStatuses.AddAsync(studentStatus);
                 await _context.SaveChangesAsync();
-                return true;
+                var addedStatus = await _context.StudentStatuses.FirstOrDefaultAsync(s => s.Name == studentStatus.Name);
+                return Result<StudentStatus>.Ok(addedStatus);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_code") == true)
+            {
+                return Result<StudentStatus>.Fail("STUDENT_STATUS_NAME_EXIST", "Student status name already exists");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_name") == true)
+            {
+                return Result<StudentStatus>.Fail("STUDENT_STATUS_NAME_EXIST", "Student status name already exists");
             }
             catch (Exception)
             {
-                return false;
+                return Result<StudentStatus>.Fail("ADD_STUDENT_FAILED", "Add student failed");
             }
         }
 
-        public async Task<IEnumerable<StudentStatus>> GetAllStudentStatusesAsync()
+        public async Task<Result<IEnumerable<StudentStatus>>> GetAllStudentStatusesAsync()
         {
             try
             {
-                return await _context.StudentStatuses.ToListAsync();
+                var statuses = await _context.StudentStatuses.ToListAsync();
+                return Result<IEnumerable<StudentStatus>>.Ok(statuses);
             }
             catch (Exception)
             {
-                return new List<StudentStatus>();
+                return Result<IEnumerable<StudentStatus>>.Fail("GET_STUDENTS_FAILED", "Failed to fetch student statuses");
             }
         }
 
-        public async Task<StudentStatus?> GetStudentStatusByIdAsync(int id)
+        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(int id)
         {
             try
             {
-                return await _context.StudentStatuses.FindAsync(id);
+                var status = await _context.StudentStatuses.FindAsync(id);
+                return Result<StudentStatus?>.Ok(status);
             }
             catch (Exception)
             {
-                return null;
+                return Result<StudentStatus?>.Fail("GET_STUDENT_FAILED", "Failed to fetch student status by ID");
             }
         }
 
-        public async Task<StudentStatus?> GetStudentStatusByNameAsync(string name)
+        public async Task<Result<StudentStatus?>> GetStudentStatusByNameAsync(string name)
         {
             try
             {
-                return await _context.StudentStatuses.FirstOrDefaultAsync(s => s.Name == name);
+                var status = await _context.StudentStatuses.FirstOrDefaultAsync(s => s.Name == name);
+                return Result<StudentStatus?>.Ok(status);
             }
             catch (Exception)
             {
-                return null;
+                return Result<StudentStatus?>.Fail("GET_STUDENT_FAILED", "Failed to fetch student status by name");
             }
         }
 
-        public async Task<bool> UpdateStudentStatusAsync(StudentStatus studentStatus)
+        public async Task<Result<StudentStatus>> UpdateStudentStatusAsync(StudentStatus studentStatus)
         {
             try
             {
                 var existingStatus = await _context.StudentStatuses.FindAsync(studentStatus.Id);
-                if (existingStatus == null) return false;
+                if (existingStatus == null)
+                    return Result<StudentStatus>.Fail("STUDENT_STATUS_NOT_FOUND", "Student status not found");
 
-                _context.Entry(existingStatus).CurrentValues.SetValues(studentStatus);
+                foreach(var prop in typeof(StudentStatus).GetProperties())
+                {
+                    var value = prop.GetValue(studentStatus);
+                    if (value is null) continue;
+                    if (prop.GetValue(existingStatus) == value) continue;
+                    prop.SetValue(existingStatus, value);
+                }
+
                 await _context.SaveChangesAsync();
-                return true;
+                return Result<StudentStatus>.Ok(existingStatus);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_code") == true)
+            {
+                return Result<StudentStatus>.Fail("STUDENT_STATUS_CODE_EXIST", "Student status code already exists");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_name") == true)
+            {
+                return Result<StudentStatus>.Fail("STUDENT_STATUS_NAME_EXIST", "Student status name already exists");
             }
             catch (Exception)
             {
-                return false;
+                return Result<StudentStatus>.Fail("UPDATE_STUDENT_STATUS_FAIL", "Update student status failed");
             }
         }
     }

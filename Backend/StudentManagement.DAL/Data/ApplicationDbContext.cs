@@ -16,8 +16,8 @@ namespace StudentManagement.DAL.Data
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
-        public DbSet<Identity> Identity { get; set; }
-        public DbSet<Address> Address { get; set; }
+        public DbSet<Identity> Identities { get; set; }
+        public DbSet<Address> Addresses { get; set; }
         public DbSet<Program> Programs { get; set; }
         public DbSet<StudentStatus> StudentStatuses { get; set; }
 
@@ -29,13 +29,21 @@ namespace StudentManagement.DAL.Data
 
             modelBuilder.Entity<Student>()
                 .Property(s => s.Gender)
-                .HasConversion<string>();
+                .HasConversion<int>();
 
             modelBuilder.Entity<Identity>()
                 .Property(i => i.IdentityType)
-                .HasConversion<string>();
+                .HasConversion<int>();
 
             // Relationships
+
+            modelBuilder.Entity<Address>()
+                .HasIndex(a => a.StudentId)
+                .IsUnique();
+
+            modelBuilder.Entity<Identity>()
+                .HasIndex(i => i.StudentId)
+                .IsUnique();
 
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Faculty)
@@ -55,13 +63,37 @@ namespace StudentManagement.DAL.Data
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Address)
                 .WithOne(a => a.Student)
-                .HasForeignKey<Address>(a => a.StudentId);
+                .HasForeignKey<Address>(a => a.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Student>()
                 .HasOne(a => a.Identity)
                 .WithOne(s => s.Student)
-                .HasForeignKey<Identity>(a => a.StudentId);
+                .HasForeignKey<Identity>(a => a.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+
+            SeedData(modelBuilder);
+
+        }
+
+        private void SeedData(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<StudentStatus>().HasData(
+                    new StudentStatus { Id = 1, Code = "ACT", Name = "Active" },
+                    new StudentStatus { Id = 2, Code = "IAC", Name = "Inactive" }
+                );
+
+            modelBuilder.Entity<Faculty>().HasData(
+                    new Faculty { Id = 1, Code="CNTT", Name = "Information Technology" },
+                    new Faculty { Id = 2, Code="BA", Name = "Business Administration" }
+                );
+
+            modelBuilder.Entity<Program>().HasData(
+                    new Program { Id = 1, Code="SE", Name = "Software Engineering" },
+                    new Program { Id = 2, Code="CS", Name = "Computer Science" },
+                    new Program { Id = 3, Code="BA", Name = "Business Administration" }
+                );
         }
     }
 }

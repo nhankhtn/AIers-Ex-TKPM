@@ -5,9 +5,11 @@ namespace StudentManagement.Application.DTOs
 {
     public class IdentityDTO
     {
-        public int Id { get; set; } // Mã định danh
+        public int? Id { get; set; }
 
         public IdentityType IdentityType { get; set; } // Loại giấy tờ (CMND/CCCD/Hộ chiếu)
+
+        public string IdentityNumber { get; set; } = string.Empty;
 
         public DateTime IssueDate { get; set; } // Ngày cấp
 

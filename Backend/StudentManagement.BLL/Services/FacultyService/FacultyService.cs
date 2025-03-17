@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
-using StudentManagement.DAL.Utils;
+using StudentManagement.Domain.Models;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,26 +22,28 @@ namespace StudentManagement.BLL.Services.FacultyService
             _mapper = mapper;
         }
 
-        public async Task<Result<FacultyDTO>> AddFacultyAsync(string name)
+        public async Task<Result<FacultyDTO>> AddFacultyAsync(FacultyDTO facultyDTO)
         {
-            var res = await _facultyRepository.AddFacultyAsync(new Domain.Models.Faculty { Name = name });
-            if (res) return Result<FacultyDTO>.Fail("ADD_FACULTY_FAILED");
+            var res = await _facultyRepository.AddFacultyAsync(_mapper.Map<Faculty>(facultyDTO));
+            if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
 
-            return Result<FacultyDTO>.Ok(new FacultyDTO { Name = name });
+            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data));
         }
 
-        public async Task<Result<FacultyDTO>> ChangeFacultyNameAsync(int id, string newName)
+        public async Task<Result<FacultyDTO>> UpdateFacultyAsync(int id, FacultyDTO facultyDTO)
         {
-            var res = await _facultyRepository.UpdateFacultyAsync(new Domain.Models.Faculty { Id = id, Name = newName });
-            if (res) return Result<FacultyDTO>.Fail("CHANGE_FACULTY_NAME_FAILED");
+            facultyDTO.Id = id;
+            var res = await _facultyRepository.UpdateFacultyAsync(_mapper.Map<Faculty>(facultyDTO));
+            if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
 
-            return Result<FacultyDTO>.Ok(new FacultyDTO { Id = id, Name = newName });
+            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data));
         }
 
         public async Task<Result<IEnumerable<FacultyDTO>>> GetAllFacultiesAsync()
         {
             var res = await _facultyRepository.GetAllFacultiesAsync();
-            return Result<IEnumerable<FacultyDTO>>.Ok(_mapper.Map<IEnumerable<FacultyDTO>>(res));
+            if (!res.Success) return Result<IEnumerable<FacultyDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<IEnumerable<FacultyDTO>>.Ok(_mapper.Map<IEnumerable<FacultyDTO>>(res.Data));
         }
     }
 }

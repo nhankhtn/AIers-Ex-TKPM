@@ -1,5 +1,5 @@
 ﻿using StudentManagement.BLL.DTOs;
-using StudentManagement.DAL.Utils;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +12,8 @@ namespace StudentManagement.BLL.Services.FacultyService
     {
         Task<Result<IEnumerable<FacultyDTO>>> GetAllFacultiesAsync();
 
-        Task<Result<FacultyDTO>> ChangeFacultyNameAsync(int id, string newName);
+        Task<Result<FacultyDTO>> UpdateFacultyAsync(int id, FacultyDTO facultyDTO);
 
-        Task<Result<FacultyDTO>> AddFacultyAsync(string name);
+        Task<Result<FacultyDTO>> AddFacultyAsync(FacultyDTO facultyDTO);
     }
 }

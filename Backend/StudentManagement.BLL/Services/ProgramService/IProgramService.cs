@@ -1,5 +1,5 @@
 ﻿using StudentManagement.BLL.DTOs;
-using StudentManagement.DAL.Utils;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +12,9 @@ namespace StudentManagement.BLL.Services.ProgramService
     {
         Task<Result<IEnumerable<ProgramDTO>>> GetAllProgramAsync();
 
-        Task<Result<ProgramDTO>> ChangeProgramNameAsync(int id, string newName);
+        Task<Result<ProgramDTO>> UpdateProgramAsync(int id, ProgramDTO programDTO);
 
-        Task<Result<ProgramDTO>> AddProgramAsync(string name);
+        Task<Result<ProgramDTO>> AddProgramAsync(ProgramDTO programDTO);
 
     }
 }

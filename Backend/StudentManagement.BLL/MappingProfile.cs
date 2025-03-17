@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentManagement.Application.DTOs;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.Domain.Enums;
 using StudentManagement.Domain.Models;
@@ -18,6 +19,13 @@ namespace StudentManagement.BLL
             CreateMap<Faculty, FacultyDTO>();
             CreateMap<StudentStatus, StudentStatusDTO>();
             CreateMap<Program, ProgramDTO>();
+
+            CreateMap<FacultyDTO, Faculty>();
+            CreateMap<StudentStatusDTO, StudentStatus>();
+            CreateMap<ProgramDTO, Program>();
+
+            CreateMap<AddressDTO, Address>();
+            CreateMap<IdentityDTO, Identity>(); 
         }
     }
 }

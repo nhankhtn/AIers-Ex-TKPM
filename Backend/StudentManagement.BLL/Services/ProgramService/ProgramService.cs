@@ -2,7 +2,8 @@
 using StudentManagement.BLL.DTOs;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
-using StudentManagement.DAL.Utils;
+using StudentManagement.Domain.Models;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,24 +23,26 @@ namespace StudentManagement.BLL.Services.ProgramService
             _mapper = mapper;
         }
 
-        public async Task<Result<ProgramDTO>> AddProgramAsync(string name)
+        public async Task<Result<ProgramDTO>> AddProgramAsync(ProgramDTO programDTO)
         {
-            var res = await _programRepository.AddProgramAsync(new Domain.Models.Program { Name = name });
-            if (res) return Result<ProgramDTO>.Fail("ADD_PROGRAM_FAILED");
-            return Result<ProgramDTO>.Ok(new ProgramDTO { Name = name });
+            var res = await _programRepository.AddProgramAsync(_mapper.Map<Program>(programDTO));
+            if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data));
         }
 
-        public async Task<Result<ProgramDTO>> ChangeProgramNameAsync(int id, string newName)
+        public async Task<Result<ProgramDTO>> UpdateProgramAsync(int id, ProgramDTO programDTO)
         {
-            var res = await _programRepository.UpdateProgramAsync(new Domain.Models.Program { Id = id, Name = newName });
-            if (res) return Result<ProgramDTO>.Fail("CHANGE_PROGRAM_NAME_FAILED");
-            return Result<ProgramDTO>.Ok(new ProgramDTO { Id = id, Name = newName });
+            programDTO.Id = id;
+            var res = await _programRepository.UpdateProgramAsync(_mapper.Map<Program>(programDTO));
+            if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data));
         }
 
         public async Task<Result<IEnumerable<ProgramDTO>>> GetAllProgramAsync()
         {
             var res = await _programRepository.GetAllProgramsAsync();
-            return Result<IEnumerable<ProgramDTO>>.Ok(_mapper.Map<IEnumerable<ProgramDTO>>(res));
+            if (!res.Success) return Result<IEnumerable<ProgramDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<IEnumerable<ProgramDTO>>.Ok(_mapper.Map<IEnumerable<ProgramDTO>>(res.Data));
         }
     }
 }

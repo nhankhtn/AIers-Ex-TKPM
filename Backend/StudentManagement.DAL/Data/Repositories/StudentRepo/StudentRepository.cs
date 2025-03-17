@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Identity.Client;
 using StudentManagement.Domain.Models;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +19,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             _context = context;
         }
 
-        public async Task<bool> AddStudentAsync(Student student)
+        public async Task<Result<string>> AddStudentAsync(Student student)
         {
             try
             {
@@ -28,44 +31,85 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
                 student.Id = $"22120{nextId:D3}";
 
-                // check unique email 
-                var studentEmail = await _context.Students.FirstOrDefaultAsync(s => s.Email == student.Email);
-                if (studentEmail != null)
+                //// check unique email 
+                //var studentEmail = await _context.Students.FirstOrDefaultAsync(s => s.Email == student.Email);
+                //if (studentEmail != null)
+                //{
+                //    return Result<string>.Fail("EMAIL_EXISTS", "Email has alreay existed");
+                //}
+
+
+                // 
+                var faculty = await _context.Faculties.FindAsync(student.FacultyId);
+                if (faculty == null)
                 {
-                    return false;
+                    return Result<string>.Fail("FACULTY_NOT_EXIST", "Faculty does not exist");
                 }
+                student.Faculty = faculty;
+                var program = await _context.Programs.FindAsync(student.ProgramId);
+                if (program == null)
+                {
+                    return Result<string>.Fail("PROGRAM_NOT_EXIST", "Program does not exist");
+                }
+                student.Program = program;
+                var status = await _context.StudentStatuses.FindAsync(student.StatusId);
+                if (status == null)
+                {
+                    return Result<string>.Fail("STATUS_NOT_EXIST", "Status does not exist");
+                }
+                student.Status = status;
 
                 await _context.Students.AddAsync(student);
+
+                if (student.Address != null)
+                {
+                    student.Address.StudentId = student.Id;
+                    student.Address.Student = student;
+                    await _context.Addresses.AddAsync(student.Address);
+                }
+                if (student.Identity != null)
+                {
+                    student.Identity.StudentId = student.Id;
+                    student.Identity.Student = student;
+                    await _context.Identities.AddAsync(student.Identity);
+                }
+
                 await _context.SaveChangesAsync();
-                return true;
+
+                return Result<string>.Ok();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Students_email") == true)
+            {
+                return Result<string>.Fail("EMAIL_EXISTS", "Email has alreay existed");
             }
             catch (Exception)
             {
-                return false;
+                return Result<string>.Fail("ADD_FAIL", "Add student failed");
             }
         }
 
-        public async Task<bool> DeleteStudentAsync(string studentId)
+
+        public async Task<Result<string>> DeleteStudentAsync(string studentId)
         {
             try
             {
                 var student = await _context.Students.FindAsync(studentId);
                 if (student == null)
                 {
-                    return false;
+                    return Result<string>.Fail("STUDENT_NOT_EXIST", "Student does not exist");
                 }
 
                 _context.Students.Remove(student);
                 await _context.SaveChangesAsync();
-                return true;
+                return Result<string>.Ok();
             }
             catch (Exception)
             {
-                return false;
+                return Result<string>.Fail("DELETE_FAILED", "Delete student failed");
             }
         }
 
-        public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int page, int pageSize, string? key)
+        public async Task<Result<(IEnumerable<Student> students, int total)>> GetAllStudentsAsync(int page, int pageSize, string? key)
         {
             try
             {
@@ -78,67 +122,75 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Take(pageSize)
                     .ToListAsync();
 
-                return (studentPage, total);
+                return Result<(IEnumerable<Student> students, int total)>.Ok((studentPage, total));
             }
             catch (Exception)
             {
-                return (new List<Student>(), 0);
+                return Result<(IEnumerable<Student> students, int total)>.Fail();
             }
         }
 
-        public async Task<Student?> GetStudentByIdAsync(string studentId)
+        public async Task<Result<Student?>> GetStudentByIdAsync(string studentId)
         {
             try
             {
                 var student = await _context.Students.FindAsync(studentId);
-
-                return student;
+                return Result<Student?>.Ok(student);
             }
             catch (Exception)
             {
-                return null;
+                return Result<Student?>.Fail(errorCode: "NOT_FOUND_STUDENT", errorMessage: "Not found student");
             }
         }
 
-        public async Task<IEnumerable<Student?>> GetStudentsByNameAsync(string name)
+        public async Task<Result<IEnumerable<Student?>>> GetStudentsByNameAsync(string name)
         {
             try
             {
                 var students = await _context.Students.Where(s => s.Name.Contains(name)).ToListAsync();
-                return students;
+                return Result<IEnumerable<Student?>>.Ok(students);
             }
             catch (Exception)
             {
-                return new List<Student?>();
+                return Result<IEnumerable<Student?>>.Fail("NOT_FOUND_STUDENT");
             }
         }
 
-        public async Task<bool> UpdateStudentAsync(Student student)
+        public async Task<Result<string>> UpdateStudentAsync(Student student)
         {
             try
             {
                 _context.Students.Update(student);
                 await _context.SaveChangesAsync();
-                return true;
+                return Result<string>.Ok();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Students_email") == true)
+            {
+                return Result<string>.Fail("EMAIL_EXISTS", "Email has alreay existed");
             }
             catch (Exception)
             {
-                return false;
+                return Result<string>.Fail("UPDATE_FAILED", "Update student failed");
             }
         }
 
 
-        public async Task<bool> IsEmailExistAsync(string email)
-        {
-            try
-            {
-                var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
-                return student != null;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        //public async Task<bool> IsEmailExistAsync(string email)
+        //{
+        //    try
+        //    {
+        //        var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
+        //        return student != null;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        //public Task<bool> AddAddressAsync(Address address)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

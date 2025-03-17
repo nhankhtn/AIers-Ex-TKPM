@@ -1,4 +1,5 @@
 ﻿using StudentManagement.Domain.Models;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,14 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
 {
     public interface IProgramRepository
     {
-        Task<Program?> GetProgramByIdAsync(int id);
+        Task<Result<Program?>> GetProgramByIdAsync(int id);
 
-        Task<Program?> GetProgramByNameAsync(string name);
+        Task<Result<Program?>> GetProgramByNameAsync(string name);
 
-        Task<IEnumerable<Program>> GetAllProgramsAsync();
+        Task<Result<IEnumerable<Program>>> GetAllProgramsAsync();
 
-        Task<bool> AddProgramAsync(Program program);
+        Task<Result<Program>> AddProgramAsync(Program program);
 
-        Task<bool> UpdateProgramAsync(Program program);
+        Task<Result<Program>> UpdateProgramAsync(Program program);
     }
 }

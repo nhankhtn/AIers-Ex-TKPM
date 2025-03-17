@@ -17,15 +17,15 @@ namespace StudentManagement.Domain.Models
 
         [Required]
         [Column("permanent_address", TypeName = "nvarchar(100)")]
-        public string? PermanentAddress { get; set; }
+        public string PermanentAddress { get; set; } = string.Empty;
 
         [Required]
         [Column("temporary_address", TypeName = "nvarchar(100)")]
-        public string? TemporaryAddress { get; set; }
+        public string TemporaryAddress { get; set; } = string.Empty;
 
         [Required]
         [Column("mailing_address", TypeName = "nvarchar(100)")]
-        public string? MailingAddress { get; set; }
+        public string MailingAddress { get; set; } = string.Empty;
 
         [Required]
         [Column("student_id", TypeName = "varchar(8)")]

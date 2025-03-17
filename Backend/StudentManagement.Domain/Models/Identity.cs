@@ -17,8 +17,12 @@ namespace StudentManagement.Domain.Models
         public int Id { get; set; }
 
         [Required]
-        [Column("identity_number", TypeName = "nvarchar(20)")]
-        public IdentityType IdentityType { get; set; } // Loại giấy tờ
+        [Column("identity_tyoe", TypeName = "int")]
+        public IdentityType IdentityType { get; set; } = IdentityType.CCCD; // Loại giấy tờ
+
+        [Required]
+        [Column("identity_number", TypeName = "nvarchar(20)")] 
+        public string IdentityNumber { get; set; } = string.Empty; // Số của giấy tờ
         
         [Required]
         [Column("issue_date", TypeName="date")]

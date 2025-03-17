@@ -2,7 +2,8 @@
 using StudentManagement.BLL.DTOs;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentStatusRepo;
-using StudentManagement.DAL.Utils;
+using StudentManagement.Domain.Models;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,24 +23,26 @@ namespace StudentManagement.BLL.Services.StudentStatusService
             _mapper = mapper;
         }
 
-        public async Task<Result<StudentStatusDTO>> AddStudentStatusAsync(string name)
+        public async Task<Result<StudentStatusDTO>> AddStudentStatusAsync(StudentStatusDTO studentStatusDTO)
         {
-            var res = await _studentStatusRepository.AddStudentStatusAsync(new Domain.Models.StudentStatus { Name = name });
-            if (res) return Result<StudentStatusDTO>.Fail("ADD_STUDENT_STATUS_FAILED");
-            return Result<StudentStatusDTO>.Ok(new StudentStatusDTO { Name = name });
+            var res = await _studentStatusRepository.AddStudentStatusAsync(_mapper.Map<StudentStatus>(studentStatusDTO));
+            if (!res.Success) return Result<StudentStatusDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res.Data));
         }
 
-        public async Task<Result<StudentStatusDTO>> ChangeStudentStatusNameAsync(int id, string newName)
+        public async Task<Result<StudentStatusDTO>> UpdateStudentStatusAsync(int id, StudentStatusDTO studentStatusDTO)
         {
-            var res = await _studentStatusRepository.UpdateStudentStatusAsync(new Domain.Models.StudentStatus { Id = id, Name = newName });
-            if (res) return Result<StudentStatusDTO>.Fail("CHANGE_STUDENT_STATUS_NAME_FAILED");
-            return Result<StudentStatusDTO>.Ok(new StudentStatusDTO { Id = id, Name = newName });
+            studentStatusDTO.Id = id;
+            var res = await _studentStatusRepository.UpdateStudentStatusAsync(_mapper.Map<StudentStatus>(studentStatusDTO));
+            if (!res.Success) return Result<StudentStatusDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res.Data));
         }
 
         public async Task<Result<IEnumerable<StudentStatusDTO>>> GetAllStudentStatusAsync()
         {
             var res = await _studentStatusRepository.GetAllStudentStatusesAsync();
-            return Result<IEnumerable<StudentStatusDTO>>.Ok(_mapper.Map<IEnumerable<StudentStatusDTO>>(res));
+            if (!res.Success) return Result<IEnumerable<StudentStatusDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<IEnumerable<StudentStatusDTO>>.Ok(_mapper.Map<IEnumerable<StudentStatusDTO>>(res.Data));
         }
     }
 }

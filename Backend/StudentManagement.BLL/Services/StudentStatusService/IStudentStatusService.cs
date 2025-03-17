@@ -1,5 +1,5 @@
 ﻿using StudentManagement.BLL.DTOs;
-using StudentManagement.DAL.Utils;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +12,8 @@ namespace StudentManagement.BLL.Services.StudentStatusService
     {
         Task<Result<IEnumerable<StudentStatusDTO>>> GetAllStudentStatusAsync();
 
-        Task<Result<StudentStatusDTO>> ChangeStudentStatusNameAsync(int id, string newName);
+        Task<Result<StudentStatusDTO>> UpdateStudentStatusAsync(int id, StudentStatusDTO studentStatusDTO);
 
-        Task<Result<StudentStatusDTO>> AddStudentStatusAsync(string name);
+        Task<Result<StudentStatusDTO>> AddStudentStatusAsync(StudentStatusDTO studentStatusDTO);
     }
 }

@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL;
+using StudentManagement.BLL.Services.FacultyService;
+using StudentManagement.BLL.Services.ProgramService;
 using StudentManagement.BLL.Services.StudentService;
+using StudentManagement.BLL.Services.StudentStatusService;
 using StudentManagement.DAL.Data;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
@@ -27,6 +30,9 @@ namespace StudentManagement.API
 
             // Services
             builder.Services.AddScoped<IStudentService, StudentService>();
+            builder.Services.AddScoped<IProgramService, ProgramService>();
+            builder.Services.AddScoped<IFacultyService, FacultyService>();
+            builder.Services.AddScoped<IStudentStatusService, StudentStatusService>();
 
             // Repo
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();

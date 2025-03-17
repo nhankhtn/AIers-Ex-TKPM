@@ -56,7 +56,7 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("StudentId")
                         .IsUnique();
 
-                    b.ToTable("Address");
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Faculty", b =>
@@ -68,6 +68,11 @@ namespace StudentManagement.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("faculty_code");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
@@ -75,7 +80,27 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Faculties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "CNTT",
+                            Name = "Information Technology"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "BA",
+                            Name = "Business Administration"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>
@@ -100,10 +125,14 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("has_chip");
 
-                    b.Property<string>("IdentityType")
+                    b.Property<string>("IdentityNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("identity_number");
+
+                    b.Property<int>("IdentityType")
+                        .HasColumnType("int")
+                        .HasColumnName("identity_tyoe");
 
                     b.Property<DateTime>("IssueDate")
                         .HasColumnType("date")
@@ -124,7 +153,7 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("StudentId")
                         .IsUnique();
 
-                    b.ToTable("Identity");
+                    b.ToTable("Identities");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Program", b =>
@@ -136,6 +165,11 @@ namespace StudentManagement.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("program_code");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
@@ -143,7 +177,33 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Programs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "SE",
+                            Name = "Software Engineering"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "CS",
+                            Name = "Computer Science"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "BA",
+                            Name = "Business Administration"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
@@ -151,10 +211,6 @@ namespace StudentManagement.DAL.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(8)")
                         .HasColumnName("student_id");
-
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int")
-                        .HasColumnName("address_id");
 
                     b.Property<string>("Course")
                         .IsRequired()
@@ -174,14 +230,9 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("int")
                         .HasColumnName("faculty_id");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("gender");
-
-                    b.Property<int>("IdentityId")
+                    b.Property<int>("Gender")
                         .HasColumnType("int")
-                        .HasColumnName("identity_id");
+                        .HasColumnName("gender");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -203,6 +254,9 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("FacultyId");
 
                     b.HasIndex("ProgramId");
@@ -221,6 +275,11 @@ namespace StudentManagement.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("student_status_code");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
@@ -228,7 +287,27 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("StudentStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "ACT",
+                            Name = "Active"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "IAC",
+                            Name = "Inactive"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Address", b =>

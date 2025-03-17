@@ -1,4 +1,5 @@
-﻿using StudentManagement.Domain.Enums;
+﻿using Microsoft.EntityFrameworkCore;
+using StudentManagement.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Domain.Models
 {
+    [Index(nameof(Email), IsUnique = true)]
     public class Student
     {
         [Key]
@@ -24,20 +26,20 @@ namespace StudentManagement.Domain.Models
         public DateTime DateOfBirth { get; set; }
 
         [Required]
-        [Column("gender", TypeName = "nvarchar(20)")]
+        [Column("gender", TypeName = "int")]
         public Gender Gender { get; set; } 
 
         [Required]
         [Column("course", TypeName = "varchar(10)")]
-        public string? Course{ get; set; }
+        public string Course{ get; set; } = string.Empty;
 
         [Required]
         [Column("phone", TypeName = "varchar(10)")]
-        public string? Phone { get; set; }
+        public string Phone { get; set; } = string.Empty;
 
         [Required]
         [Column("email", TypeName = "varchar(50)")]
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         // Foreign key
 
@@ -50,16 +52,8 @@ namespace StudentManagement.Domain.Models
         public int StatusId { get; set; }
 
         [Required]
-        [Column("address_id", TypeName = "int")]
-        public int AddressId { get; set; }
-
-        [Required]
         [Column("faculty_id", TypeName = "int")]
         public int FacultyId { get; set; } 
-
-        [Required]
-        [Column("identity_id", TypeName = "int")]
-        public int IdentityId { get; set; }
 
         // Navigation properties
 

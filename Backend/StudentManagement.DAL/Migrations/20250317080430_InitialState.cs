@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace StudentManagement.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateDatabase : Migration
+    public partial class InitialState : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,6 +19,7 @@ namespace StudentManagement.DAL.Migrations
                 {
                     faculty_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    faculty_code = table.Column<string>(type: "varchar(10)", nullable: false),
                     faculty_name = table.Column<string>(type: "nvarchar(50)", nullable: false)
                 },
                 constraints: table =>
@@ -30,6 +33,7 @@ namespace StudentManagement.DAL.Migrations
                 {
                     program_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    program_code = table.Column<string>(type: "varchar(10)", nullable: false),
                     program_name = table.Column<string>(type: "nvarchar(50)", nullable: false)
                 },
                 constraints: table =>
@@ -43,6 +47,7 @@ namespace StudentManagement.DAL.Migrations
                 {
                     student_status_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    student_status_code = table.Column<string>(type: "varchar(10)", nullable: false),
                     student_status_name = table.Column<string>(type: "nvarchar(50)", nullable: false)
                 },
                 constraints: table =>
@@ -57,15 +62,13 @@ namespace StudentManagement.DAL.Migrations
                     student_id = table.Column<string>(type: "varchar(8)", nullable: false),
                     student_name = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     date_of_birth = table.Column<DateTime>(type: "date", nullable: false),
-                    gender = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    gender = table.Column<int>(type: "int", nullable: false),
                     course = table.Column<string>(type: "varchar(10)", nullable: false),
                     phone = table.Column<string>(type: "varchar(10)", nullable: false),
                     email = table.Column<string>(type: "varchar(50)", nullable: false),
                     program_id = table.Column<int>(type: "int", nullable: false),
                     status_id = table.Column<int>(type: "int", nullable: false),
-                    address_id = table.Column<int>(type: "int", nullable: false),
-                    faculty_id = table.Column<int>(type: "int", nullable: false),
-                    identity_id = table.Column<int>(type: "int", nullable: false)
+                    faculty_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,7 +94,7 @@ namespace StudentManagement.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Address",
+                name: "Addresses",
                 columns: table => new
                 {
                     address_id = table.Column<int>(type: "int", nullable: false)
@@ -103,9 +106,9 @@ namespace StudentManagement.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Address", x => x.address_id);
+                    table.PrimaryKey("PK_Addresses", x => x.address_id);
                     table.ForeignKey(
-                        name: "FK_Address_Students_student_id",
+                        name: "FK_Addresses_Students_student_id",
                         column: x => x.student_id,
                         principalTable: "Students",
                         principalColumn: "student_id",
@@ -113,11 +116,12 @@ namespace StudentManagement.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Identity",
+                name: "Identities",
                 columns: table => new
                 {
                     identity_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    identity_tyoe = table.Column<int>(type: "int", nullable: false),
                     identity_number = table.Column<string>(type: "nvarchar(20)", nullable: false),
                     issue_date = table.Column<DateTime>(type: "date", nullable: false),
                     expiry_date = table.Column<DateTime>(type: "date", nullable: false),
@@ -128,25 +132,83 @@ namespace StudentManagement.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Identity", x => x.identity_id);
+                    table.PrimaryKey("PK_Identities", x => x.identity_id);
                     table.ForeignKey(
-                        name: "FK_Identity_Students_student_id",
+                        name: "FK_Identities_Students_student_id",
                         column: x => x.student_id,
                         principalTable: "Students",
                         principalColumn: "student_id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Faculties",
+                columns: new[] { "faculty_id", "faculty_code", "faculty_name" },
+                values: new object[,]
+                {
+                    { 1, "CNTT", "Information Technology" },
+                    { 2, "BA", "Business Administration" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Programs",
+                columns: new[] { "program_id", "program_code", "program_name" },
+                values: new object[,]
+                {
+                    { 1, "SE", "Software Engineering" },
+                    { 2, "CS", "Computer Science" },
+                    { 3, "BA", "Business Administration" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "StudentStatuses",
+                columns: new[] { "student_status_id", "student_status_code", "student_status_name" },
+                values: new object[,]
+                {
+                    { 1, "ACT", "Active" },
+                    { 2, "IAC", "Inactive" }
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Address_student_id",
-                table: "Address",
+                name: "IX_Addresses_student_id",
+                table: "Addresses",
                 column: "student_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Identity_student_id",
-                table: "Identity",
+                name: "IX_Faculties_faculty_code",
+                table: "Faculties",
+                column: "faculty_code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Faculties_faculty_name",
+                table: "Faculties",
+                column: "faculty_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Identities_student_id",
+                table: "Identities",
                 column: "student_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Programs_program_code",
+                table: "Programs",
+                column: "program_code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Programs_program_name",
+                table: "Programs",
+                column: "program_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Students_email",
+                table: "Students",
+                column: "email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -163,16 +225,28 @@ namespace StudentManagement.DAL.Migrations
                 name: "IX_Students_status_id",
                 table: "Students",
                 column: "status_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentStatuses_student_status_code",
+                table: "StudentStatuses",
+                column: "student_status_code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentStatuses_student_status_name",
+                table: "StudentStatuses",
+                column: "student_status_name",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Address");
+                name: "Addresses");
 
             migrationBuilder.DropTable(
-                name: "Identity");
+                name: "Identities");
 
             migrationBuilder.DropTable(
                 name: "Students");
