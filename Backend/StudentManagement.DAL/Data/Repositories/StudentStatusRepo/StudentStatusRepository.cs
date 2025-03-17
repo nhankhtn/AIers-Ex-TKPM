@@ -37,7 +37,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             }
             catch (Exception)
             {
-                return Result<StudentStatus>.Fail("ADD_STUDENT_FAILED", "Add student failed");
+                return Result<StudentStatus>.Fail("ADD_STUDENT_STATUS_FAILED", "Add student failed");
             }
         }
 
@@ -50,7 +50,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             }
             catch (Exception)
             {
-                return Result<IEnumerable<StudentStatus>>.Fail("GET_STUDENTS_FAILED", "Failed to fetch student statuses");
+                return Result<IEnumerable<StudentStatus>>.Fail("GET_STUDENT_STATUS_FAILED", "Failed to fetch student statuses");
             }
         }
 
@@ -63,7 +63,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             }
             catch (Exception)
             {
-                return Result<StudentStatus?>.Fail("GET_STUDENT_FAILED", "Failed to fetch student status by ID");
+                return Result<StudentStatus?>.Fail("GET_STUDENT_STATUS_FAILED", "Failed to fetch student status by ID");
             }
         }
 
@@ -76,7 +76,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             }
             catch (Exception)
             {
-                return Result<StudentStatus?>.Fail("GET_STUDENT_FAILED", "Failed to fetch student status by name");
+                return Result<StudentStatus?>.Fail("GET_STUDENT_STATUS_FAILED", "Failed to fetch student status by name");
             }
         }
 
