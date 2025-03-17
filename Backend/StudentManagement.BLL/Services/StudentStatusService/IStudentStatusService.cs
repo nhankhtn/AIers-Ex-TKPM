@@ -12,7 +12,7 @@ namespace StudentManagement.BLL.Services.StudentStatusService
     {
         Task<Result<IEnumerable<StudentStatusDTO>>> GetAllStudentStatusAsync();
 
-        Task<Result<StudentStatusDTO>> UpdateStudentStatusAsync(int id, StudentStatusDTO studentStatusDTO);
+        Task<Result<StudentStatusDTO>> UpdateStudentStatusAsync(string id, StudentStatusDTO studentStatusDTO);
 
         Task<Result<StudentStatusDTO>> AddStudentStatusAsync(StudentStatusDTO studentStatusDTO);
     }

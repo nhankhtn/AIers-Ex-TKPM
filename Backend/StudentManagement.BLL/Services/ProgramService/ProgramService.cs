@@ -30,7 +30,7 @@ namespace StudentManagement.BLL.Services.ProgramService
             return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data));
         }
 
-        public async Task<Result<ProgramDTO>> UpdateProgramAsync(int id, ProgramDTO programDTO)
+        public async Task<Result<ProgramDTO>> UpdateProgramAsync(string id, ProgramDTO programDTO)
         {
             programDTO.Id = id;
             var res = await _programRepository.UpdateProgramAsync(_mapper.Map<Program>(programDTO));

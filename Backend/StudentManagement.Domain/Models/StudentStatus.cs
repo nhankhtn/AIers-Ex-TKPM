@@ -9,23 +9,49 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Domain.Models
 {
+    /// <summary>
+    /// Represents the status of a student.
+    /// </summary>
     [Index(nameof(Name), IsUnique = true)]
     [Index(nameof(Code), IsUnique = true)]
+    [Table("status")]
     public class StudentStatus
     {
+        /// <summary>
+        /// Gets or sets the unique identifier for the student status.
+        /// </summary>
         [Key]
-        [Column("student_status_id", TypeName = "int")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [Column("id", TypeName = "uniqueidentifier")]
+        public Guid Id { get; set; }
 
+        /// <summary>
+        /// Gets or sets the code for the student status.
+        /// </summary>
+        [Column("code", TypeName = "varchar(10)")]
+        public string? Code { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the student status.
+        /// </summary>
         [Required]
-        [Column("student_status_code", TypeName = "varchar(10)")]
-        public string Code { get; set; } = string.Empty;
+        [Column("name", TypeName = "nvarchar(50)")]
+        public string? Name { get; set; }
 
-        [Required]
-        [Column("student_status_name", TypeName = "nvarchar(50)")]
-        public string Name { get; set; } = string.Empty;
+        /// <summary>
+        /// Gets or sets the date when the student status was created.
+        /// </summary>
+        [Column("created_at", TypeName = "date")]
+        public DateTime? CreatedAt;
 
+        /// <summary>
+        /// Gets or sets the date when the student status was last updated.
+        /// </summary>
+        [Column("updated_at", TypeName = "date")]
+        public DateTime? UpdatedAt;
+
+        /// <summary>
+        /// Gets or sets the collection of students associated with this status.
+        /// </summary>
         public ICollection<Student> Students { get; set; } = new List<Student>();
     }
 }

@@ -24,122 +24,114 @@ namespace StudentManagement.DAL.Migrations
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Address", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("address_id");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("city");
 
-                    b.Property<string>("MailingAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("mailing_address");
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("country");
 
-                    b.Property<string>("PermanentAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("permanent_address");
+                    b.Property<string>("District")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("district");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("street");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
                         .HasColumnType("varchar(8)")
                         .HasColumnName("student_id");
 
-                    b.Property<string>("TemporaryAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("temporary_address");
+                    b.Property<string>("Ward")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("ward");
 
                     b.HasKey("Id");
 
                     b.HasIndex("StudentId")
                         .IsUnique();
 
-                    b.ToTable("Addresses");
+                    b.ToTable("address");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Faculty", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("faculty_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasColumnType("varchar(10)")
-                        .HasColumnName("faculty_code");
+                        .HasColumnName("code");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)")
-                        .HasColumnName("faculty_name");
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[code] IS NOT NULL");
 
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[name] IS NOT NULL");
 
-                    b.ToTable("Faculties");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Code = "CNTT",
-                            Name = "Information Technology"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Code = "BA",
-                            Name = "Business Administration"
-                        });
+                    b.ToTable("faculty");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("identity_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("country");
+
+                    b.Property<string>("DocumentNumber")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("document_number");
 
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("date")
                         .HasColumnName("expiry_date");
 
-                    b.Property<bool>("HasChip")
+                    b.Property<bool?>("IsChip")
                         .HasColumnType("bit")
-                        .HasColumnName("has_chip");
-
-                    b.Property<string>("IdentityNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("identity_number");
-
-                    b.Property<int>("IdentityType")
-                        .HasColumnType("int")
-                        .HasColumnName("identity_tyoe");
+                        .HasColumnName("is_chip");
 
                     b.Property<DateTime>("IssueDate")
                         .HasColumnType("date")
                         .HasColumnName("issue_date");
 
-                    b.Property<string>("Notes")
+                    b.Property<string>("IssuePlace")
                         .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("issue_place");
+
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("notes");
 
@@ -148,73 +140,65 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("varchar(8)")
                         .HasColumnName("student_id");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(10)")
+                        .HasDefaultValue("CCCD")
+                        .HasColumnName("type");
+
                     b.HasKey("Id");
 
                     b.HasIndex("StudentId")
                         .IsUnique();
 
-                    b.ToTable("Identities");
+                    b.ToTable("identity_documents");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Program", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("program_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasColumnType("varchar(10)")
-                        .HasColumnName("program_code");
+                        .HasColumnName("code");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)")
-                        .HasColumnName("program_name");
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("updated_time");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[code] IS NOT NULL");
 
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[name] IS NOT NULL");
 
-                    b.ToTable("Programs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Code = "SE",
-                            Name = "Software Engineering"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Code = "CS",
-                            Name = "Computer Science"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Code = "BA",
-                            Name = "Business Administration"
-                        });
+                    b.ToTable("program");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(8)")
-                        .HasColumnName("student_id");
+                        .HasColumnName("id");
 
-                    b.Property<string>("Course")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)")
+                    b.Property<int?>("Course")
+                        .HasColumnType("int")
                         .HasColumnName("course");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -222,40 +206,50 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnName("date_of_birth");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("email");
 
-                    b.Property<int>("FacultyId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("FacultyId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("faculty_id");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("int")
+                    b.Property<string>("Gender")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(10)")
+                        .HasDefaultValue("Male")
                         .HasColumnName("gender");
+
+                    b.Property<string>("MailingAddress")
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("mailing_address");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
-                        .HasColumnName("student_name");
+                        .HasColumnName("name");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("varchar(10)")
                         .HasColumnName("phone");
 
-                    b.Property<int>("ProgramId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("program_id");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int")
+                    b.Property<Guid>("StatusId")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("status_id");
+
+                    b.Property<string>("TemporaryAddress")
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("temporary_address");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[email] IS NOT NULL");
 
                     b.HasIndex("FacultyId");
 
@@ -263,57 +257,66 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasIndex("StatusId");
 
-                    b.ToTable("Students");
+                    b.ToTable("student");
+                });
+
+            modelBuilder.Entity("StudentManagement.Domain.Models.StudentNationalities", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("country");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(8)")
+                        .HasColumnName("student_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.ToTable("Nationalities");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.StudentStatus", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("student_status_id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasColumnType("varchar(10)")
-                        .HasColumnName("student_status_code");
+                        .HasColumnName("code");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
-                        .HasColumnName("student_status_name");
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[code] IS NOT NULL");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("StudentStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Code = "ACT",
-                            Name = "Active"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Code = "IAC",
-                            Name = "Inactive"
-                        });
+                    b.ToTable("status");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Address", b =>
                 {
                     b.HasOne("StudentManagement.Domain.Models.Student", "Student")
-                        .WithOne("Address")
+                        .WithOne("PermanentAddress")
                         .HasForeignKey("StudentManagement.Domain.Models.Address", "StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -359,6 +362,17 @@ namespace StudentManagement.DAL.Migrations
                     b.Navigation("Status");
                 });
 
+            modelBuilder.Entity("StudentManagement.Domain.Models.StudentNationalities", b =>
+                {
+                    b.HasOne("StudentManagement.Domain.Models.Student", "Student")
+                        .WithOne("Nationalities")
+                        .HasForeignKey("StudentManagement.Domain.Models.StudentNationalities", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("StudentManagement.Domain.Models.Faculty", b =>
                 {
                     b.Navigation("Students");
@@ -371,9 +385,11 @@ namespace StudentManagement.DAL.Migrations
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
                 {
-                    b.Navigation("Address");
-
                     b.Navigation("Identity");
+
+                    b.Navigation("Nationalities");
+
+                    b.Navigation("PermanentAddress");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.StudentStatus", b =>

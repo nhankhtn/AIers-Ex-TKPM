@@ -14,7 +14,7 @@ namespace StudentManagement.BLL.DTOs
         /// <summary>
         /// StudentStatus's id
         /// </summary>
-        public int? Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// StudentStatus's code
@@ -25,5 +25,16 @@ namespace StudentManagement.BLL.DTOs
         /// StudentStatus's name
         /// </summary>
         public string? Name { get; set; }
+
+        /// <summary>
+        /// StudentStatus's Created time
+        /// </summary>
+        public DateTime? CreatedAt { get; set; }
+
+
+        /// <summary>
+        /// StudentStatus's Updated time
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
     }
 }

@@ -20,14 +20,8 @@ namespace StudentManagement.BLL.DTOs
 
         public int? Gender { get; set; }
 
-        public FacultyDTO? Faculty { get; set; }
+        public int? Course { get; set; }
 
-        [RegularExpression(@"^20\d{2}$", ErrorMessage = "INVALID_COURSE")]
-        public string? Course { get; set; }
-
-        public ProgramDTO? Program { get; set; }
-
-        public StudentStatusDTO? Status { get; set; }
 
         [RegularExpression(@"^0\d{9,10}$", ErrorMessage = "INVALID_PHONE")]
         public string? Phone { get; set; }
@@ -35,7 +29,19 @@ namespace StudentManagement.BLL.DTOs
         [RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "INVALID_EMAIL")]
         public string? Email { get; set; }
 
-        public AddressDTO? Address { get; set; }
+        public string? TemporaryAddress { get; set; }
+
+        public string? MailingAddress { get; set; }
+
+        public FacultyDTO? Faculty { get; set; }
+
+        public ProgramDTO? Program { get; set; }
+
+        public StudentStatusDTO? Status { get; set; }
+
+        public StudentNationalitesDTO? Nationalites { get; set; }
+
+        public AddressDTO? PermanentAddress { get; set; }
 
         public IdentityDTO? Identity { get; set; }
     }

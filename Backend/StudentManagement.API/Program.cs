@@ -22,8 +22,11 @@ namespace StudentManagement.API
 
             // Add services to the container.
 
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            Console.WriteLine(connectionString);
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+                options.UseSqlServer(connectionString)
             );
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));

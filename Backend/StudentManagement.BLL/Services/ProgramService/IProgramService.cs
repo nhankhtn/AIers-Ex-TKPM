@@ -12,7 +12,7 @@ namespace StudentManagement.BLL.Services.ProgramService
     {
         Task<Result<IEnumerable<ProgramDTO>>> GetAllProgramAsync();
 
-        Task<Result<ProgramDTO>> UpdateProgramAsync(int id, ProgramDTO programDTO);
+        Task<Result<ProgramDTO>> UpdateProgramAsync(string id, ProgramDTO programDTO);
 
         Task<Result<ProgramDTO>> AddProgramAsync(ProgramDTO programDTO);
 

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagement.Application.DTOs;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.Domain.Enums;
@@ -16,28 +18,58 @@ namespace StudentManagement.BLL
         public MappingProfile() 
         {
             CreateMap<Student, StudentDTO>();
-            CreateMap<Faculty, FacultyDTO>();
-            CreateMap<StudentStatus, StudentStatusDTO>();
-            CreateMap<Program, ProgramDTO>();
 
-            CreateMap<FacultyDTO, Faculty>();
-            CreateMap<StudentStatusDTO, StudentStatus>();
-            CreateMap<ProgramDTO, Program>();
+            CreateMap<Faculty, FacultyDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()));
+
+            CreateMap<StudentStatus, StudentStatusDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()));
+
+            CreateMap<Program, ProgramDTO>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()));
+
+            CreateMap<FacultyDTO, Faculty>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ParseGuidSafely(src.Id)));
+
+            CreateMap<StudentStatusDTO, StudentStatus>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ParseGuidSafely(src.Id)));
+
+
+            CreateMap<ProgramDTO, Program>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => ParseGuidSafely(src.Id)));
+
+
 
             CreateMap<AddStudentDTO, StudentDTO>();
             CreateMap<StudentDTO, AddStudentDTO>();
+
             CreateMap<UpdateStudentDTO, StudentDTO>();
             CreateMap<StudentDTO, UpdateStudentDTO>();
 
+            // 
             CreateMap<Address, AddressDTO>();
+            CreateMap<StudentNationalities, StudentNationalitesDTO>();
             CreateMap<Identity, IdentityDTO>();
+            CreateMap<AddressDTO, Address>();
+            CreateMap<IdentityDTO, Identity>();
+            CreateMap<StudentNationalitesDTO, StudentNationalities>();
 
+
+
+            // 
             CreateMap<AddStudentDTO, Student>();
             CreateMap<UpdateStudentDTO, Student>();
+        }
 
+        private Guid ParseGuidSafely(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return Guid.Empty; // or Guid.NewGuid()
 
-            CreateMap<AddressDTO, Address>();
-            CreateMap<IdentityDTO, Identity>(); 
+            if (Guid.TryParse(input, out Guid result))
+                return result;
+
+            return Guid.Empty; // or Guid.NewGuid()
         }
     }
 }

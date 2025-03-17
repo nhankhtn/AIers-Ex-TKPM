@@ -30,7 +30,7 @@ namespace StudentManagement.BLL.Services.StudentStatusService
             return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res.Data));
         }
 
-        public async Task<Result<StudentStatusDTO>> UpdateStudentStatusAsync(int id, StudentStatusDTO studentStatusDTO)
+        public async Task<Result<StudentStatusDTO>> UpdateStudentStatusAsync(string id, StudentStatusDTO studentStatusDTO)
         {
             studentStatusDTO.Id = id;
             var res = await _studentStatusRepository.UpdateStudentStatusAsync(_mapper.Map<StudentStatus>(studentStatusDTO));

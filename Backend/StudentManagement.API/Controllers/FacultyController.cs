@@ -56,7 +56,7 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateFaculty(int id, FacultyDTO facultyDTO)
+        public async Task<IActionResult> UpdateFaculty(string id, FacultyDTO facultyDTO)
         {
             var result = await _facultyService.UpdateFacultyAsync(id, facultyDTO);
             if (result.Success) return Ok(ApiResponse<FacultyDTO>.Success(

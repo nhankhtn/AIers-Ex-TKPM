@@ -31,15 +31,6 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
                 student.Id = $"22120{nextId:D3}";
 
-                //// check unique email 
-                //var studentEmail = await _context.Students.FirstOrDefaultAsync(s => s.Email == student.Email);
-                //if (studentEmail != null)
-                //{
-                //    return Result<string>.Fail("EMAIL_EXISTS", "Email has alreay existed");
-                //}
-
-
-                // 
                 var faculty = await _context.Faculties.FindAsync(student.FacultyId);
                 if (faculty == null)
                 {
@@ -61,17 +52,23 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
                 await _context.Students.AddAsync(student);
 
-                if (student.Address != null)
+                if (student.PermanentAddress != null)
                 {
-                    student.Address.StudentId = student.Id;
-                    student.Address.Student = student;
-                    await _context.Addresses.AddAsync(student.Address);
+                    student.PermanentAddress.StudentId = student.Id;
+                    student.PermanentAddress.Student = student;
+                    await _context.Addresses.AddAsync(student.PermanentAddress);
                 }
                 if (student.Identity != null)
                 {
                     student.Identity.StudentId = student.Id;
                     student.Identity.Student = student;
                     await _context.Identities.AddAsync(student.Identity);
+                }
+                if (student.Nationalities != null)
+                {
+                    student.Nationalities.StudentId = student.Id;
+                    student.Nationalities.Student = student;
+                    await _context.Nationalities.AddAsync(student.Nationalities);
                 }
 
                 await _context.SaveChangesAsync();
@@ -117,7 +114,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Faculty)
                     .Include(s => s.Program)
                     .Include(s => s.Status)
-                    .Include(s => s.Address)
+                    .Include(s => s.PermanentAddress)
                     .Include(s => s.Identity)
                     .Where(s => key == null || s.Name.Contains(key) || s.Id.Contains(key));
 

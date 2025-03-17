@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudentManagement.Domain.Enums;
 using StudentManagement.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,13 @@ namespace StudentManagement.DAL.Data
         {
         }
 
-        public DbSet<Student> Students { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
-        public DbSet<Identity> Identities { get; set; }
-        public DbSet<Address> Addresses { get; set; }
         public DbSet<Program> Programs { get; set; }
         public DbSet<StudentStatus> StudentStatuses { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Identity> Identities { get; set; }
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<StudentNationalities> Nationalities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,17 +31,15 @@ namespace StudentManagement.DAL.Data
 
             modelBuilder.Entity<Student>()
                 .Property(s => s.Gender)
-                .HasConversion<int>();
+                .HasConversion<string>()
+                .HasDefaultValue(Gender.Male);
 
             modelBuilder.Entity<Identity>()
-                .Property(i => i.IdentityType)
-                .HasConversion<int>();
+                .Property(i => i.Type)
+                .HasConversion<string>()
+                .HasDefaultValue(IdentityType.CCCD);
 
             // Relationships
-
-            modelBuilder.Entity<Address>()
-                .HasIndex(a => a.StudentId)
-                .IsUnique();
 
             modelBuilder.Entity<Identity>()
                 .HasIndex(i => i.StudentId)
@@ -61,8 +61,8 @@ namespace StudentManagement.DAL.Data
                 .HasForeignKey(s => s.StatusId);
 
             modelBuilder.Entity<Student>()
-                .HasOne(s => s.Address)
-                .WithOne(a => a.Student)
+                .HasOne(s => s.PermanentAddress)
+                .WithOne(s => s.Student)
                 .HasForeignKey<Address>(a => a.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -72,28 +72,35 @@ namespace StudentManagement.DAL.Data
                 .HasForeignKey<Identity>(a => a.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Student>()
+                .HasOne(a => a.Nationalities)
+                .WithOne(s => s.Student)
+                .HasForeignKey<StudentNationalities>(a => a.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            SeedData(modelBuilder);
+
+            // SeedData(modelBuilder);
 
         }
 
-        private void SeedData(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<StudentStatus>().HasData(
-                    new StudentStatus { Id = 1, Code = "ACT", Name = "Active" },
-                    new StudentStatus { Id = 2, Code = "IAC", Name = "Inactive" }
-                );
 
-            modelBuilder.Entity<Faculty>().HasData(
-                    new Faculty { Id = 1, Code="CNTT", Name = "Information Technology" },
-                    new Faculty { Id = 2, Code="BA", Name = "Business Administration" }
-                );
+        //private void SeedData(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<StudentStatus>().HasData(
+        //            new StudentStatus { Id = Guid.NewGuid(), Code = "ACT", Name = "Active", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow},
+        //            new StudentStatus { Id = Guid.NewGuid(), Code = "IAC", Name = "Inactive", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
+        //        );
 
-            modelBuilder.Entity<Program>().HasData(
-                    new Program { Id = 1, Code="SE", Name = "Software Engineering" },
-                    new Program { Id = 2, Code="CS", Name = "Computer Science" },
-                    new Program { Id = 3, Code="BA", Name = "Business Administration" }
-                );
-        }
+        //    modelBuilder.Entity<Faculty>().HasData(
+        //            new Faculty { Id = Guid.NewGuid(), Code="CNTT", Name = "Information Technology", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+        //            new Faculty { Id = Guid.NewGuid(), Code="BA", Name = "Business Administration", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
+        //        );
+
+        //    modelBuilder.Entity<Program>().HasData(
+        //            new Program { Id = Guid.NewGuid(), Code="SE", Name = "Software Engineering", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+        //            new Program { Id = Guid.NewGuid(), Code="CS", Name = "Computer Science", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+        //            new Program { Id = Guid.NewGuid(), Code="BA", Name = "Business Administration", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
+        //        );
+        //}
     }
 }

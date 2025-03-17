@@ -14,7 +14,7 @@ namespace StudentManagement.BLL.DTOs
         /// <summary>
         /// Program's id
         /// </summary>
-        public int? Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Program's code
@@ -25,5 +25,16 @@ namespace StudentManagement.BLL.DTOs
         /// Program's name
         /// </summary>
         public string? Name { get; set; }
+
+        /// <summary>
+        /// Program's Created time
+        /// </summary>
+        public DateTime? CreatedAt { get; set; }
+
+
+        /// <summary>
+        /// Program's Updated time
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
     }
 }

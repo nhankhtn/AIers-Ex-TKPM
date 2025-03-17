@@ -12,7 +12,7 @@ namespace StudentManagement.BLL.Services.FacultyService
     {
         Task<Result<IEnumerable<FacultyDTO>>> GetAllFacultiesAsync();
 
-        Task<Result<FacultyDTO>> UpdateFacultyAsync(int id, FacultyDTO facultyDTO);
+        Task<Result<FacultyDTO>> UpdateFacultyAsync(string id, FacultyDTO facultyDTO);
 
         Task<Result<FacultyDTO>> AddFacultyAsync(FacultyDTO facultyDTO);
     }

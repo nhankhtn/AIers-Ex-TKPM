@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
@@ -8,15 +9,8 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.BLL.DTOs
 {
-    public class AddressDTO
+    public class StudentNationalitesDTO
     {
-
-        public string? Ward { get; set; }
-
-        public string? District { get; set; }
-
-        public string? City { get; set; }
-
-        public string? Country { get; set; }
+        public string Country { get; set; } = string.Empty;
     }
 }

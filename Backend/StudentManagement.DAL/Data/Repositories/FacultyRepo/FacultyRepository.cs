@@ -22,6 +22,9 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
         {
             try
             {
+                faculty.Id = Guid.NewGuid();
+                faculty.CreatedAt = DateTime.Now;
+                faculty.UpdatedAt = DateTime.Now;
                 await _context.Faculties.AddAsync(faculty);
                 await _context.SaveChangesAsync();
                 var addedFaculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Code == faculty.Code);
@@ -95,8 +98,7 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                     if (prop.GetValue(existingFaculty) == value) continue;
                     prop.SetValue(existingFaculty, value);
                 }
-
-                _context.Entry(existingFaculty).CurrentValues.SetValues(faculty);
+                existingFaculty.UpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return Result<Faculty>.Ok(existingFaculty);
             }

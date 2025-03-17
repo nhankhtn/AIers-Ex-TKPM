@@ -21,6 +21,9 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
         {
             try
             {
+                program.Id = Guid.NewGuid();
+                program.CreatedAt = DateTime.Now;
+                program.UpdatedAt = DateTime.Now;
                 await _context.Programs.AddAsync(program);
                 await _context.SaveChangesAsync();
                 var addedProgram = await _context.Programs.FirstOrDefaultAsync(p => p.Code == program.Code);
@@ -95,7 +98,7 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                     prop.SetValue(existingProgram, value);
                 }
 
-                _context.Entry(existingProgram).CurrentValues.SetValues(program);
+                existingProgram.UpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return Result<Program>.Ok(existingProgram);
             }

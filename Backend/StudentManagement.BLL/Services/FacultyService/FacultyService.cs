@@ -30,7 +30,7 @@ namespace StudentManagement.BLL.Services.FacultyService
             return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data));
         }
 
-        public async Task<Result<FacultyDTO>> UpdateFacultyAsync(int id, FacultyDTO facultyDTO)
+        public async Task<Result<FacultyDTO>> UpdateFacultyAsync(string id, FacultyDTO facultyDTO)
         {
             facultyDTO.Id = id;
             var res = await _facultyRepository.UpdateFacultyAsync(_mapper.Map<Faculty>(facultyDTO));

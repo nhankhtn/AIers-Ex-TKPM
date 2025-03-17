@@ -169,22 +169,31 @@ namespace StudentManagement.BLL.Services.StudentService
         private Dictionary<string, Func<Student, object, bool>> SpecialSetters() => new()
         {
             { "Gender", (student, value) => SetEnumValue(value, out Gender gender) && (student.Gender = gender) == gender },
-            { "Address", (student, value) =>
+            { "Course", (student, value) => (value is int intValue && intValue > 2000) },
+            { "PermanentAddress", (student, value) =>
                 {
                     if (value is null) return true;
                     if (_mapper is null) return false;
-                    student.Address = _mapper.Map<Address>((AddressDTO)value);
+                    student.PermanentAddress = _mapper.Map<Address>(value);
                     return true;
-                }
-            },
+                }},
             { "Identity", (student, value) =>
                 {
                     if (value is null) return true;
                     if (_mapper is null) return false;
-                    student.Identity = _mapper.Map<Identity>((IdentityDTO)value);
+                    student.Identity = _mapper.Map<Identity>(value);
                     return true;
-                }
-            }
+                }},
+            { "Nationalities", (student, value) =>
+                {
+                    if (value is null) return true;
+                    if (_mapper is null) return false;
+                    student.Nationalities = _mapper.Map<StudentNationalities>(value);
+                    return true;
+                }},
+            { "ProgramId", (student, value) => (student.ProgramId = ParseGuidSafely(value.ToString())) != Guid.Empty },
+            { "FacultyId", (student, value) =>  (student.FacultyId = ParseGuidSafely(value.ToString())) != Guid.Empty},
+            { "StatusId", (student, value) =>  (student.StatusId = ParseGuidSafely(value.ToString())) != Guid.Empty}
         };
 
 
@@ -204,6 +213,17 @@ namespace StudentManagement.BLL.Services.StudentService
             }
             result = default;
             return false;
+        }
+
+        private Guid ParseGuidSafely(string? input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return Guid.Empty; // or Guid.NewGuid()
+
+            if (Guid.TryParse(input, out Guid result))
+                return result;
+
+            return Guid.Empty; // or Guid.NewGuid()
         }
 
     }

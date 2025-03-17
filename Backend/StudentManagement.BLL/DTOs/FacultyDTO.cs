@@ -14,16 +14,27 @@ namespace StudentManagement.BLL.DTOs
         /// <summary>
         /// Faculty's id
         /// </summary>
-        public int? Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Faculty's code
         /// </summary>
-        public string? Code { get; set; } = string.Empty;
+        public string? Code { get; set; } 
 
         /// <summary>
         /// Faculty's name
         /// </summary>
-        public string? Name { get; set; } = string.Empty;
+        public string? Name { get; set; } 
+
+        /// <summary>
+        /// Faculty's Created time
+        /// </summary>
+        public DateTime? CreatedAt { get; set; }
+
+
+        /// <summary>
+        /// Faculty's Updated time
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
     }
 }
