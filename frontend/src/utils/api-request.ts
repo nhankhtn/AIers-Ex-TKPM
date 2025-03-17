@@ -1,7 +1,7 @@
 import CookieHelper from "./cookie-helper";
 
 export const HOST = process.env.NEXT_PUBLIC_HOST;
-export const API_HOST = process.env.NEXT_PUBLIC_HOST + "/api/v1";
+export const API_HOST = process.env.NEXT_PUBLIC_HOST + "/api";
 
 export const getFormData = (data: { [name: string]: any }): FormData => {
   const formData = new FormData();
