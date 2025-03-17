@@ -5,7 +5,6 @@ namespace StudentManagement.Application.DTOs
 {
     public class IdentityDTO
     {
-        public int? Id { get; set; }
 
         public IdentityType IdentityType { get; set; } // Loại giấy tờ (CMND/CCCD/Hộ chiếu)
 

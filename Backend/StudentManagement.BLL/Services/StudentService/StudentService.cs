@@ -21,39 +21,6 @@ namespace StudentManagement.BLL.Services.StudentService
         private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
 
-        private Dictionary<string, Func<Student, object, bool>> SpecialSetters() => new()
-        {
-            { "Gender", (student, value) => SetEnumValue(value, out Gender gender) && (student.Gender = gender) == gender },
-            { "Address", (student, value) =>
-                {
-                    if (value is null) return true;
-                    if (_mapper is null) return false;
-                    student.Address = _mapper.Map<Address>((AddressDTO)value);
-                    return true;
-                }
-            },
-            { "Identity", (student, value) =>
-                {
-                    if (value is null) return true;
-                    if (_mapper is null) return false;
-                    student.Identity = _mapper.Map<Identity>((IdentityDTO)value);
-                    return true;
-                }
-            }
-        };
-
-        private static bool SetEnumValue<T>(object value, out T result) where T : struct, Enum
-        {
-            if (value is int intValue && Enum.IsDefined(typeof(T), intValue))
-            {
-                result = (T)(object)intValue;
-                return true;
-            }
-            result = default;
-            return false;
-        }
-
-
         public StudentService(IStudentRepository studentRepository, IMapper mapper)
         {
             _studentRepository = studentRepository;
@@ -80,7 +47,7 @@ namespace StudentManagement.BLL.Services.StudentService
             var newStudent = new Student();
             foreach (var setter in SpecialSetters())
             {
-                var prop = typeof(StudentDTO).GetProperty(setter.Key);
+                var prop = typeof(AddStudentDTO).GetProperty(setter.Key);
                 if (prop is null) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
 
                 var value = prop.GetValue(addStudentDTO);
@@ -92,7 +59,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 if (!res) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
             }
 
-            foreach (var prop in typeof(StudentDTO).GetProperties())
+            foreach (var prop in typeof(AddStudentDTO).GetProperties())
             {
                 if (SpecialSetters().ContainsKey(prop.Name)) continue;
 
@@ -194,31 +161,50 @@ namespace StudentManagement.BLL.Services.StudentService
         }
 
 
+
         /// <summary>
-        /// Set value for a Enum property of an object
+        /// Mapper for special setters
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TEnum"></typeparam>
-        /// <param name="obj"></param>
-        /// <param name="propertyName"></param>
-        /// <param name="value"></param>
         /// <returns></returns>
-        private static bool SetEnumValue<T, TEnum>(T obj, string propertyName, object value) where TEnum : struct, Enum
+        private Dictionary<string, Func<Student, object, bool>> SpecialSetters() => new()
         {
-            if (value is string strValue && Enum.TryParse(strValue, out TEnum enumValue))
-            {
-                var objProp = typeof(T).GetProperty(propertyName);
-                if (objProp != null && objProp.CanWrite)
+            { "Gender", (student, value) => SetEnumValue(value, out Gender gender) && (student.Gender = gender) == gender },
+            { "Address", (student, value) =>
                 {
-                    objProp.SetValue(obj, enumValue);
+                    if (value is null) return true;
+                    if (_mapper is null) return false;
+                    student.Address = _mapper.Map<Address>((AddressDTO)value);
                     return true;
                 }
-                return false;
+            },
+            { "Identity", (student, value) =>
+                {
+                    if (value is null) return true;
+                    if (_mapper is null) return false;
+                    student.Identity = _mapper.Map<Identity>((IdentityDTO)value);
+                    return true;
+                }
             }
-            else
+        };
+
+
+        /// <summary>
+        /// Set enum value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private static bool SetEnumValue<T>(object value, out T result) where T : struct, Enum
+        {
+            if (value is int intValue && Enum.IsDefined(typeof(T), intValue))
             {
-                return false;
+                result = (T)(object)intValue;
+                return true;
             }
+            result = default;
+            return false;
         }
+
     }
 }

@@ -117,6 +117,8 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Faculty)
                     .Include(s => s.Program)
                     .Include(s => s.Status)
+                    .Include(s => s.Address)
+                    .Include(s => s.Identity)
                     .Where(s => key == null || s.Name.Contains(key) || s.Id.Contains(key));
 
                 var total = await students.CountAsync();
