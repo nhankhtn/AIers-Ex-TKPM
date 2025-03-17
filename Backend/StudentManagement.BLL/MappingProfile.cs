@@ -24,6 +24,15 @@ namespace StudentManagement.BLL
             CreateMap<StudentStatusDTO, StudentStatus>();
             CreateMap<ProgramDTO, Program>();
 
+            CreateMap<AddStudentDTO, StudentDTO>();
+            CreateMap<StudentDTO, AddStudentDTO>();
+            CreateMap<UpdateStudentDTO, StudentDTO>();
+            CreateMap<StudentDTO, UpdateStudentDTO>();
+
+            CreateMap<AddStudentDTO, Student>();
+            CreateMap<UpdateStudentDTO, Student>();
+
+
             CreateMap<AddressDTO, Address>();
             CreateMap<IdentityDTO, Identity>(); 
         }

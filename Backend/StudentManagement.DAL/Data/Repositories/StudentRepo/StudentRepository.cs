@@ -19,7 +19,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             _context = context;
         }
 
-        public async Task<Result<string>> AddStudentAsync(Student student)
+        public async Task<Result<Student>> AddStudentAsync(Student student)
         {
             try
             {
@@ -43,19 +43,19 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                 var faculty = await _context.Faculties.FindAsync(student.FacultyId);
                 if (faculty == null)
                 {
-                    return Result<string>.Fail("FACULTY_NOT_EXIST", "Faculty does not exist");
+                    return Result<Student>.Fail("FACULTY_NOT_EXIST", "Faculty does not exist");
                 }
                 student.Faculty = faculty;
                 var program = await _context.Programs.FindAsync(student.ProgramId);
                 if (program == null)
                 {
-                    return Result<string>.Fail("PROGRAM_NOT_EXIST", "Program does not exist");
+                    return Result<Student>.Fail("PROGRAM_NOT_EXIST", "Program does not exist");
                 }
                 student.Program = program;
                 var status = await _context.StudentStatuses.FindAsync(student.StatusId);
                 if (status == null)
                 {
-                    return Result<string>.Fail("STATUS_NOT_EXIST", "Status does not exist");
+                    return Result<Student>.Fail("STATUS_NOT_EXIST", "Status does not exist");
                 }
                 student.Status = status;
 
@@ -76,15 +76,15 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
                 await _context.SaveChangesAsync();
 
-                return Result<string>.Ok();
+                return Result<Student>.Ok(student);
             }
             catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Students_email") == true)
             {
-                return Result<string>.Fail("EMAIL_EXISTS", "Email has alreay existed");
+                return Result<Student>.Fail("EMAIL_EXISTS", "Email has alreay existed");
             }
             catch (Exception)
             {
-                return Result<string>.Fail("ADD_FAIL", "Add student failed");
+                return Result<Student>.Fail("ADD_FAIL", "Add student failed");
             }
         }
 
@@ -114,6 +114,9 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             try
             {
                 var students = _context.Students
+                    .Include(s => s.Faculty)
+                    .Include(s => s.Program)
+                    .Include(s => s.Status)
                     .Where(s => key == null || s.Name.Contains(key) || s.Id.Contains(key));
 
                 var total = await students.CountAsync();
@@ -134,7 +137,11 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
         {
             try
             {
-                var student = await _context.Students.FindAsync(studentId);
+                var student = await _context.Students
+                    .Include(s => s.Faculty)
+                    .Include(s => s.Program)
+                    .Include(s => s.Status)
+                    .FirstOrDefaultAsync(s => s.Id == studentId);
                 return Result<Student?>.Ok(student);
             }
             catch (Exception)
@@ -147,7 +154,11 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
         {
             try
             {
-                var students = await _context.Students.Where(s => s.Name.Contains(name)).ToListAsync();
+                var students = await _context.Students
+                    .Include(s => s.Faculty)
+                    .Include(s => s.Program)
+                    .Include(s => s.Status)
+                    .Where(s => s.Name.Contains(name)).ToListAsync();
                 return Result<IEnumerable<Student?>>.Ok(students);
             }
             catch (Exception)

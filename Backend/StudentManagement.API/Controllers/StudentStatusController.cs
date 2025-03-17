@@ -56,7 +56,7 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> ChangeStudentStatusName(int id, StudentStatusDTO studentStatusDTO)
+        public async Task<IActionResult> UpdateStudentStatus(int id, StudentStatusDTO studentStatusDTO)
         {
             var result = await _studentStatusService.UpdateStudentStatusAsync(id, studentStatusDTO);
             if (result.Success) return Ok(ApiResponse<StudentStatusDTO>.Success(

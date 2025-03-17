@@ -11,9 +11,9 @@ namespace StudentManagement.BLL.Services.StudentService
 {
     public interface IStudentService
     {
-        Task<Result<GetStudentsDto>> GetAllStudentsAsync(int page, int pageSize, string? key);
+        Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? key);
 
-        Task<Result<StudentDTO>> AddStudentAsync(StudentDTO studentDTO);
+        Task<Result<StudentDTO>> AddStudentAsync(AddStudentDTO studentDTO);
 
         Task<Result<StudentDTO>> UpdateStudentAsync(string userId, UpdateStudentDTO studentDTO);
 

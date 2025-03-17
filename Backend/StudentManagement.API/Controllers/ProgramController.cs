@@ -56,7 +56,7 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> ChangeProgramName(int id, ProgramDTO programDTO)
+        public async Task<IActionResult> UpdateProgram(int id, ProgramDTO programDTO)
         {
             var res = await _programService.UpdateProgramAsync(id, programDTO);
             if (res.Success) return Ok(ApiResponse<ProgramDTO>.Success(

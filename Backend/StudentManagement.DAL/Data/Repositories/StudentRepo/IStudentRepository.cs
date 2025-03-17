@@ -14,7 +14,7 @@ public interface IStudentRepository
     Task<Result<Student?>> GetStudentByIdAsync(string studentId);
     Task<Result<IEnumerable<Student?>>> GetStudentsByNameAsync(string name);
 
-    Task<Result<string>> AddStudentAsync(Student student);
+    Task<Result<Student>> AddStudentAsync(Student student);
 
     Task<Result<string>> UpdateStudentAsync(Student student);
 

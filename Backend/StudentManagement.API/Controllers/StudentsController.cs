@@ -50,7 +50,7 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddStudent(StudentDTO studentDTO)
+        public async Task<IActionResult> AddStudent(AddStudentDTO studentDTO)
         {
             if (!ModelState.IsValid)
             {

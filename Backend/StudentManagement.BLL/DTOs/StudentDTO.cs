@@ -20,14 +20,14 @@ namespace StudentManagement.BLL.DTOs
 
         public int? Gender { get; set; }
 
-        public int? FacultyId { get; set; }
+        public FacultyDTO? Faculty { get; set; }
 
         [RegularExpression(@"^20\d{2}$", ErrorMessage = "INVALID_COURSE")]
         public string? Course { get; set; }
 
-        public int? ProgramId { get; set; }
+        public ProgramDTO? Program { get; set; }
 
-        public int? StatusId { get; set; }
+        public StudentStatusDTO? Status { get; set; }
 
         [RegularExpression(@"^0\d{9,10}$", ErrorMessage = "INVALID_PHONE")]
         public string? Phone { get; set; }

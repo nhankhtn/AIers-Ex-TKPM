@@ -9,7 +9,7 @@ namespace StudentManagement.BLL.DTOs
     /// <summary>
     /// Data transfer object for getting students
     /// </summary>
-    public class GetStudentsDto
+    public class GetStudentsDTO
     {
         /// <summary>
         /// List of students

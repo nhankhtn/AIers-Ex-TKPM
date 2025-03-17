@@ -62,11 +62,11 @@ namespace StudentManagement.BLL.Services.StudentService
 
 
         // Get all students
-        public async Task<Result<GetStudentsDto>> GetAllStudentsAsync(int page, int pageSize, string? key)
+        public async Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? key)
         {
             var res = await _studentRepository.GetAllStudentsAsync(page, pageSize, key);
-            if (!res.Success) return Result<GetStudentsDto>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<GetStudentsDto>.Ok(new GetStudentsDto()
+            if (!res.Success) return Result<GetStudentsDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<GetStudentsDTO>.Ok(new GetStudentsDTO()
             {
                 Students = _mapper.Map<IEnumerable<StudentDTO>>(res.Data.students),
                 Total = res.Data.total
@@ -75,7 +75,7 @@ namespace StudentManagement.BLL.Services.StudentService
 
 
         // Add a new student
-        public async Task<Result<StudentDTO>> AddStudentAsync(StudentDTO studentDTO)
+        public async Task<Result<StudentDTO>> AddStudentAsync(AddStudentDTO addStudentDTO)
         {
             var newStudent = new Student();
             foreach (var setter in SpecialSetters())
@@ -83,7 +83,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var prop = typeof(StudentDTO).GetProperty(setter.Key);
                 if (prop is null) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
 
-                var value = prop.GetValue(studentDTO);
+                var value = prop.GetValue(addStudentDTO);
                 if (value is null && Nullable.GetUnderlyingType(prop.PropertyType) != null)
                     return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
 
@@ -99,7 +99,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var studentProp = typeof(Student).GetProperty(prop.Name);
                 if (studentProp != null && studentProp.CanWrite)
                 {
-                    var value = prop.GetValue(studentDTO);
+                    var value = prop.GetValue(addStudentDTO);
                     if (value != null)
                     {
                         studentProp.SetValue(newStudent, value);
@@ -112,7 +112,8 @@ namespace StudentManagement.BLL.Services.StudentService
             }
 
             var result = await _studentRepository.AddStudentAsync(newStudent);
-            return result.Success ? Result<StudentDTO>.Ok(studentDTO) : Result<StudentDTO>.Fail(result.ErrorCode, result.ErrorMessage);
+            return result.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(result.Data)) 
+                : Result<StudentDTO>.Fail(result.ErrorCode, result.ErrorMessage);
         }
 
 
@@ -150,9 +151,11 @@ namespace StudentManagement.BLL.Services.StudentService
         // Update a student
         public async Task<Result<StudentDTO>> UpdateStudentAsync(string studentId, UpdateStudentDTO updateStudentDTO)
         {
-            var student = await _studentRepository.GetStudentByIdAsync(studentId);
-            if (!student.Success) return Result<StudentDTO>.Fail(student.ErrorCode, student.ErrorMessage);
-            if (student.Data is null) return Result<StudentDTO>.Fail("NOT_FOUND_STUDENT", "Not found student");
+            var _res = await _studentRepository.GetStudentByIdAsync(studentId);
+            if (!_res.Success) return Result<StudentDTO>.Fail(_res.ErrorCode, _res.ErrorMessage);
+            if (_res.Data is null) return Result<StudentDTO>.Fail("NOT_FOUND_STUDENT", "Not found student");
+
+            var student = _res.Data;
 
             foreach (var setter in SpecialSetters())
             {
@@ -162,7 +165,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var value = prop.GetValue(updateStudentDTO);
                 if (value is null) continue;
 
-                var res = setter.Value(student.Data, value);
+                var res = setter.Value(student, value);
                 if (!res) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
             }
 
@@ -185,7 +188,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 }
             }
 
-            var result = await _studentRepository.UpdateStudentAsync(student.Data);
+            var result = await _studentRepository.UpdateStudentAsync(student);
             return result.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(student)) 
                 : Result<StudentDTO>.Fail(result.ErrorCode, result.ErrorMessage);
         }
