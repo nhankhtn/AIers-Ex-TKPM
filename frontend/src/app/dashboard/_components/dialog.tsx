@@ -35,7 +35,7 @@ function Dialog({
     initialValues: {
       id: student?.id || "",
       name: student?.name || "",
-      dateOfBirth: student?.dateOfBirth || "",
+      dateOfBirth: student?.dateOfBirth.split("T")[0] || "",
       gender: student?.gender || Gender.Male,
       email: student?.email || "",
       address: student?.address || "",
@@ -45,6 +45,7 @@ function Dialog({
       phone: student?.phone || "",
       status: student?.status || Status.Studying,
     },
+    enableReinitialize: true,
     validationSchema: Yup.object().shape({
       name: Yup.string().required("Vui lòng nhập họ và tên"),
       dateOfBirth: Yup.string().required("Vui lòng nhập ngày tháng năm sinh"),
