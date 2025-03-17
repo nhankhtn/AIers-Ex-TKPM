@@ -1,7 +1,7 @@
 import CookieHelper from "./cookie-helper";
 
 export const HOST = process.env.NEXT_PUBLIC_HOST;
-export const API_HOST = process.env.NEXT_PUBLIC_HOST + "/api/v1";
+export const API_HOST = process.env.NEXT_PUBLIC_HOST + "/api";
 
 export const getFormData = (data: { [name: string]: any }): FormData => {
   const formData = new FormData();
@@ -63,12 +63,12 @@ const apiFetch = async (
     const response = await fetch(input, init);
     const result = await response.json();
     if (!response.ok || (response.status !== 200 && response.status !== 201)) {
-      const message = `Lỗi: ${result.message || response.status}`;
+      const message = `Lỗi: ${result.message || result.error.code || response.status}`;
       throw new Error(message);
     }
     return result;
   } catch (error) {
-    console.error("API request error:", error);
+    //console.error("API request error:", error);
     throw error;
   }
 };

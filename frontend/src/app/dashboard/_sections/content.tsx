@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Student } from "@/types/student";
-import { Box, Typography, Paper, Button } from "@mui/material";
+import { Box, Typography, Paper, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
 import Table from "@/components/table";
@@ -14,7 +14,12 @@ import usePagination from "@/hooks/use-pagination";
 import DialogConfirmDelete from "../_components/dialog-confirm-delete";
 import { StudentApi } from "@/api/students";
 import useFunction from "@/hooks/use-function";
-
+import {
+  FileDownload as FileDownloadIcon,
+  FileUpload as FileUploadIcon,
+  Search as SearchIcon,
+  MoreVert as MoreVertIcon,
+} from "@mui/icons-material"
 const Content = () => {
   const dialog = useDialog<Student>();
   const dialogConfirmDelete = useDialog<Student>();
@@ -66,13 +71,21 @@ const Content = () => {
     [getStudentsApi.data]
   );
 
+  const [moreMenuAnchorEl, setMoreMenuAnchorEl] = useState<null | HTMLElement>(null)
+  const openMoreMenu = Boolean(moreMenuAnchorEl)
+  const handleMoreMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMoreMenuAnchorEl(event.currentTarget)
+  }
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorEl(null)
+  }
   const [filter, setFilter] = useState<{
     key: string;
   }>({
     key: "",
   });
   const pagination = usePagination({
-    count: 0,
+    count: getStudentsApi.data?.total || 0,
     initialRowsPerPage: 10,
   });
 
@@ -121,6 +134,32 @@ const Content = () => {
           Danh sách sinh viên
         </Typography>
         <RowStack sx={{ gap: 1 }}>
+        <IconButton
+            color="primary"
+            onClick={handleMoreMenuClick}
+            sx={{ border: "1px solid rgba(25, 118, 210, 0.5)", borderRadius: "20px" }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu anchorEl={moreMenuAnchorEl} open={openMoreMenu} onClose={handleMoreMenuClose}>
+            <MenuItem onClick={() => {}}>
+              <FileUploadIcon fontSize="small" sx={{ mr: 1 }} />
+              Import danh sách
+            </MenuItem>
+            <MenuItem onClick={() => {}}>
+              <FileDownloadIcon fontSize="small" sx={{ mr: 1 }} />
+              Export danh sách
+            </MenuItem>
+          </Menu>
+          <Button variant="contained" color="success" startIcon={<AddIcon />} sx={{ borderRadius: "20px" }}>
+            Thêm khoa
+          </Button>
+          <Button variant="contained" color="primary" startIcon={<AddIcon />} sx={{ borderRadius: "20px" }}>
+            Thêm chương trình
+          </Button>
+          <Button variant="contained" color="primary" startIcon={<AddIcon />} sx={{ borderRadius: "20px" }}>
+            Thêm trạng thái
+          </Button>
           <Button
             variant='contained'
             color='success'
