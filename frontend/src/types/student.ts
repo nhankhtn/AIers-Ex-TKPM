@@ -30,6 +30,10 @@ export enum Status {
   Paused,
 }
 
+export interface StudentFilter extends Partial<Student> {
+  key: string;
+}
+
 export const mockData: Student[] = [
   {
     id: "SV0231",

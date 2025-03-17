@@ -1,7 +1,15 @@
 "use client";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Student } from "@/types/student";
-import { Box, Typography, Paper, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
 import Table from "@/components/table";
@@ -9,94 +17,31 @@ import { StudentCols } from "@/constants";
 import SearchBar from "@/app/dashboard/_components/search-bar";
 import Dialog from "@/app/dashboard/_components/dialog";
 import RowStack from "@/components/row-stack";
-import { useDialog } from "@/hooks/use-dialog";
-import usePagination from "@/hooks/use-pagination";
 import DialogConfirmDelete from "../_components/dialog-confirm-delete";
-import { StudentApi } from "@/api/students";
-import useFunction from "@/hooks/use-function";
 import {
   FileDownload as FileDownloadIcon,
   FileUpload as FileUploadIcon,
   Search as SearchIcon,
   MoreVert as MoreVertIcon,
-} from "@mui/icons-material"
+} from "@mui/icons-material";
+import useDashboardSearch from "./use-dashboard-search";
+
 const Content = () => {
-  const dialog = useDialog<Student>();
-  const dialogConfirmDelete = useDialog<Student>();
+  const {
+    dialog,
+    dialogConfirmDelete,
+    getStudentsApi,
+    deleteStudentsApi,
+    createStudentsApi,
+    updateStudentsApi,
+    students,
+    setFilter,
+    pagination,
+  } = useDashboardSearch();
 
-  const getStudentsApi = useFunction(StudentApi.getStudents);
-  const deleteStudentsApi = useFunction(StudentApi.deleteStudent, {
-    onSuccess: ({ payload }) => {
-      getStudentsApi.setData({
-        data: students.filter((s) => s.id !== payload),
-        total: getStudentsApi.data?.total ? getStudentsApi.data.total - 1 : 0,
-      });
-    },
-  });
-  const createStudentsApi = useFunction(StudentApi.createStudent, {
-    onSuccess: ({ result }: { result: Student }) => {
-      getStudentsApi.setData({
-        data: [...students, result],
-        total: getStudentsApi.data?.total ? getStudentsApi.data.total + 1 : 1,
-      });
-      dialog.handleClose();
-    },
-  });
-  const updateStudentsApi = useFunction(StudentApi.updateStudent, {
-    onSuccess: ({
-      payload,
-    }: {
-      payload: {
-        id: Student["id"];
-        student: Partial<Student>;
-      };
-    }) => {
-      getStudentsApi.setData({
-        data: students.map((s) =>
-          s.id === payload.id
-            ? {
-                ...s,
-                ...payload.student,
-              }
-            : s
-        ),
-        total: getStudentsApi.data?.total || 0,
-      });
-      dialog.handleClose();
-    },
-  });
-
-  const students = useMemo(
-    () => getStudentsApi.data?.data || [],
-    [getStudentsApi.data]
+  const [moreMenuAnchorEl, setMoreMenuAnchorEl] = useState<null | HTMLElement>(
+    null
   );
-
-  const [moreMenuAnchorEl, setMoreMenuAnchorEl] = useState<null | HTMLElement>(null)
-  const openMoreMenu = Boolean(moreMenuAnchorEl)
-  const handleMoreMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setMoreMenuAnchorEl(event.currentTarget)
-  }
-  const handleMoreMenuClose = () => {
-    setMoreMenuAnchorEl(null)
-  }
-  const [filter, setFilter] = useState<{
-    key: string;
-  }>({
-    key: "",
-  });
-  const pagination = usePagination({
-    count: getStudentsApi.data?.total || 0,
-    initialRowsPerPage: 10,
-  });
-
-  useEffect(() => {
-    getStudentsApi.call({
-      page: pagination.page + 1,
-      limit: pagination.rowsPerPage,
-      key: filter.key,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, pagination.rowsPerPage, filter.key]);
 
   const handleAddStudent = useCallback(
     (student: Student) => {
@@ -134,30 +79,28 @@ const Content = () => {
           Danh sách sinh viên
         </Typography>
         <RowStack sx={{ gap: 1 }}>
-        <IconButton
-            color="primary"
-            onClick={handleMoreMenuClick}
-            sx={{ border: "1px solid rgba(25, 118, 210, 0.5)", borderRadius: "20px" }}
+          <Button
+            variant='outlined'
+            color='success'
+            startIcon={<AddIcon />}
+            sx={{ borderRadius: "20px" }}
           >
-            <MoreVertIcon />
-          </IconButton>
-          <Menu anchorEl={moreMenuAnchorEl} open={openMoreMenu} onClose={handleMoreMenuClose}>
-            <MenuItem onClick={() => {}}>
-              <FileUploadIcon fontSize="small" sx={{ mr: 1 }} />
-              Import danh sách
-            </MenuItem>
-            <MenuItem onClick={() => {}}>
-              <FileDownloadIcon fontSize="small" sx={{ mr: 1 }} />
-              Export danh sách
-            </MenuItem>
-          </Menu>
-          <Button variant="contained" color="success" startIcon={<AddIcon />} sx={{ borderRadius: "20px" }}>
             Thêm khoa
           </Button>
-          <Button variant="contained" color="primary" startIcon={<AddIcon />} sx={{ borderRadius: "20px" }}>
+          <Button
+            variant='contained'
+            color='primary'
+            startIcon={<AddIcon />}
+            sx={{ borderRadius: "20px" }}
+          >
             Thêm chương trình
           </Button>
-          <Button variant="contained" color="primary" startIcon={<AddIcon />} sx={{ borderRadius: "20px" }}>
+          <Button
+            variant='contained'
+            color='secondary'
+            startIcon={<AddIcon />}
+            sx={{ borderRadius: "20px" }}
+          >
             Thêm trạng thái
           </Button>
           <Button
@@ -168,7 +111,33 @@ const Content = () => {
             onClick={() => dialog.handleOpen()}
           >
             Thêm sinh viên
-          </Button>
+          </Button>{" "}
+          <IconButton
+            color='primary'
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+              setMoreMenuAnchorEl(event.currentTarget);
+            }}
+            sx={{
+              border: "1px solid rgba(25, 118, 210, 0.5)",
+              borderRadius: "20px",
+            }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            anchorEl={moreMenuAnchorEl}
+            open={!!moreMenuAnchorEl}
+            onClose={() => setMoreMenuAnchorEl(null)}
+          >
+            <MenuItem onClick={() => {}}>
+              <FileUploadIcon fontSize='small' sx={{ mr: 1 }} />
+              Import danh sách
+            </MenuItem>
+            <MenuItem onClick={() => {}}>
+              <FileDownloadIcon fontSize='small' sx={{ mr: 1 }} />
+              Export danh sách
+            </MenuItem>
+          </Menu>
         </RowStack>
       </RowStack>
       <Grid
