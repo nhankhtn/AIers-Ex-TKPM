@@ -24,6 +24,7 @@ const useDashboardSearch = () => {
   });
 
   const deleteStudentsApi = useFunction(StudentApi.deleteStudent, {
+    successMessage: "Xóa sinh viên thành công",
     onSuccess: ({ payload }) => {
       getStudentsApi.setData({
         data: students.filter((s) => s.id !== payload),
@@ -32,15 +33,17 @@ const useDashboardSearch = () => {
     },
   });
   const createStudentsApi = useFunction(StudentApi.createStudent, {
-    onSuccess: ({ result }: { result: Student }) => {
+    successMessage: "Thêm sinh viên thành công",
+    onSuccess: ({ result }: { result: Student[] }) => {
       getStudentsApi.setData({
-        data: [...students, result],
-        total: getStudentsApi.data?.total ? getStudentsApi.data.total + 1 : 1,
+        data: [...students, ...result],
+        total: (getStudentsApi.data?.total || 0) + result.length,
       });
       dialog.handleClose();
     },
   });
   const updateStudentsApi = useFunction(StudentApi.updateStudent, {
+    successMessage: "Cập nhật sinh viên thành công",
     onSuccess: ({
       payload,
     }: {

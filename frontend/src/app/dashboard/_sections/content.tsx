@@ -1,6 +1,6 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import { Student } from "@/types/student";
+import { mappingFiledStudent, Student } from "@/types/student";
 import {
   Box,
   Typography,
@@ -25,6 +25,17 @@ import {
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
 import useDashboardSearch from "./use-dashboard-search";
+import {
+  exportToCSV,
+  exportToExcel,
+  exportToPDF,
+  importFromCSV,
+  importFromExcel,
+} from "@/utils/export-helper";
+import { useDialog } from "@/hooks/use-dialog";
+import DialogExportFile from "../_components/dialog-export-file";
+import DialogImportFile from "../_components/dialog-import-file";
+import useAppSnackbar from "@/hooks/use-app-snackbar";
 
 const Content = () => {
   const {
@@ -39,13 +50,17 @@ const Content = () => {
     pagination,
   } = useDashboardSearch();
 
+  const dialogExport = useDialog();
+  const dialogImport = useDialog();
+  const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
+
   const [moreMenuAnchorEl, setMoreMenuAnchorEl] = useState<null | HTMLElement>(
     null
   );
 
   const handleAddStudent = useCallback(
     (student: Student) => {
-      createStudentsApi.call(student);
+      createStudentsApi.call([student]);
     },
     [createStudentsApi]
   );
@@ -65,6 +80,79 @@ const Content = () => {
       deleteStudentsApi.call(studentId);
     },
     [deleteStudentsApi]
+  );
+
+  const handleUpload = useCallback(
+    async (file: File) => {
+      let studentsImported = null;
+
+      console.log(file.type);
+      if (file.type.includes("csv")) {
+        const data = await importFromCSV(file);
+
+        studentsImported = data.map((item) => {
+          const mappedStudent: Record<string, any> = {};
+
+          Object.entries(mappingFiledStudent).forEach(([key, value]) => {
+            mappedStudent[key] = item[value];
+          });
+
+          return mappedStudent;
+        });
+      } else if (
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel"
+      ) {
+        const data = await importFromExcel(file);
+
+        studentsImported = data.map((item) => {
+          const mappedStudent: Record<string, any> = {};
+          Object.entries(mappingFiledStudent).forEach(([key, value]) => {
+            mappedStudent[key] = item[value];
+          });
+          return mappedStudent;
+        });
+      }
+      if (!studentsImported || studentsImported.length === 0) {
+        showSnackbarError("Không có dữ liệu để import");
+        return;
+      }
+      createStudentsApi.call(studentsImported);
+    },
+    [createStudentsApi, showSnackbarError]
+  );
+
+  const hanldeExport = useCallback(
+    async ({ format, rows }: { format: string; rows: number }) => {
+      const data = students.slice(0, rows).map((student) => {
+        const mappedStudent: Record<string, any> = {};
+
+        Object.entries(mappingFiledStudent).forEach(([key, value]) => {
+          mappedStudent[value] = student[key];
+        });
+
+        return mappedStudent;
+      });
+
+      switch (format) {
+        case "csv": {
+          exportToCSV(data, "students");
+          break;
+        }
+        case "excel": {
+          exportToExcel(data, "students");
+          break;
+        }
+        case "pdf": {
+          exportToPDF(data, "students");
+        }
+        default:
+          break;
+      }
+      showSnackbarSuccess("Xuất file thành công");
+    },
+    [students, showSnackbarSuccess]
   );
 
   return (
@@ -129,13 +217,23 @@ const Content = () => {
             open={!!moreMenuAnchorEl}
             onClose={() => setMoreMenuAnchorEl(null)}
           >
-            <MenuItem onClick={() => {}}>
+            <MenuItem
+              onClick={() => {
+                dialogImport.handleOpen();
+                setMoreMenuAnchorEl(null);
+              }}
+            >
               <FileUploadIcon fontSize='small' sx={{ mr: 1 }} />
-              Import danh sách
+              <Typography> Import danh sách</Typography>
             </MenuItem>
-            <MenuItem onClick={() => {}}>
+            <MenuItem
+              onClick={() => {
+                dialogExport.handleOpen();
+                setMoreMenuAnchorEl(null);
+              }}
+            >
               <FileDownloadIcon fontSize='small' sx={{ mr: 1 }} />
-              Export danh sách
+              <Typography>Export danh sách</Typography>
             </MenuItem>
           </Menu>
         </RowStack>
@@ -216,6 +314,17 @@ const Content = () => {
           data={dialogConfirmDelete.data}
         />
       )}
+      <DialogExportFile
+        open={dialogExport.open}
+        onClose={dialogExport.handleClose}
+        onExport={hanldeExport}
+        totalRows={students.length}
+      />
+      <DialogImportFile
+        open={dialogImport.open}
+        onClose={dialogImport.handleClose}
+        onUpload={handleUpload}
+      />
     </Box>
   );
 };

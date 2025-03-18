@@ -27,8 +27,10 @@ export class StudentApi {
     );
   }
 
-  static async createStudent(student: Omit<Student, "id">): Promise<Student> {
-    return await apiPost("/students", student);
+  static async createStudent(
+    students: Omit<Student, "id">[]
+  ): Promise<Student[]> {
+    return await apiPost("/students", students);
   }
 
   static async updateStudent({
