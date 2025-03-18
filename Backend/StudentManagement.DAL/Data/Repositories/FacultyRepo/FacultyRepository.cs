@@ -52,7 +52,7 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
 
         }
 
-        public async Task<Result<Faculty?>> GetFacultyByIdAsync(int id)
+        public async Task<Result<Faculty?>> GetFacultyByIdAsync(Guid id)
         {
             try
             {
@@ -64,6 +64,8 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                 return Result<Faculty?>.Fail();
             }
         }
+
+        public async Task<Result<Faculty?>> GetFacultyByIdAsync(string id) => await GetFacultyByIdAsync(Guid.Parse(id));
 
         public async Task<Result<Faculty?>> GetFacultyByNameAsync(string name)
         {

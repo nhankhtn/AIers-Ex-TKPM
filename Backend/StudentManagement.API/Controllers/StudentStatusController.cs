@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentManagement.API.Utils;
-using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.BLL.Services.StudentStatusService;
 
 namespace StudentManagement.API.Controllers

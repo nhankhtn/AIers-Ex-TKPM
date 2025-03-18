@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using StudentManagement.Domain.Attributes;
 using StudentManagement.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,8 @@ namespace StudentManagement.Domain.Models
         /// <summary>
         /// Gets or sets the student's name.
         /// </summary>
-        [Column("name", TypeName = "nvarchar(50)")]
         [Required]
+        [Column("name", TypeName = "nvarchar(50)")]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
@@ -48,8 +49,10 @@ namespace StudentManagement.Domain.Models
         /// <summary>
         /// Gets or sets the student's email.
         /// </summary>
+        [UniqueConstrain("EMAIL_EXIST")]
+        [Required]
         [Column("email", TypeName = "varchar(50)")]
-        public string? Email { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the student's course year.
@@ -68,6 +71,7 @@ namespace StudentManagement.Domain.Models
         /// <summary>
         /// Gets or sets the student's permanent address.
         /// </summary>
+        [Required]
         [Column("permanent_address", TypeName = "nvarchar(100)")]
         public string PermanentAddress { get; set; } = string.Empty;
 
@@ -81,8 +85,7 @@ namespace StudentManagement.Domain.Models
         /// Gets or sets the student's mailing address.
         /// </summary>
         [Column("mailing_address", TypeName="nvarchar(100)")]
-        [Required]
-        public string MailingAddress { get; set; } = string.Empty;
+        public string? MailingAddress { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the student's program ID.
@@ -132,7 +135,6 @@ namespace StudentManagement.Domain.Models
         /// <summary>
         /// Gets or sets the identity associated with the student.
         /// </summary>
-        public Identity? Identity { get; set; } = null!;
-
+        public Identity Identity { get; set; } = null!;
     }
 }

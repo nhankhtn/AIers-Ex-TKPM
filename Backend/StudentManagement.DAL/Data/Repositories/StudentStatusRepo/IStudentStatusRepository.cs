@@ -10,7 +10,9 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
 {
     public interface IStudentStatusRepository
     {
-        Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(int id);
+        Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(string id);
+        Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(Guid id);
+
 
         Task<Result<StudentStatus?>> GetStudentStatusByNameAsync(string name);
 

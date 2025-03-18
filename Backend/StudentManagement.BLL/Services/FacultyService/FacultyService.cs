@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;

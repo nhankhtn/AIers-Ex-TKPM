@@ -1,13 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Identity.Client;
 using StudentManagement.DAL.Data.Utils;
+using StudentManagement.Domain.Attributes;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -22,15 +26,13 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
         /// Feature
         /// </summary>
 
-        private Dictionary<string, int> lastestId = new Dictionary<string, int>();
-
-       
-
 
         public StudentRepository(ApplicationDbContext context)
         {
             _context = context;
         }
+
+        private Dictionary<int, int> generateIdCache = new Dictionary<int, int>();
 
 
         // Methods
@@ -40,7 +42,8 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             try
             {
                 await _context.Students.AddRangeAsync(students);
-                return Result<IEnumerable<Student>>.Ok();
+                await _context.SaveChangesAsync();
+                return Result<IEnumerable<Student>>.Ok(students);
             }
             catch (Exception)
             {
@@ -102,6 +105,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Faculty)
                     .Include(s => s.Program)
                     .Include(s => s.Status)
+                    .Include(s => s.Identity)
                     .FirstOrDefaultAsync(s => s.Id == studentId);
                 return Result<Student?>.Ok(student);
             }
@@ -111,6 +115,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             }
         }
 
+
         public async Task<Result<IEnumerable<Student?>>> GetStudentsByNameAsync(string name)
         {
             try
@@ -119,6 +124,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Faculty)
                     .Include(s => s.Program)
                     .Include(s => s.Status)
+                    .Include(s => s.Identity)
                     .Where(s => s.Name.Contains(name)).ToListAsync();
                 return Result<IEnumerable<Student?>>.Ok(students);
             }
@@ -147,31 +153,28 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
         }
         
 
-        /// <summary>
-        /// Generate student ID
-        /// </summary>
-        /// <param name="course"></param>
-        /// <returns></returns>
-        private async Task<string> GenerateStudentId(int course)
-        {
-            var idCourseYear = String.Format("{0:D2}", course % 100);
-            var idLatest = 0;
-            if (lastestId.ContainsKey(idCourseYear)) idLatest = lastestId[idCourseYear];
-            else
-            {
-                var latestStudent = await _context.Students
-                    .Where(s => s.Id.Contains(idCourseYear))
-                    .OrderByDescending(s => s.Id)
-                    .FirstOrDefaultAsync();
-                if (latestStudent is null) idLatest = 0;
-                else idLatest = int.Parse(latestStudent.Id[^4..]);
-            }
+       
 
-            int nextIndex = idLatest + 1;
-            return $"{idCourseYear}{nextIndex:D4}";
+
+        public async Task<Result<string>> IsEmailDuplicateAsync(string email)
+        {
+            try
+            {
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
+                return student is null ? Result<string>.Ok() : Result<string>.Fail("EMAIL_EXIST", "Email has already existed");
+            }
+            catch (Exception)
+            {
+                return Result<string>.Fail("CHECK_FAILED", "Check unique constrains failed");
+            }
         }
 
+        public async Task<int> GetLatestStudentIdAsync(int course)
+        {
+            var student = await _context.Students.Where(s => s.Course == course)
+                .OrderByDescending(s => s.Id).FirstOrDefaultAsync();
 
-        
+            return student is null ? 0 : int.Parse(student.Id[4..]);
+        }
     }
-}
+} 

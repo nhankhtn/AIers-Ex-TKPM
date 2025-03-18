@@ -51,7 +51,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             }
         }
 
-        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(int id)
+        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(Guid id)
         {
             try
             {
@@ -63,6 +63,8 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 return Result<StudentStatus?>.Fail("GET_STUDENT_STATUS_FAILED", "Failed to fetch student status by ID");
             }
         }
+
+        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(string id) => await GetStudentStatusByIdAsync(Guid.Parse(id));
 
         public async Task<Result<StudentStatus?>> GetStudentStatusByNameAsync(string name)
         {

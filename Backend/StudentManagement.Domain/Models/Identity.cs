@@ -58,13 +58,13 @@ namespace StudentManagement.Domain.Models
         /// Country
         /// </summary>
         [Column("country", TypeName = "nvarchar(50)")]
-        public string? Country { get; set; } // Nơi cấp 
+        public string Country { get; set; } = string.Empty;// Nơi cấp 
 
         /// <summary>
         /// Document has a chip
         /// </summary>
         [Column("is_chip", TypeName = "bit")]
-        public bool? IsChip { get; set; } // Có chip hay không
+        public bool IsChip { get; set; } // Có chip hay không
 
 
         /// <summary>

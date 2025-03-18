@@ -1,4 +1,4 @@
-﻿using StudentManagement.BLL.DTOs;
+﻿using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;

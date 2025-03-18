@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using StudentManagement.Application.DTOs;
+using Microsoft.Identity.Client;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.Services.StudentService;
@@ -17,6 +18,7 @@ using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -31,25 +33,41 @@ namespace StudentManagement.BLL.Services.StudentService
         private readonly IStudentStatusRepository _studentStatusRepository;
         private readonly IMapper _mapper;
 
+        // These properties can be null
         private readonly List<string> _requiredProperties = new List<string>
         {
-            nameof(StudentDTO.Id),
             nameof(StudentDTO.Name),
             nameof(StudentDTO.DateOfBirth),
             nameof(StudentDTO.Gender),
             nameof(StudentDTO.Course),
             nameof(StudentDTO.Phone),
-            nameof(StudentDTO.MailingAddress),
+            nameof(StudentDTO.PermanentAddress),
             nameof(StudentDTO.Program),
             nameof(StudentDTO.Status),
             nameof(StudentDTO.Faculty),
-            nameof(StudentDTO.Nationality)
+            nameof(StudentDTO.Nationality),
+            nameof(StudentDTO.Identity)
         };
 
+        private readonly List<string> _canNotUpdatProperties = new List<string>() { nameof(StudentDTO.Id) };
 
 
-        public StudentService(IStudentRepository studentRepository, 
-            IFacultyRepository facultyRepository , IStudentStatusRepository studentStatusRepository, IProgramRepository programRepository,
+        /// <summary>
+        /// Validate properties
+        /// </summary>
+        /// <returns></returns>
+        private readonly Dictionary<string, Func<StudentDTO, Task<bool>>> _validateValue = new() { };
+
+        /// <summary>
+        /// Special mapping
+        /// </summary>
+        private readonly Dictionary<string, Func<Student, object, Task<bool>>> _specialMapping = new() { };
+        private readonly Dictionary<string, Func<StudentDTO, object, Task<bool>>> _specialMappingReverse = new() { };
+
+        private Dictionary<int, int> generateIdCache = new Dictionary<int, int>();
+
+        public StudentService(IStudentRepository studentRepository,
+            IFacultyRepository facultyRepository, IStudentStatusRepository studentStatusRepository, IProgramRepository programRepository,
             IMapper mapper)
         {
             _studentRepository = studentRepository ?? throw new ArgumentNullException(nameof(studentRepository));
@@ -57,9 +75,77 @@ namespace StudentManagement.BLL.Services.StudentService
             _programRepository = programRepository ?? throw new ArgumentNullException(nameof(programRepository));
             _studentStatusRepository = studentStatusRepository ?? throw new ArgumentNullException(nameof(studentStatusRepository));
             _mapper = mapper;
+
+            _validateValue = new()
+            {
+                // Validate email
+                { nameof(StudentDTO.Email), async student
+                    => student.Email is not null && Regex.IsMatch(student.Email, @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") && (await _studentRepository.IsEmailDuplicateAsync(student.Email)).Success },
+
+                // Validate phone
+                { nameof(StudentDTO.Phone), student  => Task.FromResult(student.Phone is not null && Regex.IsMatch(student.Phone, @"^0\d{9,10}$")) },
+
+                // Validate course
+                
+                { nameof(StudentDTO.Course), student => Task.FromResult(student.Course > 2000 && student.Course < 2100) },
+
+                // Validate faculty
+                { nameof(StudentDTO.Faculty), async student => student.Faculty is not null && _facultyRepository is not null
+                && (await _facultyRepository.GetFacultyByNameAsync(student.Faculty)).Data is not null },
+
+                // Validate program
+                { nameof(StudentDTO.Program), async student => student.Program is not null 
+                && (await _programRepository.GetProgramByNameAsync(student.Program)).Data is not null },
+            
+                // Validate status
+                { nameof(StudentDTO.Status), async student => student.Status is not null 
+                && (await _studentStatusRepository.GetStudentStatusByNameAsync(student.Status)).Data is not null },
+            };
+
+            _specialMapping = new()
+            {
+                { nameof(StudentDTO.Faculty), async (student, value) => {
+                    if (value is not null && value is string facultyName )
+                    {
+                        var faculty = (await _facultyRepository.GetFacultyByNameAsync(facultyName)).Data;
+                        if (faculty is not null)
+                        {
+                            student.FacultyId = faculty.Id;
+                            student.Faculty = faculty;
+                            return true;
+                        }
+                    }
+                    return false;
+                } },
+                { nameof(StudentDTO.Program), async (student, value) => {
+                    if (value is not null && value is string programName)
+                    {
+                        var program = (await _programRepository.GetProgramByNameAsync(programName)).Data;
+                        if (program is not null)
+                        {
+                            student.ProgramId = program.Id;
+                            student.Program = program;
+                            return true;
+                        }
+                    }
+                    return false;
+                } },
+                { nameof(StudentDTO.Status), async (student, value) => {
+                    if (value is not null && value is string statusName)
+                    {
+                        var status = (await _studentStatusRepository.GetStudentStatusByNameAsync(statusName)).Data;
+                        if (status is not null)
+                        {
+                            student.StatusId = status.Id;
+                            student.Status = status;
+                            return true;
+                        }
+                    }
+                    return false;
+                } },
+            };
+
         }
-
-
         // Get all students
         public async Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? key)
         {
@@ -74,14 +160,39 @@ namespace StudentManagement.BLL.Services.StudentService
 
 
         // Add a new student
-        public async Task<Result<AddListStudentResult>> AddListStudentAsync(AddListStudentDTO addListStudentDTO)
+        public async Task<Result<AddListStudentResult>> AddListStudentAsync(IEnumerable<StudentDTO> studentDTOs)
         {
-            //var result = new AddListStudentResult();
-            //foreach (var student in addListStudentDTO.Students)
-            //{
-            //    if (CheckValidateStudent(student))
-            //}
-            throw new NotImplementedException();
+            var result = new AddListStudentResult();
+            var addList = new List<Student>();
+            foreach (var student in studentDTOs)
+            {
+                var validate = true;
+                var addStudent = _mapper.Map<Student>(student);
+                foreach (var prop in typeof(StudentDTO).GetProperties())
+                {
+                    var value = prop.GetValue(student);
+                    if ((_requiredProperties.Contains(prop.Name) && value is null)
+                        || (_validateValue.ContainsKey(prop.Name) && !(await _validateValue[prop.Name](student))))
+                    {
+                        result.UnacceptableStudents.Add(student);
+                        validate = false;
+                        break;
+                    }
+                    if (value is not null && _specialMapping.ContainsKey(prop.Name) && await _specialMapping[prop.Name](addStudent, value)) continue;
+                }
+                if (!validate) continue;
+
+                var newId = await GenerateStudentId(student.Course ?? throw new ArgumentNullException());
+                addStudent.Id = newId;
+                addList.Add(addStudent);
+            }
+            var res = await _studentRepository.AddStudentAsync(addList);
+            if (res.Success)
+            {
+                result.AcceptableStudents = _mapper.Map<IEnumerable<StudentDTO>>(addList).ToList();
+                return Result<AddListStudentResult>.Ok(result);
+            }
+            return Result<AddListStudentResult>.Fail(res.ErrorCode, res.ErrorMessage);
         }
 
 
@@ -117,95 +228,32 @@ namespace StudentManagement.BLL.Services.StudentService
 
 
         // Update a student
-        public async Task<Result<StudentDTO>> UpdateStudentAsync(string studentId, UpdateStudentDTO updateStudentDTO)
+        public async Task<Result<StudentDTO>> UpdateStudentAsync(string studentId, StudentDTO studentDTO)
         {
-            var _res = await _studentRepository.GetStudentByIdAsync(studentId);
-            if (!_res.Success) return Result<StudentDTO>.Fail(_res.ErrorCode, _res.ErrorMessage);
-            if (_res.Data is null) return Result<StudentDTO>.Fail("NOT_FOUND_STUDENT", "Not found student");
+            var resExistStudent =  await _studentRepository.GetStudentByIdAsync(studentId);
+            if (!resExistStudent.Success) return Result<StudentDTO>.Fail(resExistStudent.ErrorCode, resExistStudent.ErrorMessage);
+            if (resExistStudent.Data is null) return Result<StudentDTO>.Fail("STUDENT_NOT_FOUND", "Student is not found");
 
-            var student = _res.Data;
 
-            //foreach (var setter in SpecialSetters())
-            //{
-            //    var prop = typeof(UpdateStudentDTO).GetProperty(setter.Key);
-            //    if (prop is null) return Result<StudentDTO>.Fail("SOMETHING WRONG");
-
-            //    var value = prop.GetValue(updateStudentDTO);
-            //    if (value is null) continue;
-
-            //    var res = setter.Value(student, value);
-            //    if (!res) return Result<StudentDTO>.Fail("INVALID_" + setter.Key.ToUpper());
-            //}
-
-            foreach (var prop in typeof(UpdateStudentDTO).GetProperties())
+            foreach(var prop in typeof(StudentDTO).GetProperties())
             {
-               // if (SpecialSetters().ContainsKey(prop.Name)) continue;
+                var value = prop.GetValue(studentDTO);
+                if (_canNotUpdatProperties.Contains(prop.Name) || value is null) continue;
+                if (_validateValue.ContainsKey(prop.Name) && !(await _validateValue[prop.Name](studentDTO))) return Result<StudentDTO>.Fail("INVALID_VALUE", "Invalid value");
+                if (_specialMapping.ContainsKey(prop.Name) && await _specialMapping[prop.Name](resExistStudent.Data,value)) continue;
 
                 var studentProp = typeof(Student).GetProperty(prop.Name);
-                if (studentProp != null && studentProp.CanWrite)
+                if (studentProp != null)
                 {
-                    var value = prop.GetValue(updateStudentDTO);
-                    if (value != null)
-                    {
-                        studentProp.SetValue(student, value);
-                    }
-                }
-                else
-                {
-                    return Result<StudentDTO>.Fail("INVALID_" + prop.Name.ToUpper());
+                    studentProp.SetValue(resExistStudent.Data, prop.GetValue(studentDTO));
                 }
             }
-
-            var result = await _studentRepository.UpdateStudentAsync(student);
-            return result.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(student))
-                : Result<StudentDTO>.Fail(result.ErrorCode, result.ErrorMessage);
+            
+            var res = await _studentRepository.UpdateStudentAsync(_mapper.Map<Student>(resExistStudent.Data));
+            return res.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent.Data)) 
+                : Result<StudentDTO>.Fail(res.ErrorCode, res.ErrorMessage);
         }
 
-
-
-        /// <summary>
-        /// Mapper for special setters
-        /// </summary>
-        /// <returns></returns>
-        private Dictionary<string, Func<Student, object, bool>> specialSetters() => new()
-        {
-            { nameof(Student.Gender), (student, value) => SetEnumValue(value, out Gender gender) && (student.Gender = gender) == gender },
-            { nameof(Student.Identity), (student, value) =>
-                {
-                    if (value is null) return true;
-                    if (_mapper is null) return false;
-                    student.Identity = _mapper.Map<Identity>(value);
-                    return true;
-                }},
-            { nameof(Student.ProgramId), (student, value) => (student.ProgramId = ParseGuidSafely(value.ToString())) != Guid.Empty },
-            { nameof(Student.FacultyId), (student, value) =>  (student.FacultyId = ParseGuidSafely(value.ToString())) != Guid.Empty},
-            { nameof(Student.StatusId), (student, value) =>  (student.StatusId = ParseGuidSafely(value.ToString())) != Guid.Empty}
-        };
-
-
-        /// <summary>
-        /// Validate properties
-        /// </summary>
-        /// <returns></returns>
-        //private Dictionary<string, Func<AddStudentDTO, Task<bool>>> validateProperties() => new()
-        //{
-        //    { nameof(AddStudentDTO.Course), student => Task.FromResult(student.Course > 2000) },
-        //    { nameof(AddStudentDTO.Email), student => Task.FromResult(student.Email is null ||
-        //                                        Regex.IsMatch(student.Email, @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))},
-        //    { nameof(AddStudentDTO.Phone), student => Task.FromResult(Regex.IsMatch(student.Phone, @"^0\d{9,10}$"))},
-        //    { nameof(AddStudentDTO.FacultyId), async student => {
-        //        if (_facultyRepository is null || student.FacultyId is null) return false;
-        //        return await _facultyRepository.GetFacultyByNameAsync(student.Faculty.Name) is not null;
-        //    } },
-        //    { nameof(AddStudentDTO.ProgramId), async student => {
-        //        if (_programRepository is null || student.ProgramId is null || student.Program.Name is null) return false;
-        //        return await _programRepository.GetProgramByNameAsync(student.Program.Name) is not null;
-        //    } },
-        //    { nameof(AddStudentDTO.Status), async student => {
-        //        if (_studentStatusRepository is null || student.Status is null || student.Status.Name is null) return false;
-        //        return await _studentStatusRepository.GetStudentStatusByNameAsync(student.Status.Name) is not null;
-        //    } },
-        //};
 
 
         /// <summary>
@@ -227,37 +275,27 @@ namespace StudentManagement.BLL.Services.StudentService
         }
 
         /// <summary>
-        /// Parse guid safely
+        /// Generate student ID
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="course"></param>
         /// <returns></returns>
-        private Guid ParseGuidSafely(string? input)
+        private async Task<string> GenerateStudentId(int course)
         {
-            if (string.IsNullOrEmpty(input))
-                return Guid.Empty; // or Guid.NewGuid()
-
-            if (Guid.TryParse(input, out Guid result))
-                return result;
-
-            return Guid.Empty; // or Guid.NewGuid()
-        }
-
-        /// <summary>
-        /// Check validate student
-        /// </summary>
-        /// <param name="student"></param>
-        /// <returns></returns>
-        private bool CheckValidateStudent(AddStudentDTO student)
-        {
-            foreach (var prop in _requiredProperties)
-            { 
-                if (typeof(AddStudentDTO).GetProperty(prop)?.GetValue(student) is null) return false;
+            var idCourseYear = course % 100;
+            int nextId;
+            if (generateIdCache.ContainsKey(idCourseYear))
+            {
+                nextId = generateIdCache[idCourseYear] + 1;
             }
-            //foreach (var prop in validateProperties())
-            //{
-            //    if (!prop.Value(student).Result) return false;
-            //}
-            return true;
+            else
+            {
+                var lastId = await _studentRepository.GetLatestStudentIdAsync(course);
+                nextId = lastId + 1;
+            }
+
+
+            return $"{idCourseYear}{nextId:D4}";
         }
     }
+
 }

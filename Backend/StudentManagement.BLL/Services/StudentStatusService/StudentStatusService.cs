@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentStatusRepo;
 using StudentManagement.Domain.Models;

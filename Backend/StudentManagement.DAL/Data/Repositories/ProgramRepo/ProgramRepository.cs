@@ -53,7 +53,7 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
             }
         }
 
-        public async Task<Result<Program?>> GetProgramByIdAsync(int id)
+        public async Task<Result<Program?>> GetProgramByIdAsync(Guid id)
         {
             try
             {
@@ -65,6 +65,8 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                 return Result<Program?>.Fail("GET_PROGRAM_FAILED", "Failed to fetch program by ID");
             }
         }
+
+        public async Task<Result<Program?>> GetProgramByIdAsync(string id) => await GetProgramByIdAsync(Guid.Parse(id));
 
         public async Task<Result<Program?>> GetProgramByNameAsync(string name)
         {
