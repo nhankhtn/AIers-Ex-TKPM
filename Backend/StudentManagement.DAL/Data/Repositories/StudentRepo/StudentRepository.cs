@@ -72,7 +72,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             }
         }
 
-        public async Task<Result<(IEnumerable<Student> students, int total)>> GetAllStudentsAsync(int page, int pageSize, string? key)
+        public async Task<Result<(IEnumerable<Student> students, int total)>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? key)
         {
             try
             {
@@ -81,7 +81,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Program)
                     .Include(s => s.Status)
                     .Include(s => s.Identity)
-                    .Where(s => key == null || s.Name.Contains(key) || s.Id.Contains(key));
+                    .AsQueryable();
+
+                if (!string.IsNullOrEmpty(faculty))
+                {
+                    students = students.Where(s => s.Faculty.Name == faculty);
+                }
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    students = students.Where(s => s.Name.Contains(key) || s.Id.Contains(key));
+                }
 
                 var total = await students.CountAsync();
 
