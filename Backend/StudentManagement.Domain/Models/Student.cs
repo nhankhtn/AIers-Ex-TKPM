@@ -40,7 +40,8 @@ namespace StudentManagement.Domain.Models
         /// Gets or sets the student's gender.
         /// </summary>
         [Column("gender", TypeName = "varchar(10)")]
-        public Gender? Gender { get; set; }
+        [Required]
+        public Gender Gender { get; set; }
 
         /// <summary>
         /// Gets or sets the student's email.
@@ -71,7 +72,8 @@ namespace StudentManagement.Domain.Models
         /// Gets or sets the student's mailing address.
         /// </summary>
         [Column("mailing_address", TypeName="nvarchar(100)")]
-        public string? MailingAddress { get; set; }
+        [Required]
+        public string MailingAddress { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the student's program ID.
@@ -121,9 +123,8 @@ namespace StudentManagement.Domain.Models
         /// </summary>
         public Identity? Identity { get; set; } = null!;
 
-        /// <summary>
-        /// Gets or sets the nationalities associated with the student.
-        /// </summary>
-        public StudentNationalities? Nationalities { get; set; } = null!;
+        [Column("nationality", TypeName = "nvarchar(50)")]
+        [Required]
+        public string National { get; set; } = string.Empty;
     }
 }

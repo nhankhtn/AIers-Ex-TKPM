@@ -13,7 +13,6 @@ namespace StudentManagement.Domain.Models
     /// Represents an academic program within the student management system.
     /// </summary>
     [Index(nameof(Name), IsUnique = true)]
-    [Index(nameof(Code), IsUnique = true)]
     [Table("program")]
     public class Program
     {
@@ -24,29 +23,16 @@ namespace StudentManagement.Domain.Models
         [Column("id", TypeName = "uniqueidentifier")]
         public Guid Id { get; set; }
 
-        /// <summary>
-        /// Gets or sets the code for the program.
-        /// </summary>
-        [Column("code", TypeName = "varchar(10)")]
-        public string? Code { get; set; }
+        
 
         /// <summary>
         /// Gets or sets the name of the program.
         /// </summary>
         [Column("name", TypeName = "nvarchar(50)")]
-        public string? Name { get; set; } = string.Empty;
+        [Required]
+        public string Name { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Gets or sets the date when the program was created.
-        /// </summary>
-        [Column("created_at", TypeName = "date")]
-        public DateTime CreatedAt { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date when the program was last updated.
-        /// </summary>
-        [Column("updated_time", TypeName = "date")]
-        public DateTime UpdatedAt { get; set; }
+       
 
         /// <summary>
         /// Gets or sets the collection of students associated with this program.

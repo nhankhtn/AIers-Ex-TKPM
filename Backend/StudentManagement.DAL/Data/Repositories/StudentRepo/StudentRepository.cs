@@ -64,12 +64,12 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     student.Identity.Student = student;
                     await _context.Identities.AddAsync(student.Identity);
                 }
-                if (student.Nationalities != null)
-                {
-                    student.Nationalities.StudentId = student.Id;
-                    student.Nationalities.Student = student;
-                    await _context.Nationalities.AddAsync(student.Nationalities);
-                }
+                //if (student.Nationalities != null)
+                //{
+                //    student.Nationalities.StudentId = student.Id;
+                //    student.Nationalities.Student = student;
+                //    await _context.Nationalities.AddAsync(student.Nationalities);
+                //}
 
                 await _context.SaveChangesAsync();
 

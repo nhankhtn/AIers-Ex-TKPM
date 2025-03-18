@@ -22,11 +22,12 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
             try
             {
                 program.Id = Guid.NewGuid();
-                program.CreatedAt = DateTime.Now;
-                program.UpdatedAt = DateTime.Now;
+                //program.CreatedAt = DateTime.Now;
+                //program.UpdatedAt = DateTime.Now;
                 await _context.Programs.AddAsync(program);
                 await _context.SaveChangesAsync();
-                var addedProgram = await _context.Programs.FirstOrDefaultAsync(p => p.Code == program.Code);
+                //var addedProgram = await _context.Programs.FirstOrDefaultAsync(p => p.Code == program.Code);
+                var addedProgram = await _context.Programs.FirstOrDefaultAsync();
                 return Result<Program>.Ok(addedProgram);
             }
             catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Programs_program_code") == true)
@@ -98,7 +99,7 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                     prop.SetValue(existingProgram, value);
                 }
 
-                existingProgram.UpdatedAt = DateTime.Now;
+                //existingProgram.UpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return Result<Program>.Ok(existingProgram);
             }

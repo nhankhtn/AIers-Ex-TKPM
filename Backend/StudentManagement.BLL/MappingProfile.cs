@@ -48,11 +48,11 @@ namespace StudentManagement.BLL
 
             // 
             CreateMap<Address, AddressDTO>();
-            CreateMap<StudentNationalities, StudentNationalitesDTO>();
+            //CreateMap<StudentNationalities, StudentNationalitesDTO>();
             CreateMap<Identity, IdentityDTO>();
             CreateMap<AddressDTO, Address>();
             CreateMap<IdentityDTO, Identity>();
-            CreateMap<StudentNationalitesDTO, StudentNationalities>();
+            //CreateMap<StudentNationalitesDTO, StudentNationalities>();
 
 
 

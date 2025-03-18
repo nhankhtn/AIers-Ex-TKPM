@@ -188,7 +188,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 {
                     if (value is null) return true;
                     if (_mapper is null) return false;
-                    student.Nationalities = _mapper.Map<StudentNationalities>(value);
+                    //student.Nationalities = _mapper.Map<StudentNationalities>(value);
                     return true;
                 }},
             { "ProgramId", (student, value) => (student.ProgramId = ParseGuidSafely(value.ToString())) != Guid.Empty },

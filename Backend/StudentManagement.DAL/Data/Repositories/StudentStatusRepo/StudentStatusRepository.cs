@@ -23,8 +23,8 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             try
             {
                 studentStatus.Id = Guid.NewGuid();
-                studentStatus.CreatedAt = DateTime.Now;
-                studentStatus.UpdatedAt = DateTime.Now;
+                //studentStatus.CreatedAt = DateTime.Now;
+                //studentStatus.UpdatedAt = DateTime.Now;
                 await _context.StudentStatuses.AddAsync(studentStatus);
                 await _context.SaveChangesAsync();
                 var addedStatus = await _context.StudentStatuses.FirstOrDefaultAsync(s => s.Name == studentStatus.Name);
@@ -100,7 +100,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 }
 
                 await _context.SaveChangesAsync();
-                existingStatus.UpdatedAt = DateTime.Now;
+                //existingStatus.UpdatedAt = DateTime.Now;
                 return Result<StudentStatus>.Ok(existingStatus);
             }
             catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_code") == true)

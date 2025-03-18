@@ -21,13 +21,11 @@ namespace StudentManagement.DAL.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Identity> Identities { get; set; }
         public DbSet<Address> Addresses { get; set; }
-        public DbSet<StudentNationalities> Nationalities { get; set; }
+        //public DbSet<StudentNationalities> Nationalities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            //
 
             modelBuilder.Entity<Student>()
                 .Property(s => s.Gender)
@@ -72,11 +70,11 @@ namespace StudentManagement.DAL.Data
                 .HasForeignKey<Identity>(a => a.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Student>()
-                .HasOne(a => a.Nationalities)
-                .WithOne(s => s.Student)
-                .HasForeignKey<StudentNationalities>(a => a.StudentId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Student>()
+            //    .HasOne(a => a.Nationalities)
+            //    .WithOne(s => s.Student)
+            //    .HasForeignKey<StudentNationalities>(a => a.StudentId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
 
             // SeedData(modelBuilder);

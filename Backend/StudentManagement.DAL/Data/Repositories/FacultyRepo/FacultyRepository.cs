@@ -23,11 +23,12 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
             try
             {
                 faculty.Id = Guid.NewGuid();
-                faculty.CreatedAt = DateTime.Now;
-                faculty.UpdatedAt = DateTime.Now;
+                //faculty.CreatedAt = DateTime.Now;
+                //faculty.UpdatedAt = DateTime.Now;
                 await _context.Faculties.AddAsync(faculty);
                 await _context.SaveChangesAsync();
-                var addedFaculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Code == faculty.Code);
+                //var addedFaculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Code == faculty.Code);
+                var addedFaculty = await _context.Faculties.FirstOrDefaultAsync();
                 return Result<Faculty>.Ok(addedFaculty);
             }
             catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Faculties_faculty_code") == null)
@@ -98,7 +99,7 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                     if (prop.GetValue(existingFaculty) == value) continue;
                     prop.SetValue(existingFaculty, value);
                 }
-                existingFaculty.UpdatedAt = DateTime.Now;
+                //existingFaculty.UpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return Result<Faculty>.Ok(existingFaculty);
             }
