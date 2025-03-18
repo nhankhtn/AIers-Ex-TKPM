@@ -49,28 +49,28 @@ function Table({
       case Status.Studying:
         return (
           <Chip
-            label="Đang học"
+            label='Đang học'
             sx={{ bgcolor: "#e0f7fa", color: "#00796b" }}
           />
         );
       case Status.Graduated:
         return (
           <Chip
-            label="Đã tốt nghiệp"
+            label='Đã tốt nghiệp'
             sx={{ bgcolor: "#e8f5e9", color: "#2e7d32" }}
           />
         );
       case Status.Droppedout:
         return (
           <Chip
-            label="Đã thôi học"
+            label='Đã thôi học'
             sx={{ bgcolor: "#ffebee", color: "#c62828" }}
           />
         );
       case Status.Paused:
         return (
           <Chip
-            label="Tạm dừng học"
+            label='Tạm dừng học'
             sx={{ bgcolor: "#fff3e0", color: "#ef6c00" }}
           />
         );
@@ -101,7 +101,7 @@ function Table({
                       }}
                     >
                       {field.first.label} <br />
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant='caption' color='text.secondary'>
                         {field.second[0].label} - {field.second[1].label}
                       </Typography>
                     </TableCell>
@@ -118,7 +118,7 @@ function Table({
                   ) : (
                     <TableCell
                       key={index}
-                      align="center"
+                      align='center'
                       sx={{
                         whiteSpace: "nowrap",
                       }}
@@ -141,7 +141,7 @@ function Table({
                       <TableCell key={index}>
                         <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Box
-                            component="span"
+                            component='span'
                             sx={{
                               width: 30,
                               height: 30,
@@ -163,8 +163,8 @@ function Table({
                       <TableCell key={index}>
                         <RowStack justifyContent={"center"} gap={1}>
                           <Button
-                            variant="outlined"
-                            size="small"
+                            variant='outlined'
+                            size='small'
                             sx={{ borderRadius: "20px", whiteSpace: "nowrap" }}
                             onClick={() => {
                               onClickEdit(student);
@@ -173,11 +173,11 @@ function Table({
                             Chỉnh sửa
                           </Button>
                           <IconButton
-                            size="small"
-                            color="error"
+                            size='small'
+                            color='error'
                             onClick={() => deleteStudent(student)}
                           >
-                            <DeleteIcon fontSize="small" />
+                            <DeleteIcon fontSize='small' />
                           </IconButton>
                         </RowStack>
                       </TableCell>
@@ -185,21 +185,23 @@ function Table({
                     (field.type === "nested" && (
                       <TableCell key={index}>
                         <Box>
-                          <Typography variant="body2">
+                          <Typography variant='body2'>
                             {getFalculty(student[field.first.name])}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant='caption' color='text.secondary'>
                             {student[field.second[0].name]} -{" "}
                             {student[field.second[1].name]}
                           </Typography>
                         </Box>
                       </TableCell>
                     )) || (
-                      <TableCell key={index}>{
-                        field.name === "faculty" && getFalculty(student[field.name]) ||
-                        field.name === "gender" && getGender(student[field.name]) ||
-                        student[field.name]
-                      }</TableCell>
+                      <TableCell key={index}>
+                        {(field.name === "faculty" &&
+                          getFalculty(student[field.name])) ||
+                          (field.name === "gender" &&
+                            getGender(student[field.name])) ||
+                          student[field.name]}
+                      </TableCell>
                     )
                 )}
               </TableRow>
@@ -210,12 +212,12 @@ function Table({
 
       <CustomPagination
         pagination={pagination}
-        justifyContent="end"
+        justifyContent='end'
         px={2}
         pt={2}
         borderTop={1}
         borderColor={"divider"}
-        rowsPerPageOptions={[5, 10, 15]}
+        rowsPerPageOptions={[10, 15, 20]}
       />
     </Stack>
   );

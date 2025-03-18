@@ -34,6 +34,20 @@ export interface StudentFilter extends Partial<Student> {
   key: string;
 }
 
+export const mappingFiledStudent: Record<string, string> = {
+  id: "Mã sinh viên",
+  name: "Họ và tên",
+  dateOfBirth: "Ngày sinh",
+  gender: "Giới tính",
+  email: "Email",
+  address: "Địa chỉ",
+  faculty: "Khoa",
+  course: "Khóa",
+  program: "Chương trình",
+  phone: "Số điện thoại",
+  status: "Trạng thái",
+};
+
 export const mockData: Student[] = [
   {
     id: "SV0231",
