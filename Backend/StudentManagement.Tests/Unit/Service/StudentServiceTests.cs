@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Moq;
-using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.Services;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
 using StudentManagement.Domain.Enums;
@@ -51,8 +51,8 @@ namespace StudentManagement.Tests.Unit.Service
                 PageIndex = page,
                 PageSize = pageSize
             };
-            _mockStudentRepository.Setup(repo => repo.GetAllStudentsAsync(page, pageSize, key)).ReturnsAsync((students, total));
-            _mockMapper.Setup(x => x.Map<IEnumerable<StudentDTO>>(students)).Returns(getStudentsDto.Students);
+            _mockStudentRepository.Setup(repo => repo.GetAllStudentsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync((students, total));
+            _mockMapper.Setup(x => x.Map<IEnumerable<StudentDTO>>(It.IsAny<List<Student>>())).Returns(getStudentsDto.Students);
 
             // Act
             var result = await _studentService.GetAllStudentsAsync(page, pageSize, key);

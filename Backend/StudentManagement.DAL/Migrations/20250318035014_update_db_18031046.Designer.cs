@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagement.DAL.Data;
 
@@ -11,9 +12,11 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250318035014_update_db_18031046")]
+    partial class update_db_18031046
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,46 @@ namespace StudentManagement.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("StudentManagement.Domain.Models.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("city");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("country");
+
+                    b.Property<string>("District")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("district");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("street");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(8)")
+                        .HasColumnName("student_id");
+
+                    b.Property<string>("Ward")
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("ward");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.ToTable("address");
+                });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Faculty", b =>
                 {
@@ -36,7 +79,7 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("faculties");
+                    b.ToTable("faculty");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>
@@ -113,7 +156,7 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("programs");
+                    b.ToTable("program");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
@@ -160,11 +203,6 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("nationality");
 
-                    b.Property<string>("PermanentAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("permanent_address");
-
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("varchar(10)")
@@ -194,7 +232,7 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasIndex("StatusId");
 
-                    b.ToTable("students");
+                    b.ToTable("student");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.StudentStatus", b =>
@@ -214,7 +252,18 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("student_status");
+                    b.ToTable("status");
+                });
+
+            modelBuilder.Entity("StudentManagement.Domain.Models.Address", b =>
+                {
+                    b.HasOne("StudentManagement.Domain.Models.Student", "Student")
+                        .WithOne("PermanentAddress")
+                        .HasForeignKey("StudentManagement.Domain.Models.Address", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>
@@ -268,6 +317,8 @@ namespace StudentManagement.DAL.Migrations
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
                 {
                     b.Navigation("Identity");
+
+                    b.Navigation("PermanentAddress");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.StudentStatus", b =>

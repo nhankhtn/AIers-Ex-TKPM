@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudentManagement.API.Utils;
 using StudentManagement.BLL.DTOs;
-using StudentManagement.BLL.Services;
+using StudentManagement.BLL.DTOs.Students;
+using StudentManagement.BLL.Services.StudentService;
+using System.Runtime.CompilerServices;
 
 namespace StudentManagement.API.Controllers
 {
@@ -15,28 +18,23 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents(int page, int limit, string? key)
+        public async Task<IActionResult> GetAllStudents(int page, int limit, string? key)
         {
             var result = await _studentService.GetAllStudentsAsync(page, limit, key);
             if (result.Success)
             {
-                if (result.Data is null) return NotFound(new
-                {
-                    title = "Not Found",
-                    status = 404,
-                    error = new
-                    {
-                        code = "STUDENT_NOT_FOUND",
+                if (result.Data is null) return NotFound(ApiResponse<IEnumerable<StudentDTO>>.NotFound(
+                    error: new ApiError() { 
+                        Code = "STUDENT_NOT_FOUND",
+                        Message = "No student found"
                     }
-                });
+                ));
                 return Ok(new
                 {
                     title = "Success",
                     status = 200,
                     data = result.Data.Students,
-                    total = result.Data.Total,
-                    pageIndex = result.Data.PageIndex,
-                    pageSize = result.Data.PageSize
+                    total = result.Data.Total
                 });
             }
             return NotFound(new
@@ -51,75 +49,39 @@ namespace StudentManagement.API.Controllers
         }
 
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<StudentDTO>> GetStudentById(string id)
+
+        //[HttpPost]
+        //public async Task<IActionResult> AddStudent(AddListStudentDTO studentDTO)
         //{
-        //    var result = await _studentService.GetStudentByIdAsync(id);
-        //    if (result.Success) return Ok(result.Data);
-        //    return NotFound(new
+        //    if (!ModelState.IsValid)
         //    {
-        //        title = "Not Found",
-        //        status = 404,
-        //        code = result.ErrorCode
-        //    });
-        //}
+        //        var firstError = ModelState.Values
+        //        .SelectMany(x => x.Errors)
+        //        .Select(e => e.ErrorMessage)
+        //        .FirstOrDefault();
 
+        //        return BadRequest(ApiResponse<string>.BadRequest(
+        //            error: new ApiError()
+        //            {
+        //                Code = firstError
+        //            }
+        //        ));
+        //    }
+        //    var result = await _studentService.AddStudentAsync(studentDTO);
 
-        //[HttpGet("search")]
-        //public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudentsByName(string name)
-        //{
-        //    var result = await _studentService.GetStudentsByNameAsync(name);
-        //    if (result.Success) return Ok(result.Data);
-        //    return NotFound(new
+        //    if (result.Success)
         //    {
-        //        title = "Not Found",
-        //        status = 404,
-        //        code = result.ErrorCode
-        //    });
+        //        return Ok(ApiResponse<StudentDTO>.Success(
+        //            data: result.Data
+        //        ));
+        //    }
+        //    return BadRequest(ApiResponse<string>.BadRequest(
+        //            error: new ApiError()
+        //            {
+        //                Code = result.ErrorCode
+        //            }
+        //    ));
         //}
-
-
-        [HttpPost]
-        public async Task<ActionResult<StudentDTO>> AddStudent(StudentDTO studentDTO)
-        {
-            if (!ModelState.IsValid)
-            {
-                var firstError = ModelState.Values
-                .SelectMany(x => x.Errors)
-                .Select(e => e.ErrorMessage)
-                .FirstOrDefault();
-
-                return BadRequest(new
-                {
-                    title = "Bad Request",
-                    status = 400,
-                    error = new
-                    {
-                        code = firstError
-                    }
-                });
-            }
-            var result = await _studentService.AddStudentAsync(studentDTO);
-
-            if (result.Success)
-            {
-                return Ok(new
-                {
-                    title = "Success",
-                    status = 200,
-                    data = result.Data
-                });
-            }
-            return BadRequest(new
-            {
-                title = "Bad Request",
-                status = 400,
-                error = new
-                {
-                    code = result.ErrorCode
-                }
-            });
-        }
 
 
 
@@ -135,62 +97,47 @@ namespace StudentManagement.API.Controllers
                 .Select(e => e.ErrorMessage)
                 .FirstOrDefault();
 
-                return BadRequest(new
-                {
-                    title = "Bad Request",
-                    status = 400,
-                    error = new
+                return BadRequest(ApiResponse<string>.BadRequest(
+                    error: new ApiError()
                     {
-                        code = firstError
+                        Code = firstError
                     }
-                });
+                ));
             }
             var result = await _studentService.UpdateStudentAsync(id, updateStudentDTO);
             if (result.Success)
             {
-                return Ok(new
-                {
-                    title = "Success",
-                    status = 200,
-                    data = result.Data
-                });
+                return Ok(ApiResponse<StudentDTO>.Success(
+                    data: result.Data
+                ));
             }
-            return BadRequest(new
-            {
-                title = "Bad Request",
-                status = 400,
-                error = new
+            return BadRequest(ApiResponse<string>.BadRequest(
+                error: new ApiError()
                 {
-                    code = result.ErrorCode
+                    Code = result.ErrorCode
                 }
-            });
+            ));
         }
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteStudentAsync(string id)
+        public async Task<IActionResult> DeleteStudentAsync(string id)
         {
             var res = await _studentService.DeleteStudentByIdAsync(id);
             if (res.Success)
             {
-                return Ok(new
-                {
-                    title = "Success",
-                    status = 200,
-                    data = res.Data
-                });
+                return Ok(ApiResponse<string>.Success(
+                    data: res.Data
+                ));
             }
             else
             {
-                return NotFound(new
-                {
-                    title = "Not Found",
-                    status = 404,
-                    error = new
+                return NotFound(ApiResponse<string>.NotFound(
+                    error: new ApiError()
                     {
-                        code = res.ErrorCode
+                        Code = res.ErrorCode
                     }
-                });
+                ));
             }
         }
     }
