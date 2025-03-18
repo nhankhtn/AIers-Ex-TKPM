@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using StudentManagement.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace StudentManagement.Domain.Models
 {
     [Index(nameof(Email), IsUnique = true)]
-    [Table("student")]
+    [Table("students")]
     public class Student
     {
         // Properties
@@ -27,6 +28,7 @@ namespace StudentManagement.Domain.Models
         /// Gets or sets the student's name.
         /// </summary>
         [Column("name", TypeName = "nvarchar(50)")]
+        [Required]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
@@ -39,8 +41,8 @@ namespace StudentManagement.Domain.Models
         /// <summary>
         /// Gets or sets the student's gender.
         /// </summary>
-        [Column("gender", TypeName = "varchar(10)")]
         [Required]
+        [Column("gender", TypeName = "varchar(10)")]
         public Gender Gender { get; set; }
 
         /// <summary>
@@ -52,8 +54,9 @@ namespace StudentManagement.Domain.Models
         /// <summary>
         /// Gets or sets the student's course year.
         /// </summary>
+        [Required]
         [Column("course", TypeName = "int")]
-        public int? Course { get; set; }
+        public int Course { get; set; }
 
         /// <summary>
         /// Gets or sets the student's phone number.
@@ -61,6 +64,12 @@ namespace StudentManagement.Domain.Models
         [Required]
         [Column("phone", TypeName = "varchar(10)")]
         public string Phone { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the student's permanent address.
+        /// </summary>
+        [Column("permanent_address", TypeName = "nvarchar(100)")]
+        public string PermanentAddress { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the student's temporary address.
@@ -96,6 +105,13 @@ namespace StudentManagement.Domain.Models
         [Column("faculty_id", TypeName = "uniqueidentifier")]
         public Guid FacultyId { get; set; }
 
+        /// <summary>
+        /// Nationality of the student.
+        /// </summary>
+        [Required]
+        [Column("nationality", TypeName = "nvarchar(50)")]
+        public string Nationality { get; set; } = string.Empty;
+
         // Navigation properties
 
         /// <summary>
@@ -114,17 +130,9 @@ namespace StudentManagement.Domain.Models
         public StudentStatus Status { get; set; } = null!;
 
         /// <summary>
-        /// Gets or sets the address associated with the student.
-        /// </summary>
-        public Address? PermanentAddress { get; set; } = null!;
-
-        /// <summary>
         /// Gets or sets the identity associated with the student.
         /// </summary>
         public Identity? Identity { get; set; } = null!;
 
-        [Column("nationality", TypeName = "nvarchar(50)")]
-        [Required]
-        public string National { get; set; } = string.Empty;
     }
 }

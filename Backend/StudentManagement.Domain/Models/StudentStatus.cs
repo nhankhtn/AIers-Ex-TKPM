@@ -13,7 +13,7 @@ namespace StudentManagement.Domain.Models
     /// Represents the status of a student.
     /// </summary>
     [Index(nameof(Name), IsUnique = true)]
-    [Table("status")]
+    [Table("student_status")]
     public class StudentStatus
     {
         /// <summary>

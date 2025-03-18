@@ -13,7 +13,7 @@ namespace StudentManagement.Domain.Models
     /// Represents an academic program within the student management system.
     /// </summary>
     [Index(nameof(Name), IsUnique = true)]
-    [Table("program")]
+    [Table("programs")]
     public class Program
     {
         /// <summary>

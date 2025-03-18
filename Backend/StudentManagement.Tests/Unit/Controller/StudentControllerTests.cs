@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using StudentManagement.API.Controllers;
-using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;

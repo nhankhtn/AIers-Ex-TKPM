@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using StudentManagement.Domain.Utils;
 using StudentManagement.Domain.Models;
+using StudentManagement.DAL.Data.Utils;
 namespace StudentManagement.DAL.Data.Repositories.StudentRepo;
 
 public interface IStudentRepository
@@ -14,13 +15,10 @@ public interface IStudentRepository
     Task<Result<Student?>> GetStudentByIdAsync(string studentId);
     Task<Result<IEnumerable<Student?>>> GetStudentsByNameAsync(string name);
 
-    Task<Result<Student>> AddStudentAsync(Student student);
+    Task<Result<IEnumerable<Student>>> AddStudentAsync(IEnumerable<Student> students);
 
     Task<Result<string>> UpdateStudentAsync(Student student);
 
     Task<Result<string>> DeleteStudentAsync(string studentId);
 
-    //Task<Result<string>> IsEmailExistAsync(string email);
-
-    //Task<Result<string>> AddAddressAsync(Address address);
 }

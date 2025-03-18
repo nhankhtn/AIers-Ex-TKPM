@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,24 +18,9 @@ namespace StudentManagement.BLL.DTOs
         public string? Id { get; set; }
 
         /// <summary>
-        /// Program's code
-        /// </summary>
-        public string? Code { get; set; }
-
-        /// <summary>
         /// Program's name
         /// </summary>
+        [Required(ErrorMessage = "NAME_REQUIRED")]
         public string? Name { get; set; }
-
-        /// <summary>
-        /// Program's Created time
-        /// </summary>
-        public DateTime? CreatedAt { get; set; }
-
-
-        /// <summary>
-        /// Program's Updated time
-        /// </summary>
-        public DateTime? UpdatedAt { get; set; }
     }
 }

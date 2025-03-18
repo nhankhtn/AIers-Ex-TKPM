@@ -32,10 +32,11 @@ namespace StudentManagement.API
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             // Services
-            builder.Services.AddScoped<IStudentService, StudentService>();
+
             builder.Services.AddScoped<IProgramService, ProgramService>();
             builder.Services.AddScoped<IFacultyService, FacultyService>();
             builder.Services.AddScoped<IStudentStatusService, StudentStatusService>();
+            builder.Services.AddScoped<IStudentService, StudentService>();
 
             // Repo
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();

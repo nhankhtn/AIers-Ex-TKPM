@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagement.Application.DTOs;
 using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.Domain.Enums;
 using StudentManagement.Domain.Models;
 using System;
@@ -47,10 +48,8 @@ namespace StudentManagement.BLL
             CreateMap<StudentDTO, UpdateStudentDTO>();
 
             // 
-            CreateMap<Address, AddressDTO>();
             //CreateMap<StudentNationalities, StudentNationalitesDTO>();
             CreateMap<Identity, IdentityDTO>();
-            CreateMap<AddressDTO, Address>();
             CreateMap<IdentityDTO, Identity>();
             //CreateMap<StudentNationalitesDTO, StudentNationalities>();
 

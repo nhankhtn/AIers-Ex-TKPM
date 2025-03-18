@@ -23,19 +23,12 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
             try
             {
                 faculty.Id = Guid.NewGuid();
-                //faculty.CreatedAt = DateTime.Now;
-                //faculty.UpdatedAt = DateTime.Now;
                 await _context.Faculties.AddAsync(faculty);
                 await _context.SaveChangesAsync();
-                //var addedFaculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Code == faculty.Code);
-                var addedFaculty = await _context.Faculties.FirstOrDefaultAsync();
+                var addedFaculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Id == faculty.Id);
                 return Result<Faculty>.Ok(addedFaculty);
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Faculties_faculty_code") == null)
-            {
-                return Result<Faculty>.Fail("FACULTY_CODE_EXIST", "Faculty code has already exist");
-            }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Faculties_faculty_name") == null)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_faculties_name") == null)
             {
                 return Result<Faculty>.Fail("FACULTY_NAME_EXIST", "Faculty name has already exist");
             }
@@ -103,11 +96,7 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                 await _context.SaveChangesAsync();
                 return Result<Faculty>.Ok(existingFaculty);
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Faculties_faculty_code") == null)
-            {
-                return Result<Faculty>.Fail("FACULTY_CODE_EXIST", "Faculty code has already exist");
-            }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Faculties_faculty_name") == null)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_faculties_name") == null)
             {
                 return Result<Faculty>.Fail("FACULTY_NAME_EXIST", "Faculty name has already exist");
             }

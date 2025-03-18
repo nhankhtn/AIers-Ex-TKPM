@@ -20,7 +20,6 @@ namespace StudentManagement.DAL.Data
         public DbSet<StudentStatus> StudentStatuses { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Identity> Identities { get; set; }
-        public DbSet<Address> Addresses { get; set; }
         //public DbSet<StudentNationalities> Nationalities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,11 +57,6 @@ namespace StudentManagement.DAL.Data
                 .WithMany(ss => ss.Students)
                 .HasForeignKey(s => s.StatusId);
 
-            modelBuilder.Entity<Student>()
-                .HasOne(s => s.PermanentAddress)
-                .WithOne(s => s.Student)
-                .HasForeignKey<Address>(a => a.StudentId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Student>()
                 .HasOne(a => a.Identity)

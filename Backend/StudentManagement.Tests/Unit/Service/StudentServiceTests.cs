@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Moq;
-using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.Services;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
 using StudentManagement.Domain.Enums;

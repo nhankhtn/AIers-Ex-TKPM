@@ -34,10 +34,8 @@ namespace StudentManagement.BLL.DTOs
 
         public string? TemporaryAddress { get; set; }
         public string? MailingAddress   { get; set; }
-
-        public AddressDTO? PermanentAddress { get; set; }
-
-        public StudentNationalitesDTO? Nationalites { get; set; }
+        public string? PermanentAddress { get; set; }
+        public string? National { get; set; }
 
         public IdentityDTO? Identity { get; set; }
     }

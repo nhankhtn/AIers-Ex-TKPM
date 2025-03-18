@@ -23,18 +23,12 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             try
             {
                 studentStatus.Id = Guid.NewGuid();
-                //studentStatus.CreatedAt = DateTime.Now;
-                //studentStatus.UpdatedAt = DateTime.Now;
                 await _context.StudentStatuses.AddAsync(studentStatus);
                 await _context.SaveChangesAsync();
-                var addedStatus = await _context.StudentStatuses.FirstOrDefaultAsync(s => s.Name == studentStatus.Name);
+                var addedStatus = await _context.StudentStatuses.FirstOrDefaultAsync(s => s.Id == studentStatus.Id);
                 return Result<StudentStatus>.Ok(addedStatus);
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_code") == true)
-            {
-                return Result<StudentStatus>.Fail("STUDENT_STATUS_NAME_EXIST", "Student status name already exists");
-            }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_name") == true)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_student_status_name") == true)
             {
                 return Result<StudentStatus>.Fail("STUDENT_STATUS_NAME_EXIST", "Student status name already exists");
             }
@@ -100,14 +94,9 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 }
 
                 await _context.SaveChangesAsync();
-                //existingStatus.UpdatedAt = DateTime.Now;
                 return Result<StudentStatus>.Ok(existingStatus);
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_code") == true)
-            {
-                return Result<StudentStatus>.Fail("STUDENT_STATUS_CODE_EXIST", "Student status code already exists");
-            }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_StudentStatuses_student_status_name") == true)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_student_status_name") == true)
             {
                 return Result<StudentStatus>.Fail("STUDENT_STATUS_NAME_EXIST", "Student status name already exists");
             }

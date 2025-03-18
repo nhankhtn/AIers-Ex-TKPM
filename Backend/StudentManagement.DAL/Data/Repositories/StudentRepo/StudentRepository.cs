@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Identity.Client;
+using StudentManagement.DAL.Data.Utils;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace StudentManagement.DAL.Data.Repositories.StudentRepo
@@ -14,74 +17,34 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
     public class StudentRepository : IStudentRepository
     {
         private readonly ApplicationDbContext _context;
+
+        /// <summary> 
+        /// Feature
+        /// </summary>
+
+        private Dictionary<string, int> lastestId = new Dictionary<string, int>();
+
+       
+
+
         public StudentRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<Result<Student>> AddStudentAsync(Student student)
+
+        // Methods
+
+        public async Task<Result<IEnumerable<Student>>> AddStudentAsync(IEnumerable<Student> students)
         {
             try
             {
-                var latestStudent = await _context.Students
-                    .OrderByDescending(s => s.Id)
-                    .FirstOrDefaultAsync(s => s.Id.StartsWith("22120"));
-
-                int nextId = latestStudent == null ? 1 : int.Parse(latestStudent.Id[^3..]) + 1;
-
-                student.Id = $"22120{nextId:D3}";
-
-                var faculty = await _context.Faculties.FindAsync(student.FacultyId);
-                if (faculty == null)
-                {
-                    return Result<Student>.Fail("FACULTY_NOT_EXIST", "Faculty does not exist");
-                }
-                student.Faculty = faculty;
-                var program = await _context.Programs.FindAsync(student.ProgramId);
-                if (program == null)
-                {
-                    return Result<Student>.Fail("PROGRAM_NOT_EXIST", "Program does not exist");
-                }
-                student.Program = program;
-                var status = await _context.StudentStatuses.FindAsync(student.StatusId);
-                if (status == null)
-                {
-                    return Result<Student>.Fail("STATUS_NOT_EXIST", "Status does not exist");
-                }
-                student.Status = status;
-
-                await _context.Students.AddAsync(student);
-
-                if (student.PermanentAddress != null)
-                {
-                    student.PermanentAddress.StudentId = student.Id;
-                    student.PermanentAddress.Student = student;
-                    await _context.Addresses.AddAsync(student.PermanentAddress);
-                }
-                if (student.Identity != null)
-                {
-                    student.Identity.StudentId = student.Id;
-                    student.Identity.Student = student;
-                    await _context.Identities.AddAsync(student.Identity);
-                }
-                //if (student.Nationalities != null)
-                //{
-                //    student.Nationalities.StudentId = student.Id;
-                //    student.Nationalities.Student = student;
-                //    await _context.Nationalities.AddAsync(student.Nationalities);
-                //}
-
-                await _context.SaveChangesAsync();
-
-                return Result<Student>.Ok(student);
-            }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Students_email") == true)
-            {
-                return Result<Student>.Fail("EMAIL_EXISTS", "Email has alreay existed");
+                await _context.Students.AddRangeAsync(students);
+                return Result<IEnumerable<Student>>.Ok();
             }
             catch (Exception)
             {
-                return Result<Student>.Fail("ADD_FAIL", "Add student failed");
+                return Result<IEnumerable<Student>>.Fail("ADD_FAILED", "Add student failed");
             }
         }
 
@@ -114,7 +77,6 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Faculty)
                     .Include(s => s.Program)
                     .Include(s => s.Status)
-                    .Include(s => s.PermanentAddress)
                     .Include(s => s.Identity)
                     .Where(s => key == null || s.Name.Contains(key) || s.Id.Contains(key));
 
@@ -174,33 +136,42 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                 await _context.SaveChangesAsync();
                 return Result<string>.Ok();
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Students_email") == true)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_students_email") == true)
             {
-                return Result<string>.Fail("EMAIL_EXISTS", "Email has alreay existed");
+                return Result<string>.Fail("EMAIL_EXIST", "Email has already existed");
             }
             catch (Exception)
             {
                 return Result<string>.Fail("UPDATE_FAILED", "Update student failed");
             }
         }
+        
+
+        /// <summary>
+        /// Generate student ID
+        /// </summary>
+        /// <param name="course"></param>
+        /// <returns></returns>
+        private async Task<string> GenerateStudentId(int course)
+        {
+            var idCourseYear = String.Format("{0:D2}", course % 100);
+            var idLatest = 0;
+            if (lastestId.ContainsKey(idCourseYear)) idLatest = lastestId[idCourseYear];
+            else
+            {
+                var latestStudent = await _context.Students
+                    .Where(s => s.Id.Contains(idCourseYear))
+                    .OrderByDescending(s => s.Id)
+                    .FirstOrDefaultAsync();
+                if (latestStudent is null) idLatest = 0;
+                else idLatest = int.Parse(latestStudent.Id[^4..]);
+            }
+
+            int nextIndex = idLatest + 1;
+            return $"{idCourseYear}{nextIndex:D4}";
+        }
 
 
-        //public async Task<bool> IsEmailExistAsync(string email)
-        //{
-        //    try
-        //    {
-        //        var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
-        //        return student != null;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return false;
-        //    }
-        //}
-
-        //public Task<bool> AddAddressAsync(Address address)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.Students;
+using StudentManagement.BLL.Utils;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,7 @@ namespace StudentManagement.BLL.Services.StudentService
     {
         Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? key);
 
-        Task<Result<StudentDTO>> AddStudentAsync(AddStudentDTO studentDTO);
+        Task<Result<AddListStudentResult>> AddListStudentAsync(AddListStudentDTO studentDTO);
 
         Task<Result<StudentDTO>> UpdateStudentAsync(string userId, UpdateStudentDTO studentDTO);
 

@@ -12,14 +12,14 @@ namespace StudentManagement.API.Utils
         /// <summary>
         /// Status code
         /// </summary>
-        [JsonPropertyName("status")]
-        public int Status { get; set; }
+        //[JsonPropertyName("status")]
+        //public int Status { get; set; }
 
         /// <summary>
         /// Title
         /// </summary>
-        [JsonPropertyName("title")]
-        public string Title { get; set; } = "Success";
+        //[JsonPropertyName("title")]
+        //public string Title { get; set; } = "Success";
 
         /// <summary>
         /// Data
@@ -40,10 +40,10 @@ namespace StudentManagement.API.Utils
         public ApiError? Error { get; set; }
 
         // Constructor
-        public ApiResponse(int status, string title, T? data = default, ApiError? error = null, string? message = null)
+        public ApiResponse(T? data = default, ApiError? error = null, string? message = null)
         {
-            Status = status;
-            Title = title;
+            //Status = status;
+            //Title = title;
             Data = data;
             Error = error;
             Message = message;
@@ -59,7 +59,7 @@ namespace StudentManagement.API.Utils
             string? title = null,
             T? data = default,
             string? message = null)
-           => new ApiResponse<T>((int)HttpStatusCode.OK, title ?? "Success", data, null, message);
+           => new ApiResponse<T>( data, null, message);
 
         /// <summary>
         /// BadRequest response
@@ -72,7 +72,7 @@ namespace StudentManagement.API.Utils
             T? data = default,
             ApiError? error = null,
             string? message = null)
-            => new ApiResponse<T>((int)HttpStatusCode.BadRequest, title ?? "Bad Request", data, error, message);
+            => new ApiResponse<T>(data, error, message);
 
         /// <summary>
         /// NotFound response
@@ -86,7 +86,7 @@ namespace StudentManagement.API.Utils
             T? data = default,
             ApiError? error = null,
             string? message = null)
-            => new ApiResponse<T>((int)HttpStatusCode.NotFound, title ?? "Not Found", data, error, message);
+            => new ApiResponse<T>(data, error, message);
 
         /// <summary>
         /// Unauthorized response
@@ -101,7 +101,7 @@ namespace StudentManagement.API.Utils
             T? data = default,
             ApiError? error = null,
             string? message = null)
-            => new ApiResponse<T>((int)HttpStatusCode.InternalServerError, title ?? "Internal Server Error", data, error, message);
+            => new ApiResponse<T>(data, error, message);
     }
 
     // Class ApiError

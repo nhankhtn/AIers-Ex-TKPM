@@ -27,14 +27,10 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                 await _context.Programs.AddAsync(program);
                 await _context.SaveChangesAsync();
                 //var addedProgram = await _context.Programs.FirstOrDefaultAsync(p => p.Code == program.Code);
-                var addedProgram = await _context.Programs.FirstOrDefaultAsync();
+                var addedProgram = await _context.Programs.FirstOrDefaultAsync(p => p.Id == program.Id);
                 return Result<Program>.Ok(addedProgram);
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Programs_program_code") == true)
-            {
-                return Result<Program>.Fail("PROGRAM_CODE_EXIST", "Program code already exists");
-            }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Programs_program_name") == true)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_programs_name") == true)
             {
                 return Result<Program>.Fail("PROGRAM_NAME_EXIST", "Program name already exists");
             }
@@ -103,11 +99,7 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                 await _context.SaveChangesAsync();
                 return Result<Program>.Ok(existingProgram);
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Programs_program_code") == true)
-            {
-                return Result<Program>.Fail("PROGRAM_CODE_EXIST", "Program code already exists");
-            }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_Programs_program_name") == true)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_programs_name") == true)
             {
                 return Result<Program>.Fail("PROGRAM_NAME_EXIST", "Program name already exists");
             }
