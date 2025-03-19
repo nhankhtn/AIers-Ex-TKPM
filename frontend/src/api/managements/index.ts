@@ -52,13 +52,13 @@ export class ManagementApi {
     return res.data
   }
   static async deleteFaculty(id: string): Promise<void> {
-    await apiDelete(`/faculty/${id}`, {});
+    await apiDelete(`/faculty/id/${id}`, {});
   }
   static async deleteProgram(id: string): Promise<void> {
-    await apiDelete(`/program/${id}`, {});
+    await apiDelete(`/program//id/${id}`, {});
   }
   static async deleteStatus(id: string): Promise<void> {
-    await apiDelete(`/studentstatus/${id}`, {});
+    await apiDelete(`/studentstatus/id/${id}`, {});
   }
 
 }
