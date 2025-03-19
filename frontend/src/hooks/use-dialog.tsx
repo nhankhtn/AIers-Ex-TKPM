@@ -21,7 +21,6 @@ export function useDialog<T = unknown>(): DialogController<T> {
   });
 
   const handleOpen = useCallback((data?: T): void => {
-    console.log(data);
     setState({
       open: true,
       data,

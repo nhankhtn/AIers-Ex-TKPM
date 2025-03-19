@@ -38,6 +38,8 @@ import DialogImportFile from "../_components/dialog-import-file";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
 import DialogManagement from "../_components/dialog-management";
 import { useFaculty } from "./use-faculty";
+import { useProgram } from "./use-program";
+import { useStatus } from "./use-status";
 
 const Content = () => {
   const {
@@ -58,6 +60,20 @@ const Content = () => {
     addFacultyApi,
     updateFacultyApi,
   } = useFaculty();
+  const {
+    dialog: dialogProgram,
+    getProgramApi,
+    deleteProgramApi,
+    addProgramApi,
+    updateProgramApi
+  }= useProgram();
+  const {
+    dialog: dialogStatus,
+    getStatusApi,
+    deleteStatusApi,
+    addStatusApi,
+    updateStatusApi
+  }= useStatus();
   const dialogExport = useDialog();
   const dialogImport = useDialog();
   const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
@@ -189,6 +205,7 @@ const Content = () => {
             color='primary'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
+            onClick={() => dialogProgram.handleOpen()}
            
           >
             Thêm chương trình
@@ -198,7 +215,7 @@ const Content = () => {
             color='secondary'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
-          
+            onClick={() => dialogStatus.handleOpen()}
           >
             Thêm trạng thái
           </Button>
@@ -350,6 +367,26 @@ const Content = () => {
         handleUpdateItem={updateFacultyApi.call}
         items={getFacultiesApi.data || []}
         handleEditItem={(item) => updateFacultyApi.call(item)}
+      />
+      <DialogManagement
+        type= {"program"}
+        open={dialogProgram.open}
+        onClose={dialogProgram.handleClose}
+        handleAddItem={addProgramApi.call}
+        handleDeleteItem={deleteProgramApi.call}
+        handleUpdateItem={updateProgramApi.call}
+        items={getProgramApi.data || []}
+        handleEditItem={(item) => updateProgramApi.call(item)}
+      />
+      <DialogManagement
+        type= {"status"}
+        open={dialogStatus.open}
+        onClose={dialogStatus.handleClose}
+        handleAddItem={addStatusApi.call}
+        handleDeleteItem={deleteStatusApi.call}
+        handleUpdateItem={updateStatusApi.call}
+        items={getStatusApi.data || []}
+        handleEditItem={(item) => updateStatusApi.call(item)}
       />
     </Box>
   );
