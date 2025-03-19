@@ -37,6 +37,7 @@ import DialogExportFile from "../_components/dialog-export-file";
 import DialogImportFile from "../_components/dialog-import-file";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
 import DialogManagement from "../_components/dialog-management";
+import { useFaculty } from "./use-faculty";
 
 const Content = () => {
   const {
@@ -50,7 +51,13 @@ const Content = () => {
     setFilter,
     pagination,
   } = useDashboardSearch();
-  const dialogManagement = useDialog<string>();
+  const {
+    dialog : dialogFaculty,
+    getFacultiesApi,
+    deleteFacultyApi,
+    addFacultyApi,
+    updateFacultyApi,
+  } = useFaculty();
   const dialogExport = useDialog();
   const dialogImport = useDialog();
   const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
@@ -173,7 +180,7 @@ const Content = () => {
             color='success'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
-            onClick={() => dialogManagement.handleOpen("faculty")}
+            onClick={() => dialogFaculty.handleOpen()}
           >
             Thêm khoa
           </Button>
@@ -182,7 +189,7 @@ const Content = () => {
             color='primary'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
-            onClick={() => dialogManagement.handleOpen("program")}
+           
           >
             Thêm chương trình
           </Button>
@@ -191,7 +198,7 @@ const Content = () => {
             color='secondary'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
-            onClick={() => dialogManagement.handleOpen("status")}
+          
           >
             Thêm trạng thái
           </Button>
@@ -329,10 +336,20 @@ const Content = () => {
         onClose={dialogImport.handleClose}
         onUpload={handleUpload}
       />
-      <DialogManagement
+      {/* <DialogManagement
         type= {dialogManagement.data || ""}
         open={dialogManagement.open}
         onClose={dialogManagement.handleClose}
+      /> */}
+      <DialogManagement
+        type= {"faculty"}
+        open={dialogFaculty.open}
+        onClose={dialogFaculty.handleClose}
+        handleAddItem={addFacultyApi.call}
+        handleDeleteItem={deleteFacultyApi.call}
+        handleUpdateItem={updateFacultyApi.call}
+        items={getFacultiesApi.data || []}
+        handleEditItem={(item) => updateFacultyApi.call(item)}
       />
     </Box>
   );
