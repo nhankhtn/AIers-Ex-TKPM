@@ -9,6 +9,8 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Grid2,
+  Stack,
 } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import Grid from "@mui/material/Grid2";
@@ -36,6 +38,10 @@ import { useDialog } from "@/hooks/use-dialog";
 import DialogExportFile from "../_components/dialog-export-file";
 import DialogImportFile from "../_components/dialog-import-file";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
+import SelectFilter from "../_components/select-filter";
+import { CustomTable } from "@/components/custom-table";
+import { getTableConfig } from "./table-config";
+import CustomPagination from "@/components/custom-pagination";
 
 const Content = () => {
   const {
@@ -48,6 +54,8 @@ const Content = () => {
     students,
     setFilter,
     pagination,
+    filterConfig,
+    filter,
   } = useDashboardSearch();
 
   const dialogExport = useDialog();
@@ -86,7 +94,6 @@ const Content = () => {
     async (file: File) => {
       let studentsImported = null;
 
-      console.log(file.type);
       if (file.type.includes("csv")) {
         const data = await importFromCSV(file);
 
@@ -199,7 +206,7 @@ const Content = () => {
             onClick={() => dialog.handleOpen()}
           >
             Thêm sinh viên
-          </Button>{" "}
+          </Button>
           <IconButton
             color='primary'
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -238,44 +245,53 @@ const Content = () => {
           </Menu>
         </RowStack>
       </RowStack>
-      <Grid
-        container
-        direction='row'
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Paper
-          sx={{
-            p: 1,
-            display: "flex",
-            alignItems: "center",
-            border: "1px solid #f0f7ff",
-          }}
-        >
-          <RowStack
+      <RowStack mb={3} gap={2}>
+        <Stack flex={1}>
+          <Paper
             sx={{
-              bgcolor: "#f0f7ff",
-              borderRadius: "50%",
-              width: 50,
-              height: 50,
-              justifyContent: "center",
-              mr: 2,
+              p: 1,
+              display: "flex",
+              alignItems: "center",
+              border: "1px solid #f0f7ff",
+              width: 250,
             }}
           >
-            <PeopleIcon sx={{ color: "#1976d2", fontSize: 30 }} />
-          </RowStack>
-          <Box>
-            <Typography variant='body2' color='text.secondary'>
-              Tổng số sinh viên
-            </Typography>
-            <Typography variant='h5' fontWeight='bold'>
-              {getStudentsApi.data?.total || 0}
-            </Typography>
-          </Box>
-        </Paper>
-        <Grid size={{ xs: 4, md: 2 }}>
+            <RowStack
+              sx={{
+                bgcolor: "#f0f7ff",
+                borderRadius: "50%",
+                width: 50,
+                height: 50,
+                justifyContent: "center",
+                mr: 2,
+              }}
+            >
+              <PeopleIcon sx={{ color: "#1976d2", fontSize: 30 }} />
+            </RowStack>
+            <Box>
+              <Typography variant='body2' color='text.secondary'>
+                Tổng số sinh viên
+              </Typography>
+              <Typography variant='h5' fontWeight='bold'>
+                {getStudentsApi.data?.total || 0}
+              </Typography>
+            </Box>
+          </Paper>
+        </Stack>
+        <Stack width={500}>
+          <SelectFilter
+            configs={filterConfig}
+            filter={filter}
+            onChange={(key: string, value: string) => {
+              setFilter((prev) => ({
+                ...prev,
+                [key]: value,
+              }));
+            }}
+          />
+        </Stack>
+
+        <Stack width={250}>
           <SearchBar
             onSearch={(value: string) =>
               setFilter((prev) => ({
@@ -284,20 +300,28 @@ const Content = () => {
               }))
             }
           />
-        </Grid>
-      </Grid>
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 2 }}></Grid>
-      </Grid>
-      <Table
-        data={students || []}
-        fieldCols={StudentCols}
-        onClickEdit={dialog.handleOpen}
-        deleteStudent={dialogConfirmDelete.handleOpen}
-        pagination={pagination}
-      />
+        </Stack>
+      </RowStack>
+      <Stack>
+        <CustomTable
+          configs={getTableConfig()}
+          rows={[]}
+          loading={getStudentsApi.loading}
+        />{" "}
+        {[].length > 0 && (
+          <CustomPagination
+            pagination={pagination}
+            justifyContent='end'
+            px={2}
+            pt={2}
+            borderTop={1}
+            borderColor={"divider"}
+            rowsPerPageOptions={[10, 15, 20]}
+          />
+        )}
+      </Stack>
       <Dialog
-        isOpen={dialog.open}
+        open={dialog.open}
         student={dialog.data || null}
         onClose={dialog.handleClose}
         addStudent={handleAddStudent}

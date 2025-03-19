@@ -4,10 +4,15 @@ import useFunction from "@/hooks/use-function";
 import usePagination from "@/hooks/use-pagination";
 import { mockData, Student, StudentFilter } from "@/types/student";
 import { useEffect, useMemo, useState } from "react";
+import { getFilterConfig } from "./filter-config";
+import { useSearchParams } from "next/navigation";
 
 const useDashboardSearch = () => {
+  const searchParams = useSearchParams();
   const [filter, setFilter] = useState<StudentFilter>({
     key: "",
+    status_name: "",
+    faculty_name: "",
   });
   const students = useMemo(() => mockData, []);
 
@@ -68,13 +73,86 @@ const useDashboardSearch = () => {
   });
 
   useEffect(() => {
+    const key = searchParams.get("key");
+    const status_name = searchParams.get("status_name");
+    const faculty_name = searchParams.get("faculty_name");
+
+    setFilter((prev) => ({
+      ...prev,
+      key: key || "",
+      status_name: status_name || "",
+      faculty_name: faculty_name || "",
+    }));
     getStudentsApi.call({
       page: pagination.page + 1,
       limit: pagination.rowsPerPage,
       key: filter.key,
+      status_name: filter.status_name,
+      faculty_name: filter.faculty_name,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, pagination.rowsPerPage, filter.key]);
+  }, [searchParams, pagination.page, pagination.rowsPerPage, filter]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    Object.entries(filter).forEach(([key, value]) => {
+      if (value) {
+        searchParams.set(key, value);
+      } else {
+        searchParams.delete(key);
+      }
+    });
+
+    window.history.pushState({}, "", `?${searchParams.toString()}`);
+  }, [filter]);
+
+  const filterConfig = getFilterConfig({
+    status: [
+      {
+        value: "",
+        label: "Tất cả",
+      },
+      {
+        value: "studying",
+        label: "Đang học",
+      },
+      {
+        value: "graduated",
+        label: "Đã tốt nghiệp",
+      },
+      {
+        value: "droppedout",
+        label: "Đã thôi học",
+      },
+      {
+        value: "paused",
+        label: "Tạm dừng",
+      },
+    ],
+    faculty: [
+      {
+        value: "",
+        label: "Tất cả",
+      },
+      {
+        value: "law",
+        label: "Luật",
+      },
+      {
+        value: "business_english",
+        label: "Tiếng Anh Kinh doanh",
+      },
+      {
+        value: "japanese",
+        label: "Tiếng Nhật",
+      },
+      {
+        value: "grench",
+        label: "Tiếng Pháp",
+      },
+    ],
+  });
 
   return {
     dialog,
@@ -86,6 +164,8 @@ const useDashboardSearch = () => {
     students,
     setFilter,
     pagination,
+    filterConfig,
+    filter,
   };
 };
 
