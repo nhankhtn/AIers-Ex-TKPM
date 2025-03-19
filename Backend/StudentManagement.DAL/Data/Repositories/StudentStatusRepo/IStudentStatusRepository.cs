@@ -21,5 +21,8 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
         Task<Result<StudentStatus>> AddStudentStatusAsync(StudentStatus studentStatus);
 
         Task<Result<StudentStatus>> UpdateStudentStatusAsync(StudentStatus studentStatus);
+
+        Task<Result<StudentStatus>> DeleteStudentStatusAsync(StudentStatus studentStatus);
+
     }
 }

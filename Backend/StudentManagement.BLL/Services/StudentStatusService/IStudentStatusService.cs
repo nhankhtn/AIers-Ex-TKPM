@@ -1,4 +1,5 @@
-﻿using StudentManagement.BLL.DTOs.StudentStatus;
+﻿using StudentManagement.BLL.DTOs.Program;
+using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,8 @@ namespace StudentManagement.BLL.Services.StudentStatusService
         Task<Result<StudentStatusDTO>> UpdateStudentStatusAsync(string id, StudentStatusDTO studentStatusDTO);
 
         Task<Result<StudentStatusDTO>> AddStudentStatusAsync(StudentStatusDTO studentStatusDTO);
+
+        Task<Result<StudentStatusDTO>> DeleteStudentStatusAsync(string key);
+
     }
 }

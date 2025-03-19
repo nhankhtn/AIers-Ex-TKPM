@@ -107,5 +107,21 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 return Result<StudentStatus>.Fail("UPDATE_STUDENT_STATUS_FAIL", "Update student status failed");
             }
         }
+
+        public async Task<Result<StudentStatus>> DeleteStudentStatusAsync(StudentStatus studentStatus)
+        {
+            try
+            {
+                var existingStudentStatus = await _context.StudentStatuses.Where(s => s.Id == studentStatus.Id || s.Name == studentStatus.Name).FirstOrDefaultAsync();
+                if (existingStudentStatus is null) return Result<StudentStatus>.Fail("FACULTY_NOT_EXIST", "Faculty does not exist");
+                _context.StudentStatuses.Remove(existingStudentStatus);
+                await _context.SaveChangesAsync();
+                return Result<StudentStatus>.Ok(existingStudentStatus);
+            }
+            catch (Exception)
+            {
+                return Result<StudentStatus>.Fail("DELETE_FACULTY_FAILED");
+            }
+        }
     }
 }

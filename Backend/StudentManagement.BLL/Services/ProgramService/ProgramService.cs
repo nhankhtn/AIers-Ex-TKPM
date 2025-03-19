@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.Program;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
@@ -43,6 +44,14 @@ namespace StudentManagement.BLL.Services.ProgramService
             var res = await _programRepository.GetAllProgramsAsync();
             if (!res.Success) return Result<IEnumerable<ProgramDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
             return Result<IEnumerable<ProgramDTO>>.Ok(_mapper.Map<IEnumerable<ProgramDTO>>(res.Data));
+        }
+
+
+        public async Task<Result<ProgramDTO>> DeleteProgramAsync (string key)
+        {
+            var res = await _programRepository.DeleteProgramAsync(new Program() { Id = key.ToGuid(), Name = key });
+            if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data));
         }
     }
 }

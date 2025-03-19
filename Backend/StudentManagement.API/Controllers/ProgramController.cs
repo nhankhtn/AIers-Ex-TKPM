@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentManagement.API.Utils;
+using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.Program;
 using StudentManagement.BLL.Services.ProgramService;
 
@@ -69,6 +70,42 @@ namespace StudentManagement.API.Controllers
                     {
                         Code = res.ErrorCode,
                         Message = "Failed to change program name"
+                    }
+                ));
+        }
+
+        [HttpDelete("id/{id}")]
+        public async Task<IActionResult> DeleteProgram(string id)
+        {
+            var result = await _programService.DeleteProgramAsync(id);
+            if (result.Success) return Ok(ApiResponse<ProgramDTO>.Success(
+                    data: result.Data,
+                    message: "Faculty deleted successfully"
+                ));
+
+            return BadRequest(ApiResponse<string>.BadRequest(
+                    error: new ApiError()
+                    {
+                        Code = result.ErrorCode,
+                        Message = "Failed to delete faculty"
+                    }
+                ));
+        }
+
+        [HttpDelete("name/{name}")]
+        public async Task<IActionResult> DeleteProgramByName(string name)
+        {
+            var result = await _programService.DeleteProgramAsync(name);
+            if (result.Success) return Ok(ApiResponse<ProgramDTO>.Success(
+                    data: result.Data,
+                    message: "Faculty deleted successfully"
+                ));
+
+            return BadRequest(ApiResponse<string>.BadRequest(
+                    error: new ApiError()
+                    {
+                        Code = result.ErrorCode,
+                        Message = "Failed to delete faculty"
                     }
                 ));
         }

@@ -45,17 +45,20 @@ namespace StudentManagement.DAL.Data
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Faculty)
                 .WithMany(f => f.Students)
-                .HasForeignKey(s => s.FacultyId);
+                .HasForeignKey(s => s.FacultyId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Program)
                 .WithMany(p => p.Students)
-                .HasForeignKey(s => s.ProgramId);
+                .HasForeignKey(s => s.ProgramId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Student>()
                 .HasOne(s => s.Status)
                 .WithMany(ss => ss.Students)
-                .HasForeignKey(s => s.StatusId);
+                .HasForeignKey(s => s.StatusId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Student>()

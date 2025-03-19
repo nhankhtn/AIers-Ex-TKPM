@@ -15,5 +15,7 @@ namespace StudentManagement.BLL.Services.FacultyService
         Task<Result<FacultyDTO>> UpdateFacultyAsync(string id, FacultyDTO facultyDTO);
 
         Task<Result<FacultyDTO>> AddFacultyAsync(FacultyDTO facultyDTO);
+
+        Task<Result<FacultyDTO>> DeleteFacultyAsync(string key); 
     }
 }

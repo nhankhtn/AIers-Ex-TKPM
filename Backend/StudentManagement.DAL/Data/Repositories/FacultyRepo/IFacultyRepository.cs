@@ -21,5 +21,7 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
         Task<Result<Faculty>> AddFacultyAsync(Faculty faculty);
 
         Task<Result<Faculty>> UpdateFacultyAsync(Faculty faculty);
+
+        Task<Result<Faculty>> DeleteFacultyAsync(Faculty faculty);
     }
 }

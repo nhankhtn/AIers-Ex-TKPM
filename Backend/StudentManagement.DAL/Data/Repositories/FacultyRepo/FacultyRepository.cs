@@ -38,6 +38,22 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
             }
         }
 
+        public async Task<Result<Faculty>> DeleteFacultyAsync(Faculty faculty)
+        {
+            try
+            {
+                var existingFaculty = await _context.Faculties.Where(f => f.Id == faculty.Id || f.Name == faculty.Name).FirstOrDefaultAsync();
+                if (existingFaculty is null) return Result<Faculty>.Fail("FACULTY_NOT_EXIST", "Faculty does not exist");
+                _context.Faculties.Remove(existingFaculty);
+                await _context.SaveChangesAsync();
+                return Result<Faculty>.Ok(existingFaculty);
+            }
+            catch (Exception)
+            {
+                return Result<Faculty>.Fail("DELETE_FACULTY_FAILED"); 
+            }
+        }
+
         public async Task<Result<IEnumerable<Faculty>>> GetAllFacultiesAsync()
         {
             try

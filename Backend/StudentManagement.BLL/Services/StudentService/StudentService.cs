@@ -149,7 +149,7 @@ namespace StudentManagement.BLL.Services.StudentService
         // Get all students
         public async Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? key)
         {
-            var res = await _studentRepository.GetAllStudentsAsync(page, pageSize, key);
+            var res = await _studentRepository.GetAllStudentsAsync(page, pageSize, faculty, key);
             if (!res.Success) return Result<GetStudentsDTO>.Fail(res.ErrorCode, res.ErrorMessage);
             return Result<GetStudentsDTO>.Ok(new GetStudentsDTO()
             {

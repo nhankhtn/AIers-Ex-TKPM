@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentStatusRepo;
@@ -43,6 +44,13 @@ namespace StudentManagement.BLL.Services.StudentStatusService
             var res = await _studentStatusRepository.GetAllStudentStatusesAsync();
             if (!res.Success) return Result<IEnumerable<StudentStatusDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
             return Result<IEnumerable<StudentStatusDTO>>.Ok(_mapper.Map<IEnumerable<StudentStatusDTO>>(res.Data));
+        }
+
+        public async Task<Result<StudentStatusDTO>> DeleteStudentStatusAsync(string key)
+        {
+            var res = await _studentStatusRepository.DeleteStudentStatusAsync(new StudentStatus() { Id = key.ToGuid(), Name = key });
+            if (!res.Success) return Result<StudentStatusDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res.Data));
         }
     }
 }

@@ -21,5 +21,8 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
         Task<Result<Program>> AddProgramAsync(Program program);
 
         Task<Result<Program>> UpdateProgramAsync(Program program);
+
+        Task<Result<Program>> DeleteProgramAsync(Program program);
+
     }
 }

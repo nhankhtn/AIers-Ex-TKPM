@@ -186,5 +186,6 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
             return student is null ? 0 : int.Parse(student.Id[4..]);
         }
+
     }
 } 

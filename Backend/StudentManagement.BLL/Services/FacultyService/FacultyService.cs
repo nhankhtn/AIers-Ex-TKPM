@@ -6,6 +6,7 @@ using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +45,13 @@ namespace StudentManagement.BLL.Services.FacultyService
             var res = await _facultyRepository.GetAllFacultiesAsync();
             if (!res.Success) return Result<IEnumerable<FacultyDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
             return Result<IEnumerable<FacultyDTO>>.Ok(_mapper.Map<IEnumerable<FacultyDTO>>(res.Data));
+        }
+
+        public async Task<Result<FacultyDTO>> DeleteFacultyAsync(string key)
+        {
+            var res = await _facultyRepository.DeleteFacultyAsync(new Faculty() { Id = key.ToGuid(), Name = key });
+            if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data));
         }
     }
 }
