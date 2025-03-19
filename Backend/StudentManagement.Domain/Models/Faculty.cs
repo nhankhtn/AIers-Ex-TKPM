@@ -14,6 +14,7 @@ namespace StudentManagement.Domain.Models
     /// Represents a faculty within the student management system.
     /// </summary>
     [Table("faculty")]
+    [Index(nameof(Name), IsUnique = true)]
     public class Faculty
     {
         /// <summary>
