@@ -36,7 +36,7 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("faculties");
+                    b.ToTable("faculty");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>

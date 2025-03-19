@@ -292,7 +292,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var lastId = await _studentRepository.GetLatestStudentIdAsync(course);
                 nextId = lastId + 1;
             }
-
+            generateIdCache[idCourseYear] = nextId;
 
             return $"{idCourseYear}{nextId:D4}";
         }

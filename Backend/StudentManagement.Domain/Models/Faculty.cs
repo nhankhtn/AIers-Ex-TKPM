@@ -13,7 +13,7 @@ namespace StudentManagement.Domain.Models
     /// <summary>
     /// Represents a faculty within the student management system.
     /// </summary>
-    [Table("faculties")]
+    [Table("faculty")]
     public class Faculty
     {
         /// <summary>
