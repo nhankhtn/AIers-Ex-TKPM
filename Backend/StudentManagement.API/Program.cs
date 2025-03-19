@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL;
+using StudentManagement.BLL.Services.AddressService;
 using StudentManagement.BLL.Services.FacultyService;
 using StudentManagement.BLL.Services.ProgramService;
 using StudentManagement.BLL.Services.StudentService;
@@ -31,12 +32,16 @@ namespace StudentManagement.API
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+            //add http client
+            builder.Services.AddHttpClient<IAddressService, AddressService>();
+
             // Services
 
             builder.Services.AddScoped<IProgramService, ProgramService>();
             builder.Services.AddScoped<IFacultyService, FacultyService>();
             builder.Services.AddScoped<IStudentStatusService, StudentStatusService>();
             builder.Services.AddScoped<IStudentService, StudentService>();
+            builder.Services.AddScoped<IAddressService, AddressService>();
 
             // Repo
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();

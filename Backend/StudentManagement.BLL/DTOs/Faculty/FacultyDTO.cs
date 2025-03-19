@@ -5,22 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentManagement.BLL.DTOs
+namespace StudentManagement.BLL.DTOs.Faculty
 {
     /// <summary>
-    /// DTO for Program
+    /// DTO for Faculty
     /// </summary>
-    public class ProgramDTO
+    public class FacultyDTO
     {
         /// <summary>
-        /// Program's id
+        /// Faculty's id
         /// </summary>
         public string? Id { get; set; }
 
+
         /// <summary>
-        /// Program's name
+        /// Faculty's name
         /// </summary>
         [Required(ErrorMessage = "NAME_REQUIRED")]
-        public string? Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

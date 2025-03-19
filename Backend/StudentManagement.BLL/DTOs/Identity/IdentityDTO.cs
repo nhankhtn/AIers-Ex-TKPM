@@ -1,7 +1,7 @@
 ﻿using StudentManagement.Domain.Enums;
 using System;
 
-namespace StudentManagement.Application.DTOs
+namespace StudentManagement.BLL.DTOs.Identity
 {
     public class IdentityDTO
     {
@@ -12,13 +12,13 @@ namespace StudentManagement.Application.DTOs
 
         public DateTime IssueDate { get; set; } // Ngày cấp
 
-        public string? IssuePlace { get; set; }
+        public string IssuePlace { get; set; } = string.Empty;
 
         public DateTime ExpiryDate { get; set; } // Ngày hết hạn
 
-        public string? Country { get; set; } = string.Empty; // Quốc gia cấp
+        public string Country { get; set; } = string.Empty; // Quốc gia cấp
 
-        public bool? IsChip { get; set; } // Có gắn chip hay không (dành cho CCCD)
+        public bool IsChip { get; set; } // Có gắn chip hay không (dành cho CCCD)
 
         public string? Notes { get; set; } // Ghi chú (nếu có)
     }

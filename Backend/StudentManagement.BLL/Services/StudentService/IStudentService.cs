@@ -13,11 +13,11 @@ namespace StudentManagement.BLL.Services.StudentService
 {
     public interface IStudentService
     {
-        Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? key);
+        Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? key);
 
-        Task<Result<AddListStudentResult>> AddListStudentAsync(AddListStudentDTO studentDTO);
+        Task<Result<AddListStudentResult>> AddListStudentAsync(IEnumerable<StudentDTO> studentDTOs);
 
-        Task<Result<StudentDTO>> UpdateStudentAsync(string userId, UpdateStudentDTO studentDTO);
+        Task<Result<StudentDTO>> UpdateStudentAsync(string userId, StudentDTO studentDTO);
 
         Task<Result<StudentDTO>> GetStudentByIdAsync(string studentId);
 

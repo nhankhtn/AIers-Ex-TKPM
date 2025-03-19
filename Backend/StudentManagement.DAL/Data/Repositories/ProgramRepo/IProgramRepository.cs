@@ -10,7 +10,9 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
 {
     public interface IProgramRepository
     {
-        Task<Result<Program?>> GetProgramByIdAsync(int id);
+        Task<Result<Program?>> GetProgramByIdAsync(string id);
+        Task<Result<Program?>> GetProgramByIdAsync(Guid id);
+
 
         Task<Result<Program?>> GetProgramByNameAsync(string name);
 
@@ -19,5 +21,8 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
         Task<Result<Program>> AddProgramAsync(Program program);
 
         Task<Result<Program>> UpdateProgramAsync(Program program);
+
+        Task<Result<Program>> DeleteProgramAsync(Program program);
+
     }
 }

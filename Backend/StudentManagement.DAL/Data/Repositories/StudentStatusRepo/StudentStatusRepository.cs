@@ -51,7 +51,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             }
         }
 
-        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(int id)
+        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(Guid id)
         {
             try
             {
@@ -63,6 +63,8 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 return Result<StudentStatus?>.Fail("GET_STUDENT_STATUS_FAILED", "Failed to fetch student status by ID");
             }
         }
+
+        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(string id) => await GetStudentStatusByIdAsync(Guid.Parse(id));
 
         public async Task<Result<StudentStatus?>> GetStudentStatusByNameAsync(string name)
         {
@@ -103,6 +105,22 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             catch (Exception)
             {
                 return Result<StudentStatus>.Fail("UPDATE_STUDENT_STATUS_FAIL", "Update student status failed");
+            }
+        }
+
+        public async Task<Result<StudentStatus>> DeleteStudentStatusAsync(StudentStatus studentStatus)
+        {
+            try
+            {
+                var existingStudentStatus = await _context.StudentStatuses.Where(s => s.Id == studentStatus.Id || s.Name == studentStatus.Name).FirstOrDefaultAsync();
+                if (existingStudentStatus is null) return Result<StudentStatus>.Fail("FACULTY_NOT_EXIST", "Faculty does not exist");
+                _context.StudentStatuses.Remove(existingStudentStatus);
+                await _context.SaveChangesAsync();
+                return Result<StudentStatus>.Ok(existingStudentStatus);
+            }
+            catch (Exception)
+            {
+                return Result<StudentStatus>.Fail("DELETE_FACULTY_FAILED");
             }
         }
     }

@@ -6,49 +6,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StudentManagement.Domain.Enums;
-using StudentManagement.Application.DTOs;
+using StudentManagement.BLL.DTOs.Identity;
 
 namespace StudentManagement.BLL.DTOs.Students
 {
     public class StudentDTO
     {
         public string? Id { get; set; }
+        public string? Name { get; set; }
 
-        [Required(ErrorMessage = "NAME_REQUIRED")]
-        public string Name { get; set; } = string.Empty;
+        public DateTime? DateOfBirth { get; set; }
 
-
-        [Required(ErrorMessage = "DATE_OF_BIRTH_REQUIRED")]
-        public DateTime DateOfBirth { get; set; }
-
-        [Required(ErrorMessage = "GENDER_REQUIRED")]
-        public int Gender { get; set; }
+        public Gender? Gender { get; set; }
 
         public int? Course { get; set; }
 
-        [RegularExpression(@"^0\d{9,10}$", ErrorMessage = "INVALID_PHONE")]
-        [Required(ErrorMessage = "PHONE_REQUIRED")]
-        public string Phone { get; set; } = string.Empty;
+        public string? Faculty { get; set; }
 
-        [RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "INVALID_EMAIL")]
+        public string? Program { get; set; }
+
+        public string? Status { get; set; }
+
+        public string? Phone { get; set; }
+
         public string? Email { get; set; }
 
         public string? TemporaryAddress { get; set; }
 
-        [Required(ErrorMessage = "MAILING_ADDRESS_REQUIRED")]
-        public string MailingAddress { get; set; } = string.Empty;
+        public string? MailingAddress { get; set; }
 
-        [Required(ErrorMessage = "PERMANENT_ADDRESS_REQUIRED")]
-        public string PermanentAddress { get; set; } = string.Empty;
+        public string? PermanentAddress { get; set; }
 
-        [Required(ErrorMessage = "NATIONALITY_REQUIRED")]
-        public string Nationality { get; set; } = string.Empty;
-
-        public FacultyDTO? Faculty { get; set; }
-
-        public ProgramDTO? Program { get; set; }
-
-        public StudentStatusDTO? Status { get; set; }
+        public string? Nationality { get; set; }
 
         public IdentityDTO? Identity { get; set; }
     }

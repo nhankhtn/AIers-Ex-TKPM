@@ -1,4 +1,5 @@
-﻿using StudentManagement.BLL.DTOs;
+﻿using StudentManagement.BLL.DTOs.Faculty;
+using StudentManagement.BLL.DTOs.Program;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,9 @@ namespace StudentManagement.BLL.Services.ProgramService
         Task<Result<ProgramDTO>> UpdateProgramAsync(string id, ProgramDTO programDTO);
 
         Task<Result<ProgramDTO>> AddProgramAsync(ProgramDTO programDTO);
+
+        Task<Result<ProgramDTO>> DeleteProgramAsync(string key);
+
 
     }
 }

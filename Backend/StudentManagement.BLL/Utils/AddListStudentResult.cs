@@ -13,11 +13,11 @@ namespace StudentManagement.BLL.Utils
         /// <summary>
         /// List of students that are added successfully
         /// </summary>
-        public List<StudentDTO> AcceptableStudent { get; set; } = new List<StudentDTO>();
+        public List<StudentDTO> AcceptableStudents { get; set; } = new List<StudentDTO>();
 
         /// <summary>
         /// List of students that are not added successfully
         /// </summary>
-        public List<StudentDTO> UnacceptableStudent { get; set; } = new List<StudentDTO>();
+        public List<StudentDTO> UnacceptableStudents { get; set; } = new List<StudentDTO>();
     }
 }

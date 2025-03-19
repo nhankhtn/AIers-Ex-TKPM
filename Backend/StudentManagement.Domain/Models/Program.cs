@@ -23,7 +23,6 @@ namespace StudentManagement.Domain.Models
         [Column("id", TypeName = "uniqueidentifier")]
         public Guid Id { get; set; }
 
-        
 
         /// <summary>
         /// Gets or sets the name of the program.
@@ -32,7 +31,6 @@ namespace StudentManagement.Domain.Models
         [Required]
         public string Name { get; set; } = string.Empty;
 
-       
 
         /// <summary>
         /// Gets or sets the collection of students associated with this program.

@@ -8,6 +8,6 @@ namespace StudentManagement.BLL.DTOs.Students
 {
     public class AddListStudentDTO
     {
-        public IEnumerable<AddStudentDTO> Students { get; set; } = new List<AddStudentDTO>();
+        public IEnumerable<StudentDTO> Students { get; set; } = new List<StudentDTO>();
     }
 }

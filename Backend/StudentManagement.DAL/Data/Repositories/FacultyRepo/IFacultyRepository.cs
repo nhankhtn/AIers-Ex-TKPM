@@ -10,7 +10,9 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
 {
     public interface IFacultyRepository
     {
-        Task<Result<Faculty?>> GetFacultyByIdAsync(int id);
+        Task<Result<Faculty?>> GetFacultyByIdAsync(string id);
+        Task<Result<Faculty?>> GetFacultyByIdAsync(Guid id);
+
 
         Task<Result<Faculty?>> GetFacultyByNameAsync(string name);
 
@@ -19,5 +21,7 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
         Task<Result<Faculty>> AddFacultyAsync(Faculty faculty);
 
         Task<Result<Faculty>> UpdateFacultyAsync(Faculty faculty);
+
+        Task<Result<Faculty>> DeleteFacultyAsync(Faculty faculty);
     }
 }

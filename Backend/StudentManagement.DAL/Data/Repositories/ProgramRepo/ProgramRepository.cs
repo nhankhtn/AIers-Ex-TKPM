@@ -53,7 +53,7 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
             }
         }
 
-        public async Task<Result<Program?>> GetProgramByIdAsync(int id)
+        public async Task<Result<Program?>> GetProgramByIdAsync(Guid id)
         {
             try
             {
@@ -65,6 +65,8 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                 return Result<Program?>.Fail("GET_PROGRAM_FAILED", "Failed to fetch program by ID");
             }
         }
+
+        public async Task<Result<Program?>> GetProgramByIdAsync(string id) => await GetProgramByIdAsync(Guid.Parse(id));
 
         public async Task<Result<Program?>> GetProgramByNameAsync(string name)
         {
@@ -106,6 +108,22 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
             catch (Exception)
             {
                 return Result<Program>.Fail("UPDATE_PROGRAM_FAILED", "Update program failed");
+            }
+        }
+
+        public async Task<Result<Program>> DeleteProgramAsync(Program program)
+        {
+            try
+            {
+                var existingProgram = await _context.Programs.Where(p => p.Id == program.Id || p.Name == program.Name).FirstOrDefaultAsync();
+                if (existingProgram is null) return Result<Program>.Fail("FACULTY_NOT_EXIST", "Faculty does not exist");
+                _context.Programs.Remove(existingProgram);
+                await _context.SaveChangesAsync();
+                return Result<Program>.Ok(existingProgram);
+            }
+            catch (Exception)
+            {
+                return Result<Program>.Fail("DELETE_FACULTY_FAILED");
             }
         }
     }
