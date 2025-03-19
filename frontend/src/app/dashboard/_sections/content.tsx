@@ -42,6 +42,10 @@ import SelectFilter from "../_components/select-filter";
 import { CustomTable } from "@/components/custom-table";
 import { getTableConfig } from "./table-config";
 import CustomPagination from "@/components/custom-pagination";
+import DialogManagement from "../_components/dialog-management";
+import { useFaculty } from "./use-faculty";
+import { useProgram } from "./use-program";
+import { useStatus } from "./use-status";
 
 const Content = () => {
   const {
@@ -57,7 +61,30 @@ const Content = () => {
     filterConfig,
     filter,
   } = useDashboardSearch();
-
+  const {
+    dialog: dialogFaculty,
+    getFacultiesApi,
+    deleteFacultyApi,
+    addFacultyApi,
+    updateFacultyApi,
+    faculties,
+  } = useFaculty();
+  const {
+    dialog: dialogProgram,
+    getProgramApi,
+    deleteProgramApi,
+    addProgramApi,
+    updateProgramApi,
+    programs,
+  } = useProgram();
+  const {
+    dialog: dialogStatus,
+    getStatusApi,
+    deleteStatusApi,
+    addStatusApi,
+    updateStatusApi,
+    statuses,
+  } = useStatus();
   const dialogExport = useDialog();
   const dialogImport = useDialog();
   const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
@@ -125,9 +152,9 @@ const Content = () => {
         showSnackbarError("Không có dữ liệu để import");
         return;
       }
-      createStudentsApi.call(studentsImported);
+      // createStudentsApi.call(studentsImported);
     },
-    [createStudentsApi, showSnackbarError]
+    [showSnackbarError]
   );
 
   const hanldeExport = useCallback(
@@ -179,6 +206,7 @@ const Content = () => {
             color='success'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
+            onClick={() => dialogFaculty.handleOpen()}
           >
             Thêm khoa
           </Button>
@@ -187,6 +215,7 @@ const Content = () => {
             color='primary'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
+            onClick={() => dialogProgram.handleOpen()}
           >
             Thêm chương trình
           </Button>
@@ -195,6 +224,7 @@ const Content = () => {
             color='secondary'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
+            onClick={() => dialogStatus.handleOpen()}
           >
             Thêm trạng thái
           </Button>
@@ -279,7 +309,7 @@ const Content = () => {
           </Paper>
         </Stack>
         <Stack width={500}>
-          <SelectFilter
+          {/* <SelectFilter
             configs={filterConfig}
             filter={filter}
             onChange={(key: string, value: string) => {
@@ -288,7 +318,7 @@ const Content = () => {
                 [key]: value,
               }));
             }}
-          />
+          /> */}
         </Stack>
 
         <Stack width={250}>
@@ -302,13 +332,14 @@ const Content = () => {
           />
         </Stack>
       </RowStack>
-      <Stack>
+      <Stack height={300}>
         <CustomTable
           configs={getTableConfig()}
-          rows={[]}
+          rows={students}
           loading={getStudentsApi.loading}
-        />{" "}
-        {[].length > 0 && (
+          emptyState={<Typography>Không có dữ liệu</Typography>}
+        />
+        {students.length > 0 && (
           <CustomPagination
             pagination={pagination}
             justifyContent='end'
@@ -348,6 +379,41 @@ const Content = () => {
         open={dialogImport.open}
         onClose={dialogImport.handleClose}
         onUpload={handleUpload}
+      />
+      {/* <DialogManagement
+        type= {dialogManagement.data || ""}
+        open={dialogManagement.open}
+        onClose={dialogManagement.handleClose}
+      /> */}
+      <DialogManagement
+        type={"faculty"}
+        open={dialogFaculty.open}
+        onClose={dialogFaculty.handleClose}
+        handleAddItem={addFacultyApi.call}
+        handleDeleteItem={deleteFacultyApi.call}
+        handleUpdateItem={updateFacultyApi.call}
+        items={faculties}
+        handleEditItem={(item) => updateFacultyApi.call(item)}
+      />
+      <DialogManagement
+        type={"program"}
+        open={dialogProgram.open}
+        onClose={dialogProgram.handleClose}
+        handleAddItem={addProgramApi.call}
+        handleDeleteItem={deleteProgramApi.call}
+        handleUpdateItem={updateProgramApi.call}
+        items={programs}
+        handleEditItem={(item) => updateProgramApi.call(item)}
+      />
+      <DialogManagement
+        type={"status"}
+        open={dialogStatus.open}
+        onClose={dialogStatus.handleClose}
+        handleAddItem={addStatusApi.call}
+        handleDeleteItem={deleteStatusApi.call}
+        handleUpdateItem={updateStatusApi.call}
+        items={statuses}
+        handleEditItem={(item) => updateStatusApi.call(item)}
       />
     </Box>
   );

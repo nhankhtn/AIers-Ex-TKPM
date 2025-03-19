@@ -6,8 +6,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { useDrag } from "src/hooks/use-drag";
-import { useDebounce } from "src/hooks/use_debounce";
+import { useDrag } from "@/hooks/use-drag";
+import { useDebounce } from "@/hooks/use_debounce";
 
 export const CardTableResizableCell = ({
   log,
@@ -46,7 +46,7 @@ export const CardTableResizableCell = ({
         dragHandlers.onMouseDown(e);
       }
     },
-    [dragHandlers],
+    [dragHandlers]
   );
 
   useEffect(() => {

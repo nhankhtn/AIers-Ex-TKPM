@@ -3,8 +3,8 @@ import { TableCellProps, TableCell, IconButton } from "@mui/material";
 import { Stack } from "@mui/system";
 import { format } from "date-fns";
 import { useState, useCallback, useMemo, ReactNode, useEffect } from "react";
-import useFunction from "src/hooks/use-function";
-import { getObjectValue } from "src/utils/obj-helper";
+import useFunction from "@/hooks/use-function";
+import { getObjectValue } from "@/utils/obj-helper";
 import { CardTableConfig } from "./card-table-types";
 
 export function CardTableCell<P, T extends { id: P; [key: string]: any }>({
@@ -32,7 +32,7 @@ export function CardTableCell<P, T extends { id: P; [key: string]: any }>({
       await onUpdate(value);
       setEditing(false);
     },
-    [onUpdate],
+    [onUpdate]
   );
 
   const handleStartEdit = useCallback(() => {
@@ -50,21 +50,20 @@ export function CardTableCell<P, T extends { id: P; [key: string]: any }>({
     return config.renderCell
       ? config.renderCell(data, handleStartEdit)
       : config.type == "date"
-        ? cellValue
-          ? format(new Date(cellValue), "dd/MM/yyyy")
-          : "--"
-        : config.type == "datetime"
-          ? cellValue
-            ? format(new Date(cellValue), "dd/MM/yyyy HH:mm")
-            : "--"
-          : config.type == "number" || config.type == "float"
-            ? cellValue
-              ? Number(cellValue).toLocaleString("vi-VN", {
-                  maximumFractionDigits: 8,
-                })
-              : "0"
-            : String(cellValue || "--");
-     
+      ? cellValue
+        ? format(new Date(cellValue), "dd/MM/yyyy")
+        : "--"
+      : config.type == "datetime"
+      ? cellValue
+        ? format(new Date(cellValue), "dd/MM/yyyy HH:mm")
+        : "--"
+      : config.type == "number" || config.type == "float"
+      ? cellValue
+        ? Number(cellValue).toLocaleString("vi-VN", {
+            maximumFractionDigits: 8,
+          })
+        : "0"
+      : String(cellValue || "--");
   }, [config, data, handleStartEdit, cellValue]);
 
   useEffect(() => {
@@ -83,7 +82,7 @@ export function CardTableCell<P, T extends { id: P; [key: string]: any }>({
           cellValue || "",
           handleUpdateHelper.call,
           handleCancelEdit,
-          config.type,
+          config.type
         )}
       </TableCell>
     );
@@ -106,14 +105,14 @@ export function CardTableCell<P, T extends { id: P; [key: string]: any }>({
     >
       {config.renderEditingCell ? (
         <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-end"
+          direction='row'
+          alignItems='center'
+          justifyContent='flex-end'
           sx={{ my: -1 }}
         >
           {content}
-          <IconButton onClick={handleStartEdit} color="primary">
-            <Edit fontSize="small" />
+          <IconButton onClick={handleStartEdit} color='primary'>
+            <Edit fontSize='small' />
           </IconButton>
         </Stack>
       ) : (

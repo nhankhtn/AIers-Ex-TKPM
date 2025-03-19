@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Domain.Enums
 {
-    public enum StudentStatus
+    public enum IdentityType
     {
-        Studying,
-        Graduated,
-        Droppedout,
-        Paused
+        CCCD,
+        CMND,
+        Passport
     }
 }

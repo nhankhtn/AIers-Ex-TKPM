@@ -2,7 +2,7 @@ import { StudentApi } from "@/api/students";
 import { useDialog } from "@/hooks/use-dialog";
 import useFunction from "@/hooks/use-function";
 import usePagination from "@/hooks/use-pagination";
-import { mockData, Student, StudentFilter } from "@/types/student";
+import { Student, StudentFilter } from "@/types/student";
 import { useEffect, useMemo, useState } from "react";
 import { getFilterConfig } from "./filter-config";
 import { useSearchParams } from "next/navigation";
@@ -14,7 +14,6 @@ const useDashboardSearch = () => {
     status_name: "",
     faculty_name: "",
   });
-  const students = useMemo(() => mockData, []);
 
   const dialog = useDialog<Student>();
   const dialogConfirmDelete = useDialog<Student>();
@@ -22,6 +21,11 @@ const useDashboardSearch = () => {
   const getStudentsApi = useFunction(StudentApi.getStudents, {
     disableResetOnCall: true,
   });
+
+  const students = useMemo(
+    () => getStudentsApi.data?.data || [],
+    [getStudentsApi.data?.data]
+  );
 
   const pagination = usePagination({
     count: getStudentsApi.data?.total || 0,
@@ -91,7 +95,14 @@ const useDashboardSearch = () => {
       faculty_name: filter.faculty_name,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, pagination.page, pagination.rowsPerPage, filter]);
+  }, [
+    searchParams,
+    pagination.page,
+    pagination.rowsPerPage,
+    filter.key,
+    filter.status_name,
+    filter.faculty_name,
+  ]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);

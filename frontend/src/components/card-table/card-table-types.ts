@@ -1,8 +1,8 @@
 import { TableCellProps, TableProps, CardProps } from "@mui/material";
 import { ReactNode } from "react";
 import { ScrollbarProps } from "../scrollbar";
-import { Selection } from "src/hooks/use-selection";
-import { UsePaginationResult } from "src/hooks/use-pagination";
+import { Selection } from "@/hooks/use-selection";
+import { UsePaginationResult } from "@/hooks/use-pagination";
 
 // Interface for editing cell props, providing flexibility for various data types
 export type CardTableEditCellProps<P, T extends { id: P }> = (
@@ -12,7 +12,7 @@ export type CardTableEditCellProps<P, T extends { id: P }> = (
   initialValue: any, // Initial value before editing
   onUpdate: (value: any) => Promise<any>, // Function to perform update
   onCancel: () => void, // Function to cancel editing
-  type?: "string" | "number" | "date" | "datetime" | "float", // Data type of the cell
+  type?: "string" | "number" | "date" | "datetime" | "float" // Data type of the cell
 ) => ReactNode;
 
 // Interface for configuring table columns
