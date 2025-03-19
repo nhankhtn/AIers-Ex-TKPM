@@ -25,10 +25,9 @@ import {
   Check as CheckIcon,
 } from "@mui/icons-material";
 import useFunction from "@/hooks/use-function";
-interface Item {
-  id: string;
-  name: string;
-}
+import { Faculty, Program, Status } from "@/types/student";
+
+type Item = Status | Program | Faculty;
 
 interface DialogManagementProps {
   open: boolean;
@@ -49,7 +48,6 @@ export default function DialogManagement({
   handleAddItem,
   handleEditItem,
   handleDeleteItem,
-  
 }: DialogManagementProps) {
   const [newItemName, setNewItemName] = useState("");
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -112,13 +110,12 @@ export default function DialogManagement({
     setConfirmDialogOpen(false);
     setItemToDelete(null);
     setItemToEdit(null);
-  }
+  };
   useEffect(() => {
     if (!open) {
       resetAll();
     }
-  }
-  , [open]);
+  }, [open]);
   const handleAddClick = () => {
     if (newItemName.trim() === "") return;
 
@@ -132,7 +129,7 @@ export default function DialogManagement({
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
         <DialogTitle>
           <Box
             sx={{
@@ -142,7 +139,7 @@ export default function DialogManagement({
             }}
           >
             {getTitle()}
-            <IconButton onClick={onClose} size="small">
+            <IconButton onClick={onClose} size='small'>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -167,10 +164,10 @@ export default function DialogManagement({
                     sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}
                   >
                     <TextField
-                      margin="dense"
+                      margin='dense'
                       fullWidth
-                      variant="outlined"
-                      size="small"
+                      variant='outlined'
+                      size='small'
                       value={editingItem.name}
                       onChange={(e) =>
                         setEditingItem({ ...editingItem, name: e.target.value })
@@ -178,11 +175,11 @@ export default function DialogManagement({
                       autoFocus
                     />
                     <IconButton
-                      size="small"
-                      color="success"
+                      size='small'
+                      color='success'
                       onClick={handleSaveEdit}
                     >
-                      <CheckIcon fontSize="small" />
+                      <CheckIcon fontSize='small' />
                     </IconButton>
                   </Box>
                 ) : (
@@ -193,18 +190,18 @@ export default function DialogManagement({
                 {editingItem?.id !== item.id && (
                   <>
                     <IconButton
-                      size="small"
+                      size='small'
                       sx={{ color: "primary.main" }}
                       onClick={() => handleEditClick(item)}
                     >
-                      <EditIcon fontSize="small" />
+                      <EditIcon fontSize='small' />
                     </IconButton>
                     <IconButton
-                      size="small"
+                      size='small'
                       sx={{ color: "error.main" }}
                       onClick={() => handleDeleteClick(item.id)}
                     >
-                      <DeleteIcon fontSize="small" />
+                      <DeleteIcon fontSize='small' />
                     </IconButton>
                   </>
                 )}
@@ -214,7 +211,7 @@ export default function DialogManagement({
           {!newItemName && (
             <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
               <Button
-                variant="outlined"
+                variant='outlined'
                 startIcon={<AddIcon />}
                 onClick={() => setNewItemName("Nhóm mới")}
                 sx={{ width: "100%", maxWidth: 300 }}
@@ -229,20 +226,20 @@ export default function DialogManagement({
             >
               <TextField
                 fullWidth
-                size="small"
-                margin="dense"
-                variant="outlined"
+                size='small'
+                margin='dense'
+                variant='outlined'
                 value={newItemName}
                 onChange={(e) => setNewItemName(e.target.value)}
                 autoFocus
                 sx={{ mb: 2 }}
               />
               <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-                <Button variant="outlined" onClick={() => setNewItemName("")}>
+                <Button variant='outlined' onClick={() => setNewItemName("")}>
                   Hủy
                 </Button>
                 <Button
-                  variant="contained"
+                  variant='contained'
                   onClick={handleAddClick}
                   disabled={!newItemName.trim()}
                 >
@@ -258,7 +255,7 @@ export default function DialogManagement({
       <Dialog
         open={confirmDialogOpen}
         onClose={handleCancelAction}
-        maxWidth="xs"
+        maxWidth='xs'
         fullWidth
       >
         <DialogTitle>
@@ -266,24 +263,25 @@ export default function DialogManagement({
         </DialogTitle>
         <DialogContent>
           {itemToDelete ? (
-            <Alert severity="warning" sx={{ mb: 2 }}>
+            <Alert severity='warning' sx={{ mb: 2 }}>
               Bạn có chắc chắn muốn xóa mục này không? Hành động này không thể
               hoàn tác.
             </Alert>
           ) : (
             <Typography>
-              Bạn có chắc chắn muốn chỉnh sửa mục "{itemToEdit?.name}" không?
+              Bạn có chắc chắn muốn chỉnh sửa mục `&quot;`{itemToEdit?.name}
+              `&quot;` không?
             </Typography>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelAction} color="inherit">
+          <Button onClick={handleCancelAction} color='inherit'>
             Hủy
           </Button>
           <Button
             onClick={itemToDelete ? handleConfirmDelete : handleConfirmEdit}
             color={itemToDelete ? "error" : "primary"}
-            variant="contained"
+            variant='contained'
             autoFocus
           >
             {itemToDelete ? "Xóa" : "Chỉnh sửa"}

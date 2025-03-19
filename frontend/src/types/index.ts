@@ -5,6 +5,10 @@ export type ResponseWithTotal<T = any> = {
   data: T;
 };
 
+export type ResponseWithData<T = any> = {
+  data: T;
+};
+
 export type ResponseWithMessage<T = any> = {
   message: string;
   data: T;

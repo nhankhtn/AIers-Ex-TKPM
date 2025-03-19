@@ -1,5 +1,5 @@
 import { ResponseWithTotal } from "@/types";
-import { Student } from "@/types/student";
+import { Student, StudentFilter } from "@/types/student";
 import {
   apiDelete,
   apiGet,
@@ -8,7 +8,11 @@ import {
   getFormData,
 } from "@/utils/api-request";
 
-export type GetStudentRequest = { page: number; limit: number; key?: string };
+export type GetStudentRequest = {
+  page: number;
+  limit: number;
+  key?: string;
+} & Partial<StudentFilter>;
 export type StudentResponse = ResponseWithTotal<Student[]>;
 
 export class StudentApi {
@@ -16,6 +20,8 @@ export class StudentApi {
     page,
     limit,
     key,
+    status_name,
+    faculty_name,
   }: GetStudentRequest): Promise<StudentResponse> {
     return await apiGet(
       "/students",
@@ -23,6 +29,8 @@ export class StudentApi {
         page,
         limit,
         key,
+        status_name,
+        faculty_name,
       })
     );
   }

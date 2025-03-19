@@ -1,45 +1,51 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useDialog } from "@/hooks/use-dialog";
 import useFunction from "@/hooks/use-function";
-import { ManagementApi } from "@/api/managements";
+import { StatusApi } from "@/api/status";
 
 export const useStatus = () => {
   const dialog = useDialog();
 
-  const getStatusApi = useFunction(ManagementApi.getStatus, {
+  const getStatusApi = useFunction(StatusApi.getStatus, {
     disableResetOnCall: true,
   });
 
+  const statuses = useMemo(
+    () => getStatusApi.data?.data || [],
+    [getStatusApi.data]
+  );
+
   useEffect(() => {
     getStatusApi.call({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const addStatusApi = useFunction(ManagementApi.addStatus, {
+  const addStatusApi = useFunction(StatusApi.addStatus, {
     successMessage: "Thêm trạng thái thành công",
     onSuccess: ({ result }) => {
-      getStatusApi.setData(
-        [...(getStatusApi.data || []), result],
-    );
+      getStatusApi.setData({
+        data: [...(getStatusApi.data?.data || []), result.data],
+      });
     },
   });
 
-  const updateStatusApi = useFunction(ManagementApi.updateStatus, {
+  const updateStatusApi = useFunction(StatusApi.updateStatus, {
     successMessage: "Cập nhật trạng thái thành công",
     onSuccess: ({ result }) => {
-      getStatusApi.setData(
-        (getStatusApi.data || []).map((f) =>
-          f.id === result.id ? result : f
-        )
-      );
+      getStatusApi.setData({
+        data: (getStatusApi.data?.data || []).map((f) =>
+          f.id === result.data.id ? result.data : f
+        ),
+      });
     },
   });
 
-  const deleteStatusApi = useFunction(ManagementApi.deleteStatus, {
+  const deleteStatusApi = useFunction(StatusApi.deleteStatus, {
     successMessage: "Xóa trạng thái thành công",
     onSuccess: ({ payload }) => {
-      getStatusApi.setData(
-        (getStatusApi.data || []).filter((f) => f.id !== payload)
-      );
+      getStatusApi.setData({
+        data: (getStatusApi.data?.data || []).filter((f) => f.id !== payload),
+      });
     },
   });
 
@@ -49,5 +55,6 @@ export const useStatus = () => {
     addStatusApi,
     updateStatusApi,
     deleteStatusApi,
+    statuses,
   };
 };
