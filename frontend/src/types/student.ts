@@ -4,13 +4,24 @@ export interface Student {
   dateOfBirth: string;
   gender: Gender;
   email: string;
-  permanent_address: string;
-  temporary_address?: string;
+  temporaryAddress?: string;
+  permanentAddress: string;
+  mailingAddress?: string;
   faculty: Faculty["id"];
   course: number;
   program: Program["id"];
   phone: string;
   status: Status["id"];
+  identity: {
+    type: number;
+    documentNumber: string;
+    issueDate: Date;
+    issuePlace: string;
+    expiryDate: Date;
+    country: string;
+    isChip: boolean;
+    notes: string;
+  };
 }
 export enum Gender {
   Male,

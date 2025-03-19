@@ -63,14 +63,14 @@ export const CardTableResizableCell = ({
 
   useEffect(() => {
     if (ref.current) {
-      setWidth(Math.max(40, (originWidth.current || 0) + position.x));
+      // setWidth(Math.max(40, (originWidth.current || 0) + position.x));
     }
   }, [position]);
 
   useEffect(() => {
     if (ref.current) {
       originWidth.current = ref.current.getBoundingClientRect().width;
-      setWidth(originWidth.current);
+      // setWidth(originWidth.current);
     }
   }, [props.children]);
 

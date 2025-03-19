@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { mappingFiledStudent, Student } from "@/types/student";
 import {
   Box,
@@ -9,13 +9,9 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Grid2,
   Stack,
 } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
-import Grid from "@mui/material/Grid2";
-import Table from "@/components/table";
-import { StudentCols } from "@/constants";
 import SearchBar from "@/app/dashboard/_components/search-bar";
 import Dialog from "@/app/dashboard/_components/dialog";
 import RowStack from "@/components/row-stack";
@@ -159,34 +155,31 @@ const Content = () => {
 
   const hanldeExport = useCallback(
     async ({ format, rows }: { format: string; rows: number }) => {
-      const data = students.slice(0, rows).map((student) => {
-        const mappedStudent: Record<string, any> = {};
-
-        Object.entries(mappingFiledStudent).forEach(([key, value]) => {
-          mappedStudent[value] = student[key];
-        });
-
-        return mappedStudent;
-      });
-
-      switch (format) {
-        case "csv": {
-          exportToCSV(data, "students");
-          break;
-        }
-        case "excel": {
-          exportToExcel(data, "students");
-          break;
-        }
-        case "pdf": {
-          exportToPDF(data, "students");
-        }
-        default:
-          break;
-      }
-      showSnackbarSuccess("Xuất file thành công");
+      // const data = students.slice(0, rows).map((student) => {
+      //   const mappedStudent: Record<string, any> = {};
+      //   Object.entries(mappingFiledStudent).forEach(([key, value]) => {
+      //     mappedStudent[value] = student[key];
+      //   });
+      //   return mappedStudent;
+      // });
+      // switch (format) {
+      //   case "csv": {
+      //     exportToCSV(data, "students");
+      //     break;
+      //   }
+      //   case "excel": {
+      //     exportToExcel(data, "students");
+      //     break;
+      //   }
+      //   case "pdf": {
+      //     exportToPDF(data, "students");
+      //   }
+      //   default:
+      //     break;
+      // }
+      // showSnackbarSuccess("Xuất file thành công");
     },
-    [students, showSnackbarSuccess]
+    []
   );
 
   return (
@@ -309,16 +302,16 @@ const Content = () => {
           </Paper>
         </Stack>
         <Stack width={500}>
-          {/* <SelectFilter
+          <SelectFilter
             configs={filterConfig}
-            filter={filter}
+            filter={filter as any}
             onChange={(key: string, value: string) => {
               setFilter((prev) => ({
                 ...prev,
                 [key]: value,
               }));
             }}
-          /> */}
+          />
         </Stack>
 
         <Stack width={250}>
@@ -357,6 +350,9 @@ const Content = () => {
         onClose={dialog.handleClose}
         addStudent={handleAddStudent}
         updateStudent={handleUpdateStudent}
+        faculties={faculties}
+        programs={programs}
+        statuses={statuses}
       />
       {dialogConfirmDelete.data && (
         <DialogConfirmDelete
@@ -380,11 +376,6 @@ const Content = () => {
         onClose={dialogImport.handleClose}
         onUpload={handleUpload}
       />
-      {/* <DialogManagement
-        type= {dialogManagement.data || ""}
-        open={dialogManagement.open}
-        onClose={dialogManagement.handleClose}
-      /> */}
       <DialogManagement
         type={"faculty"}
         open={dialogFaculty.open}

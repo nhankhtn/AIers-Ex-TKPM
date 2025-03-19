@@ -16,7 +16,13 @@ import {
   FormHelperText,
   Autocomplete,
 } from "@mui/material";
-import { Faculty, Gender, Status, Student } from "../../../types/student";
+import {
+  Faculty,
+  Gender,
+  Program,
+  Status,
+  Student,
+} from "../../../types/student";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Address } from "@/types/address";
@@ -29,6 +35,9 @@ interface DialogProps {
   onClose: () => void;
   addStudent: (student: Student) => void;
   updateStudent: (student: Student) => void;
+  faculties: Faculty[];
+  statuses: Status[];
+  programs: Program[];
 }
 
 function Dialog({
@@ -37,6 +46,9 @@ function Dialog({
   onClose,
   addStudent,
   updateStudent,
+  faculties,
+  statuses,
+  programs,
 }: DialogProps) {
   const getCountriesApi = useFunction(AddressApi.getCountries);
   const getProvincesApi = useFunction(AddressApi.getProvinces);
@@ -49,6 +61,8 @@ function Dialog({
     if (open) {
       getCountriesApi.call({});
       getProvincesApi.call({});
+    } else {
+      formik.resetForm();
     }
     //  eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -72,34 +86,12 @@ function Dialog({
     [getWardOfDistrictApi.data]
   );
 
-  const parseAddress = useCallback((addressString: string): Address => {
-    try {
-      if (addressString) {
-        const addressObj = JSON.parse(addressString);
-        return {
-          province: addressObj.province || "",
-          district: addressObj.district || "",
-          ward: addressObj.ward || "",
-          street: addressObj.detail || "",
-          country: "Việt Nam",
-        };
-      }
-    } catch (e) {}
-    return {
-      province: "",
-      district: "",
-      ward: "",
-      street: "",
-      country: "",
-    };
-  }, []);
-
   const initialAddress = useMemo(
     () =>
-      student?.address
-        ? parseAddress(student.address)
+      student?.permanentAddress
+        ? JSON.parse(student.permanentAddress)
         : { province: "", district: "", ward: "", street: "", country: "" },
-    [student, parseAddress]
+    [student]
   );
 
   const formik = useFormik({
@@ -114,11 +106,21 @@ function Dialog({
       ward: initialAddress.ward,
       street: initialAddress.street,
       country: initialAddress.country,
-      faculty: student?.faculty.name || "",
+      faculty: faculties.find((f) => f.id === student?.faculty)?.name || "",
       course: student?.course || 0,
-      program: student?.program.name || "",
+      program: programs.find((p) => p.id === student?.program)?.name || "",
       phone: student?.phone || "",
-      status: student?.status.name || "",
+      status: statuses.find((s) => s.id === student?.status)?.name || "",
+      identity: {
+        type: student?.identity.type || 0,
+        documentNumber: student?.identity.documentNumber || "",
+        issueDate: student?.identity.issueDate || new Date(),
+        issuePlace: student?.identity.issuePlace || "",
+        expiryDate: student?.identity.expiryDate || new Date(),
+        country: student?.identity.country || "",
+        isChip: !!student?.identity.isChip,
+        notes: student?.identity.notes || "",
+      },
     },
     enableReinitialize: true,
     validationSchema: Yup.object().shape({
@@ -145,12 +147,12 @@ function Dialog({
           updateStudent({
             ...student,
             ...values,
-            address: JSON.stringify(addressObject),
+            permanentAddress: JSON.stringify(addressObject),
           });
         } else {
           addStudent({
             ...values,
-            address: JSON.stringify(addressObject),
+            permanentAddress: JSON.stringify(addressObject),
           });
         }
       } catch (e) {
@@ -158,13 +160,6 @@ function Dialog({
       }
     },
   });
-
-  useEffect(() => {
-    if (!open) {
-      formik.resetForm();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
 
   useEffect(() => {
     if (formik.values.province) {
@@ -279,7 +274,7 @@ function Dialog({
           >
             <FormControl
               fullWidth
-              error={formik.touched.province && Boolean(formik.errors.province)}
+              error={formik.touched.country && Boolean(formik.errors.province)}
             >
               <InputLabel>Quốc gia</InputLabel>
               <Select
@@ -293,8 +288,8 @@ function Dialog({
                   </MenuItem>
                 ))}
               </Select>
-              {formik.touched.province && formik.errors.province && (
-                <FormHelperText>{formik.errors.province}</FormHelperText>
+              {formik.touched.country && formik.errors.country && (
+                <FormHelperText>{String(formik.errors.country)}</FormHelperText>
               )}
             </FormControl>
           </Grid2>
@@ -332,7 +327,7 @@ function Dialog({
                       formik.touched.province && Boolean(formik.errors.province)
                     }
                     helperText={
-                      formik.touched.province && formik.errors.province
+                      formik.touched.province && String(formik.errors.province)
                     }
                   />
                 )}
@@ -374,7 +369,7 @@ function Dialog({
                       formik.touched.district && Boolean(formik.errors.district)
                     }
                     helperText={
-                      formik.touched.district && formik.errors.district
+                      formik.touched.district && String(formik.errors.district)
                     }
                   />
                 )}
@@ -407,7 +402,9 @@ function Dialog({
                     label='Phường/Xã'
                     variant='outlined'
                     error={formik.touched.ward && Boolean(formik.errors.ward)}
-                    helperText={formik.touched.ward && formik.errors.ward}
+                    helperText={
+                      formik.touched.ward && String(formik.errors.ward)
+                    }
                   />
                 )}
               />
@@ -423,7 +420,7 @@ function Dialog({
               placeholder='Ví dụ: Tổ 2, thôn Vĩnh Xuân'
               {...formik.getFieldProps("addressDetail")}
               error={formik.touched.street && Boolean(formik.errors.street)}
-              helperText={formik.touched.street && formik.errors.street}
+              helperText={formik.touched.street && String(formik.errors.street)}
             />
           </Grid2>
         </Grid2>
@@ -444,12 +441,11 @@ function Dialog({
                 variant='outlined'
                 {...formik.getFieldProps("faculty")}
               >
-                <MenuItem value={Faculty.Law}>Khoa Luật</MenuItem>
-                <MenuItem value={Faculty.BusinessEnglish}>
-                  Khoa Tiếng Anh thương mại
-                </MenuItem>
-                <MenuItem value={Faculty.Japanese}>Khoa Tiếng Nhật</MenuItem>
-                <MenuItem value={Faculty.French}>Khoa Tiếng Pháp</MenuItem>
+                {faculties.map((faculty) => (
+                  <MenuItem key={faculty.id} value={faculty.name}>
+                    {faculty.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid2>
@@ -505,10 +501,11 @@ function Dialog({
                 variant='outlined'
                 {...formik.getFieldProps("status")}
               >
-                <MenuItem value={Status.Studying}>Đang học</MenuItem>
-                <MenuItem value={Status.Graduated}>Đã tốt nghiệp</MenuItem>
-                <MenuItem value={Status.Droppedout}>Đã thôi học</MenuItem>
-                <MenuItem value={Status.Paused}>Tạm dừng học</MenuItem>
+                {statuses.map((status) => (
+                  <MenuItem key={status.id} value={status.name}>
+                    {status.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid2>

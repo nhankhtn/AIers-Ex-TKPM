@@ -1,3 +1,5 @@
+"use client";
+
 import { StudentApi } from "@/api/students";
 import { useDialog } from "@/hooks/use-dialog";
 import useFunction from "@/hooks/use-function";
@@ -5,10 +7,14 @@ import usePagination from "@/hooks/use-pagination";
 import { Student, StudentFilter } from "@/types/student";
 import { useEffect, useMemo, useState } from "react";
 import { getFilterConfig } from "./filter-config";
-import { useSearchParams } from "next/navigation";
+import { useFaculty } from "./use-faculty";
+import { useStatus } from "./use-status";
+import { useProgram } from "./use-program";
+import { normalizeString } from "@/utils/string-helper";
 
 const useDashboardSearch = () => {
-  const searchParams = useSearchParams();
+  const { faculties } = useFaculty();
+  const { statuses } = useStatus();
   const [filter, setFilter] = useState<StudentFilter>({
     key: "",
     status_name: "",
@@ -77,6 +83,7 @@ const useDashboardSearch = () => {
   });
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
     const key = searchParams.get("key");
     const status_name = searchParams.get("status_name");
     const faculty_name = searchParams.get("faculty_name");
@@ -96,7 +103,6 @@ const useDashboardSearch = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    searchParams,
     pagination.page,
     pagination.rowsPerPage,
     filter.key,
@@ -124,44 +130,20 @@ const useDashboardSearch = () => {
         value: "",
         label: "Tất cả",
       },
-      {
-        value: "studying",
-        label: "Đang học",
-      },
-      {
-        value: "graduated",
-        label: "Đã tốt nghiệp",
-      },
-      {
-        value: "droppedout",
-        label: "Đã thôi học",
-      },
-      {
-        value: "paused",
-        label: "Tạm dừng",
-      },
+      ...statuses.map((s) => ({
+        value: normalizeString(s.name),
+        label: s.name,
+      })),
     ],
     faculty: [
       {
         value: "",
         label: "Tất cả",
       },
-      {
-        value: "law",
-        label: "Luật",
-      },
-      {
-        value: "business_english",
-        label: "Tiếng Anh Kinh doanh",
-      },
-      {
-        value: "japanese",
-        label: "Tiếng Nhật",
-      },
-      {
-        value: "grench",
-        label: "Tiếng Pháp",
-      },
+      ...faculties.map((s) => ({
+        value: normalizeString(s.name),
+        label: s.name,
+      })),
     ],
   });
 

@@ -20,10 +20,10 @@ import { CardTableCell } from "./card-table-cell";
 import { CardTableProps, CardTableSortModel } from "./card-table-types";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { isValid } from "date-fns";
-import { getObjectValue } from "src/utils/obj-helper";
+import { getObjectValue } from "@/utils/obj-helper";
 
 export function CardTable<P, T extends { id: P; [key: string]: any }>(
-  props: CardTableProps<P, T>,
+  props: CardTableProps<P, T>
 ) {
   const {
     rows,
@@ -82,7 +82,7 @@ export function CardTable<P, T extends { id: P; [key: string]: any }>(
     return pagination
       ? sortedRows.slice(
           pagination.rowsPerPage * pagination.page,
-          pagination.rowsPerPage * (pagination.page + 1),
+          pagination.rowsPerPage * (pagination.page + 1)
         )
       : sortedRows;
   }, [pagination, sortedRows]);
@@ -98,7 +98,7 @@ export function CardTable<P, T extends { id: P; [key: string]: any }>(
         });
       }
     },
-    [sortModel?.direction, sortModel?.key],
+    [sortModel?.direction, sortModel?.key]
   );
 
   useEffect(() => {
@@ -148,7 +148,7 @@ export function CardTable<P, T extends { id: P; [key: string]: any }>(
                       onClick={(e) => e.stopPropagation()}
                       {...cellProps}
                     >
-                      <Stack direction="row" gap={1} alignItems="center">
+                      <Stack direction='row' gap={1} alignItems='center'>
                         {select && (
                           <Checkbox
                             sx={{ my: -1, mx: -0.5 }}
@@ -163,7 +163,7 @@ export function CardTable<P, T extends { id: P; [key: string]: any }>(
                         {indexColumn && <>{index + 1}</>}
                         {row.error && (
                           <Tooltip title={row.error}>
-                            <Warning color="error" />
+                            <Warning color='error' />
                           </Tooltip>
                         )}
                       </Stack>
@@ -186,12 +186,12 @@ export function CardTable<P, T extends { id: P; [key: string]: any }>(
                     onClickEdit ||
                     renderRowActions) && (
                     <TableCell
-                      align="right"
+                      align='right'
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Stack
-                        direction="row"
-                        justifyContent="flex-end"
+                        direction='row'
+                        justifyContent='flex-end'
                         my={-0.5}
                       >
                         {renderRowActions?.(row, index)}
@@ -199,7 +199,7 @@ export function CardTable<P, T extends { id: P; [key: string]: any }>(
                           <IconButton onClick={() => onClickEdit(row, index)}>
                             <Edit
                               sx={{ height: "20px", width: "20px" }}
-                              color="primary"
+                              color='primary'
                             />
                           </IconButton>
                         )}
@@ -207,16 +207,16 @@ export function CardTable<P, T extends { id: P; [key: string]: any }>(
                           <IconButton onClick={() => onClickDelete(row, index)}>
                             <Delete
                               sx={{ height: "20px", width: "20px" }}
-                              color="error"
+                              color='error'
                             />
                           </IconButton>
                         )}
                         {onClickDetail && (
                           <Button
-                            variant="outlined"
-                            color="primary"
+                            variant='outlined'
+                            color='primary'
                             onClick={() => onClickDetail(row, index)}
-                            size="small"
+                            size='small'
                           >
                             Chi tiết
                           </Button>
@@ -238,21 +238,21 @@ export function CardTable<P, T extends { id: P; [key: string]: any }>(
           marginTop={-12}
           height={104}
           width={"100%"}
-          alignItems="center"
-          justifyContent="center"
-          position="sticky"
+          alignItems='center'
+          justifyContent='center'
+          position='sticky'
           left={0}
         >
           {loading ? (
             <CircularProgress />
           ) : (
-            <Typography variant="subtitle1">Không có dữ liệu</Typography>
+            <Typography variant='subtitle1'>Không có dữ liệu</Typography>
           )}
         </Stack>
       )}
       {pagination && !hidePagination && (
         <TablePagination
-          component="div"
+          component='div'
           {...pagination}
           count={pagination.count}
           rowsPerPageOptions={[5, 10, 25]}

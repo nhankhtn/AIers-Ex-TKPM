@@ -63,7 +63,7 @@ export const getTableConfig = (): CustomTableConfig<
     headerLabel: "Địa chị thường trú",
     type: "string",
     renderCell: (data) => (
-      <Typography variant='body2'>{data.permanent_address}</Typography>
+      <Typography variant='body2'>{data.permanentAddress}</Typography>
     ),
   },
   {
@@ -72,7 +72,7 @@ export const getTableConfig = (): CustomTableConfig<
     type: "string",
     renderCell: (data) => (
       <Typography variant='body2'>
-        {data.temporary_address || "Trống"}
+        {data.temporaryAddress || "Trống"}
       </Typography>
     ),
   },

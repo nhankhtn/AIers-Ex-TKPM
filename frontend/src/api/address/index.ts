@@ -6,7 +6,7 @@ const API_COUNTRY = process.env.NEXT_PUBLIC_API_COUNTRY;
 
 export class AddressApi {
   static async getProvinces(): Promise<Province[]> {
-    return await apiGet(`${API_PROVINCE}/provinces`);
+    return await apiGet(`/provinces`);
   }
 
   static async getDistrictOfProvinces({
@@ -16,7 +16,7 @@ export class AddressApi {
     province_code: number;
     depth?: number;
   }): Promise<Province> {
-    return await apiGet(`${API_PROVINCE}/districts/${province_code}`, {
+    return await apiGet(`/districts/${province_code}`, {
       depth,
     });
   }
@@ -28,12 +28,12 @@ export class AddressApi {
     district_code: number;
     depth?: number;
   }): Promise<District> {
-    return await apiGet(`${API_PROVINCE}/wards/${district_code}`, {
+    return await apiGet(`/wards/${district_code}`, {
       depth,
     });
   }
 
   static async getCountries(): Promise<Country[]> {
-    return await apiGet(`${API_PROVINCE}/countries`);
+    return await apiGet(`/countries`);
   }
 }
