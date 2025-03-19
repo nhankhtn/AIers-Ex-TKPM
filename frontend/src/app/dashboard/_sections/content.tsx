@@ -36,6 +36,10 @@ import { useDialog } from "@/hooks/use-dialog";
 import DialogExportFile from "../_components/dialog-export-file";
 import DialogImportFile from "../_components/dialog-import-file";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
+import DialogManagement from "../_components/dialog-management";
+import { useFaculty } from "./use-faculty";
+import { useProgram } from "./use-program";
+import { useStatus } from "./use-status";
 
 const Content = () => {
   const {
@@ -49,7 +53,27 @@ const Content = () => {
     setFilter,
     pagination,
   } = useDashboardSearch();
-
+  const {
+    dialog : dialogFaculty,
+    getFacultiesApi,
+    deleteFacultyApi,
+    addFacultyApi,
+    updateFacultyApi,
+  } = useFaculty();
+  const {
+    dialog: dialogProgram,
+    getProgramApi,
+    deleteProgramApi,
+    addProgramApi,
+    updateProgramApi
+  }= useProgram();
+  const {
+    dialog: dialogStatus,
+    getStatusApi,
+    deleteStatusApi,
+    addStatusApi,
+    updateStatusApi
+  }= useStatus();
   const dialogExport = useDialog();
   const dialogImport = useDialog();
   const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
@@ -172,6 +196,7 @@ const Content = () => {
             color='success'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
+            onClick={() => dialogFaculty.handleOpen()}
           >
             Thêm khoa
           </Button>
@@ -180,6 +205,8 @@ const Content = () => {
             color='primary'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
+            onClick={() => dialogProgram.handleOpen()}
+           
           >
             Thêm chương trình
           </Button>
@@ -188,6 +215,7 @@ const Content = () => {
             color='secondary'
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
+            onClick={() => dialogStatus.handleOpen()}
           >
             Thêm trạng thái
           </Button>
@@ -324,6 +352,41 @@ const Content = () => {
         open={dialogImport.open}
         onClose={dialogImport.handleClose}
         onUpload={handleUpload}
+      />
+      {/* <DialogManagement
+        type= {dialogManagement.data || ""}
+        open={dialogManagement.open}
+        onClose={dialogManagement.handleClose}
+      /> */}
+      <DialogManagement
+        type= {"faculty"}
+        open={dialogFaculty.open}
+        onClose={dialogFaculty.handleClose}
+        handleAddItem={addFacultyApi.call}
+        handleDeleteItem={deleteFacultyApi.call}
+        handleUpdateItem={updateFacultyApi.call}
+        items={getFacultiesApi.data || []}
+        handleEditItem={(item) => updateFacultyApi.call(item)}
+      />
+      <DialogManagement
+        type= {"program"}
+        open={dialogProgram.open}
+        onClose={dialogProgram.handleClose}
+        handleAddItem={addProgramApi.call}
+        handleDeleteItem={deleteProgramApi.call}
+        handleUpdateItem={updateProgramApi.call}
+        items={getProgramApi.data || []}
+        handleEditItem={(item) => updateProgramApi.call(item)}
+      />
+      <DialogManagement
+        type= {"status"}
+        open={dialogStatus.open}
+        onClose={dialogStatus.handleClose}
+        handleAddItem={addStatusApi.call}
+        handleDeleteItem={deleteStatusApi.call}
+        handleUpdateItem={updateStatusApi.call}
+        items={getStatusApi.data || []}
+        handleEditItem={(item) => updateStatusApi.call(item)}
       />
     </Box>
   );
