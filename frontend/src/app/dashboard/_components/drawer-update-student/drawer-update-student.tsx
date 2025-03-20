@@ -109,6 +109,7 @@ function DrawerUpdateStudent({
 
   const handleSubmit = useCallback(
     async (values: any) => {
+      onClose();
       const permanentAddress = {
         country: values.permanentCountry,
         province: values.permanentProvince,
@@ -181,7 +182,7 @@ function DrawerUpdateStudent({
         await addStudent(studentData);
       }
     },
-    [updateStudent, addStudent, student]
+    [updateStudent, addStudent, student, onClose]
   );
 
   const formik = useFormik({
