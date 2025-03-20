@@ -11,8 +11,8 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
     public interface IFacultyRepository
     {
         Task<Result<Faculty?>> GetFacultyByIdAsync(string id);
-        Task<Result<Faculty?>> GetFacultyByIdAsync(Guid id);
 
+        Task<Result<Faculty?>> GetFacultyByIdAsync(Guid id);
 
         Task<Result<Faculty?>> GetFacultyByNameAsync(string name);
 

@@ -24,18 +24,6 @@ namespace StudentManagement.DAL.Data
         public DbSet<Identity> Identities { get; set; }
         public DbSet<AuditEntry> AuditEntries { get; set; }
 
-        public override int SaveChanges()
-        {
-            try
-            {
-                return base.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new DbUpdateException(ex.Message, ex);
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
