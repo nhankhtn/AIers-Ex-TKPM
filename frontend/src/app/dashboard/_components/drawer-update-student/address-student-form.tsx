@@ -209,7 +209,7 @@ const AddressStudentForm = ({
                 }
                 helperText={
                   formik.touched.permanentProvince &&
-                  String(formik.errors.permanentProvince)
+                  String(formik.errors.permanentProvince || "")
                 }
               />
             )}
@@ -248,7 +248,7 @@ const AddressStudentForm = ({
                 }
                 helperText={
                   formik.touched.permanentDistrict &&
-                  String(formik.errors.permanentDistrict)
+                  String(formik.errors.permanentDistrict || "")
                 }
               />
             )}
@@ -285,7 +285,7 @@ const AddressStudentForm = ({
                 }
                 helperText={
                   formik.touched.permanentWard &&
-                  String(formik.errors.permanentWard)
+                  String(formik.errors.permanentWard || "")
                 }
               />
             )}
@@ -305,7 +305,7 @@ const AddressStudentForm = ({
             }
             helperText={
               formik.touched.permanentDetail &&
-              String(formik.errors.permanentDetail)
+              String(formik.errors.permanentDetail || "")
             }
           />
         </Grid2>
@@ -400,7 +400,7 @@ const AddressStudentForm = ({
                     }
                     helperText={
                       formik.touched.temporaryProvince &&
-                      String(formik.errors.temporaryProvince)
+                      String(formik.errors.temporaryProvince || "")
                     }
                   />
                 )}
@@ -439,7 +439,7 @@ const AddressStudentForm = ({
                     }
                     helperText={
                       formik.touched.temporaryDistrict &&
-                      String(formik.errors.temporaryDistrict)
+                      String(formik.errors.temporaryDistrict || "")
                     }
                   />
                 )}
@@ -471,7 +471,7 @@ const AddressStudentForm = ({
                     }
                     helperText={
                       formik.touched.temporaryWard &&
-                      String(formik.errors.temporaryWard)
+                      String(formik.errors.temporaryWard || "")
                     }
                   />
                 )}
@@ -491,7 +491,7 @@ const AddressStudentForm = ({
                 }
                 helperText={
                   formik.touched.temporaryDetail &&
-                  String(formik.errors.temporaryDetail)
+                  String(formik.errors.temporaryDetail || "")
                 }
               />
             </Grid2>
@@ -588,7 +588,7 @@ const AddressStudentForm = ({
                     }
                     helperText={
                       formik.touched.mailingProvince &&
-                      String(formik.errors.mailingProvince)
+                      String(formik.errors.mailingProvince || "")
                     }
                   />
                 )}
@@ -627,7 +627,7 @@ const AddressStudentForm = ({
                     }
                     helperText={
                       formik.touched.mailingDistrict &&
-                      String(formik.errors.mailingDistrict)
+                      String(formik.errors.mailingDistrict || "")
                     }
                   />
                 )}
@@ -664,7 +664,7 @@ const AddressStudentForm = ({
                     }
                     helperText={
                       formik.touched.mailingWard &&
-                      String(formik.errors.mailingWard)
+                      String(formik.errors.mailingWard || "")
                     }
                   />
                 )}
@@ -684,7 +684,7 @@ const AddressStudentForm = ({
                 }
                 helperText={
                   formik.touched.mailingDetail &&
-                  String(formik.errors.mailingDetail)
+                  String(formik.errors.mailingDetail || "")
                 }
               />
             </Grid2>
