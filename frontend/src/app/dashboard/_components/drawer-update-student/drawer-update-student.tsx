@@ -12,6 +12,7 @@ import {
   Drawer,
   Stack,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import {
   Faculty,
@@ -32,8 +33,8 @@ interface DrawerUpdateStudentProps {
   student: Student | null;
   open: boolean;
   onClose: () => void;
-  addStudent: (student: Student) => void;
-  updateStudent: (student: Student) => void;
+  addStudent: (student: Student) => Promise<void>;
+  updateStudent: (student: Student) => Promise<void>;
   faculties: Faculty[];
   statuses: Status[];
   programs: Program[];
@@ -83,7 +84,7 @@ function DrawerUpdateStudent({
   const parseAddress = (addressString?: string) => {
     if (!addressString)
       return {
-        country: "Việt Nam",
+        country: "Vietnam",
         province: "",
         district: "",
         ward: "",
@@ -93,7 +94,7 @@ function DrawerUpdateStudent({
       return JSON.parse(addressString);
     } catch (e) {
       return {
-        country: "Việt Nam",
+        country: "Vietnam",
         province: "",
         district: "",
         ward: "",
@@ -106,78 +107,82 @@ function DrawerUpdateStudent({
   const temporaryAddress = parseAddress(student?.temporaryAddress);
   const mailingAddress = parseAddress(student?.mailingAddress);
 
-  const handleSubmit = useCallback((values: any) => {
-    const permanentAddress = {
-      country: values.permanentCountry,
-      province: values.permanentProvince,
-      district: values.permanentDistrict,
-      ward: values.permanentWard,
-      detail: values.permanentDetail,
-    };
-
-    // Optional addresses
-    let temporaryAddress;
-    if (values.useTemporaryAddress) {
-      temporaryAddress = {
-        country: values.temporaryCountry,
-        province: values.temporaryProvince,
-        district: values.temporaryDistrict,
-        ward: values.temporaryWard,
-        detail: values.temporaryDetail,
+  const handleSubmit = useCallback(
+    async (values: any) => {
+      const permanentAddress = {
+        country: values.permanentCountry,
+        province: values.permanentProvince,
+        district: values.permanentDistrict,
+        ward: values.permanentWard,
+        detail: values.permanentDetail,
       };
-    }
 
-    let mailingAddress;
-    if (values.useMailingAddress) {
-      mailingAddress = {
-        country: values.mailingCountry,
-        province: values.mailingProvince,
-        district: values.mailingDistrict,
-        ward: values.mailingWard,
-        detail: values.mailingDetail,
+      // Optional addresses
+      let temporaryAddress;
+      if (values.useTemporaryAddress) {
+        temporaryAddress = {
+          country: values.temporaryCountry,
+          province: values.temporaryProvince,
+          district: values.temporaryDistrict,
+          ward: values.temporaryWard,
+          detail: values.temporaryDetail,
+        };
+      }
+
+      let mailingAddress;
+      if (values.useMailingAddress) {
+        mailingAddress = {
+          country: values.mailingCountry,
+          province: values.mailingProvince,
+          district: values.mailingDistrict,
+          ward: values.mailingWard,
+          detail: values.mailingDetail,
+        };
+      }
+
+      // Construct identity object
+      const identity = {
+        type: values.identityType,
+        documentNumber: values.identityDocumentNumber,
+        issueDate: new Date(values.identityIssueDate),
+        issuePlace: values.identityIssuePlace,
+        expiryDate: new Date(values.identityExpiryDate),
+        country: values.identityCountry,
+        isChip: values.identityIsChip,
+        notes: values.identityNotes,
       };
-    }
 
-    // Construct identity object
-    const identity = {
-      type: values.identityType,
-      documentNumber: values.identityDocumentNumber,
-      issueDate: new Date(values.identityIssueDate),
-      issuePlace: values.identityIssuePlace,
-      expiryDate: new Date(values.identityExpiryDate),
-      country: values.identityCountry,
-      isChip: values.identityIsChip,
-      notes: values.identityNotes,
-    };
+      // Construct student object
+      const studentData: Student = {
+        id: values.id,
+        name: values.name,
+        dateOfBirth: values.dateOfBirth,
+        gender: values.gender,
+        email: values.email,
+        permanentAddress: JSON.stringify(permanentAddress),
+        temporaryAddress: values.useTemporaryAddress
+          ? JSON.stringify(temporaryAddress)
+          : "",
+        mailingAddress: values.useMailingAddress
+          ? JSON.stringify(mailingAddress)
+          : "",
+        faculty: values.faculty,
+        course: values.course,
+        program: values.program,
+        phone: values.phone,
+        status: values.status,
+        identity: identity,
+        nationality: values.nationality,
+      };
 
-    // Construct student object
-    const studentData: Student = {
-      id: values.id,
-      name: values.name,
-      dateOfBirth: values.dateOfBirth,
-      gender: values.gender,
-      email: values.email,
-      permanentAddress: JSON.stringify(permanentAddress),
-      temporaryAddress: values.useTemporaryAddress
-        ? JSON.stringify(temporaryAddress)
-        : undefined,
-      mailingAddress: values.useMailingAddress
-        ? JSON.stringify(mailingAddress)
-        : undefined,
-      faculty: values.faculty,
-      course: values.course,
-      program: values.program,
-      phone: values.phone,
-      status: values.status,
-      identity: identity,
-    };
-
-    if (student) {
-      updateStudent(studentData);
-    } else {
-      addStudent(studentData);
-    }
-  }, []);
+      if (student) {
+        await updateStudent(studentData);
+      } else {
+        await addStudent(studentData);
+      }
+    },
+    [updateStudent, addStudent, student]
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -188,7 +193,7 @@ function DrawerUpdateStudent({
       email: student?.email || "",
 
       // Permanent address
-      permanentCountry: permanentAddress.country || "Việt Nam",
+      permanentCountry: permanentAddress.country || "Vietnam",
       permanentProvince: permanentAddress.province || "",
       permanentDistrict: permanentAddress.district || "",
       permanentWard: permanentAddress.ward || "",
@@ -196,7 +201,7 @@ function DrawerUpdateStudent({
 
       // Temporary address
       useTemporaryAddress: !!student?.temporaryAddress,
-      temporaryCountry: temporaryAddress.country || "Việt Nam",
+      temporaryCountry: temporaryAddress.country || "Vietnam",
       temporaryProvince: temporaryAddress.province || "",
       temporaryDistrict: temporaryAddress.district || "",
       temporaryWard: temporaryAddress.ward || "",
@@ -204,7 +209,7 @@ function DrawerUpdateStudent({
 
       // Mailing address
       useMailingAddress: !!student?.mailingAddress,
-      mailingCountry: mailingAddress.country || "Việt Nam",
+      mailingCountry: mailingAddress.country || "Vietnam",
       mailingProvince: mailingAddress.province || "",
       mailingDistrict: mailingAddress.district || "",
       mailingWard: mailingAddress.ward || "",
@@ -223,15 +228,15 @@ function DrawerUpdateStudent({
       identityIssueDate: student?.identity.issueDate || new Date(),
       identityIssuePlace: student?.identity.issuePlace || "",
       identityExpiryDate: student?.identity.expiryDate || new Date(),
-      identityCountry: student?.identity.country || "",
+      identityCountry: student?.identity.country || "Vietnam",
       identityIsChip: !!student?.identity.isChip,
       identityNotes: student?.identity.notes || "",
+      nationlity: student?.nationality || "Vietnam",
     },
     // enableReinitialize: true,
     validationSchema: validationStudent,
     onSubmit: handleSubmit,
   });
-
   return (
     <Drawer
       open={open}
@@ -284,7 +289,9 @@ function DrawerUpdateStudent({
               variant='outlined'
               {...formik.getFieldProps("name")}
               error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
+              helperText={
+                formik.touched.name && String(formik.errors.name || "")
+              }
             />
           </Grid2>
           <Grid2
@@ -301,13 +308,15 @@ function DrawerUpdateStudent({
               variant='outlined'
               {...formik.getFieldProps("email")}
               error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
+              helperText={
+                formik.touched.email && String(formik.errors.email || "")
+              }
             />
           </Grid2>
           <Grid2
             size={{
               xs: 12,
-              md: 4,
+              md: 6,
             }}
           >
             <TextField
@@ -322,14 +331,15 @@ function DrawerUpdateStudent({
                 formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)
               }
               helperText={
-                formik.touched.dateOfBirth && formik.errors.dateOfBirth
+                formik.touched.dateOfBirth &&
+                String(formik.errors.dateOfBirth || "")
               }
             />
           </Grid2>
           <Grid2
             size={{
               xs: 12,
-              md: 4,
+              md: 6,
             }}
           >
             <FormControl fullWidth>
@@ -348,7 +358,7 @@ function DrawerUpdateStudent({
           <Grid2
             size={{
               xs: 12,
-              md: 4,
+              md: 6,
             }}
           >
             <TextField
@@ -358,8 +368,31 @@ function DrawerUpdateStudent({
               variant='outlined'
               {...formik.getFieldProps("phone")}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
-              helperText={formik.touched.phone && formik.errors.phone}
+              helperText={
+                formik.touched.phone && String(formik.errors.phone || "")
+              }
             />
+          </Grid2>
+          <Grid2
+            size={{
+              xs: 12,
+              md: 6,
+            }}
+          >
+            <FormControl fullWidth>
+              <InputLabel>Quốc tịch</InputLabel>
+              <Select
+                id='nationality'
+                label='Quốc tịch'
+                {...formik.getFieldProps("nationality")}
+              >
+                {countries.map((country) => (
+                  <MenuItem key={country.name} value={country.name}>
+                    {country.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid2>
         </Grid2>
 

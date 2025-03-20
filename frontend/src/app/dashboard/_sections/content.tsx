@@ -92,15 +92,15 @@ const Content = () => {
   );
 
   const handleAddStudent = useCallback(
-    (student: Student) => {
-      createStudentsApi.call([student]);
+    async (student: Student) => {
+      await createStudentsApi.call([student]);
     },
     [createStudentsApi]
   );
 
   const handleUpdateStudent = useCallback(
-    (student: Student) => {
-      updateStudentsApi.call({
+    async (student: Student) => {
+      await updateStudentsApi.call({
         id: student.id as string,
         student,
       });
@@ -115,17 +115,57 @@ const Content = () => {
     [deleteStudentsApi]
   );
 
+  function parseAddress(address: string) {
+    const parts = address.split(",").map((part) => part.trim());
+    const len = parts.length;
+    return {
+      detail: parts.slice(0, len - 4).join(", "),
+      ward: parts[len - 4] || "",
+      district: parts[len - 3] || "",
+      provinces: parts[len - 2] || "",
+      contry: parts[len - 1] || "",
+    };
+  }
+
   const handleUpload = useCallback(
     async (file: File) => {
       let studentsImported = null;
 
       if (file.type.includes("csv")) {
         const data = await importFromCSV(file);
-
+        let identity = {};
         studentsImported = data.map((item) => {
           const mappedStudent: Record<string, any> = {};
 
           Object.entries(mappingFiledStudent).forEach(([key, value]) => {
+            if (
+              key === "temporaryAddress" ||
+              key === "mailingAddress" ||
+              key === "permanentAddress"
+            ) {
+              mappedStudent[key] = parseAddress(item[value]);
+              return;
+            }
+            if (key === "identity") {
+              mappedStudent[key] = identity;
+              return;
+            }
+            if (
+              key === "type" ||
+              key === "documentNumber" ||
+              key === "issueDate" ||
+              key === "issuePlace" ||
+              key === "expiryDate" ||
+              key === "country" ||
+              key === "isChip" ||
+              key === "notes"
+            ) {
+              identity = {
+                ...identity,
+                [key]: item[value],
+              };
+              return;
+            }
             mappedStudent[key] = item[value];
           });
 
@@ -150,38 +190,57 @@ const Content = () => {
         showSnackbarError("Không có dữ liệu để import");
         return;
       }
-      // createStudentsApi.call(studentsImported);
+      createStudentsApi.call(studentsImported as Student[]);
     },
-    [showSnackbarError]
+    [showSnackbarError, createStudentsApi]
   );
 
   const hanldeExport = useCallback(
     async ({ format, rows }: { format: string; rows: number }) => {
-      // const data = students.slice(0, rows).map((student) => {
-      //   const mappedStudent: Record<string, any> = {};
-      //   Object.entries(mappingFiledStudent).forEach(([key, value]) => {
-      //     mappedStudent[value] = student[key];
-      //   });
-      //   return mappedStudent;
-      // });
-      // switch (format) {
-      //   case "csv": {
-      //     exportToCSV(data, "students");
-      //     break;
-      //   }
-      //   case "excel": {
-      //     exportToExcel(data, "students");
-      //     break;
-      //   }
-      //   case "pdf": {
-      //     exportToPDF(data, "students");
-      //   }
-      //   default:
-      //     break;
-      // }
-      // showSnackbarSuccess("Xuất file thành công");
+      const data = students.slice(0, rows).map((student) => {
+        const mappedStudent: Record<string, any> = {};
+        Object.entries(mappingFiledStudent).forEach(([key, value]) => {
+          const typedKey = key as keyof Student;
+          if (typeof student[typedKey] === "object") {
+            Object.entries(student[typedKey]).forEach(([subKey, subValue]) => {
+              if (
+                subValue === "" ||
+                subValue === undefined ||
+                subValue === null
+              )
+                return;
+              if (subKey === "issueDate" || subKey === "expiryDate") {
+                mappedStudent[subKey] = new Date(
+                  subValue as Date
+                ).toLocaleDateString("vi-VN");
+                return;
+              }
+              mappedStudent[subKey] = subValue;
+            });
+          } else {
+            mappedStudent[value] = student[typedKey];
+          }
+        });
+        return mappedStudent;
+      });
+      switch (format) {
+        case "csv": {
+          exportToCSV(data, "students");
+          break;
+        }
+        case "excel": {
+          exportToExcel(data, "students");
+          break;
+        }
+        case "pdf": {
+          exportToPDF(data, "students");
+        }
+        default:
+          break;
+      }
+      showSnackbarSuccess("Xuất file thành công");
     },
-    []
+    [students, showSnackbarSuccess]
   );
 
   return (

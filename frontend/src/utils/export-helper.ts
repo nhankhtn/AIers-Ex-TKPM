@@ -2,6 +2,7 @@ import { saveAs } from "file-saver";
 import { unparse, parse } from "papaparse";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
+import { normalizeName } from "./string-helper";
 
 export const exportToCSV = (data: any[], filename: string) => {
   const csv = unparse(data);
@@ -52,6 +53,7 @@ export const importFromCSV = (file: File): Promise<any[]> => {
       },
       header: true,
       skipEmptyLines: true,
+      transformHeader: (header) => normalizeName(header),
     });
   });
 };

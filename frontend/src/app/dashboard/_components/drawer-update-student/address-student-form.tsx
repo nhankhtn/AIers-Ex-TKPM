@@ -323,6 +323,7 @@ const AddressStudentForm = ({
                     "useTemporaryAddress",
                     !formik.values.useTemporaryAddress
                   );
+                  formik.validateForm();
                 }}
                 name='useTemporaryAddress'
               />
@@ -511,6 +512,7 @@ const AddressStudentForm = ({
                     "useMailingAddress",
                     !formik.values.useMailingAddress
                   );
+                  formik.validateForm();
                 }}
                 name='useMailingAddress'
               />
