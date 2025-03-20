@@ -28,7 +28,7 @@ namespace StudentManagement.API.Controllers
             return Ok(districts);
         }
 
-        [HttpGet("wards{districtCode}")]
+        [HttpGet("wards/{districtCode}")]
         public async Task<IActionResult> GetWards([FromRoute] int districtCode, [FromQuery] int depth = 2)
         {
             var wards = await _addressService.GetWardsAsync(districtCode, depth);

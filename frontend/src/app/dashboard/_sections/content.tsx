@@ -34,14 +34,16 @@ import { useDialog } from "@/hooks/use-dialog";
 import DialogExportFile from "../_components/dialog-export-file";
 import DialogImportFile from "../_components/dialog-import-file";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
-import SelectFilter from "../_components/select-filter";
 import { CustomTable } from "@/components/custom-table";
-import { getTableConfig } from "./table-config";
 import CustomPagination from "@/components/custom-pagination";
 import DialogManagement from "../_components/dialog-management";
 import { useFaculty } from "./use-faculty";
 import { useProgram } from "./use-program";
 import { useStatus } from "./use-status";
+import DrawerUpdateStudent from "../_components/drawer-update-student/drawer-update-student";
+import SelectFilter from "../_components/select-filter";
+import { getTableConfig } from "./table-config";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const Content = () => {
   const {
@@ -269,7 +271,7 @@ const Content = () => {
         </RowStack>
       </RowStack>
       <RowStack mb={3} gap={2}>
-        <Stack flex={1}>
+        <Stack>
           <Paper
             sx={{
               p: 1,
@@ -314,7 +316,7 @@ const Content = () => {
           />
         </Stack>
 
-        <Stack width={250}>
+        <Stack flex={1}>
           <SearchBar
             onSearch={(value: string) =>
               setFilter((prev) => ({
@@ -331,6 +333,29 @@ const Content = () => {
           rows={students}
           loading={getStudentsApi.loading}
           emptyState={<Typography>Không có dữ liệu</Typography>}
+          renderRowActions={() => {
+            return (
+              <RowStack gap={1}>
+                <Button
+                  variant='outlined'
+                  size='small'
+                  sx={{ borderRadius: "20px", whiteSpace: "nowrap" }}
+                  onClick={() => {
+                    // onClickEdit(student);
+                  }}
+                >
+                  Chỉnh sửa
+                </Button>
+                <IconButton
+                  size='small'
+                  color='error'
+                  // onClick={() => deleteStudent(student)}
+                >
+                  <DeleteIcon fontSize='small' />
+                </IconButton>
+              </RowStack>
+            );
+          }}
         />
         {students.length > 0 && (
           <CustomPagination
@@ -344,7 +369,7 @@ const Content = () => {
           />
         )}
       </Stack>
-      <Dialog
+      <DrawerUpdateStudent
         open={dialog.open}
         student={dialog.data || null}
         onClose={dialog.handleClose}
