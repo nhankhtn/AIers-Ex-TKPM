@@ -1,13 +1,26 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace StudentManagement.BLL.Services.AddressService
 {
+    //public class Country
+    //{
+    //    public string name { get; set; }
+    //    public string common { get; set; }
+    //}
+
+    //public class Name
+    //{
+    //    public string common { get; set; }
+    //}
     public class AddressService : IAddressService
     {
         private readonly HttpClient _httpClient;
@@ -58,12 +71,27 @@ namespace StudentManagement.BLL.Services.AddressService
             }
         }
 
-        public async Task<string> GetCountriesAsync()
+        public async Task<List<object>> GetCountriesAsync()
         {
             try
             {
                 string responseBody = await _httpClient.GetStringAsync(_configuration["AddressApi:CountriesUrl"]);
-                return responseBody;
+
+                using var doc = JsonDocument.Parse(responseBody);
+                var root = doc.RootElement;
+
+                var transformedList = new List<object>();
+
+                foreach (var country in root.EnumerateArray())
+                {
+                    if (country.TryGetProperty("name", out JsonElement nameProperty) &&
+                        nameProperty.TryGetProperty("common", out JsonElement commonName))
+                    {
+                        transformedList.Add(new { name = commonName.GetString() });
+                    }
+                }
+
+                return transformedList;
             }
             catch (HttpRequestException ex)
             {
