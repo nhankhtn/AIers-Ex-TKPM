@@ -39,10 +39,11 @@ import DialogManagement from "../_components/dialog-management";
 import { useFaculty } from "./use-faculty";
 import { useProgram } from "./use-program";
 import { useStatus } from "./use-status";
-import DrawerUpdateStudent from "../_components/drawer-update-student/drawer-update-student";
 import SelectFilter from "../_components/select-filter";
-import { getTableConfig } from "./table-config";
+import { getTableConfig, objectToAddress } from "./table-config";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DrawerUpdateStudent from "../_components/drawer-update-student/drawer-update-student";
+import { isJSONString } from "@/utils/string-helper";
 
 const Content = () => {
   const {
@@ -197,7 +198,7 @@ const Content = () => {
         const mappedStudent: Record<string, any> = {};
         Object.entries(mappingFiledStudent).forEach(([key, value]) => {
           const typedKey = key as keyof Student;
-          if (typeof student[typedKey] === "object") {
+          if (student[typedKey] === "object") {
             Object.entries(student[typedKey]).forEach(([subKey, subValue]) => {
               if (
                 subValue === "" ||
@@ -206,13 +207,18 @@ const Content = () => {
               )
                 return;
               if (subKey === "issueDate" || subKey === "expiryDate") {
-                mappedStudent[subKey] = new Date(
-                  subValue as Date
-                ).toLocaleDateString("vi-VN");
+                mappedStudent[subKey] = new Date(subValue).toLocaleDateString(
+                  "vi-VN"
+                );
                 return;
               }
               mappedStudent[subKey] = subValue;
             });
+          }
+          if (isJSONString(student[typedKey] as string)) {
+            mappedStudent[value] = objectToAddress(
+              JSON.parse(student[typedKey] as string)
+            );
           } else {
             mappedStudent[value] = student[typedKey];
           }

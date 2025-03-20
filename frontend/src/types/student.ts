@@ -20,7 +20,7 @@ export interface Student {
     issueDate: Date;
     issuePlace: string;
     expiryDate: Date;
-    country: string;
+    countryIssue: string;
     isChip: boolean;
     notes: string;
   };
@@ -34,6 +34,12 @@ export enum Gender {
   Female = "Female",
   Other = "Other",
 }
+
+export const mappingGender: Record<Gender, string> = {
+  Male: "Nam",
+  Female: "Nữ",
+  Other: "Khác",
+};
 
 export interface Faculty {
   id: string;
@@ -75,6 +81,7 @@ export const mappingFiledStudent: Record<string, string> = {
   issuePlace: "Nơi cấp",
   expiryDate: "Ngày hết hạn",
   country: "Quốc gia",
+  countryIssue: "Quốc gia cấp",
   isChip: "Có chip",
   notes: "Ghi chú",
   identity: "Định danh",
@@ -185,7 +192,7 @@ export const mock_students: Student[] = [
       issueDate: new Date("2020-01-01"),
       issuePlace: "Công an TP Hồ Chí Minh",
       expiryDate: new Date("2030-01-01"),
-      country: "Việt Nam",
+      countryIssue: "Việt Nam",
       isChip: true,
       notes: "",
     },
@@ -229,7 +236,7 @@ export const mock_students: Student[] = [
       issueDate: new Date("2019-07-15"),
       issuePlace: "Công an Hà Nội",
       expiryDate: new Date("2029-07-15"),
-      country: "Việt Nam",
+      countryIssue: "Việt Nam",
       isChip: false,
       notes: "Còn hiệu lực",
     },

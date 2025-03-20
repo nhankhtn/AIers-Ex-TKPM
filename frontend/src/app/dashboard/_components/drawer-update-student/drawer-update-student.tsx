@@ -149,7 +149,7 @@ function DrawerUpdateStudent({
         issueDate: new Date(values.identityIssueDate),
         issuePlace: values.identityIssuePlace,
         expiryDate: new Date(values.identityExpiryDate),
-        country: values.identityCountry,
+        countryIssue: values.identityCountry,
         isChip: values.identityIsChip,
         notes: values.identityNotes,
       };
@@ -230,10 +230,10 @@ function DrawerUpdateStudent({
       identityIssueDate: student?.identity.issueDate || new Date(),
       identityIssuePlace: student?.identity.issuePlace || "",
       identityExpiryDate: student?.identity.expiryDate || new Date(),
-      identityCountry: student?.identity.country || COUNTRY_DEFAULT,
+      identityCountry: student?.identity.countryIssue || COUNTRY_DEFAULT,
       identityIsChip: !!student?.identity.isChip,
       identityNotes: student?.identity.notes || "",
-      nationlity: student?.nationality || COUNTRY_DEFAULT,
+      nationality: student?.nationality || COUNTRY_DEFAULT,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [student, faculties, programs, statuses]

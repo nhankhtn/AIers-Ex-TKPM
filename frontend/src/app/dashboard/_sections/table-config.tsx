@@ -1,7 +1,20 @@
 import { CustomTableConfig } from "@/components/custom-table";
-import { Faculty, Program, Status, Student } from "@/types/student";
+import {
+  Faculty,
+  mappingGender,
+  Program,
+  Status,
+  Student,
+} from "@/types/student";
 import { Typography } from "@mui/material";
 import { parseStringToAddress } from "../_components/drawer-update-student/drawer-update-student";
+
+export function objectToAddress(address: any) {
+  return Object.entries(address)
+    .map(([, value]) => value)
+    .filter(Boolean)
+    .join(", ");
+}
 
 export const getTableConfig = ({
   programs,
@@ -49,7 +62,7 @@ export const getTableConfig = ({
     headerLabel: "Giới tính",
     type: "string",
     renderCell: (data) => (
-      <Typography variant='body2'>{data.gender}</Typography>
+      <Typography variant='body2'>{mappingGender[data.gender]}</Typography>
     ),
   },
   {
@@ -71,22 +84,8 @@ export const getTableConfig = ({
     renderCell: (data) => {
       const address = parseStringToAddress(data.permanentAddress);
       return (
-        <Typography
-          variant='body2'
-          width={300}
-          whiteSpace={"normal"}
-          // sx={{
-          //   display: "-webkit-box",
-          //   WebkitLineClamp: 2,
-          //   WebkitBoxOrient: "vertical",
-          //   overflow: "hidden",
-          //   textOverflow: "ellipsis",
-          // }}
-        >
-          {Object.entries(address)
-            .map(([, value]) => value)
-            .filter(Boolean)
-            .join(", ")}
+        <Typography variant='body2' width={300} whiteSpace={"normal"}>
+          {objectToAddress(address)}
         </Typography>
       );
     },
@@ -99,12 +98,7 @@ export const getTableConfig = ({
       const address = parseStringToAddress(data.temporaryAddress);
       return (
         <Typography variant='body2' width={300} whiteSpace={"normal"}>
-          {data.temporaryAddress
-            ? Object.entries(address)
-                .map(([, value]) => value)
-                .filter(Boolean)
-                .join(", ")
-            : "Trống"}
+          {data.temporaryAddress ? objectToAddress(address) : "Trống"}
         </Typography>
       );
     },
@@ -117,12 +111,7 @@ export const getTableConfig = ({
       const address = parseStringToAddress(data.mailingAddress);
       return (
         <Typography variant='body2'>
-          {data.mailingAddress
-            ? Object.entries(address)
-                .map(([, value]) => value)
-                .filter(Boolean)
-                .join(", ")
-            : "Trống"}
+          {data.mailingAddress ? objectToAddress(address) : "Trống"}
         </Typography>
       );
     },
