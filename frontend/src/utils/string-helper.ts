@@ -11,3 +11,6 @@ export const removeVietnameseTones = (str: string) => {
 export const normalizeString = (str: string) => {
   return slugify(str, { lower: true, locale: "vi" });
 };
+export const normalizeName = (str: string): string => {
+  return str.toLowerCase().replace(/\b\w/, (char) => char.toUpperCase());
+};

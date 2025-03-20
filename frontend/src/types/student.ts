@@ -24,6 +24,7 @@ export interface Student {
     isChip: boolean;
     notes: string;
   };
+  nationality: string;
 }
 export enum Gender {
   Male,
@@ -57,12 +58,24 @@ export const mappingFiledStudent: Record<string, string> = {
   dateOfBirth: "Ngày sinh",
   gender: "Giới tính",
   email: "Email",
-  address: "Địa chỉ",
   faculty: "Khoa",
   course: "Khóa",
   program: "Chương trình",
   phone: "Số điện thoại",
   status: "Trạng thái",
+  temporaryAddress: "Địa chỉ tạm trú",
+  permanentAddress: "Địa chỉ thường trú",
+  mailingAddress: "Địa chỉ gửi thư",
+  type: "Loại giấy từ",
+  documentNumber: "Số giấy tờ",
+  issueDate: "Ngày cấp",
+  issuePlace: "Nơi cấp",
+  expiryDate: "Ngày hết hạn",
+  country: "Quốc gia",
+  isChip: "Có chip",
+  notes: "Ghi chú",
+  identity: "Định danh",
+  nationality: "Quốc tịch",
 };
 
 export const validationStudent = Yup.object().shape({
@@ -124,10 +137,10 @@ export const validationStudent = Yup.object().shape({
   status: Yup.string().required("Vui lòng chọn tình trạng sinh viên"),
 
   // Identity validation
-  documentNumber: Yup.string().required("Vui lòng nhập số giấy tờ"),
-  issueDate: Yup.string().required("Vui lòng nhập ngày cấp"),
-  issuePlace: Yup.string().required("Vui lòng nhập nơi cấp"),
-  expiryDate: Yup.string().required("Vui lòng nhập ngày hết hạn"),
+  identityDocumentNumber: Yup.string().required("Vui lòng nhập số giấy tờ"),
+  identityIssueDate: Yup.string().required("Vui lòng nhập ngày cấp"),
+  identityIssuePlace: Yup.string().required("Vui lòng nhập nơi cấp"),
+  identityExpiryDate: Yup.string().required("Vui lòng nhập ngày hết hạn"),
 });
 
 // export const mockData: Student[] = [

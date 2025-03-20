@@ -54,7 +54,6 @@ const useDashboardSearch = () => {
         data: [...students, ...result],
         total: (getStudentsApi.data?.total || 0) + result.length,
       });
-      dialog.handleClose();
     },
   });
   const updateStudentsApi = useFunction(StudentApi.updateStudent, {
@@ -78,7 +77,6 @@ const useDashboardSearch = () => {
         ),
         total: getStudentsApi.data?.total || 0,
       });
-      dialog.handleClose();
     },
   });
 
