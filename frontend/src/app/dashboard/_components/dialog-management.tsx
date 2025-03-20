@@ -23,9 +23,11 @@ import {
   Delete as DeleteIcon,
   DragIndicator as DragIndicatorIcon,
   Check as CheckIcon,
+  Close,
 } from "@mui/icons-material";
 import useFunction from "@/hooks/use-function";
 import { Faculty, Program, Status } from "@/types/student";
+import RowStack from "@/components/row-stack";
 
 type Item = Status | Program | Faculty;
 
@@ -150,75 +152,93 @@ export default function DialogManagement({
               <ListItem
                 key={item.id}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
                   py: 1,
-                  border:
-                    editingItem?.id === item.id ? "1px solid #e0e0e0" : "none",
                   borderRadius: 1,
                 }}
               >
-                <DragIndicatorIcon sx={{ color: "text.secondary", mr: 1 }} />
-                {editingItem?.id === item.id ? (
-                  <Box
-                    sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}
-                  >
-                    <TextField
-                      margin='dense'
-                      fullWidth
-                      variant='outlined'
-                      size='small'
-                      value={editingItem.name}
-                      onChange={(e) =>
-                        setEditingItem({ ...editingItem, name: e.target.value })
-                      }
-                      autoFocus
-                    />
-                    <IconButton
-                      size='small'
-                      color='success'
-                      onClick={handleSaveEdit}
-                    >
-                      <CheckIcon fontSize='small' />
-                    </IconButton>
-                  </Box>
-                ) : (
-                  <Box sx={{ flexGrow: 1 }}>
-                    <ListItemText primary={item.name} />
-                  </Box>
-                )}
-                {editingItem?.id !== item.id && (
-                  <>
-                    <IconButton
-                      size='small'
-                      sx={{ color: "primary.main" }}
-                      onClick={() => handleEditClick(item)}
-                    >
-                      <EditIcon fontSize='small' />
-                    </IconButton>
-                    <IconButton
-                      size='small'
-                      sx={{ color: "error.main" }}
-                      onClick={() => handleDeleteClick(item.id)}
-                    >
-                      <DeleteIcon fontSize='small' />
-                    </IconButton>
-                  </>
-                )}
+                <Box
+                  width={"8px"}
+                  height={"8px"}
+                  borderRadius={"50%"}
+                  bgcolor={"text.secondary"}
+                  mr={1}
+                />
+                <RowStack gap={1} flex={1}>
+                  {editingItem?.id === item.id ? (
+                    <RowStack gap={1} flex={1}>
+                      <TextField
+                        margin='dense'
+                        fullWidth
+                        variant='outlined'
+                        size='small'
+                        value={editingItem.name}
+                        onChange={(e) =>
+                          setEditingItem({
+                            ...editingItem,
+                            name: e.target.value,
+                          })
+                        }
+                        autoFocus
+                      />
+                      <IconButton
+                        size='small'
+                        color='success'
+                        onClick={handleSaveEdit}
+                      >
+                        <CheckIcon />
+                      </IconButton>
+
+                      <IconButton
+                        size='small'
+                        color='error'
+                        onClick={() => {
+                          setEditingItem(null);
+                          setItemToEdit(null);
+                        }}
+                      >
+                        <Close />
+                      </IconButton>
+                    </RowStack>
+                  ) : (
+                    <Box sx={{ flexGrow: 1 }}>
+                      <ListItemText primary={item.name} />
+                    </Box>
+                  )}
+                  {editingItem?.id !== item.id && (
+                    <>
+                      <IconButton
+                        size='small'
+                        sx={{ color: "primary.main" }}
+                        onClick={() => handleEditClick(item)}
+                      >
+                        <EditIcon fontSize='small' />
+                      </IconButton>
+                      <IconButton
+                        size='small'
+                        sx={{ color: "error.main" }}
+                        onClick={() => handleDeleteClick(item.id)}
+                      >
+                        <DeleteIcon fontSize='small' />
+                      </IconButton>
+                    </>
+                  )}
+                </RowStack>
               </ListItem>
             ))}
           </List>
           {!newItemName && (
-            <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+            <RowStack gap={1} sx={{ mt: 3, justifyContent: "flex-end" }}>
               <Button
                 variant='outlined'
                 startIcon={<AddIcon />}
                 onClick={() => setNewItemName("Nhóm mới")}
-                sx={{ width: "100%", maxWidth: 300 }}
               >
-                Tạo nhóm mới
+                Thêm mới
               </Button>
-            </Box>
+              <Button variant='contained' color='secondary' onClick={onClose}>
+                Đóng
+              </Button>
+            </RowStack>
           )}
           {newItemName && (
             <Box
