@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { mappingFiledStudent, Student } from "@/types/student";
 import {
   Box,
@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import SearchBar from "@/app/dashboard/_components/search-bar";
-import Dialog from "@/app/dashboard/_components/dialog";
 import RowStack from "@/components/row-stack";
 import DialogConfirmDelete from "../_components/dialog-confirm-delete";
 import {
@@ -40,10 +39,11 @@ import DialogManagement from "../_components/dialog-management";
 import { useFaculty } from "./use-faculty";
 import { useProgram } from "./use-program";
 import { useStatus } from "./use-status";
-import DrawerUpdateStudent from "../_components/drawer-update-student/drawer-update-student";
 import SelectFilter from "../_components/select-filter";
-import { getTableConfig } from "./table-config";
+import { getTableConfig, objectToAddress } from "./table-config";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DrawerUpdateStudent from "../_components/drawer-update-student/drawer-update-student";
+import { isJSONString } from "@/utils/string-helper";
 
 const Content = () => {
   const {
@@ -61,7 +61,6 @@ const Content = () => {
   } = useDashboardSearch();
   const {
     dialog: dialogFaculty,
-    getFacultiesApi,
     deleteFacultyApi,
     addFacultyApi,
     updateFacultyApi,
@@ -69,7 +68,6 @@ const Content = () => {
   } = useFaculty();
   const {
     dialog: dialogProgram,
-    getProgramApi,
     deleteProgramApi,
     addProgramApi,
     updateProgramApi,
@@ -77,7 +75,6 @@ const Content = () => {
   } = useProgram();
   const {
     dialog: dialogStatus,
-    getStatusApi,
     deleteStatusApi,
     addStatusApi,
     updateStatusApi,
@@ -201,7 +198,7 @@ const Content = () => {
         const mappedStudent: Record<string, any> = {};
         Object.entries(mappingFiledStudent).forEach(([key, value]) => {
           const typedKey = key as keyof Student;
-          if (typeof student[typedKey] === "object") {
+          if (student[typedKey] === "object") {
             Object.entries(student[typedKey]).forEach(([subKey, subValue]) => {
               if (
                 subValue === "" ||
@@ -210,13 +207,18 @@ const Content = () => {
               )
                 return;
               if (subKey === "issueDate" || subKey === "expiryDate") {
-                mappedStudent[subKey] = new Date(
-                  subValue as Date
-                ).toLocaleDateString("vi-VN");
+                mappedStudent[subKey] = new Date(subValue).toLocaleDateString(
+                  "vi-VN"
+                );
                 return;
               }
               mappedStudent[subKey] = subValue;
             });
+          }
+          if (isJSONString(student[typedKey] as string)) {
+            mappedStudent[value] = objectToAddress(
+              JSON.parse(student[typedKey] as string)
+            );
           } else {
             mappedStudent[value] = student[typedKey];
           }
@@ -388,27 +390,29 @@ const Content = () => {
       </RowStack>
       <Stack height={300}>
         <CustomTable
-          configs={getTableConfig()}
+          configs={getTableConfig({
+            statuses,
+            faculties,
+            programs,
+          })}
           rows={students}
           loading={getStudentsApi.loading}
           emptyState={<Typography>Không có dữ liệu</Typography>}
-          renderRowActions={() => {
+          renderRowActions={(row: Student) => {
             return (
               <RowStack gap={1}>
                 <Button
                   variant='outlined'
                   size='small'
                   sx={{ borderRadius: "20px", whiteSpace: "nowrap" }}
-                  onClick={() => {
-                    // onClickEdit(student);
-                  }}
+                  onClick={() => dialog.handleOpen(row)}
                 >
                   Chỉnh sửa
                 </Button>
                 <IconButton
                   size='small'
                   color='error'
-                  // onClick={() => deleteStudent(student)}
+                  onClick={() => dialogConfirmDelete.handleOpen(row)}
                 >
                   <DeleteIcon fontSize='small' />
                 </IconButton>

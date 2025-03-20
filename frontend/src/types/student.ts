@@ -20,17 +20,26 @@ export interface Student {
     issueDate: Date;
     issuePlace: string;
     expiryDate: Date;
-    country: string;
+    countryIssue: string;
     isChip: boolean;
     notes: string;
   };
   nationality: string;
 }
+
+export const COUNTRY_DEFAULT = "Vietnam";
+
 export enum Gender {
-  Male,
-  Female,
-  Other,
+  Male = "Male",
+  Female = "Female",
+  Other = "Other",
 }
+
+export const mappingGender: Record<Gender, string> = {
+  Male: "Nam",
+  Female: "Nữ",
+  Other: "Khác",
+};
 
 export interface Faculty {
   id: string;
@@ -72,6 +81,7 @@ export const mappingFiledStudent: Record<string, string> = {
   issuePlace: "Nơi cấp",
   expiryDate: "Ngày hết hạn",
   country: "Quốc gia",
+  countryIssue: "Quốc gia cấp",
   isChip: "Có chip",
   notes: "Ghi chú",
   identity: "Định danh",
@@ -143,217 +153,93 @@ export const validationStudent = Yup.object().shape({
   identityExpiryDate: Yup.string().required("Vui lòng nhập ngày hết hạn"),
 });
 
-// export const mockData: Student[] = [
-//   {
-//     id: "SV0231",
-//     name: "Nguyễn Văn A",
-//     dateOfBirth: "2000-01-01",
-//     gender: Gender.Male,
-//     email: "nguyenvana@example.com",
-//     permanent_address: "123 Đường ABC, Quận 1, TP.HCM",
-//     faculty: "Luật",
-//     course: 2021,
-//     program: "Cử nhân Luật",
-//     phone: "0123456789",
-//     status: "Đang học",
-//   },
-//   {
-//     id: "SV002",
-//     name: "Trần Thị B",
-//     dateOfBirth: "1999-02-15",
-//     gender: Gender.Female,
-//     email: "tranthib@example.com",
-//     permanent_address: "456 Đường DEF, Quận 2, TP.HCM",
-//     faculty: {
-//       id: "K002",
-//       name: "Tiếng Anh thương mại",
-//     },
-//     course: 2020,
-//     program: {
-//       id: "P002",
-//       name: "Cử nhân Tiếng Anh thương mại",
-//     },
-//     phone: "0987654321",
-//     status: {
-//       id: "graduated",
-//       name: "Đã tốt nghiệp",
-//     },
-//   },
-//   {
-//     id: "SV003",
-//     name: "Lê Văn C",
-//     dateOfBirth: "2001-03-20",
-//     gender: Gender.Male,
-//     email: "levanc@example.com",
-//     permanent_address: "789 Đường GHI, Quận 3, TP.HCM",
-//     faculty: {
-//       id: "K003",
-//       name: "Tiếng Nhật",
-//     },
-//     course: 2022,
-//     program: {
-//       id: "P003",
-//       name: "Cử nhân Tiếng Nhật",
-//     },
-//     phone: "0123987654",
-//     status: {
-//       id: "studying",
-//       name: "Đang học",
-//     },
-//   },
-//   {
-//     id: "SV004",
-//     name: "Phạm Thị D",
-//     dateOfBirth: "1998-04-10",
-//     gender: Gender.Female,
-//     email: "phamthid@example.com",
-//     permanent_address: "101 Đường JKL, Quận 4, TP.HCM",
-//     faculty: {
-//       id: "K004",
-//       name: "Tiếng Pháp",
-//     },
-//     course: 2019,
-//     program: {
-//       id: "P004",
-//       name: "Cử nhân Tiếng Pháp",
-//     },
-//     phone: "0987123456",
-//     status: {
-//       id: "paused",
-//       name: "Tạm dừng",
-//     },
-//   },
-//   {
-//     id: "SV005",
-//     name: "Hoàng Văn E",
-//     dateOfBirth: "2002-05-25",
-//     gender: Gender.Male,
-//     email: "hoangvane@example.com",
-//     permanent_address: "202 Đường MNO, Quận 5, TP.HCM",
-//     faculty: {
-//       id: "K001",
-//       name: "Luật",
-//     },
-//     course: 2023,
-//     program: {
-//       id: "P001",
-//       name: "Cử nhân Luật",
-//     },
-//     phone: "0123456780",
-//     status: {
-//       id: "droppedout",
-//       name: "Đã thôi học",
-//     },
-//   },
-//   {
-//     id: "SV001",
-//     name: "Nguyễn Văn A",
-//     dateOfBirth: "2000-01-01",
-//     gender: Gender.Male,
-//     email: "nguyenvana@example.com",
-//     permanent_address: "123 Đường ABC, Quận 1, TP.HCM",
-//     faculty: {
-//       id: "K001",
-//       name: "Luật",
-//     },
-//     course: 2021,
-//     program: {
-//       id: "P001",
-//       name: "Cử nhân Luật",
-//     },
-//     phone: "0123456789",
-//     status: {
-//       id: "studying",
-//       name: "Đang học",
-//     },
-//   },
-//   {
-//     id: "SV002",
-//     name: "Trần Thị B",
-//     dateOfBirth: "1999-02-15",
-//     gender: Gender.Female,
-//     email: "tranthib@example.com",
-//     permanent_address: "456 Đường DEF, Quận 2, TP.HCM",
-//     faculty: {
-//       id: "K002",
-//       name: "Tiếng Anh thương mại",
-//     },
-//     course: 2020,
-//     program: {
-//       id: "P002",
-//       name: "Cử nhân Tiếng Anh thương mại",
-//     },
-//     phone: "0987654321",
-//     status: {
-//       id: "graduated",
-//       name: "Đã tốt nghiệp",
-//     },
-//   },
-//   {
-//     id: "SV003",
-//     name: "Lê Văn C",
-//     dateOfBirth: "2001-03-20",
-//     gender: Gender.Male,
-//     email: "levanc@example.com",
-//     permanent_address: "789 Đường GHI, Quận 3, TP.HCM",
-//     faculty: {
-//       id: "K003",
-//       name: "Tiếng Nhật",
-//     },
-
-//     course: 2022,
-//     program: {
-//       id: "P003",
-//       name: "Cử nhân Tiếng Nhật",
-//     },
-//     phone: "0123987654",
-//     status: {
-//       id: "studying",
-//       name: "Đang học",
-//     },
-//   },
-//   {
-//     id: "SV004",
-//     name: "Phạm Thị D",
-//     dateOfBirth: "1998-04-10",
-//     gender: Gender.Female,
-//     email: "phamthid@example.com",
-//     permanent_address: "101 Đường JKL, Quận 4, TP.HCM",
-//     faculty: {
-//       id: "K004",
-//       name: "Tiếng Pháp",
-//     },
-//     course: 2019,
-//     program: {
-//       id: "P004",
-//       name: "Cử nhân Tiếng Pháp",
-//     },
-//     phone: "0987123456",
-//     status: {
-//       id: "paused",
-//       name: "Tạm dừng",
-//     },
-//   },
-//   {
-//     id: "SV005",
-//     name: "Hoàng Văn E",
-//     dateOfBirth: "2002-05-25",
-//     gender: Gender.Male,
-//     email: "hoangvane@example.com",
-//     permanent_address: "202 Đường MNO, Quận 5, TP.HCM",
-//     faculty: {
-//       id: "K001",
-//       name: "Luật",
-//     },
-//     course: 2023,
-//     program: {
-//       id: "P001",
-//       name: "Cử nhân Luật",
-//     },
-//     phone: "0123456780",
-//     status: {
-//       id: "droppedout",
-//       name: "Đã thôi học",
-//     },
-//   },
-// ];
+export const mock_students: Student[] = [
+  {
+    id: "SV001",
+    name: "Nguyễn Văn A",
+    dateOfBirth: "2002-05-10",
+    gender: Gender.Male,
+    email: "nguyenvana@example.com",
+    temporaryAddress: JSON.stringify({
+      detail: "123 Đường ABC",
+      ward: "Phường 1",
+      district: "Quận 1",
+      province: "TP Hồ Chí Minh",
+      country: "Việt Nam",
+    }),
+    permanentAddress: JSON.stringify({
+      detail: "456 Đường XYZ",
+      ward: "Phường 5",
+      district: "Quận 10",
+      province: "TP Hồ Chí Minh",
+      country: "Việt Nam",
+    }),
+    mailingAddress: JSON.stringify({
+      detail: "789 Đường DEF",
+      ward: "Phường 7",
+      district: "Quận 3",
+      province: "TP Hồ Chí Minh",
+      country: "Việt Nam",
+    }),
+    faculty: "CNTT",
+    course: 2020,
+    program: "KTPM",
+    phone: "0901234567",
+    status: "Active",
+    identity: {
+      type: 1,
+      documentNumber: "123456789",
+      issueDate: new Date("2020-01-01"),
+      issuePlace: "Công an TP Hồ Chí Minh",
+      expiryDate: new Date("2030-01-01"),
+      countryIssue: "Việt Nam",
+      isChip: true,
+      notes: "",
+    },
+    nationality: "Việt Nam",
+  },
+  {
+    id: "SV002",
+    name: "Trần Thị B",
+    dateOfBirth: "2001-08-22",
+    gender: Gender.Female,
+    email: "tranthib@example.com",
+    temporaryAddress: JSON.stringify({
+      detail: "88 Đường QWE",
+      ward: "Phường 3",
+      district: "Quận 5",
+      province: "Hà Nội",
+      country: "Việt Nam",
+    }),
+    permanentAddress: JSON.stringify({
+      detail: "99 Đường RTY",
+      ward: "Phường 9",
+      district: "Quận Bình Thạnh",
+      province: "TP Hồ Chí Minh",
+      country: "Việt Nam",
+    }),
+    mailingAddress: JSON.stringify({
+      detail: "100 Đường UIO",
+      ward: "Phường 12",
+      district: "Quận 7",
+      province: "TP Hồ Chí Minh",
+      country: "Việt Nam",
+    }),
+    faculty: "Kinh Tế",
+    course: 2019,
+    program: "QTKD",
+    phone: "0912345678",
+    status: "Active",
+    identity: {
+      type: 2,
+      documentNumber: "987654321",
+      issueDate: new Date("2019-07-15"),
+      issuePlace: "Công an Hà Nội",
+      expiryDate: new Date("2029-07-15"),
+      countryIssue: "Việt Nam",
+      isChip: false,
+      notes: "Còn hiệu lực",
+    },
+    nationality: "Việt Nam",
+  },
+];
