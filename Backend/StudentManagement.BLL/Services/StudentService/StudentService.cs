@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Identity.Client;
 using StudentManagement.BLL.DTOs;
+using StudentManagement.BLL.DTOs.Identity;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.Services.StudentService;
-using StudentManagement.BLL.Utils;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
@@ -91,58 +91,59 @@ namespace StudentManagement.BLL.Services.StudentService
 
                 // Validate faculty
                 { nameof(StudentDTO.Faculty), async student => student.Faculty is not null && _facultyRepository is not null
-                && (await _facultyRepository.GetFacultyByNameAsync(student.Faculty)).Data is not null },
+                && (await _facultyRepository.GetFacultyByIdAsync(student.Faculty)).Data is not null },
 
                 // Validate program
-                { nameof(StudentDTO.Program), async student => student.Program is not null 
-                && (await _programRepository.GetProgramByNameAsync(student.Program)).Data is not null },
+                { nameof(StudentDTO.Program), async student => student.Program is not null
+                && (await _programRepository.GetProgramByIdAsync(student.Program)).Data is not null },
             
                 // Validate status
-                { nameof(StudentDTO.Status), async student => student.Status is not null 
-                && (await _studentStatusRepository.GetStudentStatusByNameAsync(student.Status)).Data is not null },
+                { nameof(StudentDTO.Status), async student => student.Status is not null
+                && (await _studentStatusRepository.GetStudentStatusByIdAsync(student.Status)).Data is not null },
             };
 
             _specialMapping = new()
             {
-                { nameof(StudentDTO.Faculty), async (student, value) => {
-                    if (value is not null && value is string facultyName )
+                { nameof(StudentDTO.Faculty), (student, value) => {
+                    if (value is not null && value is string facultyId)
                     {
-                        var faculty = (await _facultyRepository.GetFacultyByNameAsync(facultyName)).Data;
-                        if (faculty is not null)
-                        {
-                            student.FacultyId = faculty.Id;
-                            student.Faculty = faculty;
-                            return true;
-                        }
+                        student.FacultyId = facultyId.ToGuid();
                     }
-                    return false;
+                    return Task.FromResult(false);
                 } },
-                { nameof(StudentDTO.Program), async (student, value) => {
-                    if (value is not null && value is string programName)
+                { nameof(StudentDTO.Program), (student, value) => {
+                    if (value is not null && value is string programId)
                     {
-                        var program = (await _programRepository.GetProgramByNameAsync(programName)).Data;
-                        if (program is not null)
-                        {
-                            student.ProgramId = program.Id;
-                            student.Program = program;
-                            return true;
-                        }
+                        student.ProgramId = programId.ToGuid();
                     }
-                    return false;
+                    return Task.FromResult(false);
                 } },
-                { nameof(StudentDTO.Status), async (student, value) => {
-                    if (value is not null && value is string statusName)
+                { nameof(StudentDTO.Status), (student, value) => {
+                    if (value is not null && value is string statusId)
                     {
-                        var status = (await _studentStatusRepository.GetStudentStatusByNameAsync(statusName)).Data;
-                        if (status is not null)
-                        {
-                            student.StatusId = status.Id;
-                            student.Status = status;
-                            return true;
-                        }
+                        student.StatusId = statusId.ToGuid();
                     }
-                    return false;
+                    return Task.FromResult(false);
                 } },
+
+                { nameof(StudentDTO.Gender), (student, value) => {
+                    if (SetEnumValue(value, out Gender gender))
+                    {
+                        student.Gender = gender;
+                        return Task.FromResult(true);
+                    }
+                    return Task.FromResult(false);
+                } },
+
+                { nameof(Student.Identity), (student, typeValue) =>
+                {
+                    if (SetEnumValue(typeValue, out IdentityType type))
+                    {
+                        student.Identity.Type = type;
+                        return Task.FromResult(true);
+                    }
+                    return Task.FromResult(false);
+                } }
             };
 
         }
@@ -155,7 +156,7 @@ namespace StudentManagement.BLL.Services.StudentService
             {
                 Students = _mapper.Map<IEnumerable<StudentDTO>>(res.Data.students),
                 Total = res.Data.total
-            });
+            }, res.Message);
         }
 
 
@@ -190,7 +191,7 @@ namespace StudentManagement.BLL.Services.StudentService
             if (res.Success)
             {
                 result.AcceptableStudents = _mapper.Map<IEnumerable<StudentDTO>>(addList).ToList();
-                return Result<AddListStudentResult>.Ok(result);
+                return Result<AddListStudentResult>.Ok(result, res.Message);
             }
             return Result<AddListStudentResult>.Fail(res.ErrorCode, res.ErrorMessage);
         }
@@ -211,7 +212,7 @@ namespace StudentManagement.BLL.Services.StudentService
         public async Task<Result<IEnumerable<StudentDTO>>> GetStudentsByNameAsync(string name)
         {
             var students = await _studentRepository.GetStudentsByNameAsync(name);
-            return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+            return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students), students.Message);
         }
 
 
@@ -223,7 +224,7 @@ namespace StudentManagement.BLL.Services.StudentService
         public async Task<Result<string>> DeleteStudentByIdAsync(string studentId)
         {
             var res = await _studentRepository.DeleteStudentAsync(studentId);
-            return res.Success ? Result<string>.Ok(studentId) : Result<string>.Fail(res.ErrorCode, res.ErrorMessage);
+            return res.Success ? Result<string>.Ok(studentId, res.Message) : Result<string>.Fail(res.ErrorCode, res.ErrorMessage);
         }
 
 
@@ -250,7 +251,7 @@ namespace StudentManagement.BLL.Services.StudentService
             }
             
             var res = await _studentRepository.UpdateStudentAsync(_mapper.Map<Student>(resExistStudent.Data));
-            return res.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent.Data)) 
+            return res.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent.Data), res.Message) 
                 : Result<StudentDTO>.Fail(res.ErrorCode, res.ErrorMessage);
         }
 
@@ -270,6 +271,12 @@ namespace StudentManagement.BLL.Services.StudentService
                 result = (T)(object)intValue;
                 return true;
             }
+            if (value is string strValue && Enum.TryParse<T>(strValue, true, out var enumValue))
+            {
+                result = enumValue;
+                return true;
+            }
+
             result = default;
             return false;
         }

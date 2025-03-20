@@ -6,7 +6,7 @@ namespace StudentManagement.BLL.DTOs.Identity
     public class IdentityDTO
     {
 
-        public IdentityType Type { get; set; } // Loại giấy tờ (CMND/CCCD/Hộ chiếu)
+        public string Type { get; set; } = IdentityType.CCCD.ToString();// Loại giấy tờ (CMND/CCCD/Hộ chiếu)
 
         public string DocumentNumber { get; set; } = string.Empty;
 

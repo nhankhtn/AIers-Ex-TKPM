@@ -1,26 +1,24 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace StudentManagement.BLL.Services.AddressService
 {
-    //public class Country
-    //{
-    //    public string name { get; set; }
-    //    public string common { get; set; }
-    //}
+    public class Country
+    {
+        public Name name { get; set; }
+    }
 
-    //public class Name
-    //{
-    //    public string common { get; set; }
-    //}
+    public class Name
+    {
+        public string common { get; set; }
+    }
     public class AddressService : IAddressService
     {
         private readonly HttpClient _httpClient;
@@ -71,27 +69,17 @@ namespace StudentManagement.BLL.Services.AddressService
             }
         }
 
-        public async Task<List<object>> GetCountriesAsync()
+        public async Task<string> GetCountriesAsync()
         {
             try
             {
                 string responseBody = await _httpClient.GetStringAsync(_configuration["AddressApi:CountriesUrl"]);
 
-                using var doc = JsonDocument.Parse(responseBody);
-                var root = doc.RootElement;
+                List<Country> countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(responseBody);
+                var result = countries.Select(c => new { name = c.name.common });
+                string json = JsonSerializer.Serialize(result);
 
-                var transformedList = new List<object>();
-
-                foreach (var country in root.EnumerateArray())
-                {
-                    if (country.TryGetProperty("name", out JsonElement nameProperty) &&
-                        nameProperty.TryGetProperty("common", out JsonElement commonName))
-                    {
-                        transformedList.Add(new { name = commonName.GetString() });
-                    }
-                }
-
-                return transformedList;
+                return json;
             }
             catch (HttpRequestException ex)
             {

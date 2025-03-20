@@ -21,7 +21,7 @@ namespace StudentManagement.DAL.Data
             {
                 return await base.SavingChangesAsync(eventData, result, cancellationToken);
             }
-            var startTime = DateTime.UtcNow;
+            var startTime = DateTime.Now;
             var auditEntries = eventData.Context.ChangeTracker.Entries()
                 .Where(x => x.Entity is not AuditEntry && x.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
                 .Select(x => new AuditEntry
@@ -45,7 +45,7 @@ namespace StudentManagement.DAL.Data
             {
                 return await base.SavedChangesAsync(eventData, result, cancellationToken);
             }
-            var endTime = DateTime.UtcNow;
+            var endTime = DateTime.Now;
             foreach (var auditEntry in _auditEntries)
             {
                 auditEntry.EndTimeUtc = endTime;
@@ -69,7 +69,7 @@ namespace StudentManagement.DAL.Data
                 return;
             }
 
-            var endTime = DateTime.UtcNow;
+            var endTime = DateTime.Now;
 
             foreach (var auditEntry in _auditEntries)
             {

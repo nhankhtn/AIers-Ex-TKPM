@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
@@ -28,13 +29,21 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                 var addedFaculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Id == faculty.Id);
                 return Result<Faculty>.Ok(addedFaculty);
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_faculties_name") == null)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_faculty_name") == null)
             {
                 return Result<Faculty>.Fail("FACULTY_NAME_EXIST", "Faculty name has already exist");
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Faculty>.Fail("ADD_FACULTY_FAILED", "Add faculty failed");
+                return Result<Faculty>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Faculty>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Faculty>.Fail("ADD_FACULTY_FAILED", ex.Message);
             }
         }
 
@@ -48,9 +57,17 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                 await _context.SaveChangesAsync();
                 return Result<Faculty>.Ok(existingFaculty);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Faculty>.Fail("DELETE_FACULTY_FAILED"); 
+                return Result<Faculty>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Faculty>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Faculty>.Fail("DELETE_FACULTY_FAILED", ex.Message); 
             }
         }
 
@@ -61,9 +78,17 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                 var faculties = await _context.Faculties.ToListAsync();
                 return Result<IEnumerable<Faculty>>.Ok(faculties);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<IEnumerable<Faculty>>.Fail();
+                return Result<IEnumerable<Faculty>>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<IEnumerable<Faculty>>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<Faculty>>.Fail("GET_FACULTY_FAILED", ex.Message);
             }
 
         }
@@ -75,9 +100,17 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                 var faculty = await _context.Faculties.FindAsync(id);
                 return Result<Faculty?>.Ok(faculty);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Faculty?>.Fail();
+                return Result<Faculty?>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Faculty?>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Faculty?>.Fail("GET_FACULTY_FAILED", ex.Message);
             }
         }
 
@@ -90,9 +123,17 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                 var faculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Name == name);
                 return Result<Faculty?>.Ok(faculty);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Faculty?>.Fail();
+                return Result<Faculty?>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Faculty?>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Faculty?>.Fail("GET_FACULTY_FAILED", ex.Message);
             }
         }
 
@@ -114,14 +155,29 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
                 await _context.SaveChangesAsync();
                 return Result<Faculty>.Ok(existingFaculty);
             }
-            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_faculties_name") == null)
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("IX_faculty_name") == null)
             {
                 return Result<Faculty>.Fail("FACULTY_NAME_EXIST", "Faculty name has already exist");
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Faculty>.Fail("UPDATE_FACULTY_FAILED", "Update faculty failed");
+                return Result<Faculty>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Faculty>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Faculty>.Fail("UPDATE_FACULTY_FAILED", ex.Message);
             }
         }
+
+
+        private bool IsConnectDatabaseFailed(SqlException ex)
+        {
+            return ex.Number == 10061;
+        }
+
     }
 }

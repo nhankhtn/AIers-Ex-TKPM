@@ -17,7 +17,7 @@ namespace StudentManagement.BLL.DTOs.Students
 
         public DateTime? DateOfBirth { get; set; }
 
-        public Gender? Gender { get; set; }
+        public string? Gender { get; set; }
 
         public int? Course { get; set; }
 
@@ -39,6 +39,6 @@ namespace StudentManagement.BLL.DTOs.Students
 
         public string? Nationality { get; set; }
 
-        public IdentityDTO? Identity { get; set; }
+        public IdentityDTO? Identity { get; set; } = null!;
     }
 }

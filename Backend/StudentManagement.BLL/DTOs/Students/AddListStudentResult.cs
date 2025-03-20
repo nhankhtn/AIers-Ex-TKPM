@@ -1,12 +1,11 @@
-﻿using StudentManagement.BLL.DTOs.Students;
-using StudentManagement.Domain.Models;
+﻿using StudentManagement.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentManagement.BLL.Utils
+namespace StudentManagement.BLL.DTOs.Students
 {
     public class AddListStudentResult
     {

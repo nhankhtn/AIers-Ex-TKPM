@@ -22,7 +22,7 @@ namespace StudentManagement.API.Controllers
             var result = await _facultyService.AddFacultyAsync(facultyDTO);
             if (result.Success) return Ok(ApiResponse<FacultyDTO>.Success(
                     data: result.Data,
-                    message: "Faculty added successfully"
+                    message: result.Message
                 ));
 
             // Failed
@@ -30,7 +30,7 @@ namespace StudentManagement.API.Controllers
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to add faculty"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -42,14 +42,14 @@ namespace StudentManagement.API.Controllers
             var result = await _facultyService.GetAllFacultiesAsync();
             if (result.Success) return Ok(ApiResponse<IEnumerable<FacultyDTO>>.Success(
                     data: result.Data,
-                    message: "Faculties retrieved successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to retrieve faculties"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -61,14 +61,14 @@ namespace StudentManagement.API.Controllers
             var result = await _facultyService.UpdateFacultyAsync(id, facultyDTO);
             if (result.Success) return Ok(ApiResponse<FacultyDTO>.Success(
                     data: result.Data,
-                    message: "Faculty name changed successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to change faculty name"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -79,14 +79,14 @@ namespace StudentManagement.API.Controllers
             var result = await _facultyService.DeleteFacultyAsync(id);
             if (result.Success) return Ok(ApiResponse<FacultyDTO>.Success(
                     data: result.Data,
-                    message: "Faculty deleted successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to delete faculty"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -97,14 +97,14 @@ namespace StudentManagement.API.Controllers
             var result = await _facultyService.DeleteFacultyAsync(name);
             if (result.Success) return Ok(ApiResponse<FacultyDTO>.Success(
                     data: result.Data,
-                    message: "Faculty deleted successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to delete faculty"
+                        Message = result.ErrorMessage
                     }
                 ));
         }

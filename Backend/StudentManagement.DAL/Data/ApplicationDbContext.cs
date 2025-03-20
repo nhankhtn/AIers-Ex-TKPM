@@ -83,23 +83,6 @@ namespace StudentManagement.DAL.Data
         }
 
 
-        //private void SeedData(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<StudentStatus>().HasData(
-        //            new StudentStatus { Id = Guid.NewGuid(), Code = "ACT", Name = "Active", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow},
-        //            new StudentStatus { Id = Guid.NewGuid(), Code = "IAC", Name = "Inactive", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-        //        );
-
-        //    modelBuilder.Entity<Faculty>().HasData(
-        //            new Faculty { Id = Guid.NewGuid(), Code="CNTT", Name = "Information Technology", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-        //            new Faculty { Id = Guid.NewGuid(), Code="BA", Name = "Business Administration", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-        //        );
-
-        //    modelBuilder.Entity<Program>().HasData(
-        //            new Program { Id = Guid.NewGuid(), Code="SE", Name = "Software Engineering", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-        //            new Program { Id = Guid.NewGuid(), Code="CS", Name = "Computer Science", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-        //            new Program { Id = Guid.NewGuid(), Code="BA", Name = "Business Administration", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-        //        );
-        //}
+        
     }
 }
