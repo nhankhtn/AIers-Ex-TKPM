@@ -1,3 +1,5 @@
+import * as Yup from "yup";
+
 export interface Student {
   id: string;
   name: string;
@@ -62,6 +64,71 @@ export const mappingFiledStudent: Record<string, string> = {
   phone: "Số điện thoại",
   status: "Trạng thái",
 };
+
+export const validationStudent = Yup.object().shape({
+  name: Yup.string().required("Vui lòng nhập họ và tên"),
+  dateOfBirth: Yup.string().required("Vui lòng nhập ngày tháng năm sinh"),
+  email: Yup.string()
+    .email("Email không hợp lệ")
+    .required("Vui lòng nhập email"),
+
+  // Permanent address validation
+  permanentProvince: Yup.string().required("Vui lòng chọn tỉnh/thành phố"),
+  permanentDistrict: Yup.string().required("Vui lòng chọn quận/huyện"),
+  permanentWard: Yup.string().required("Vui lòng chọn phường/xã"),
+  permanentDetail: Yup.string().required("Vui lòng nhập địa chỉ chi tiết"),
+
+  // Temporary address validation (conditional)
+  temporaryProvince: Yup.string().when("useTemporaryAddress", {
+    is: true,
+    then: (schema) => schema.required("Vui lòng chọn tỉnh/thành phố"),
+  }),
+  temporaryDistrict: Yup.string().when("useTemporaryAddress", {
+    is: true,
+    then: (schema) => schema.required("Vui lòng chọn quận/huyện"),
+  }),
+  temporaryWard: Yup.string().when("useTemporaryAddress", {
+    is: true,
+    then: (schema) => schema.required("Vui lòng chọn phường/xã"),
+  }),
+  temporaryDetail: Yup.string().when("useTemporaryAddress", {
+    is: true,
+    then: (schema) => schema.required("Vui lòng nhập địa chỉ chi tiết"),
+  }),
+
+  // Mailing address validation (conditional)
+  mailingProvince: Yup.string().when("useMailingAddress", {
+    is: true,
+    then: (schema) => schema.required("Vui lòng chọn tỉnh/thành phố"),
+  }),
+  mailingDistrict: Yup.string().when("useMailingAddress", {
+    is: true,
+    then: (schema) => schema.required("Vui lòng chọn quận/huyện"),
+  }),
+  mailingWard: Yup.string().when("useMailingAddress", {
+    is: true,
+    then: (schema) => schema.required("Vui lòng chọn phường/xã"),
+  }),
+  mailingDetail: Yup.string().when("useMailingAddress", {
+    is: true,
+    then: (schema) => schema.required("Vui lòng nhập địa chỉ chi tiết"),
+  }),
+
+  // Academic info validation
+  faculty: Yup.string().required("Vui lòng chọn khoa"),
+  course: Yup.number()
+    .required("Vui lòng nhập khóa học")
+    .positive("Khóa học phải là số dương"),
+  program: Yup.string().required("Vui lòng chọn chương trình"),
+  phone: Yup.string().required("Vui lòng nhập số điện thoại"),
+  status: Yup.string().required("Vui lòng chọn tình trạng sinh viên"),
+
+  // Identity validation
+  documentNumber: Yup.string().required("Vui lòng nhập số giấy tờ"),
+  issueDate: Yup.string().required("Vui lòng nhập ngày cấp"),
+  issuePlace: Yup.string().required("Vui lòng nhập nơi cấp"),
+  expiryDate: Yup.string().required("Vui lòng nhập ngày hết hạn"),
+});
 
 // export const mockData: Student[] = [
 //   {

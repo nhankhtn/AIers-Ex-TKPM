@@ -42,6 +42,7 @@ import DialogManagement from "../_components/dialog-management";
 import { useFaculty } from "./use-faculty";
 import { useProgram } from "./use-program";
 import { useStatus } from "./use-status";
+import DrawerUpdateStudent from "../_components/drawer-update-student/drawer-update-student";
 
 const Content = () => {
   const {
@@ -269,7 +270,7 @@ const Content = () => {
         </RowStack>
       </RowStack>
       <RowStack mb={3} gap={2}>
-        <Stack flex={1}>
+        <Stack>
           <Paper
             sx={{
               p: 1,
@@ -314,7 +315,7 @@ const Content = () => {
           />
         </Stack>
 
-        <Stack width={250}>
+        <Stack flex={1}>
           <SearchBar
             onSearch={(value: string) =>
               setFilter((prev) => ({
@@ -344,7 +345,7 @@ const Content = () => {
           />
         )}
       </Stack>
-      <Dialog
+      <DrawerUpdateStudent
         open={dialog.open}
         student={dialog.data || null}
         onClose={dialog.handleClose}

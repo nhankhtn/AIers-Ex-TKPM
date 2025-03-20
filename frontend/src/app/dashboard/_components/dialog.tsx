@@ -62,7 +62,7 @@ function Dialog({
       getCountriesApi.call({});
       getProvincesApi.call({});
     } else {
-      formik.resetForm();
+      // formik.resetForm();
     }
     //  eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -122,7 +122,7 @@ function Dialog({
         notes: student?.identity.notes || "",
       },
     },
-    enableReinitialize: true,
+    // enableReinitialize: true,
     validationSchema: Yup.object().shape({
       name: Yup.string().required("Vui lòng nhập họ và tên"),
       dateOfBirth: Yup.string().required("Vui lòng nhập ngày tháng năm sinh"),
