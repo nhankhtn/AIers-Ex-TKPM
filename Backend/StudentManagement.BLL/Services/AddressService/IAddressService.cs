@@ -11,6 +11,6 @@ namespace StudentManagement.BLL.Services.AddressService
         public Task<string> GetProvincesAsync();
         public Task<string> GetDistrictsAsync(int provinceCode, int depth);
         public Task<string> GetWardsAsync(int districtCode, int depth);
-        public Task<List<object>> GetCountriesAsync();
+        public Task<string> GetCountriesAsync();
     }
 }
