@@ -4,7 +4,7 @@ import { StudentApi } from "@/api/students";
 import { useDialog } from "@/hooks/use-dialog";
 import useFunction from "@/hooks/use-function";
 import usePagination from "@/hooks/use-pagination";
-import { Student, StudentFilter } from "@/types/student";
+import { mock_students, Student, StudentFilter } from "@/types/student";
 import { useEffect, useMemo, useState } from "react";
 import { getFilterConfig } from "./filter-config";
 import { useFaculty } from "./use-faculty";
@@ -28,10 +28,7 @@ const useDashboardSearch = () => {
     disableResetOnCall: true,
   });
 
-  const students = useMemo(
-    () => getStudentsApi.data?.data || [],
-    [getStudentsApi.data?.data]
-  );
+  const students = useMemo(() => mock_students, [getStudentsApi.data?.data]);
 
   const pagination = usePagination({
     count: getStudentsApi.data?.total || 0,

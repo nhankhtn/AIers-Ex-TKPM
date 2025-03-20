@@ -1,11 +1,17 @@
 import { CustomTableConfig } from "@/components/custom-table";
-import { Student } from "@/types/student";
+import { Faculty, Program, Status, Student } from "@/types/student";
 import { Typography } from "@mui/material";
+import { parseStringToAddress } from "../_components/drawer-update-student/drawer-update-student";
 
-export const getTableConfig = (): CustomTableConfig<
-  Student["id"],
-  Student
->[] => [
+export const getTableConfig = ({
+  programs,
+  statuses,
+  faculties,
+}: {
+  programs: Program[];
+  statuses: Status[];
+  faculties: Faculty[];
+}): CustomTableConfig<Student["id"], Student>[] => [
   {
     key: "mssv",
     headerLabel: "Mã số sinh viên",
@@ -60,28 +66,75 @@ export const getTableConfig = (): CustomTableConfig<
   },
   {
     key: "permanent_address",
-    headerLabel: "Địa chị thường trú",
+    headerLabel: "Địa chỉ thường trú",
     type: "string",
-    renderCell: (data) => (
-      <Typography variant='body2'>{data.permanentAddress}</Typography>
-    ),
+    renderCell: (data) => {
+      const address = parseStringToAddress(data.permanentAddress);
+      return (
+        <Typography
+          variant='body2'
+          width={300}
+          whiteSpace={"normal"}
+          // sx={{
+          //   display: "-webkit-box",
+          //   WebkitLineClamp: 2,
+          //   WebkitBoxOrient: "vertical",
+          //   overflow: "hidden",
+          //   textOverflow: "ellipsis",
+          // }}
+        >
+          {Object.entries(address)
+            .map(([, value]) => value)
+            .filter(Boolean)
+            .join(", ")}
+        </Typography>
+      );
+    },
   },
   {
     key: "temporary_address",
     headerLabel: "Địa chị tạm trú",
     type: "string",
-    renderCell: (data) => (
-      <Typography variant='body2'>
-        {data.temporaryAddress || "Trống"}
-      </Typography>
-    ),
+    renderCell: (data) => {
+      const address = parseStringToAddress(data.temporaryAddress);
+      return (
+        <Typography variant='body2' width={300} whiteSpace={"normal"}>
+          {data.temporaryAddress
+            ? Object.entries(address)
+                .map(([, value]) => value)
+                .filter(Boolean)
+                .join(", ")
+            : "Trống"}
+        </Typography>
+      );
+    },
+  },
+  {
+    key: "mailing_address",
+    headerLabel: "Địa chỉ nhận thư",
+    type: "string",
+    renderCell: (data) => {
+      const address = parseStringToAddress(data.mailingAddress);
+      return (
+        <Typography variant='body2'>
+          {data.mailingAddress
+            ? Object.entries(address)
+                .map(([, value]) => value)
+                .filter(Boolean)
+                .join(", ")
+            : "Trống"}
+        </Typography>
+      );
+    },
   },
   {
     key: "faculty",
     headerLabel: "Khoa",
     type: "string",
     renderCell: (data) => (
-      <Typography variant='body2'>{data.faculty}</Typography>
+      <Typography variant='body2'>
+        {faculties.find((f) => f.id === data.faculty)?.name}
+      </Typography>
     ),
   },
   {
@@ -97,7 +150,9 @@ export const getTableConfig = (): CustomTableConfig<
     headerLabel: "Chương trình",
     type: "string",
     renderCell: (data) => (
-      <Typography variant='body2'>{data.program}</Typography>
+      <Typography variant='body2'>
+        {programs.find((p) => p.id === data.program)?.name}
+      </Typography>
     ),
   },
   {
@@ -105,7 +160,9 @@ export const getTableConfig = (): CustomTableConfig<
     headerLabel: "Trạng thái",
     type: "string",
     renderCell: (data) => (
-      <Typography variant='body2'>{data.status}</Typography>
+      <Typography variant='body2'>
+        {statuses.find((s) => s.id === data.program)?.name}
+      </Typography>
     ),
   },
 ];

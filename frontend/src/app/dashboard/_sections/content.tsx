@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { mappingFiledStudent, Student } from "@/types/student";
 import {
   Box,
@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
 import SearchBar from "@/app/dashboard/_components/search-bar";
-import Dialog from "@/app/dashboard/_components/dialog";
 import RowStack from "@/components/row-stack";
 import DialogConfirmDelete from "../_components/dialog-confirm-delete";
 import {
@@ -61,7 +60,6 @@ const Content = () => {
   } = useDashboardSearch();
   const {
     dialog: dialogFaculty,
-    getFacultiesApi,
     deleteFacultyApi,
     addFacultyApi,
     updateFacultyApi,
@@ -69,7 +67,6 @@ const Content = () => {
   } = useFaculty();
   const {
     dialog: dialogProgram,
-    getProgramApi,
     deleteProgramApi,
     addProgramApi,
     updateProgramApi,
@@ -77,7 +74,6 @@ const Content = () => {
   } = useProgram();
   const {
     dialog: dialogStatus,
-    getStatusApi,
     deleteStatusApi,
     addStatusApi,
     updateStatusApi,
@@ -388,27 +384,29 @@ const Content = () => {
       </RowStack>
       <Stack height={300}>
         <CustomTable
-          configs={getTableConfig()}
+          configs={getTableConfig({
+            statuses,
+            faculties,
+            programs,
+          })}
           rows={students}
           loading={getStudentsApi.loading}
           emptyState={<Typography>Không có dữ liệu</Typography>}
-          renderRowActions={() => {
+          renderRowActions={(row: Student) => {
             return (
               <RowStack gap={1}>
                 <Button
                   variant='outlined'
                   size='small'
                   sx={{ borderRadius: "20px", whiteSpace: "nowrap" }}
-                  onClick={() => {
-                    // onClickEdit(student);
-                  }}
+                  onClick={() => dialog.handleOpen(row)}
                 >
                   Chỉnh sửa
                 </Button>
                 <IconButton
                   size='small'
                   color='error'
-                  // onClick={() => deleteStudent(student)}
+                  onClick={() => dialogConfirmDelete.handleOpen(row)}
                 >
                   <DeleteIcon fontSize='small' />
                 </IconButton>
