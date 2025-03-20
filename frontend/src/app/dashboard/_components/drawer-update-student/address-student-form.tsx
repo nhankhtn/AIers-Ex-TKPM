@@ -4,6 +4,7 @@ import { AddressApi } from "@/api/address";
 import RowStack from "@/components/row-stack";
 import useFunction from "@/hooks/use-function";
 import { Country } from "@/types/address";
+import { COUNTRY_DEFAULT } from "@/types/student";
 import { InfoOutlined } from "@mui/icons-material";
 import {
   TextField,
@@ -183,9 +184,12 @@ const AddressStudentForm = ({
           }}
         >
           <Autocomplete
+            freeSolo={formik.values.permanentCountry !== COUNTRY_DEFAULT}
             id='permanentProvince'
             options={provinces}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) =>
+              typeof option === "string" ? option : option.name
+            }
             value={
               provinces.find(
                 (p) => p.name === formik.values.permanentProvince
@@ -194,7 +198,11 @@ const AddressStudentForm = ({
             onChange={(_, newValue) => {
               formik.setFieldValue(
                 "permanentProvince",
-                newValue ? newValue.name : ""
+                newValue
+                  ? typeof newValue === "string"
+                    ? newValue
+                    : newValue.name
+                  : ""
               );
               formik.setFieldValue("permanentDistrict", "");
               formik.setFieldValue("permanentWard", "");
@@ -222,9 +230,12 @@ const AddressStudentForm = ({
           }}
         >
           <Autocomplete
+            freeSolo={formik.values.permanentCountry !== COUNTRY_DEFAULT}
             id='permanentDistrict'
             options={districtsPA}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) =>
+              typeof option === "string" ? option : option.name
+            }
             value={
               districtsPA.find(
                 (d) => d.name === formik.values.permanentDistrict
@@ -233,11 +244,18 @@ const AddressStudentForm = ({
             onChange={(_, newValue) => {
               formik.setFieldValue(
                 "permanentDistrict",
-                newValue ? newValue.name : ""
+                newValue
+                  ? typeof newValue === "string"
+                    ? newValue
+                    : newValue.name
+                  : ""
               );
               formik.setFieldValue("permanentWard", "");
             }}
-            disabled={!formik.values.permanentProvince}
+            disabled={
+              !formik.values.permanentProvince &&
+              formik.values.permanentCountry === COUNTRY_DEFAULT
+            }
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -261,9 +279,12 @@ const AddressStudentForm = ({
           }}
         >
           <Autocomplete
+            freeSolo={formik.values.permanentCountry !== COUNTRY_DEFAULT}
             id='permanentWard'
             options={wardsPA}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) =>
+              typeof option === "string" ? option : option.name
+            }
             value={
               wardsPA.find((w) => w.name === formik.values.permanentWard) ||
               null
@@ -271,10 +292,17 @@ const AddressStudentForm = ({
             onChange={(_, newValue) => {
               formik.setFieldValue(
                 "permanentWard",
-                newValue ? newValue.name : ""
+                newValue
+                  ? typeof newValue === "string"
+                    ? newValue
+                    : newValue.name
+                  : ""
               );
             }}
-            disabled={!formik.values.permanentDistrict}
+            disabled={
+              !formik.values.permanentDistrict &&
+              formik.values.permanentCountry === COUNTRY_DEFAULT
+            }
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -375,9 +403,12 @@ const AddressStudentForm = ({
               }}
             >
               <Autocomplete
+                freeSolo={formik.values.temporaryCountry !== COUNTRY_DEFAULT}
                 id='temporaryProvince'
                 options={provinces}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.name
+                }
                 value={
                   provinces.find(
                     (p) => p.name === formik.values.temporaryProvince
@@ -386,7 +417,11 @@ const AddressStudentForm = ({
                 onChange={(_, newValue) => {
                   formik.setFieldValue(
                     "temporaryProvince",
-                    newValue ? newValue.name : ""
+                    newValue
+                      ? typeof newValue === "string"
+                        ? newValue
+                        : newValue.name
+                      : ""
                   );
                   formik.setFieldValue("temporaryDistrict", "");
                   formik.setFieldValue("temporaryWard", "");
@@ -416,7 +451,10 @@ const AddressStudentForm = ({
               <Autocomplete
                 id='temporaryDistrict'
                 options={districtsTA}
-                getOptionLabel={(option) => option.name}
+                freeSolo={formik.values.temporaryCountry !== COUNTRY_DEFAULT}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.name
+                }
                 value={
                   districtsTA.find(
                     (d) => d.name === formik.values.temporaryDistrict
@@ -425,11 +463,18 @@ const AddressStudentForm = ({
                 onChange={(_, newValue) => {
                   formik.setFieldValue(
                     "temporaryDistrict",
-                    newValue ? newValue.name : ""
+                    newValue
+                      ? typeof newValue === "string"
+                        ? newValue
+                        : newValue.name
+                      : ""
                   );
                   formik.setFieldValue("temporaryWard", "");
                 }}
-                disabled={!formik.values.temporaryProvince}
+                disabled={
+                  !formik.values.temporaryProvince &&
+                  formik.values.temporaryCountry === COUNTRY_DEFAULT
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -449,8 +494,11 @@ const AddressStudentForm = ({
             <Grid2 size={12}>
               <Autocomplete
                 id='temporaryWard'
+                freeSolo={formik.values.temporaryCountry !== COUNTRY_DEFAULT}
                 options={wardsTA}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.name
+                }
                 value={
                   wardsTA.find((w) => w.name === formik.values.temporaryWard) ||
                   null
@@ -458,10 +506,17 @@ const AddressStudentForm = ({
                 onChange={(_, newValue) => {
                   formik.setFieldValue(
                     "temporaryWard",
-                    newValue ? newValue.name : ""
+                    newValue
+                      ? typeof newValue === "string"
+                        ? newValue
+                        : newValue.name
+                      : ""
                   );
                 }}
-                disabled={!formik.values.temporaryDistrict}
+                disabled={
+                  !formik.values.temporaryDistrict &&
+                  formik.values.temporaryCountry === COUNTRY_DEFAULT
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -565,8 +620,11 @@ const AddressStudentForm = ({
             >
               <Autocomplete
                 id='mailingProvince'
+                freeSolo={formik.values.mailingCountry !== COUNTRY_DEFAULT}
                 options={provinces}
-                getOptionLabel={(option) => option.name}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.name
+                }
                 value={
                   provinces.find(
                     (p) => p.name === formik.values.mailingProvince
@@ -575,7 +633,11 @@ const AddressStudentForm = ({
                 onChange={(_, newValue) => {
                   formik.setFieldValue(
                     "mailingProvince",
-                    newValue ? newValue.name : ""
+                    newValue
+                      ? typeof newValue === "string"
+                        ? newValue
+                        : newValue.name
+                      : ""
                   );
                   formik.setFieldValue("mailingDistrict", "");
                   formik.setFieldValue("mailingWard", "");
@@ -605,7 +667,10 @@ const AddressStudentForm = ({
               <Autocomplete
                 id='mailingDistrict'
                 options={districtsMA}
-                getOptionLabel={(option) => option.name}
+                freeSolo={formik.values.mailingCountry !== COUNTRY_DEFAULT}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.name
+                }
                 value={
                   districtsMA.find(
                     (d) => d.name === formik.values.mailingDistrict
@@ -614,11 +679,18 @@ const AddressStudentForm = ({
                 onChange={(_, newValue) => {
                   formik.setFieldValue(
                     "mailingDistrict",
-                    newValue ? newValue.name : ""
+                    newValue
+                      ? typeof newValue === "string"
+                        ? newValue
+                        : newValue.name
+                      : ""
                   );
                   formik.setFieldValue("mailingWard", "");
                 }}
-                disabled={!formik.values.mailingProvince}
+                disabled={
+                  !formik.values.mailingProvince &&
+                  formik.values.mailingCountry === COUNTRY_DEFAULT
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -644,7 +716,10 @@ const AddressStudentForm = ({
               <Autocomplete
                 id='mailingWard'
                 options={wardsMA}
-                getOptionLabel={(option) => option.name}
+                freeSolo={formik.values.mailingCountry !== COUNTRY_DEFAULT}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.name
+                }
                 value={
                   wardsMA.find((w) => w.name === formik.values.mailingWard) ||
                   null
@@ -652,10 +727,17 @@ const AddressStudentForm = ({
                 onChange={(_, newValue) => {
                   formik.setFieldValue(
                     "mailingWard",
-                    newValue ? newValue.name : ""
+                    newValue
+                      ? typeof newValue === "string"
+                        ? newValue
+                        : newValue.name
+                      : ""
                   );
                 }}
-                disabled={!formik.values.mailingDistrict}
+                disabled={
+                  !formik.values.mailingDistrict &&
+                  formik.values.mailingCountry === COUNTRY_DEFAULT
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}

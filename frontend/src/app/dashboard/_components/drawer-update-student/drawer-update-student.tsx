@@ -15,6 +15,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import {
+  COUNTRY_DEFAULT,
   Faculty,
   Gender,
   Program,
@@ -28,6 +29,28 @@ import { AddressApi } from "@/api/address";
 import RowStack from "@/components/row-stack";
 import AddressStudentForm from "./address-student-form";
 import AdditionalInformationForm from "./addtional-infomation-form";
+
+export const parseStringToAddress = (addressString?: string) => {
+  if (!addressString)
+    return {
+      detail: "",
+      ward: "",
+      district: "",
+      province: "",
+      country: COUNTRY_DEFAULT,
+    };
+  try {
+    return JSON.parse(addressString);
+  } catch (e) {
+    return {
+      detail: addressString,
+      ward: "",
+      district: "",
+      province: "",
+      country: COUNTRY_DEFAULT,
+    };
+  }
+};
 
 interface DrawerUpdateStudentProps {
   student: Student | null;
@@ -81,31 +104,9 @@ function DrawerUpdateStudent({
     //  eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const parseAddress = (addressString?: string) => {
-    if (!addressString)
-      return {
-        country: "Vietnam",
-        province: "",
-        district: "",
-        ward: "",
-        detail: "",
-      };
-    try {
-      return JSON.parse(addressString);
-    } catch (e) {
-      return {
-        country: "Vietnam",
-        province: "",
-        district: "",
-        ward: "",
-        detail: addressString,
-      };
-    }
-  };
-
-  const permanentAddress = parseAddress(student?.permanentAddress);
-  const temporaryAddress = parseAddress(student?.temporaryAddress);
-  const mailingAddress = parseAddress(student?.mailingAddress);
+  const permanentAddress = parseStringToAddress(student?.permanentAddress);
+  const temporaryAddress = parseStringToAddress(student?.temporaryAddress);
+  const mailingAddress = parseStringToAddress(student?.mailingAddress);
 
   const handleSubmit = useCallback(
     async (values: any) => {
@@ -148,7 +149,7 @@ function DrawerUpdateStudent({
         issueDate: new Date(values.identityIssueDate),
         issuePlace: values.identityIssuePlace,
         expiryDate: new Date(values.identityExpiryDate),
-        country: values.identityCountry,
+        countryIssue: values.identityCountry,
         isChip: values.identityIsChip,
         notes: values.identityNotes,
       };
@@ -185,8 +186,8 @@ function DrawerUpdateStudent({
     [updateStudent, addStudent, student, onClose]
   );
 
-  const formik = useFormik({
-    initialValues: {
+  const initialValues = useMemo(
+    () => ({
       id: student?.id || "",
       name: student?.name || "",
       dateOfBirth: student?.dateOfBirth.split("T")[0] || "",
@@ -194,7 +195,7 @@ function DrawerUpdateStudent({
       email: student?.email || "",
 
       // Permanent address
-      permanentCountry: permanentAddress.country || "Vietnam",
+      permanentCountry: permanentAddress.country || COUNTRY_DEFAULT,
       permanentProvince: permanentAddress.province || "",
       permanentDistrict: permanentAddress.district || "",
       permanentWard: permanentAddress.ward || "",
@@ -202,7 +203,7 @@ function DrawerUpdateStudent({
 
       // Temporary address
       useTemporaryAddress: !!student?.temporaryAddress,
-      temporaryCountry: temporaryAddress.country || "Vietnam",
+      temporaryCountry: temporaryAddress.country || COUNTRY_DEFAULT,
       temporaryProvince: temporaryAddress.province || "",
       temporaryDistrict: temporaryAddress.district || "",
       temporaryWard: temporaryAddress.ward || "",
@@ -210,7 +211,7 @@ function DrawerUpdateStudent({
 
       // Mailing address
       useMailingAddress: !!student?.mailingAddress,
-      mailingCountry: mailingAddress.country || "Vietnam",
+      mailingCountry: mailingAddress.country || COUNTRY_DEFAULT,
       mailingProvince: mailingAddress.province || "",
       mailingDistrict: mailingAddress.district || "",
       mailingWard: mailingAddress.ward || "",
@@ -229,15 +230,21 @@ function DrawerUpdateStudent({
       identityIssueDate: student?.identity.issueDate || new Date(),
       identityIssuePlace: student?.identity.issuePlace || "",
       identityExpiryDate: student?.identity.expiryDate || new Date(),
-      identityCountry: student?.identity.country || "Vietnam",
+      identityCountry: student?.identity.countryIssue || COUNTRY_DEFAULT,
       identityIsChip: !!student?.identity.isChip,
       identityNotes: student?.identity.notes || "",
-      nationlity: student?.nationality || "Vietnam",
-    },
-    // enableReinitialize: true,
+      nationality: student?.nationality || COUNTRY_DEFAULT,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [student, faculties, programs, statuses]
+  );
+  const formik = useFormik({
+    initialValues,
+    enableReinitialize: true,
     validationSchema: validationStudent,
     onSubmit: handleSubmit,
   });
+
   return (
     <Drawer
       open={open}
