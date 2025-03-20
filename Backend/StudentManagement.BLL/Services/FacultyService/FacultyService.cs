@@ -28,7 +28,7 @@ namespace StudentManagement.BLL.Services.FacultyService
             var res = await _facultyRepository.AddFacultyAsync(_mapper.Map<Faculty>(facultyDTO));
             if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
 
-            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data));
+            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data), res.Message);
         }
 
         public async Task<Result<FacultyDTO>> UpdateFacultyAsync(string id, FacultyDTO facultyDTO)
@@ -37,21 +37,21 @@ namespace StudentManagement.BLL.Services.FacultyService
             var res = await _facultyRepository.UpdateFacultyAsync(_mapper.Map<Faculty>(facultyDTO));
             if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
 
-            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data));
+            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data), res.Message);
         }
 
         public async Task<Result<IEnumerable<FacultyDTO>>> GetAllFacultiesAsync()
         {
             var res = await _facultyRepository.GetAllFacultiesAsync();
             if (!res.Success) return Result<IEnumerable<FacultyDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<IEnumerable<FacultyDTO>>.Ok(_mapper.Map<IEnumerable<FacultyDTO>>(res.Data));
+            return Result<IEnumerable<FacultyDTO>>.Ok(_mapper.Map<IEnumerable<FacultyDTO>>(res.Data), res.Message);
         }
 
         public async Task<Result<FacultyDTO>> DeleteFacultyAsync(string key)
         {
             var res = await _facultyRepository.DeleteFacultyAsync(new Faculty() { Id = key.ToGuid(), Name = key });
             if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data));
+            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data), res.Message);
         }
     }
 }

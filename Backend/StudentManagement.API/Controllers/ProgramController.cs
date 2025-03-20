@@ -24,14 +24,14 @@ namespace StudentManagement.API.Controllers
             var res = await _programService.GetAllProgramAsync();
             if (res.Success) return Ok(ApiResponse<IEnumerable<ProgramDTO>>.Success(
                     data: res.Data,
-                    message: "Programs retrieved successfully"
+                    message: res.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = res.ErrorCode,
-                        Message = "Failed to retrieve programs"
+                        Message = res.ErrorMessage
                     }
                 ));
             
@@ -43,14 +43,14 @@ namespace StudentManagement.API.Controllers
             var res = await _programService.AddProgramAsync(programDTO);
             if (res.Success) return Ok(ApiResponse<ProgramDTO>.Success(
                     data: res.Data,
-                    message: "Program added successfully"
+                    message: res.ErrorMessage
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = res.ErrorCode,
-                        Message = "Failed to add program"
+                        Message = res.ErrorMessage
                     }
                 ));
         }
@@ -62,14 +62,14 @@ namespace StudentManagement.API.Controllers
             var res = await _programService.UpdateProgramAsync(id, programDTO);
             if (res.Success) return Ok(ApiResponse<ProgramDTO>.Success(
                     data: res.Data,
-                    message: "Program name changed successfully"
+                    message: res.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = res.ErrorCode,
-                        Message = "Failed to change program name"
+                        Message = res.ErrorMessage
                     }
                 ));
         }
@@ -80,14 +80,14 @@ namespace StudentManagement.API.Controllers
             var result = await _programService.DeleteProgramAsync(id);
             if (result.Success) return Ok(ApiResponse<ProgramDTO>.Success(
                     data: result.Data,
-                    message: "Faculty deleted successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to delete faculty"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -98,14 +98,14 @@ namespace StudentManagement.API.Controllers
             var result = await _programService.DeleteProgramAsync(name);
             if (result.Success) return Ok(ApiResponse<ProgramDTO>.Success(
                     data: result.Data,
-                    message: "Faculty deleted successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to delete faculty"
+                        Message = result.ErrorMessage
                     }
                 ));
         }

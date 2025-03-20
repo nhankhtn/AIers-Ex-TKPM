@@ -7,7 +7,6 @@ using Microsoft.Identity.Client;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.Services.StudentService;
-using StudentManagement.BLL.Utils;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
@@ -155,7 +154,7 @@ namespace StudentManagement.BLL.Services.StudentService
             {
                 Students = _mapper.Map<IEnumerable<StudentDTO>>(res.Data.students),
                 Total = res.Data.total
-            });
+            }, res.Message);
         }
 
 
@@ -190,7 +189,7 @@ namespace StudentManagement.BLL.Services.StudentService
             if (res.Success)
             {
                 result.AcceptableStudents = _mapper.Map<IEnumerable<StudentDTO>>(addList).ToList();
-                return Result<AddListStudentResult>.Ok(result);
+                return Result<AddListStudentResult>.Ok(result, res.Message);
             }
             return Result<AddListStudentResult>.Fail(res.ErrorCode, res.ErrorMessage);
         }
@@ -211,7 +210,7 @@ namespace StudentManagement.BLL.Services.StudentService
         public async Task<Result<IEnumerable<StudentDTO>>> GetStudentsByNameAsync(string name)
         {
             var students = await _studentRepository.GetStudentsByNameAsync(name);
-            return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+            return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students), students.Message);
         }
 
 
@@ -223,7 +222,7 @@ namespace StudentManagement.BLL.Services.StudentService
         public async Task<Result<string>> DeleteStudentByIdAsync(string studentId)
         {
             var res = await _studentRepository.DeleteStudentAsync(studentId);
-            return res.Success ? Result<string>.Ok(studentId) : Result<string>.Fail(res.ErrorCode, res.ErrorMessage);
+            return res.Success ? Result<string>.Ok(studentId, res.Message) : Result<string>.Fail(res.ErrorCode, res.ErrorMessage);
         }
 
 
@@ -250,7 +249,7 @@ namespace StudentManagement.BLL.Services.StudentService
             }
             
             var res = await _studentRepository.UpdateStudentAsync(_mapper.Map<Student>(resExistStudent.Data));
-            return res.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent.Data)) 
+            return res.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent.Data), res.Message) 
                 : Result<StudentDTO>.Fail(res.ErrorCode, res.ErrorMessage);
         }
 

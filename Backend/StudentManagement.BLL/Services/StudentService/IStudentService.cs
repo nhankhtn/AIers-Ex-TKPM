@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Students;
-using StudentManagement.BLL.Utils;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
