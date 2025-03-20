@@ -91,7 +91,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             }
         }
 
-        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(string id) => await GetStudentStatusByIdAsync(Guid.Parse(id));
+        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(string id) => await GetStudentStatusByIdAsync(id.ToGuid());
 
         public async Task<Result<StudentStatus?>> GetStudentStatusByNameAsync(string name)
         {
