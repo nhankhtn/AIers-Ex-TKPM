@@ -56,7 +56,6 @@ function Dialog({
     AddressApi.getDistrictOfProvinces
   );
   const getWardOfDistrictApi = useFunction(AddressApi.getWardOfDistrict);
-
   useEffect(() => {
     if (open) {
       getCountriesApi.call({});
@@ -97,30 +96,31 @@ function Dialog({
   const formik = useFormik({
     initialValues: {
       id: student?.id || "",
-      name: student?.name || "",
-      dateOfBirth: student?.dateOfBirth.split("T")[0] || "",
+      name: student?.name || "ahahah",
+      dateOfBirth: student?.dateOfBirth.split("T")[0] || "12/12/2000",
       gender: student?.gender || Gender.Male,
-      email: student?.email || "",
+      email: student?.email || "ndminhnhat@gmail.com",
       province: initialAddress.province,
       district: initialAddress.district,
       ward: initialAddress.ward,
       street: initialAddress.street,
       country: initialAddress.country,
-      faculty: faculties.find((f) => f.id === student?.faculty)?.name || "",
+      faculty: faculties.find((f) => f.id === student?.faculty)?.name || "haha",
       course: student?.course || 0,
-      program: programs.find((p) => p.id === student?.program)?.name || "",
+      program: programs.find((p) => p.id === student?.program)?.name || "clc",
       phone: student?.phone || "",
-      status: statuses.find((s) => s.id === student?.status)?.name || "",
+      status: statuses.find((s) => s.id === student?.status)?.name || "studying",
       identity: {
         type: student?.identity.type || 0,
         documentNumber: student?.identity.documentNumber || "",
         issueDate: student?.identity.issueDate || new Date(),
         issuePlace: student?.identity.issuePlace || "",
         expiryDate: student?.identity.expiryDate || new Date(),
-        country: student?.identity.country || "",
+        countryIssue: student?.identity.countryIssue || "",
         isChip: !!student?.identity.isChip,
         notes: student?.identity.notes || "",
       },
+      nationality : student?.nationality || "",
     },
     // enableReinitialize: true,
     validationSchema: Yup.object().shape({

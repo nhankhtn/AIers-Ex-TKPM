@@ -49,10 +49,17 @@ const useDashboardSearch = () => {
   });
   const createStudentsApi = useFunction(StudentApi.createStudent, {
     successMessage: "Thêm sinh viên thành công",
-    onSuccess: ({ result }: { result: Student[] }) => {
+    onSuccess: ({ result }: { result: {
+      data: {
+        acceptableStudents: Student[];
+        unacceptableStudents: Omit<Student, "id">[];
+      }
+
+    } }) => {
+      console.log("res: ", result);
       getStudentsApi.setData({
-        data: [...students, ...result],
-        total: (getStudentsApi.data?.total || 0) + result.length,
+        data: [...students, ...result.data.acceptableStudents],
+        total: (getStudentsApi.data?.total || 0) + result.data.acceptableStudents.length,
       });
     },
   });
@@ -63,7 +70,7 @@ const useDashboardSearch = () => {
     }: {
       payload: {
         id: Student["id"];
-        student: Partial<Student>;
+        student: Partial<Student | Omit<Student, "email">>;
       };
     }) => {
       getStudentsApi.setData({

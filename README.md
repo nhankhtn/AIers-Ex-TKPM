@@ -70,7 +70,7 @@ cd Backend
 ```sh
 dotnet ef database update -s ./StudentManagement.API -p ./StudentManagement.DAL
 ```
-
+#### Chạy script `data.sql` trong thư mục `Backend/scripts`
 
 #### Chạy Ctrl + F5 để Run Server
 Server hoạt động ở </br>
