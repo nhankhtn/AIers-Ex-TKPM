@@ -92,8 +92,8 @@ const useDashboardSearch = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const key = searchParams.get("key");
-    const status_name = searchParams.get("status");
-    const faculty_name = searchParams.get("faculty");
+    const status_name = searchParams.get("status_name");
+    const faculty_name = searchParams.get("faculty_name");
 
     setFilter((prev) => ({
       ...prev,

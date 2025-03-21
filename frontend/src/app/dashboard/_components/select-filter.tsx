@@ -39,7 +39,7 @@ const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
               onChange={(e) => onChange(key, e.target.value as string)}
             >
               {configs[index].options.map(({ value, label }) => (
-                <MenuItem key={value} value={value}>
+                <MenuItem key={value} value={label=== "Tất cả" ? value : label}>
                   {label}
                 </MenuItem>
               ))}
