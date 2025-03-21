@@ -70,7 +70,7 @@ const useDashboardSearch = () => {
     }: {
       payload: {
         id: Student["id"];
-        student: Partial<Student>;
+        student: Partial<Student | Omit<Student, "email">>;
       };
     }) => {
       getStudentsApi.setData({

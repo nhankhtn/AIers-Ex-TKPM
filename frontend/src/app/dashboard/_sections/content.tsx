@@ -96,7 +96,7 @@ const Content = () => {
   );
 
   const handleUpdateStudent = useCallback(
-    async (student: Student) => {
+    async (student: Student| Omit<Student,'email'>) => {
       await updateStudentsApi.call({
         id: student.id as string,
         student,
