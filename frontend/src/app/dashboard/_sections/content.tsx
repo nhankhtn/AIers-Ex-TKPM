@@ -1,6 +1,11 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import { mappingFiledStudent, Student } from "@/types/student";
+import {
+  Gender,
+  mappingFiledStudent,
+  mappingGender,
+  Student,
+} from "@/types/student";
 import {
   Box,
   Typography,
@@ -219,6 +224,8 @@ const Content = () => {
             mappedStudent[value] = objectToAddress(
               JSON.parse(student[typedKey] as string)
             );
+          } else if (typedKey === "gender") {
+            mappedStudent[value] = mappingGender[student[typedKey] as Gender];
           } else {
             mappedStudent[value] = student[typedKey];
           }

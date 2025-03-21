@@ -57,8 +57,8 @@ export interface Status {
 
 export interface StudentFilter extends Partial<Student> {
   key: string;
-  status_name: string;
-  faculty_name: string;
+  status: string;
+  faculty: string;
 }
 
 export const mappingFiledStudent: Record<string, string> = {

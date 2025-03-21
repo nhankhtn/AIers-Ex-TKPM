@@ -29,6 +29,7 @@ import { AddressApi } from "@/api/address";
 import RowStack from "@/components/row-stack";
 import AddressStudentForm from "./address-student-form";
 import AdditionalInformationForm from "./addtional-infomation-form";
+import { useMainContext } from "@/context";
 
 export const parseStringToAddress = (addressString?: string) => {
   if (!addressString)
@@ -89,16 +90,10 @@ function DrawerUpdateStudent({
   programs,
 }: DrawerUpdateStudentProps) {
   const getCountriesApi = useFunction(AddressApi.getCountries);
-
-  const countries = useMemo(
-    () => getCountriesApi.data || [],
-    [getCountriesApi.data]
-  );
+  const { countries } = useMainContext();
 
   useEffect(() => {
-    if (open) {
-      getCountriesApi.call({});
-    } else {
+    if (!open) {
       formik.resetForm();
     }
     //  eslint-disable-next-line react-hooks/exhaustive-deps

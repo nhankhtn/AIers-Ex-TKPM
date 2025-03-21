@@ -20,8 +20,8 @@ export class StudentApi {
     page,
     limit,
     key,
-    status_name,
-    faculty_name,
+    status,
+    faculty,
   }: GetStudentRequest): Promise<StudentResponse> {
     return await apiGet(
       "/students",
@@ -29,8 +29,8 @@ export class StudentApi {
         page,
         limit,
         key,
-        status_name,
-        faculty_name,
+        status,
+        faculty,
       })
     );
   }
