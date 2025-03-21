@@ -179,7 +179,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnName("gender");
 
                     b.Property<string>("MailingAddress")
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("nvarchar(200)")
                         .HasColumnName("mailing_address");
 
                     b.Property<string>("Name")
@@ -194,7 +194,7 @@ namespace StudentManagement.DAL.Migrations
 
                     b.Property<string>("PermanentAddress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("nvarchar(200)")
                         .HasColumnName("permanent_address");
 
                     b.Property<string>("Phone")
@@ -211,7 +211,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnName("status_id");
 
                     b.Property<string>("TemporaryAddress")
-                        .HasColumnType("nvarchar(100)")
+                        .HasColumnType("nvarchar(200)")
                         .HasColumnName("temporary_address");
 
                     b.HasKey("Id");

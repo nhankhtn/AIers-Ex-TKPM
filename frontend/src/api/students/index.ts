@@ -37,7 +37,13 @@ export class StudentApi {
 
   static async createStudent(
     students: Omit<Student, "id">[]
-  ): Promise<Student[]> {
+  ): Promise<{
+    data: {
+      acceptableStudents: Student[];
+      unacceptableStudents: Omit<Student, "id">[];
+    }
+
+  }> {
     return await apiPost("/students", students);
   }
 

@@ -187,7 +187,37 @@ const Content = () => {
         showSnackbarError("Không có dữ liệu để import");
         return;
       }
-      createStudentsApi.call(studentsImported as Student[]);
+      const studentArr = studentsImported.map((student) => {
+        const mappedStudent: Student = {
+          id: student.id || "",
+          name: student.name || "",
+          dateOfBirth: student.dateOfBirth || "",
+          gender: student.gender,
+          email: student.email || "",
+          temporaryAddress: student.temporaryAddress || undefined,
+          permanentAddress: student.permanentAddress || "",
+          mailingAddress: student.mailingAddress || undefined,
+          faculty: student.faculty || "",
+          course: Number(student.course) || 0,
+          program: student.program || "",
+          phone: student.phone || "",
+          status: student.status || "",
+          identity: {
+            type: student.type || 0,
+            documentNumber: student.documentNumber || "",
+            issueDate: student.issueDate ,
+            issuePlace: student.issuePlace || "",
+            expiryDate: student.expiryDate,
+            countryIssue: student.countryIssue || "",
+            isChip: Boolean(student.isChip),
+            notes: student.notes || "",
+          },
+          nationality: student.nationality || "",
+        };
+        return mappedStudent;
+      });
+      console.log(studentArr);
+      createStudentsApi.call(studentArr as Student[]);
     },
     [showSnackbarError, createStudentsApi]
   );
@@ -198,7 +228,7 @@ const Content = () => {
         const mappedStudent: Record<string, any> = {};
         Object.entries(mappingFiledStudent).forEach(([key, value]) => {
           const typedKey = key as keyof Student;
-          if (student[typedKey] === "object") {
+          if (typeof student[typedKey] === "object") {
             Object.entries(student[typedKey]).forEach(([subKey, subValue]) => {
               if (
                 subValue === "" ||
@@ -206,13 +236,15 @@ const Content = () => {
                 subValue === null
               )
                 return;
-              if (subKey === "issueDate" || subKey === "expiryDate") {
-                mappedStudent[subKey] = new Date(subValue).toLocaleDateString(
-                  "vi-VN"
-                );
-                return;
-              }
-              mappedStudent[subKey] = subValue;
+              // if (subKey === "issueDate" || subKey === "expiryDate") {
+              //   if (typeof subValue === "string" || typeof subValue === "number" || subValue instanceof Date) {
+              //     mappedStudent[mappingFiledStudent[subKey]] = new Date(subValue).toLocaleDateString(
+              //       "vi-VN"
+              //     );
+              //   }
+              //   return;
+              // }
+              mappedStudent[mappingFiledStudent[subKey]] = subValue;
             });
           }
           if (isJSONString(student[typedKey] as string)) {
