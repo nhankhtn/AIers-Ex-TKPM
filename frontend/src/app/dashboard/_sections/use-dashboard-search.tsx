@@ -11,14 +11,16 @@ import { useFaculty } from "./use-faculty";
 import { useStatus } from "./use-status";
 import { useProgram } from "./use-program";
 import { normalizeString } from "@/utils/string-helper";
+import { useSearchParams } from "next/navigation";
 
 const useDashboardSearch = () => {
+  const searchParams = useSearchParams();
   const { faculties } = useFaculty();
   const { statuses } = useStatus();
   const [filter, setFilter] = useState<StudentFilter>({
     key: "",
-    status_name: "",
-    faculty_name: "",
+    status: "",
+    faculty: "",
   });
 
   const dialog = useDialog<Student>();
@@ -90,29 +92,30 @@ const useDashboardSearch = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const key = searchParams.get("key");
-    const status_name = searchParams.get("status_name");
-    const faculty_name = searchParams.get("faculty_name");
+    const status_name = searchParams.get("status");
+    const faculty_name = searchParams.get("faculty");
 
     setFilter((prev) => ({
       ...prev,
       key: key || "",
-      status_name: status_name || "",
-      faculty_name: faculty_name || "",
+      status: status_name || "",
+      faculty: faculty_name || "",
     }));
     getStudentsApi.call({
       page: pagination.page + 1,
       limit: pagination.rowsPerPage,
       key: filter.key,
-      status_name: filter.status_name,
-      faculty_name: filter.faculty_name,
+      status: filter.status,
+      faculty: filter.faculty,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     pagination.page,
     pagination.rowsPerPage,
     filter.key,
-    filter.status_name,
-    filter.faculty_name,
+    filter.status,
+    filter.faculty,
+    searchParams,
   ]);
 
   useEffect(() => {
