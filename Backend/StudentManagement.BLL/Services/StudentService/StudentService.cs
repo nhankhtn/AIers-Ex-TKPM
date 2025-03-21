@@ -108,6 +108,7 @@ namespace StudentManagement.BLL.Services.StudentService
                     if (value is not null && value is string facultyId)
                     {
                         student.FacultyId = facultyId.ToGuid();
+                        return Task.FromResult(true);
                     }
                     return Task.FromResult(false);
                 } },
@@ -115,6 +116,7 @@ namespace StudentManagement.BLL.Services.StudentService
                     if (value is not null && value is string programId)
                     {
                         student.ProgramId = programId.ToGuid();
+                        return Task.FromResult(true);
                     }
                     return Task.FromResult(false);
                 } },
@@ -122,6 +124,7 @@ namespace StudentManagement.BLL.Services.StudentService
                     if (value is not null && value is string statusId)
                     {
                         student.StatusId = statusId.ToGuid();
+                        return Task.FromResult(true);
                     }
                     return Task.FromResult(false);
                 } },
@@ -137,9 +140,9 @@ namespace StudentManagement.BLL.Services.StudentService
 
                 { nameof(Student.Identity), (student, typeValue) =>
                 {
-                    if (SetEnumValue(typeValue, out IdentityType type))
+                    if (typeValue is not null && typeValue is IdentityDTO identityDTO)
                     {
-                        student.Identity.Type = type;
+                        student.Identity.Type = identityDTO.Type.ToEnum<IdentityType>();
                         return Task.FromResult(true);
                     }
                     return Task.FromResult(false);
