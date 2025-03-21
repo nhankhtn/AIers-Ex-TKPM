@@ -40,6 +40,25 @@
 - **`package.json`**: danh sách package, scripts
 - **`package-lock.json`**: khóa phiên bản package (đảm bảo cài đúng)
 
+## Các chức năng chính
+### Màn hình xem, lọc, tìm kiếm sinh viên
+![alt text](Images/dashboard.png)
+### Các phím chức năng như thêm khoa, thêm chương trình, thêm trạng thái, thêm sinh viên mới, nhập/xuất file
+![alt text](Images/task.png)
+#### Giao diện thêm khoa
+![alt text](Images/faculty.png)
+#### Giao diện thêm chương trình
+![alt text](Images/program.png)
+#### Giao diện thêm trạng thái
+![alt text](Images/status.png)
+#### Giao diện import danh sách sinh viên
+![alt text](Images/import.png)
+#### Giao diện export danh sách sinh viên
+![alt text](Images/export.png)
+### Giao diện thêm/chỉnh sửa sinh viên 
+![alt text](Images/add_1.png)
+![alt text](Images/add_2.png)
+
 ## Hướng dẫn cài đặt & chạy chương trình
 ### Backend:
 
