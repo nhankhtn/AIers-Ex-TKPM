@@ -150,7 +150,7 @@ export const getTableConfig = ({
     type: "string",
     renderCell: (data) => (
       <Typography variant='body2'>
-        {statuses.find((s) => s.id === data.program)?.name}
+        {statuses.find((s) => s.id === data.status)?.name}
       </Typography>
     ),
   },
