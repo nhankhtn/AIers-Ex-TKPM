@@ -11,9 +11,10 @@ import { useFaculty } from "./use-faculty";
 import { useStatus } from "./use-status";
 import { useProgram } from "./use-program";
 import { normalizeString } from "@/utils/string-helper";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const useDashboardSearch = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { faculties } = useFaculty();
   const { statuses } = useStatus();
@@ -51,17 +52,22 @@ const useDashboardSearch = () => {
   });
   const createStudentsApi = useFunction(StudentApi.createStudent, {
     successMessage: "Thêm sinh viên thành công",
-    onSuccess: ({ result }: { result: {
-      data: {
-        acceptableStudents: Student[];
-        unacceptableStudents: Omit<Student, "id">[];
-      }
-
-    } }) => {
+    onSuccess: ({
+      result,
+    }: {
+      result: {
+        data: {
+          acceptableStudents: Student[];
+          unacceptableStudents: Omit<Student, "id">[];
+        };
+      };
+    }) => {
       console.log("res: ", result);
       getStudentsApi.setData({
         data: [...students, ...result.data.acceptableStudents],
-        total: (getStudentsApi.data?.total || 0) + result.data.acceptableStudents.length,
+        total:
+          (getStudentsApi.data?.total || 0) +
+          result.data.acceptableStudents.length,
       });
     },
   });
@@ -90,46 +96,37 @@ const useDashboardSearch = () => {
   });
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const key = searchParams.get("key");
-    const status_name = searchParams.get("status_name");
-    const faculty_name = searchParams.get("faculty_name");
+    const key = searchParams.get("key") || "";
+    const status = searchParams.get("status") || "";
+    const faculty = searchParams.get("faculty") || "";
 
     setFilter((prev) => ({
       ...prev,
       key: key || "",
-      status: status_name || "",
-      faculty: faculty_name || "",
+      status: status || "",
+      faculty: faculty || "",
     }));
     getStudentsApi.call({
       page: pagination.page + 1,
       limit: pagination.rowsPerPage,
-      key: filter.key,
-      status: filter.status,
-      faculty: filter.faculty,
+      ...(key ? { key } : {}),
+      ...(status ? { status } : {}),
+      ...(faculty ? { faculty } : {}),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    pagination.page,
-    pagination.rowsPerPage,
-    filter.key,
-    filter.status,
-    filter.faculty,
-    searchParams,
-  ]);
+  }, [pagination.page, pagination.rowsPerPage, searchParams]);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
+    const currentParams = new URLSearchParams();
 
     Object.entries(filter).forEach(([key, value]) => {
       if (value) {
-        searchParams.set(key, value);
-      } else {
-        searchParams.delete(key);
+        currentParams.set(key, value);
       }
     });
 
-    window.history.pushState({}, "", `?${searchParams.toString()}`);
+    router.replace(`?${currentParams.toString()}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
 
   const filterConfig = getFilterConfig({
