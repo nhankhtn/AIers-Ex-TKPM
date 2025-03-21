@@ -25,10 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Integration\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\StudentManagement.API\StudentManagement.API.csproj" />
     <ProjectReference Include="..\StudentManagement.BLL\StudentManagement.BLL.csproj" />
     <ProjectReference Include="..\StudentManagement.DAL\StudentManagement.DAL.csproj" />
