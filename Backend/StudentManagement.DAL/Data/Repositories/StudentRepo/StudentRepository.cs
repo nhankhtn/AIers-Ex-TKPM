@@ -249,8 +249,14 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
         public async Task<int> GetLatestStudentIdAsync(int course)
         {
-            var student = await _context.Students.Where(s => s.Course == course)
-                .OrderByDescending(s => s.Id).FirstOrDefaultAsync();
+            // Lấy 2 số cuối của năm từ course
+            string idPrefix = course.ToString()[2..];
+
+            // Tìm sinh viên có Id bắt đầu bằng prefix và lấy Id lớn nhất
+            var student = await _context.Students
+                .Where(s => s.Id.StartsWith(idPrefix))
+                .OrderByDescending(s => s.Id)
+                .FirstOrDefaultAsync();
 
             return student is null ? 0 : int.Parse(student.Id[4..]);
         }
