@@ -1,5 +1,5 @@
 import { ResponseWithTotal } from "@/types";
-import { Student } from "@/types/student";
+import { Student, StudentFilter } from "@/types/student";
 import {
   apiDelete,
   apiGet,
@@ -8,7 +8,11 @@ import {
   getFormData,
 } from "@/utils/api-request";
 
-export type GetStudentRequest = { page: number; limit: number; key?: string };
+export type GetStudentRequest = {
+  page: number;
+  limit: number;
+  key?: string;
+} & Partial<StudentFilter>;
 export type StudentResponse = ResponseWithTotal<Student[]>;
 
 export class StudentApi {
@@ -16,6 +20,8 @@ export class StudentApi {
     page,
     limit,
     key,
+    status,
+    faculty,
   }: GetStudentRequest): Promise<StudentResponse> {
     return await apiGet(
       "/students",
@@ -23,13 +29,22 @@ export class StudentApi {
         page,
         limit,
         key,
+        status,
+        faculty,
       })
     );
   }
 
-  static async createStudent(student: Omit<Student, "id">): Promise<Student> {
-    const res = await apiPost("/students", student);
-    return res.data;
+  static async createStudent(
+    students: Omit<Student, "id">[]
+  ): Promise<{
+    data: {
+      acceptableStudents: Student[];
+      unacceptableStudents: Omit<Student, "id">[];
+    }
+
+  }> {
+    return await apiPost("/students", students);
   }
 
   static async updateStudent({
@@ -37,14 +52,12 @@ export class StudentApi {
     student,
   }: {
     id: Student["id"];
-    student: Partial<Student>;
+    student: Partial<Student | Omit<Student, "email">>;
   }): Promise<void> {
-    const res = await apiPut(`/students/${id}`, student);
-    return res.data;
+    return await apiPut(`/students/${id}`, student);
   }
 
   static async deleteStudent(id: Student["id"]): Promise<void> {
-    const res = await apiDelete(`/students/${id}`, {});
-    return res.data;
+    return await apiDelete(`/students/${id}`, {});
   }
 }

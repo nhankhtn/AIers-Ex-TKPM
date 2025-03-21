@@ -74,7 +74,7 @@ const CustomPagination: FC<CustomPaginationProps> = ({
         <IconButton
           color='secondary'
           sx={{ borderRadius: 1 }}
-          disabled={pagination.page == pagination.totalPages - 1}
+          disabled={pagination.page >= pagination.totalPages - 1}
           onClick={(e) => pagination.onPageChange(e, pagination.page + 1)}
         >
           <KeyboardArrowRight />

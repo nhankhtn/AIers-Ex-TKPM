@@ -10,13 +10,13 @@ import { get, set, del } from "idb-keyval";
 const MAX_CACHED_ARRAY = 2000;
 type ApiFunction<P, T> = (payload: P) => Promise<T>;
 
-export interface UseFunctionOptions {
+export interface UseFunctionOptions<P, T> {
   successMessage?: string;
   getErrorMessage?: (error: unknown) => string;
   hideSnackbarError?: boolean;
   disableSaving?: boolean;
   disableResetOnCall?: boolean;
-  onSuccess?: () => void;
+  onSuccess?: ({ payload, result }: { payload: P; result: T }) => void;
   onError?: (error: any, payload?: any) => void;
   fixedPayload?: any;
   cacheKey?: string; // save response to localStorage and use if next request failed
@@ -40,7 +40,7 @@ export const DEFAULT_FUNCTION_RETURN: UseFunctionReturnType<any, any> = {
 
 function useFunction<P, T>(
   apiFunction: ApiFunction<P, T>,
-  options?: UseFunctionOptions
+  options?: UseFunctionOptions<P, T>
 ): UseFunctionReturnType<P, T> {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -49,14 +49,20 @@ function useFunction<P, T>(
   const { showSnackbarError, showSnackbarSuccess } = useAppSnackbar();
 
   const onRequestSuccess = useCallback(
-    async (result: T, option?: { noSave?: boolean }) => {
+    async (
+      { payload, result }: { payload: P; result: T },
+      option?: { noSave?: boolean }
+    ) => {
       if (options?.successMessage) {
         showSnackbarSuccess(options?.successMessage);
       }
       if (!options?.disableSaving && !option?.noSave) {
         setStateData(result);
       }
-      options?.onSuccess?.();
+      options?.onSuccess?.({
+        payload,
+        result,
+      });
       if (options?.cacheKey) {
         await set(
           options.cacheKey,
@@ -90,16 +96,19 @@ function useFunction<P, T>(
             : payload
         );
 
-        return await onRequestSuccess(result, {
-          noSave: callCount != callCountRef.current,
-        });
+        return await onRequestSuccess(
+          { payload, result },
+          {
+            noSave: callCount != callCountRef.current,
+          }
+        );
       } catch (error) {
         if (options?.cacheKey) {
           const raw = await get(options.cacheKey);
           if (raw) {
             const result = JSON.parse(raw);
 
-            return await onRequestSuccess(result);
+            return await onRequestSuccess({ payload, result });
           }
         }
         if (!options?.hideSnackbarError) {
