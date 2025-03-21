@@ -4,22 +4,26 @@
 
 ### Backend:
 ![alt text](Images/image.png)
-- `StudentManagement.API`: Lớp API cung cấp các endpoints để tương tác với hệ thống.
+- `StudentManagement.API`: Project API cung cấp các endpoints để tương tác với hệ thống.
     - **`Controllers/`**: Chứa các controller định nghĩa các API endpoint.
-    - **`appsettings.json`**: Tệp cấu hình của ứng dụng.
+    - **`appsettings.json`**: Tệp cấu hình chính của ứng dụng, lưu trữ thông tin về database, logging, các API bên thứ 3,...
+    - **`Utils`**: Chứa class ApiResponse để chuẩn hóa phản hồi từ API
     - **`Program.cs`**: Entry point của ứng dụng API.
-- `StudentManagement.BLL`: Lớp Business Logic Layer (BLL) chứa các logic nghiệp vụ.
+- `StudentManagement.BLL`: Project Business Logic Layer (BLL) chứa các logic nghiệp vụ.
     - **`DTOs/`**: Chứa các Data Transfer Object (DTO) để trao đổi dữ liệu giữa các tầng.
     - **`Services/`**: Chứa các service xử lý logic nghiệp vụ.
-    - **`MappingProfile.cs`**: Cấu hình AutoMapper để ánh xạ dữ liệu giữa các tầng.
-- `StudentManagement.DAL`: Lớp Data Access Layer (DAL) để truy xuất và quản lý dữ liệu.
-    - **`Data/`**: Chứa các context và repository để làm việc với database.
+    - **`MappingProfile.cs`**: Cấu hình AutoMapper để ánh xạ dữ liệu giữa Enity và DTO.
+
+- `StudentManagement.DAL`: Project Data Access Layer (DAL) để truy xuất và quản lý dữ liệu.
+    - **`Data/`**: Chứa các ApplicationDbcontext, AuditInterceptor, utils và repositories để làm việc với database.
     - **`Migrations/`**: Chứa các tệp migration để cập nhật database schema.
-- `StudentManagement.Domain`: Lớp chứa các định nghĩa thực thể và cấu trúc dữ liệu chung.
+- `StudentManagement.Domain`: Project chứa các định nghĩa thực thể và cấu trúc dữ liệu chung.
     - **`Enums/`**: Chứa các enum dùng chung trong hệ thống.
     - **`Models/`**: Chứa các model định nghĩa thực thể dữ liệu.
     - **`Utils/`**: Chứa các hàm tiện ích chung.
-
+    - **`Attributes`**: Chứa class UniqueConstrainAttribute dùng để đánh dấu một thuộc tínhtrong model cần đảm bảo tính duy nhất.
+- `StudentManagement.Tests`: Project chứa các unit tests cho ứng dụng.
+    - **`Units/`**: Chứa các unit test của ứng dụng.
 ### Frontend:
 ![alt text](Images/image-1.png)
 - **`public`**: chứa các image, icon,… của trang web
@@ -39,7 +43,10 @@
 - **`next.config.ts`**: cấu hình Next.js (ví dụ: rewrites, redirects)
 - **`package.json`**: danh sách package, scripts
 - **`package-lock.json`**: khóa phiên bản package (đảm bảo cài đúng)
-
+## Hình ảnh minh chứng các chức năng của úng dụng
+### Thêm logging mechanism để troubleshooting production issue & audit purposes
+- Kế thừa từ SaveChangesInterceptor để can thiệp vào quá trình SaveChanges của Entity Framework, từ đó ghi lại lịch sử thay đổi dữ liệu (audit logging) khi thao tác với database, nếu có lỗi sẽ thông báo vào error message. Logs sẽ được ghi vào database.
+![alt text](Images/image-2.png)
 ## Hướng dẫn cài đặt & chạy chương trình
 ### Backend:
 
@@ -63,7 +70,7 @@ cd Backend
 ```sh
 dotnet ef database update -s ./StudentManagement.API -p ./StudentManagement.DAL
 ```
-
+#### Chạy script `data.sql` trong thư mục `Backend/scripts`
 
 #### Chạy Ctrl + F5 để Run Server
 Server hoạt động ở </br>

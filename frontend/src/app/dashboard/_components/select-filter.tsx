@@ -37,11 +37,14 @@ const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
               label={label}
               fullWidth
               variant='outlined'
-              value={filter[key] ?? ""}
+              value={filter[key] || ""}
               onChange={(e) => onChange(key, e.target.value as string)}
             >
               {configs[index].options.map(({ value, label }) => (
-                <MenuItem key={value} value={value}>
+                <MenuItem
+                  key={value}
+                  value={label === "Tất cả" ? value : label}
+                >
                   {label}
                 </MenuItem>
               ))}

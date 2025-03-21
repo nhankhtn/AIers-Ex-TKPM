@@ -37,7 +37,13 @@ export class StudentApi {
 
   static async createStudent(
     students: Omit<Student, "id">[]
-  ): Promise<Student[]> {
+  ): Promise<{
+    data: {
+      acceptableStudents: Student[];
+      unacceptableStudents: Omit<Student, "id">[];
+    }
+
+  }> {
     return await apiPost("/students", students);
   }
 
@@ -46,7 +52,7 @@ export class StudentApi {
     student,
   }: {
     id: Student["id"];
-    student: Partial<Student>;
+    student: Partial<Student | Omit<Student, "email">>;
   }): Promise<void> {
     return await apiPut(`/students/${id}`, student);
   }

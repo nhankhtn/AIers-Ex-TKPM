@@ -18,9 +18,9 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<IActionResult> GetAllStudents(int page, int limit, string? faculty, string? key)
+        public async Task<IActionResult> GetAllStudents(int page, int limit, string? faculty, string? program, string? status, string? key)
         {
-            var result = await _studentService.GetAllStudentsAsync(page, limit, faculty, key);
+            var result = await _studentService.GetAllStudentsAsync(page, limit, faculty, program, status, key);
             if (result.Success)
             {
                 if (result.Data is null) return NotFound(ApiResponse<IEnumerable<StudentDTO>>.NotFound(

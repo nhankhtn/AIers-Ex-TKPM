@@ -89,7 +89,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             }
         }
 
-        public async Task<Result<(IEnumerable<Student> students, int total)>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? key)
+        public async Task<Result<(IEnumerable<Student> students, int total)>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key)
         {
             try
             {
@@ -104,11 +104,24 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                 {
                     students = students.Where(s => s.Faculty.Name == faculty);
                 }
+                if (!string.IsNullOrEmpty(program))
+                {
+                    students = students.Where(s => s.Program.Name == program);
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    students = students.Where(s => s.Status.Name == status);
+                }
 
                 if (!string.IsNullOrEmpty(key))
                 {
-                    students = students.Where(s => s.Name.Contains(key) || s.Id.Contains(key));
+                    var keywords = key.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var keyword in keywords)
+                    {
+                        students = students.Where(s => s.Name.Contains(keyword) || s.Id.Contains(keyword));
+                    }
                 }
+
 
                 var total = await students.CountAsync();
 
@@ -238,8 +251,14 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
         public async Task<int> GetLatestStudentIdAsync(int course)
         {
-            var student = await _context.Students.Where(s => s.Course == course)
-                .OrderByDescending(s => s.Id).FirstOrDefaultAsync();
+            // Lấy 2 số cuối của năm từ course
+            string idPrefix = course.ToString()[2..];
+
+            // Tìm sinh viên có Id bắt đầu bằng prefix và lấy Id lớn nhất
+            var student = await _context.Students
+                .Where(s => s.Id.StartsWith(idPrefix))
+                .OrderByDescending(s => s.Id)
+                .FirstOrDefaultAsync();
 
             return student is null ? 0 : int.Parse(student.Id[4..]);
         }

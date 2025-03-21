@@ -61,7 +61,7 @@ interface DrawerUpdateStudentProps {
   open: boolean;
   onClose: () => void;
   addStudent: (student: Student) => Promise<void>;
-  updateStudent: (student: Student) => Promise<void>;
+  updateStudent: (student: Student | Omit<Student,'email'>) => Promise<void>;
   faculties: Faculty[];
   statuses: Status[];
   programs: Program[];
@@ -175,7 +175,13 @@ function DrawerUpdateStudent({
       };
 
       if (student) {
-        await updateStudent(studentData);
+        
+        if (studentData.email === student.email) {
+          const { email, ...studentDataWithoutEmail } = studentData;
+          await updateStudent(studentDataWithoutEmail);
+        } else {
+          await updateStudent(studentData);
+        }
       } else {
         await addStudent(studentData);
       }

@@ -91,7 +91,7 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
             }
         }
 
-        public async Task<Result<Program?>> GetProgramByIdAsync(string id) => await GetProgramByIdAsync(Guid.Parse(id));
+        public async Task<Result<Program?>> GetProgramByIdAsync(string id) => await GetProgramByIdAsync(id.ToGuid());
 
         public async Task<Result<Program?>> GetProgramByNameAsync(string name)
         {

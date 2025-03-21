@@ -16,7 +16,7 @@ namespace StudentManagement.BLL.DTOs.Identity
 
         public DateTime ExpiryDate { get; set; } // Ngày hết hạn
 
-        public string Country { get; set; } = string.Empty; // Quốc gia cấp
+        public string CountryIssue { get; set; } = string.Empty; // Quốc gia cấp
 
         public bool IsChip { get; set; } // Có gắn chip hay không (dành cho CCCD)
 

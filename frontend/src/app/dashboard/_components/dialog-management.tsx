@@ -51,7 +51,7 @@ export default function DialogManagement({
   handleEditItem,
   handleDeleteItem,
 }: DialogManagementProps) {
-  const [newItemName, setNewItemName] = useState("");
+  const [newItemName, setNewItemName] = useState<string|null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
@@ -107,11 +107,12 @@ export default function DialogManagement({
     }
   };
   const resetAll = () => {
-    setNewItemName("");
+    setNewItemName(null);
     setEditingItem(null);
     setConfirmDialogOpen(false);
     setItemToDelete(null);
     setItemToEdit(null);
+
   };
   useEffect(() => {
     if (!open) {
@@ -119,14 +120,14 @@ export default function DialogManagement({
     }
   }, [open]);
   const handleAddClick = () => {
-    if (newItemName.trim() === "") return;
+    if (newItemName==null || newItemName.trim() === "") return;
 
     const newItem = {
       id: "",
       name: newItemName,
     };
     handleAddItem(newItem);
-    setNewItemName("");
+    setNewItemName(null);
   };
 
   return (
@@ -226,7 +227,7 @@ export default function DialogManagement({
               </ListItem>
             ))}
           </List>
-          {!newItemName && (
+          {newItemName ===null && (
             <RowStack gap={1} sx={{ mt: 3, justifyContent: "flex-end" }}>
               <Button
                 variant='outlined'
@@ -240,7 +241,7 @@ export default function DialogManagement({
               </Button>
             </RowStack>
           )}
-          {newItemName && (
+          {newItemName !==null && (
             <Box
               sx={{ mt: 2, p: 2, border: "1px solid #e0e0e0", borderRadius: 1 }}
             >
@@ -255,7 +256,7 @@ export default function DialogManagement({
                 sx={{ mb: 2 }}
               />
               <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-                <Button variant='outlined' onClick={() => setNewItemName("")}>
+                <Button variant='outlined' onClick={() => setNewItemName(null)}>
                   Hủy
                 </Button>
                 <Button

@@ -114,7 +114,7 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
             }
         }
 
-        public async Task<Result<Faculty?>> GetFacultyByIdAsync(string id) => await GetFacultyByIdAsync(Guid.Parse(id));
+        public async Task<Result<Faculty?>> GetFacultyByIdAsync(string id) => await GetFacultyByIdAsync(id.ToGuid());
 
         public async Task<Result<Faculty?>> GetFacultyByNameAsync(string name)
         {
