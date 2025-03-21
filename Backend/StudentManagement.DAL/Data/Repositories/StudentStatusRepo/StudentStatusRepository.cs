@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
@@ -6,6 +7,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
 {
@@ -32,9 +35,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             {
                 return Result<StudentStatus>.Fail("STUDENT_STATUS_NAME_EXIST", "Student status name already exists");
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<StudentStatus>.Fail("ADD_STUDENT_STATUS_FAILED", "Add student failed");
+                return Result<StudentStatus>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (SqlException ex)
+            {
+                return Result<StudentStatus>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Result<StudentStatus>.Fail("ADD_STUDENT_STATUS_FAILED", ex.Message);
             }
         }
 
@@ -45,9 +56,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 var statuses = await _context.StudentStatuses.ToListAsync();
                 return Result<IEnumerable<StudentStatus>>.Ok(statuses);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<IEnumerable<StudentStatus>>.Fail("GET_STUDENT_STATUS_FAILED", "Failed to fetch student statuses");
+                return Result<IEnumerable<StudentStatus>>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (SqlException ex)
+            {
+                return Result<IEnumerable<StudentStatus>>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<StudentStatus>>.Fail("GET_STUDENT_STATUS_FAILED", ex.Message);
             }
         }
 
@@ -58,13 +77,21 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 var status = await _context.StudentStatuses.FindAsync(id);
                 return Result<StudentStatus?>.Ok(status);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<StudentStatus?>.Fail("GET_STUDENT_STATUS_FAILED", "Failed to fetch student status by ID");
+                return Result<StudentStatus?>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (SqlException ex)
+            {
+                return Result<StudentStatus?>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Result<StudentStatus?>.Fail("GET_STUDENT_STATUS_FAILED", ex.Message);
             }
         }
 
-        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(string id) => await GetStudentStatusByIdAsync(Guid.Parse(id));
+        public async Task<Result<StudentStatus?>> GetStudentStatusByIdAsync(string id) => await GetStudentStatusByIdAsync(id.ToGuid());
 
         public async Task<Result<StudentStatus?>> GetStudentStatusByNameAsync(string name)
         {
@@ -73,9 +100,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 var status = await _context.StudentStatuses.FirstOrDefaultAsync(s => s.Name == name);
                 return Result<StudentStatus?>.Ok(status);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<StudentStatus?>.Fail("GET_STUDENT_STATUS_FAILED", "Failed to fetch student status by name");
+                return Result<StudentStatus?>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (SqlException ex)
+            {
+                return Result<StudentStatus?>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Result<StudentStatus?>.Fail("GET_STUDENT_STATUS_FAILED", ex.Message);
             }
         }
 
@@ -102,9 +137,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
             {
                 return Result<StudentStatus>.Fail("STUDENT_STATUS_NAME_EXIST", "Student status name already exists");
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<StudentStatus>.Fail("UPDATE_STUDENT_STATUS_FAIL", "Update student status failed");
+                return Result<StudentStatus>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (SqlException ex)
+            {
+                return Result<StudentStatus>.Fail("DB_CONNECT_FAILED", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Result<StudentStatus>.Fail("UPDATE_STUDENT_STATUS_FAIL", ex.Message);
             }
         }
 
@@ -118,10 +161,24 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
                 await _context.SaveChangesAsync();
                 return Result<StudentStatus>.Ok(existingStudentStatus);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<StudentStatus>.Fail("DELETE_FACULTY_FAILED");
+                return Result<StudentStatus>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
             }
+            catch (SqlException ex)
+            {
+                return Result<StudentStatus>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<StudentStatus>.Fail("DELETE_FACULTY_FAILED", ex.Message);
+            }
+        }
+
+
+        private bool IsConnectDatabaseFailed(SqlException ex)
+        {
+            return ex.Number == 10061;
         }
     }
 }

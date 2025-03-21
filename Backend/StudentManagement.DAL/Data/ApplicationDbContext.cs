@@ -11,8 +11,10 @@ namespace StudentManagement.DAL.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        private readonly List<AuditEntry> _auditEntries;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, List<AuditEntry> auditEntries) : base(options)
         {
+            _auditEntries = auditEntries;
         }
 
         public DbSet<Faculty> Faculties { get; set; }
@@ -20,11 +22,13 @@ namespace StudentManagement.DAL.Data
         public DbSet<StudentStatus> StudentStatuses { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Identity> Identities { get; set; }
-        //public DbSet<StudentNationalities> Nationalities { get; set; }
+        public DbSet<AuditEntry> AuditEntries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            
 
             modelBuilder.Entity<Student>()
                 .Property(s => s.Gender)
@@ -79,23 +83,6 @@ namespace StudentManagement.DAL.Data
         }
 
 
-        //private void SeedData(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<StudentStatus>().HasData(
-        //            new StudentStatus { Id = Guid.NewGuid(), Code = "ACT", Name = "Active", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow},
-        //            new StudentStatus { Id = Guid.NewGuid(), Code = "IAC", Name = "Inactive", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-        //        );
-
-        //    modelBuilder.Entity<Faculty>().HasData(
-        //            new Faculty { Id = Guid.NewGuid(), Code="CNTT", Name = "Information Technology", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-        //            new Faculty { Id = Guid.NewGuid(), Code="BA", Name = "Business Administration", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-        //        );
-
-        //    modelBuilder.Entity<Program>().HasData(
-        //            new Program { Id = Guid.NewGuid(), Code="SE", Name = "Software Engineering", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-        //            new Program { Id = Guid.NewGuid(), Code="CS", Name = "Computer Science", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
-        //            new Program { Id = Guid.NewGuid(), Code="BA", Name = "Business Administration", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
-        //        );
-        //}
+        
     }
 }

@@ -28,7 +28,7 @@ namespace StudentManagement.BLL.Services.ProgramService
         {
             var res = await _programRepository.AddProgramAsync(_mapper.Map<Program>(programDTO));
             if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data));
+            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data), res.Message);
         }
 
         public async Task<Result<ProgramDTO>> UpdateProgramAsync(string id, ProgramDTO programDTO)
@@ -36,14 +36,14 @@ namespace StudentManagement.BLL.Services.ProgramService
             programDTO.Id = id;
             var res = await _programRepository.UpdateProgramAsync(_mapper.Map<Program>(programDTO));
             if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data));
+            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data), res.Message);
         }
 
         public async Task<Result<IEnumerable<ProgramDTO>>> GetAllProgramAsync()
         {
             var res = await _programRepository.GetAllProgramsAsync();
             if (!res.Success) return Result<IEnumerable<ProgramDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<IEnumerable<ProgramDTO>>.Ok(_mapper.Map<IEnumerable<ProgramDTO>>(res.Data));
+            return Result<IEnumerable<ProgramDTO>>.Ok(_mapper.Map<IEnumerable<ProgramDTO>>(res.Data), res.Message);
         }
 
 
@@ -51,7 +51,7 @@ namespace StudentManagement.BLL.Services.ProgramService
         {
             var res = await _programRepository.DeleteProgramAsync(new Program() { Id = key.ToGuid(), Name = key });
             if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data));
+            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data), res.Message);
         }
     }
 }

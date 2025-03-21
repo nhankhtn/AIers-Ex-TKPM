@@ -12,8 +12,8 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250318035014_update_db_18031046")]
-    partial class update_db_18031046
+    [Migration("20250319145458_UniqueFaculty")]
+    partial class UniqueFaculty
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,46 +24,6 @@ namespace StudentManagement.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("StudentManagement.Domain.Models.Address", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("id");
-
-                    b.Property<string>("City")
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("city");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("country");
-
-                    b.Property<string>("District")
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("district");
-
-                    b.Property<string>("Street")
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("street");
-
-                    b.Property<string>("StudentId")
-                        .IsRequired()
-                        .HasColumnType("varchar(8)")
-                        .HasColumnName("student_id");
-
-                    b.Property<string>("Ward")
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("ward");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId")
-                        .IsUnique();
-
-                    b.ToTable("address");
-                });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Faculty", b =>
                 {
@@ -79,6 +39,9 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("faculty");
                 });
 
@@ -90,6 +53,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("country");
 
@@ -102,7 +66,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("date")
                         .HasColumnName("expiry_date");
 
-                    b.Property<bool?>("IsChip")
+                    b.Property<bool>("IsChip")
                         .HasColumnType("bit")
                         .HasColumnName("is_chip");
 
@@ -156,7 +120,7 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("program");
+                    b.ToTable("programs");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
@@ -165,7 +129,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("varchar(8)")
                         .HasColumnName("id");
 
-                    b.Property<int?>("Course")
+                    b.Property<int>("Course")
                         .HasColumnType("int")
                         .HasColumnName("course");
 
@@ -174,6 +138,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnName("date_of_birth");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("email");
 
@@ -189,7 +154,6 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnName("gender");
 
                     b.Property<string>("MailingAddress")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("mailing_address");
 
@@ -198,10 +162,15 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
-                    b.Property<string>("National")
+                    b.Property<string>("Nationality")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("nationality");
+
+                    b.Property<string>("PermanentAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("permanent_address");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -223,8 +192,7 @@ namespace StudentManagement.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique()
-                        .HasFilter("[email] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("FacultyId");
 
@@ -232,7 +200,7 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasIndex("StatusId");
 
-                    b.ToTable("student");
+                    b.ToTable("students");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.StudentStatus", b =>
@@ -252,18 +220,7 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("status");
-                });
-
-            modelBuilder.Entity("StudentManagement.Domain.Models.Address", b =>
-                {
-                    b.HasOne("StudentManagement.Domain.Models.Student", "Student")
-                        .WithOne("PermanentAddress")
-                        .HasForeignKey("StudentManagement.Domain.Models.Address", "StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
+                    b.ToTable("student_status");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>
@@ -282,19 +239,19 @@ namespace StudentManagement.DAL.Migrations
                     b.HasOne("StudentManagement.Domain.Models.Faculty", "Faculty")
                         .WithMany("Students")
                         .HasForeignKey("FacultyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("StudentManagement.Domain.Models.Program", "Program")
                         .WithMany("Students")
                         .HasForeignKey("ProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("StudentManagement.Domain.Models.StudentStatus", "Status")
                         .WithMany("Students")
                         .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Faculty");
@@ -316,9 +273,8 @@ namespace StudentManagement.DAL.Migrations
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
                 {
-                    b.Navigation("Identity");
-
-                    b.Navigation("PermanentAddress");
+                    b.Navigation("Identity")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.StudentStatus", b =>

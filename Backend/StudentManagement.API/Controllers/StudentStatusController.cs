@@ -25,14 +25,14 @@ namespace StudentManagement.API.Controllers
             var result = await _studentStatusService.GetAllStudentStatusAsync();
             if (result.Success) return Ok(ApiResponse<IEnumerable<StudentStatusDTO>>.Success(
                     data: result.Data,
-                    message: "Student status retrieved successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to retrieve student status"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -43,14 +43,14 @@ namespace StudentManagement.API.Controllers
             var result = await _studentStatusService.AddStudentStatusAsync(studentStatusDTO);
             if (result.Success) return Ok(ApiResponse<StudentStatusDTO>.Success(
                     data: result.Data,
-                    message: "Student status added successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to add student status"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -62,14 +62,14 @@ namespace StudentManagement.API.Controllers
             var result = await _studentStatusService.UpdateStudentStatusAsync(id, studentStatusDTO);
             if (result.Success) return Ok(ApiResponse<StudentStatusDTO>.Success(
                     data: result.Data,
-                    message: "Student status name changed successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to change student status name"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -80,14 +80,14 @@ namespace StudentManagement.API.Controllers
             var result = await _studentStatusService.DeleteStudentStatusAsync(id);
             if (result.Success) return Ok(ApiResponse<StudentStatusDTO>.Success(
                     data: result.Data,
-                    message: "Faculty deleted successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to delete faculty"
+                        Message = result.ErrorMessage
                     }
                 ));
         }
@@ -98,14 +98,14 @@ namespace StudentManagement.API.Controllers
             var result = await _studentStatusService.DeleteStudentStatusAsync(name);
             if (result.Success) return Ok(ApiResponse<StudentStatusDTO>.Success(
                     data: result.Data,
-                    message: "Faculty deleted successfully"
+                    message: result.Message
                 ));
 
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
-                        Message = "Failed to delete faculty"
+                        Message = result.ErrorMessage
                     }
                 ));
         }

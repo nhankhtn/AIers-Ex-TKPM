@@ -22,6 +22,34 @@ namespace StudentManagement.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("StudentManagement.Domain.Models.AuditEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EndTimeUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Metadata")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartTimeUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("audit_entry");
+                });
+
             modelBuilder.Entity("StudentManagement.Domain.Models.Faculty", b =>
                 {
                     b.Property<Guid>("Id")
@@ -36,7 +64,10 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("faculties");
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("faculty");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>

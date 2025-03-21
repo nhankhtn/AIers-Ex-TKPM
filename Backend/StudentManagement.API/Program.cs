@@ -1,4 +1,4 @@
-
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL;
@@ -12,6 +12,7 @@ using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
 using StudentManagement.DAL.Data.Repositories.StudentStatusRepo;
+using StudentManagement.Domain.Models;
 
 namespace StudentManagement.API
 {
@@ -25,10 +26,25 @@ namespace StudentManagement.API
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             Console.WriteLine(connectionString);
+            // Đăng ký danh sách AuditEntry theo phạm vi Scoped
+            builder.Services.AddScoped<List<AuditEntry>>();
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString)
-            );
+            // Đăng ký AuditInterceptor và inject List<AuditEntry> vào nó
+            builder.Services.AddScoped<AuditInterceptor>(sp =>
+            {
+                var auditEntries = sp.GetRequiredService<List<AuditEntry>>();
+                return new AuditInterceptor(auditEntries);
+            });
+
+            // Đăng ký DbContext với AuditInterceptor lấy từ DI container
+            builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                var auditInterceptor = serviceProvider.GetRequiredService<AuditInterceptor>();
+                options.UseSqlServer(connectionString).AddInterceptors(auditInterceptor);
+            });
+
+
+
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 

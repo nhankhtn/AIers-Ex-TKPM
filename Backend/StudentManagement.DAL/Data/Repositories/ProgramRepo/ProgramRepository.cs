@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
@@ -34,9 +35,17 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
             {
                 return Result<Program>.Fail("PROGRAM_NAME_EXIST", "Program name already exists");
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Program>.Fail("ADD_PROGRAM_FAILED", "Add program failed");
+                return Result<Program>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Program>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Program>.Fail("ADD_PROGRAM_FAILED", ex.Message);
             }
         }
 
@@ -47,9 +56,17 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                 var programs = await _context.Programs.ToListAsync();
                 return Result<IEnumerable<Program>>.Ok(programs);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<IEnumerable<Program>>.Fail("GET_PROGRAMS_FAILED", "Failed to fetch programs");
+                return Result<IEnumerable<Program>>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<IEnumerable<Program>>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<Program>>.Fail("GET_PROGRAMS_FAILED", ex.Message);
             }
         }
 
@@ -60,13 +77,21 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                 var program = await _context.Programs.FindAsync(id);
                 return Result<Program?>.Ok(program);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Program?>.Fail("GET_PROGRAM_FAILED", "Failed to fetch program by ID");
+                return Result<Program?>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Program?>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Program?>.Fail("GET_PROGRAM_FAILED", ex.Message);
             }
         }
 
-        public async Task<Result<Program?>> GetProgramByIdAsync(string id) => await GetProgramByIdAsync(Guid.Parse(id));
+        public async Task<Result<Program?>> GetProgramByIdAsync(string id) => await GetProgramByIdAsync(id.ToGuid());
 
         public async Task<Result<Program?>> GetProgramByNameAsync(string name)
         {
@@ -75,9 +100,17 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                 var program = await _context.Programs.FirstOrDefaultAsync(p => p.Name == name);
                 return Result<Program?>.Ok(program);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Program?>.Fail("GET_PROGRAM_FAILED", "Failed to fetch program by name");
+                return Result<Program?>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Program?>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Program?>.Fail("GET_PROGRAM_FAILED", ex.Message);
             }
         }
 
@@ -105,9 +138,17 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
             {
                 return Result<Program>.Fail("PROGRAM_NAME_EXIST", "Program name already exists");
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Program>.Fail("UPDATE_PROGRAM_FAILED", "Update program failed");
+                return Result<Program>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Program>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Program>.Fail("UPDATE_PROGRAM_FAILED", ex.Message);
             }
         }
 
@@ -121,10 +162,27 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
                 await _context.SaveChangesAsync();
                 return Result<Program>.Ok(existingProgram);
             }
-            catch (Exception)
+            catch (DbUpdateException ex)
             {
-                return Result<Program>.Fail("DELETE_FACULTY_FAILED");
+                return Result<Program>.Fail("DB_CONNECT_FAILED", ex.Message);
             }
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
+            {
+                return Result<Program>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Program>.Fail("DB_ERROR", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Program>.Fail("DELETE_FACULTY_FAILED", ex.Message);
+            }
+        }
+
+        private bool IsConnectDatabaseFailed(SqlException ex)
+        {
+            return ex.Number == 10061;
         }
     }
 }

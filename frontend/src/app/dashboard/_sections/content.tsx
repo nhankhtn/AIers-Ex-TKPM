@@ -9,13 +9,10 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Stack,
 } from "@mui/material";
 import { People as PeopleIcon, Add as AddIcon } from "@mui/icons-material";
-import Grid from "@mui/material/Grid2";
-import Table from "@/components/table";
-import { StudentCols } from "@/constants";
 import SearchBar from "@/app/dashboard/_components/search-bar";
-import Dialog from "@/app/dashboard/_components/dialog";
 import RowStack from "@/components/row-stack";
 import DialogConfirmDelete from "../_components/dialog-confirm-delete";
 import {
@@ -36,10 +33,17 @@ import { useDialog } from "@/hooks/use-dialog";
 import DialogExportFile from "../_components/dialog-export-file";
 import DialogImportFile from "../_components/dialog-import-file";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
+import { CustomTable } from "@/components/custom-table";
+import CustomPagination from "@/components/custom-pagination";
 import DialogManagement from "../_components/dialog-management";
 import { useFaculty } from "./use-faculty";
 import { useProgram } from "./use-program";
 import { useStatus } from "./use-status";
+import SelectFilter from "../_components/select-filter";
+import { getTableConfig, objectToAddress } from "./table-config";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DrawerUpdateStudent from "../_components/drawer-update-student/drawer-update-student";
+import { isJSONString } from "@/utils/string-helper";
 
 const Content = () => {
   const {
@@ -52,28 +56,30 @@ const Content = () => {
     students,
     setFilter,
     pagination,
+    filterConfig,
+    filter,
   } = useDashboardSearch();
   const {
-    dialog : dialogFaculty,
-    getFacultiesApi,
+    dialog: dialogFaculty,
     deleteFacultyApi,
     addFacultyApi,
     updateFacultyApi,
+    faculties,
   } = useFaculty();
   const {
     dialog: dialogProgram,
-    getProgramApi,
     deleteProgramApi,
     addProgramApi,
-    updateProgramApi
-  }= useProgram();
+    updateProgramApi,
+    programs,
+  } = useProgram();
   const {
     dialog: dialogStatus,
-    getStatusApi,
     deleteStatusApi,
     addStatusApi,
-    updateStatusApi
-  }= useStatus();
+    updateStatusApi,
+    statuses,
+  } = useStatus();
   const dialogExport = useDialog();
   const dialogImport = useDialog();
   const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
@@ -83,15 +89,15 @@ const Content = () => {
   );
 
   const handleAddStudent = useCallback(
-    (student: Student) => {
-      createStudentsApi.call([student]);
+    async (student: Student) => {
+      await createStudentsApi.call([student]);
     },
     [createStudentsApi]
   );
 
   const handleUpdateStudent = useCallback(
-    (student: Student) => {
-      updateStudentsApi.call({
+    async (student: Student) => {
+      await updateStudentsApi.call({
         id: student.id as string,
         student,
       });
@@ -106,18 +112,57 @@ const Content = () => {
     [deleteStudentsApi]
   );
 
+  function parseAddress(address: string) {
+    const parts = address.split(",").map((part) => part.trim());
+    const len = parts.length;
+    return {
+      detail: parts.slice(0, len - 4).join(", "),
+      ward: parts[len - 4] || "",
+      district: parts[len - 3] || "",
+      provinces: parts[len - 2] || "",
+      contry: parts[len - 1] || "",
+    };
+  }
+
   const handleUpload = useCallback(
     async (file: File) => {
       let studentsImported = null;
 
-      console.log(file.type);
       if (file.type.includes("csv")) {
         const data = await importFromCSV(file);
-
+        let identity = {};
         studentsImported = data.map((item) => {
           const mappedStudent: Record<string, any> = {};
 
           Object.entries(mappingFiledStudent).forEach(([key, value]) => {
+            if (
+              key === "temporaryAddress" ||
+              key === "mailingAddress" ||
+              key === "permanentAddress"
+            ) {
+              mappedStudent[key] = parseAddress(item[value]);
+              return;
+            }
+            if (key === "identity") {
+              mappedStudent[key] = identity;
+              return;
+            }
+            if (
+              key === "type" ||
+              key === "documentNumber" ||
+              key === "issueDate" ||
+              key === "issuePlace" ||
+              key === "expiryDate" ||
+              key === "country" ||
+              key === "isChip" ||
+              key === "notes"
+            ) {
+              identity = {
+                ...identity,
+                [key]: item[value],
+              };
+              return;
+            }
             mappedStudent[key] = item[value];
           });
 
@@ -142,23 +187,44 @@ const Content = () => {
         showSnackbarError("Không có dữ liệu để import");
         return;
       }
-      createStudentsApi.call(studentsImported);
+      createStudentsApi.call(studentsImported as Student[]);
     },
-    [createStudentsApi, showSnackbarError]
+    [showSnackbarError, createStudentsApi]
   );
 
   const hanldeExport = useCallback(
     async ({ format, rows }: { format: string; rows: number }) => {
       const data = students.slice(0, rows).map((student) => {
         const mappedStudent: Record<string, any> = {};
-
         Object.entries(mappingFiledStudent).forEach(([key, value]) => {
-          mappedStudent[value] = student[key];
+          const typedKey = key as keyof Student;
+          if (student[typedKey] === "object") {
+            Object.entries(student[typedKey]).forEach(([subKey, subValue]) => {
+              if (
+                subValue === "" ||
+                subValue === undefined ||
+                subValue === null
+              )
+                return;
+              if (subKey === "issueDate" || subKey === "expiryDate") {
+                mappedStudent[subKey] = new Date(subValue).toLocaleDateString(
+                  "vi-VN"
+                );
+                return;
+              }
+              mappedStudent[subKey] = subValue;
+            });
+          }
+          if (isJSONString(student[typedKey] as string)) {
+            mappedStudent[value] = objectToAddress(
+              JSON.parse(student[typedKey] as string)
+            );
+          } else {
+            mappedStudent[value] = student[typedKey];
+          }
         });
-
         return mappedStudent;
       });
-
       switch (format) {
         case "csv": {
           exportToCSV(data, "students");
@@ -206,7 +272,6 @@ const Content = () => {
             startIcon={<AddIcon />}
             sx={{ borderRadius: "20px" }}
             onClick={() => dialogProgram.handleOpen()}
-           
           >
             Thêm chương trình
           </Button>
@@ -227,7 +292,7 @@ const Content = () => {
             onClick={() => dialog.handleOpen()}
           >
             Thêm sinh viên
-          </Button>{" "}
+          </Button>
           <IconButton
             color='primary'
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -266,44 +331,53 @@ const Content = () => {
           </Menu>
         </RowStack>
       </RowStack>
-      <Grid
-        container
-        direction='row'
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Paper
-          sx={{
-            p: 1,
-            display: "flex",
-            alignItems: "center",
-            border: "1px solid #f0f7ff",
-          }}
-        >
-          <RowStack
+      <RowStack mb={3} gap={2}>
+        <Stack>
+          <Paper
             sx={{
-              bgcolor: "#f0f7ff",
-              borderRadius: "50%",
-              width: 50,
-              height: 50,
-              justifyContent: "center",
-              mr: 2,
+              p: 1,
+              display: "flex",
+              alignItems: "center",
+              border: "1px solid #f0f7ff",
+              width: 250,
             }}
           >
-            <PeopleIcon sx={{ color: "#1976d2", fontSize: 30 }} />
-          </RowStack>
-          <Box>
-            <Typography variant='body2' color='text.secondary'>
-              Tổng số sinh viên
-            </Typography>
-            <Typography variant='h5' fontWeight='bold'>
-              {getStudentsApi.data?.total || 0}
-            </Typography>
-          </Box>
-        </Paper>
-        <Grid size={{ xs: 4, md: 2 }}>
+            <RowStack
+              sx={{
+                bgcolor: "#f0f7ff",
+                borderRadius: "50%",
+                width: 50,
+                height: 50,
+                justifyContent: "center",
+                mr: 2,
+              }}
+            >
+              <PeopleIcon sx={{ color: "#1976d2", fontSize: 30 }} />
+            </RowStack>
+            <Box>
+              <Typography variant='body2' color='text.secondary'>
+                Tổng số sinh viên
+              </Typography>
+              <Typography variant='h5' fontWeight='bold'>
+                {getStudentsApi.data?.total || 0}
+              </Typography>
+            </Box>
+          </Paper>
+        </Stack>
+        <Stack width={500}>
+          <SelectFilter
+            configs={filterConfig}
+            filter={filter as any}
+            onChange={(key: string, value: string) => {
+              setFilter((prev) => ({
+                ...prev,
+                [key]: value,
+              }));
+            }}
+          />
+        </Stack>
+
+        <Stack flex={1}>
           <SearchBar
             onSearch={(value: string) =>
               setFilter((prev) => ({
@@ -312,24 +386,61 @@ const Content = () => {
               }))
             }
           />
-        </Grid>
-      </Grid>
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 2 }}></Grid>
-      </Grid>
-      <Table
-        data={students || []}
-        fieldCols={StudentCols}
-        onClickEdit={dialog.handleOpen}
-        deleteStudent={dialogConfirmDelete.handleOpen}
-        pagination={pagination}
-      />
-      <Dialog
-        isOpen={dialog.open}
+        </Stack>
+      </RowStack>
+      <Stack height={300}>
+        <CustomTable
+          configs={getTableConfig({
+            statuses,
+            faculties,
+            programs,
+          })}
+          rows={students}
+          loading={getStudentsApi.loading}
+          emptyState={<Typography>Không có dữ liệu</Typography>}
+          renderRowActions={(row: Student) => {
+            return (
+              <RowStack gap={1}>
+                <Button
+                  variant='outlined'
+                  size='small'
+                  sx={{ borderRadius: "20px", whiteSpace: "nowrap" }}
+                  onClick={() => dialog.handleOpen(row)}
+                >
+                  Chỉnh sửa
+                </Button>
+                <IconButton
+                  size='small'
+                  color='error'
+                  onClick={() => dialogConfirmDelete.handleOpen(row)}
+                >
+                  <DeleteIcon fontSize='small' />
+                </IconButton>
+              </RowStack>
+            );
+          }}
+        />
+        {students.length > 0 && (
+          <CustomPagination
+            pagination={pagination}
+            justifyContent='end'
+            px={2}
+            pt={2}
+            borderTop={1}
+            borderColor={"divider"}
+            rowsPerPageOptions={[10, 15, 20]}
+          />
+        )}
+      </Stack>
+      <DrawerUpdateStudent
+        open={dialog.open}
         student={dialog.data || null}
         onClose={dialog.handleClose}
         addStudent={handleAddStudent}
         updateStudent={handleUpdateStudent}
+        faculties={faculties}
+        programs={programs}
+        statuses={statuses}
       />
       {dialogConfirmDelete.data && (
         <DialogConfirmDelete
@@ -353,39 +464,34 @@ const Content = () => {
         onClose={dialogImport.handleClose}
         onUpload={handleUpload}
       />
-      {/* <DialogManagement
-        type= {dialogManagement.data || ""}
-        open={dialogManagement.open}
-        onClose={dialogManagement.handleClose}
-      /> */}
       <DialogManagement
-        type= {"faculty"}
+        type={"faculty"}
         open={dialogFaculty.open}
         onClose={dialogFaculty.handleClose}
         handleAddItem={addFacultyApi.call}
         handleDeleteItem={deleteFacultyApi.call}
         handleUpdateItem={updateFacultyApi.call}
-        items={getFacultiesApi.data || []}
+        items={faculties}
         handleEditItem={(item) => updateFacultyApi.call(item)}
       />
       <DialogManagement
-        type= {"program"}
+        type={"program"}
         open={dialogProgram.open}
         onClose={dialogProgram.handleClose}
         handleAddItem={addProgramApi.call}
         handleDeleteItem={deleteProgramApi.call}
         handleUpdateItem={updateProgramApi.call}
-        items={getProgramApi.data || []}
+        items={programs}
         handleEditItem={(item) => updateProgramApi.call(item)}
       />
       <DialogManagement
-        type= {"status"}
+        type={"status"}
         open={dialogStatus.open}
         onClose={dialogStatus.handleClose}
         handleAddItem={addStatusApi.call}
         handleDeleteItem={deleteStatusApi.call}
         handleUpdateItem={updateStatusApi.call}
-        items={getStatusApi.data || []}
+        items={statuses}
         handleEditItem={(item) => updateStatusApi.call(item)}
       />
     </Box>

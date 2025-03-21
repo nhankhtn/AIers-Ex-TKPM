@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -45,9 +46,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                 await _context.SaveChangesAsync();
                 return Result<IEnumerable<Student>>.Ok(students);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<IEnumerable<Student>>.Fail("ADD_FAILED", "Add student failed");
+                return Result<IEnumerable<Student>>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<IEnumerable<Student>>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception? ex)
+            {
+                return Result<IEnumerable<Student>>.Fail("ADD_FAILED", ex.Message);
             }
         }
 
@@ -66,13 +75,21 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                 await _context.SaveChangesAsync();
                 return Result<string>.Ok();
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<string>.Fail("DELETE_FAILED", "Delete student failed");
+                return Result<string>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<string>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Fail("DELETE_FAILED", ex.Message);
             }
         }
 
-        public async Task<Result<(IEnumerable<Student> students, int total)>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? key)
+        public async Task<Result<(IEnumerable<Student> students, int total)>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key)
         {
             try
             {
@@ -85,13 +102,24 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
                 if (!string.IsNullOrEmpty(faculty))
                 {
-                    students = students.Where(s => s.Faculty.Name == faculty);
+                    students = students.Where(s => s.Faculty.Name == faculty && s.Program.Name == program && s.Status.Name == status);
                 }
 
                 if (!string.IsNullOrEmpty(key))
                 {
-                    students = students.Where(s => s.Name.Contains(key) || s.Id.Contains(key));
+                    key = key.Trim().ToLower();
+                    var keywords = key.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (var keyword in keywords)
+                    {
+                        students = students.Where(s =>
+                            s.Name.ToLower().Contains(keyword) ||
+                            s.Id.ToLower().Contains(keyword) || s.Status.Name.ToLower().Contains(keyword)
+                            || s.Program.Name.ToLower().Contains(keyword)
+                            || s.Faculty.Name.ToLower().Contains(keyword));
+                    }
                 }
+
 
                 var total = await students.CountAsync();
 
@@ -101,9 +129,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
                 return Result<(IEnumerable<Student> students, int total)>.Ok((studentPage, total));
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<(IEnumerable<Student> students, int total)>.Fail();
+                return Result<(IEnumerable<Student> students, int total)>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<(IEnumerable<Student> students, int total)>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<(IEnumerable<Student> students, int total)>.Fail("GET_STUDENTS_FAILED", ex.Message);
             }
         }
 
@@ -119,9 +155,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .FirstOrDefaultAsync(s => s.Id == studentId);
                 return Result<Student?>.Ok(student);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<Student?>.Fail(errorCode: "NOT_FOUND_STUDENT", errorMessage: "Not found student");
+                return Result<Student?>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<Student?>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<Student?>.Fail(errorCode: "NOT_FOUND_STUDENT", errorMessage: ex.Message);
             }
         }
 
@@ -138,9 +182,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Where(s => s.Name.Contains(name)).ToListAsync();
                 return Result<IEnumerable<Student?>>.Ok(students);
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<IEnumerable<Student?>>.Fail("NOT_FOUND_STUDENT");
+                return Result<IEnumerable<Student?>>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<IEnumerable<Student?>>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<Student?>>.Fail("NOT_FOUND_STUDENT", ex.Message);
             }
         }
 
@@ -156,9 +208,17 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             {
                 return Result<string>.Fail("EMAIL_EXIST", "Email has already existed");
             }
-            catch (Exception)
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
             {
-                return Result<string>.Fail("UPDATE_FAILED", "Update student failed");
+                return Result<string>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<string>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Fail("UPDATE_FAILED", ex.Message);
             }
         }
         
@@ -172,6 +232,14 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             {
                 var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
                 return student is null ? Result<string>.Ok() : Result<string>.Fail("EMAIL_EXIST", "Email has already existed");
+            }
+            catch (SqlException ex) when (IsConnectDatabaseFailed(ex))
+            {
+                return Result<string>.Fail("DB_CONNECT_FAILED", "Database connection error. Please try again later.");
+            }
+            catch (SqlException ex)
+            {
+                return Result<string>.Fail("DB_CONNECT_FAILED", "Something went wrong. Please try again later.");
             }
             catch (Exception)
             {
@@ -187,5 +255,10 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             return student is null ? 0 : int.Parse(student.Id[4..]);
         }
 
+
+        private bool IsConnectDatabaseFailed(SqlException ex)
+        {
+            return ex.Number == 10061;
+        }
     }
 } 

@@ -6,7 +6,7 @@ namespace StudentManagement.BLL.DTOs.Identity
     public class IdentityDTO
     {
 
-        public IdentityType Type { get; set; } // Loại giấy tờ (CMND/CCCD/Hộ chiếu)
+        public string Type { get; set; } = IdentityType.CCCD.ToString();// Loại giấy tờ (CMND/CCCD/Hộ chiếu)
 
         public string DocumentNumber { get; set; } = string.Empty;
 
@@ -16,7 +16,7 @@ namespace StudentManagement.BLL.DTOs.Identity
 
         public DateTime ExpiryDate { get; set; } // Ngày hết hạn
 
-        public string Country { get; set; } = string.Empty; // Quốc gia cấp
+        public string CountryIssue { get; set; } = string.Empty; // Quốc gia cấp
 
         public bool IsChip { get; set; } // Có gắn chip hay không (dành cho CCCD)
 

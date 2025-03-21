@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,15 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.BLL.Services.AddressService
 {
+    public class Country
+    {
+        public Name name { get; set; }
+    }
+
+    public class Name
+    {
+        public string common { get; set; }
+    }
     public class AddressService : IAddressService
     {
         private readonly HttpClient _httpClient;
@@ -63,7 +74,12 @@ namespace StudentManagement.BLL.Services.AddressService
             try
             {
                 string responseBody = await _httpClient.GetStringAsync(_configuration["AddressApi:CountriesUrl"]);
-                return responseBody;
+
+                List<Country> countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(responseBody);
+                var result = countries.Select(c => new { name = c.name.common });
+                string json = JsonSerializer.Serialize(result);
+
+                return json;
             }
             catch (HttpRequestException ex)
             {

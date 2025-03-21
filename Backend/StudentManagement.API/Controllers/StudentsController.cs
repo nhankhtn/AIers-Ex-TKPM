@@ -3,7 +3,6 @@ using StudentManagement.API.Utils;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.Services.StudentService;
-using StudentManagement.BLL.Utils;
 using System.Runtime.CompilerServices;
 
 namespace StudentManagement.API.Controllers
@@ -19,32 +18,29 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<IActionResult> GetAllStudents(int page, int limit, string? faculty, string? key)
+        public async Task<IActionResult> GetAllStudents(int page, int limit, string? faculty, string? program, string? status, string? key)
         {
-            var result = await _studentService.GetAllStudentsAsync(page, limit, faculty, key);
+            var result = await _studentService.GetAllStudentsAsync(page, limit, faculty, program, status, key);
             if (result.Success)
             {
                 if (result.Data is null) return NotFound(ApiResponse<IEnumerable<StudentDTO>>.NotFound(
                     error: new ApiError() { 
-                        Code = "STUDENT_NOT_FOUND",
-                        Message = "No student found"
+                        Code = result.ErrorCode,
+                        Message = result.ErrorMessage
                     }
                 ));
                 return Ok(new
                 {
-                    title = "Success",
-                    status = 200,
                     data = result.Data.Students,
                     total = result.Data.Total
                 });
             }
             return NotFound(new
             {
-                title = "Not Found",
-                status = 404,
                 error = new
                 {
                     code = result.ErrorCode,
+                    message = result.ErrorMessage
                 }
             });
         }
@@ -79,7 +75,8 @@ namespace StudentManagement.API.Controllers
             return BadRequest(ApiResponse<string>.BadRequest(
                     error: new ApiError()
                     {
-                        Code = result.ErrorCode
+                        Code = result.ErrorCode,
+                        Message = result.ErrorMessage
                     }
             ));
         }
@@ -115,7 +112,8 @@ namespace StudentManagement.API.Controllers
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
                 {
-                    Code = result.ErrorCode
+                    Code = result.ErrorCode,
+                    Message = result.ErrorMessage
                 }
             ));
         }
@@ -136,7 +134,8 @@ namespace StudentManagement.API.Controllers
                 return NotFound(ApiResponse<string>.NotFound(
                     error: new ApiError()
                     {
-                        Code = res.ErrorCode
+                        Code = res.ErrorCode,
+                        Message = res.ErrorMessage
                     }
                 ));
             }
