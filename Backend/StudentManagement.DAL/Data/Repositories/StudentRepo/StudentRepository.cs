@@ -102,21 +102,23 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
                 if (!string.IsNullOrEmpty(faculty))
                 {
-                    students = students.Where(s => s.Faculty.Name == faculty && s.Program.Name == program && s.Status.Name == status);
+                    students = students.Where(s => s.Faculty.Name == faculty);
+                }
+                if (!string.IsNullOrEmpty(program))
+                {
+                    students = students.Where(s => s.Program.Name == program);
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    students = students.Where(s => s.Status.Name == status);
                 }
 
                 if (!string.IsNullOrEmpty(key))
                 {
-                    key = key.Trim().ToLower();
-                    var keywords = key.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
+                    var keywords = key.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
                     foreach (var keyword in keywords)
                     {
-                        students = students.Where(s =>
-                            s.Name.ToLower().Contains(keyword) ||
-                            s.Id.ToLower().Contains(keyword) || s.Status.Name.ToLower().Contains(keyword)
-                            || s.Program.Name.ToLower().Contains(keyword)
-                            || s.Faculty.Name.ToLower().Contains(keyword));
+                        students = students.Where(s => s.Name.Contains(keyword) || s.Id.Contains(keyword));
                     }
                 }
 
