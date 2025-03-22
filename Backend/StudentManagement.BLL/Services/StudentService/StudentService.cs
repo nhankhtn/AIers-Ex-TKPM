@@ -80,7 +80,7 @@ namespace StudentManagement.BLL.Services.StudentService
             {
                 // Validate email
                 { nameof(StudentDTO.Email), async student
-                    => student.Email is not null && Regex.IsMatch(student.Email, @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") && (await _studentRepository.IsEmailDuplicateAsync(student.Email)) },
+                    => student.Email is not null && Regex.IsMatch(student.Email, @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") && !(await _studentRepository.IsEmailDuplicateAsync(student.Email)) },
 
                 // Validate phone
                 { nameof(StudentDTO.Phone), student  => Task.FromResult(student.Phone is not null && Regex.IsMatch(student.Phone, @"^0\d{9,10}$")) },
