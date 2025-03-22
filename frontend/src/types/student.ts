@@ -15,7 +15,7 @@ export interface Student {
   phone: string;
   status: Status["id"];
   identity: {
-    type: number;
+    type: string;
     documentNumber: string;
     issueDate: Date;
     issuePlace: string;
@@ -57,8 +57,8 @@ export interface Status {
 
 export interface StudentFilter extends Partial<Student> {
   key: string;
-  status_name: string;
-  faculty_name: string;
+  status: string;
+  faculty: string;
 }
 
 export const mappingFiledStudent: Record<string, string> = {
@@ -187,7 +187,7 @@ export const mock_students: Student[] = [
     phone: "0901234567",
     status: "Active",
     identity: {
-      type: 1,
+      type: "CCCD",
       documentNumber: "123456789",
       issueDate: new Date("2020-01-01"),
       issuePlace: "Công an TP Hồ Chí Minh",
@@ -231,7 +231,7 @@ export const mock_students: Student[] = [
     phone: "0912345678",
     status: "Active",
     identity: {
-      type: 2,
+      type: "CMND",
       documentNumber: "987654321",
       issueDate: new Date("2019-07-15"),
       issuePlace: "Công an Hà Nội",
