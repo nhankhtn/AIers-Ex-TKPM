@@ -26,31 +26,71 @@ namespace StudentManagement.BLL.Services.StudentStatusService
 
         public async Task<Result<StudentStatusDTO>> AddStudentStatusAsync(StudentStatusDTO studentStatusDTO)
         {
-            var res = await _studentStatusRepository.AddStudentStatusAsync(_mapper.Map<StudentStatus>(studentStatusDTO));
-            if (!res.Success) return Result<StudentStatusDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res.Data), res.Message);
+            try
+            {
+                var student = _mapper.Map<StudentStatus>(studentStatusDTO);
+                var std = await _studentStatusRepository.AddStudentStatusAsync(student);
+                return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(std));
+            }
+            catch (Exception ex)
+            {
+                return Result<StudentStatusDTO>.Fail("500", ex.Message);
+            }
         }
 
         public async Task<Result<StudentStatusDTO>> UpdateStudentStatusAsync(string id, StudentStatusDTO studentStatusDTO)
         {
-            studentStatusDTO.Id = id;
-            var res = await _studentStatusRepository.UpdateStudentStatusAsync(_mapper.Map<StudentStatus>(studentStatusDTO));
-            if (!res.Success) return Result<StudentStatusDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res.Data), res.Message);
+            try
+            {
+                studentStatusDTO.Id = id;
+                var studentStatus = _mapper.Map<StudentStatus>(studentStatusDTO);
+                var existingStudentStatus = await _studentStatusRepository.GetStudentStatusByIdAsync(id.ToGuid());
+                if (existingStudentStatus == null)
+                {
+                    return Result<StudentStatusDTO>.Fail("404", "Student Status not found");
+                }
+
+                foreach (var prop in typeof(StudentStatus).GetProperties())
+                {
+                    var value = prop.GetValue(studentStatus);
+                    if (value is null) continue;
+                    if (prop.GetValue(existingStudentStatus) == value) continue;
+                    prop.SetValue(existingStudentStatus, value);
+                }
+
+                var res = await _studentStatusRepository.UpdateStudentStatusAsync(existingStudentStatus);
+                return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res));
+            }
+            catch (Exception ex)
+            {
+                return Result<StudentStatusDTO>.Fail("500", ex.Message);
+            }
         }
 
         public async Task<Result<IEnumerable<StudentStatusDTO>>> GetAllStudentStatusAsync()
         {
-            var res = await _studentStatusRepository.GetAllStudentStatusesAsync();
-            if (!res.Success) return Result<IEnumerable<StudentStatusDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<IEnumerable<StudentStatusDTO>>.Ok(_mapper.Map<IEnumerable<StudentStatusDTO>>(res.Data), res.Message);
+            try
+            {
+                var studentStatuses =  await _studentStatusRepository.GetAllStudentStatusesAsync();
+                return Result<IEnumerable<StudentStatusDTO>>.Ok(_mapper.Map<IEnumerable<StudentStatusDTO>>(studentStatuses));
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<StudentStatusDTO>>.Fail("500", ex.Message);
+            }
         }
 
-        public async Task<Result<StudentStatusDTO>> DeleteStudentStatusAsync(string key)
+        public async Task<Result<string>> DeleteStudentStatusAsync(string id)
         {
-            var res = await _studentStatusRepository.DeleteStudentStatusAsync(new StudentStatus() { Id = key.ToGuid(), Name = key });
-            if (!res.Success) return Result<StudentStatusDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res.Data), res.Message);
+            try
+            {
+                await _studentStatusRepository.DeleteStudentStatusAsync(id.ToGuid());
+                return Result<string>.Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Fail("500", ex.Message);
+            }
         }
     }
 }

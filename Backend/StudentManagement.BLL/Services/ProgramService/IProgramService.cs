@@ -15,9 +15,9 @@ namespace StudentManagement.BLL.Services.ProgramService
 
         Task<Result<ProgramDTO>> UpdateProgramAsync(string id, ProgramDTO programDTO);
 
-        Task<Result<ProgramDTO>> AddProgramAsync(ProgramDTO programDTO);
+        Task<Result<ProgramDTO?>> AddProgramAsync(ProgramDTO programDTO);
 
-        Task<Result<ProgramDTO>> DeleteProgramAsync(string key);
+        Task<Result<string>> DeleteProgramAsync(string id);
 
 
     }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.Program;
+using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.Domain.Models;
@@ -24,34 +25,75 @@ namespace StudentManagement.BLL.Services.ProgramService
             _mapper = mapper;
         }
 
-        public async Task<Result<ProgramDTO>> AddProgramAsync(ProgramDTO programDTO)
+        public async Task<Result<ProgramDTO?>> AddProgramAsync(ProgramDTO programDTO)
         {
-            var res = await _programRepository.AddProgramAsync(_mapper.Map<Program>(programDTO));
-            if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data), res.Message);
+            try
+            {
+                var program = _mapper.Map<Program>(programDTO);
+                var p = await _programRepository.AddProgramAsync(program);
+                return Result<ProgramDTO?>.Ok(_mapper.Map<ProgramDTO>(p));
+            }
+            catch (Exception ex)
+            {
+                return Result<ProgramDTO?>.Fail("500", ex.Message);
+            }
         }
 
         public async Task<Result<ProgramDTO>> UpdateProgramAsync(string id, ProgramDTO programDTO)
         {
-            programDTO.Id = id;
-            var res = await _programRepository.UpdateProgramAsync(_mapper.Map<Program>(programDTO));
-            if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data), res.Message);
+            try
+            {
+                programDTO.Id = id;
+                var studentStatus = _mapper.Map<StudentStatus>(programDTO);
+                var existingStudentStatus = await _programRepository.GetProgramByIdAsync(id.ToGuid());
+                if (existingStudentStatus == null)
+                {
+                    return Result<ProgramDTO>.Fail("404", "Student Status not found");
+                }
+
+                foreach (var prop in typeof(StudentStatus).GetProperties())
+                {
+                    var value = prop.GetValue(studentStatus);
+                    if (value is null) continue;
+                    if (prop.GetValue(existingStudentStatus) == value) continue;
+                    prop.SetValue(existingStudentStatus, value);
+                }
+
+                var res = await _programRepository.UpdateProgramAsync(existingStudentStatus);
+                return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res));
+            }
+            catch (Exception ex)
+            {
+                return Result<ProgramDTO>.Fail("500", ex.Message);
+            }
         }
 
         public async Task<Result<IEnumerable<ProgramDTO>>> GetAllProgramAsync()
         {
-            var res = await _programRepository.GetAllProgramsAsync();
-            if (!res.Success) return Result<IEnumerable<ProgramDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<IEnumerable<ProgramDTO>>.Ok(_mapper.Map<IEnumerable<ProgramDTO>>(res.Data), res.Message);
+            try
+            {
+                var programs = await _programRepository.GetAllProgramsAsync();
+                return Result<IEnumerable<ProgramDTO>>.Ok(_mapper.Map<IEnumerable<ProgramDTO>>(programs));
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<ProgramDTO>>.Fail("500", ex.Message);
+            }
         }
 
-
-        public async Task<Result<ProgramDTO>> DeleteProgramAsync (string key)
+        public async Task<Result<string>> DeleteProgramAsync(string id)
         {
-            var res = await _programRepository.DeleteProgramAsync(new Program() { Id = key.ToGuid(), Name = key });
-            if (!res.Success) return Result<ProgramDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res.Data), res.Message);
+            try
+            {
+                await _programRepository.DeleteProgramAsync(id.ToGuid());
+                return Result<string>.Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Fail("500", ex.Message);
+            }
         }
+
+        
     }
 }

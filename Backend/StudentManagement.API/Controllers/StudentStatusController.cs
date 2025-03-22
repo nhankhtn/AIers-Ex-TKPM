@@ -78,7 +78,7 @@ namespace StudentManagement.API.Controllers
         public async Task<IActionResult> DeleteFaculty(string id)
         {
             var result = await _studentStatusService.DeleteStudentStatusAsync(id);
-            if (result.Success) return Ok(ApiResponse<StudentStatusDTO>.Success(
+            if (result.Success) return Ok(ApiResponse<string>.Success(
                     data: result.Data,
                     message: result.Message
                 ));
@@ -96,7 +96,7 @@ namespace StudentManagement.API.Controllers
         public async Task<IActionResult> DeleteProgramByName(string name)
         {
             var result = await _studentStatusService.DeleteStudentStatusAsync(name);
-            if (result.Success) return Ok(ApiResponse<StudentStatusDTO>.Success(
+            if (result.Success) return Ok(ApiResponse<string>.Success(
                     data: result.Data,
                     message: result.Message
                 ));

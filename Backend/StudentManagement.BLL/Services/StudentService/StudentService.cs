@@ -80,7 +80,7 @@ namespace StudentManagement.BLL.Services.StudentService
             {
                 // Validate email
                 { nameof(StudentDTO.Email), async student
-                    => student.Email is not null && Regex.IsMatch(student.Email, @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") && (await _studentRepository.IsEmailDuplicateAsync(student.Email)).Success },
+                    => student.Email is not null && Regex.IsMatch(student.Email, @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") && (await _studentRepository.IsEmailDuplicateAsync(student.Email)) },
 
                 // Validate phone
                 { nameof(StudentDTO.Phone), student  => Task.FromResult(student.Phone is not null && Regex.IsMatch(student.Phone, @"^0\d{9,10}$")) },
@@ -91,15 +91,15 @@ namespace StudentManagement.BLL.Services.StudentService
 
                 // Validate faculty
                 { nameof(StudentDTO.Faculty), async student => student.Faculty is not null && _facultyRepository is not null
-                && (await _facultyRepository.GetFacultyByIdAsync(student.Faculty)).Data is not null },
+                && (await _facultyRepository.GetFacultyByIdAsync(student.Faculty)) is not null },
 
                 // Validate program
                 { nameof(StudentDTO.Program), async student => student.Program is not null
-                && (await _programRepository.GetProgramByIdAsync(student.Program)).Data is not null },
+                && (await _programRepository.GetProgramByIdAsync(student.Program)) is not null },
             
                 // Validate status
                 { nameof(StudentDTO.Status), async student => student.Status is not null
-                && (await _studentStatusRepository.GetStudentStatusByIdAsync(student.Status)).Data is not null },
+                && (await _studentStatusRepository.GetStudentStatusByIdAsync(student.Status)) is not null },
             };
 
             _specialMapping = new()
@@ -152,50 +152,60 @@ namespace StudentManagement.BLL.Services.StudentService
         // Get all students
         public async Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key)
         {
-            var res = await _studentRepository.GetAllStudentsAsync(page, pageSize, faculty, program, status, key);
-            if (!res.Success) return Result<GetStudentsDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<GetStudentsDTO>.Ok(new GetStudentsDTO()
+            try
             {
-                Students = _mapper.Map<IEnumerable<StudentDTO>>(res.Data.students),
-                Total = res.Data.total
-            }, res.Message);
+                var res = await _studentRepository.GetAllStudentsAsync(page, pageSize, faculty, program, status, key);
+                return Result<GetStudentsDTO>.Ok(new GetStudentsDTO()
+                {
+                    Students = _mapper.Map<IEnumerable<StudentDTO>>(res.students),
+                    Total = res.total
+                });
+            }
+            catch (Exception ex)
+            {
+                return Result<GetStudentsDTO>.Fail("500", ex.Message);
+            }
         }
 
 
         // Add a new student
         public async Task<Result<AddListStudentResult>> AddListStudentAsync(IEnumerable<StudentDTO> studentDTOs)
         {
-            var result = new AddListStudentResult();
-            var addList = new List<Student>();
-            foreach (var student in studentDTOs)
+            try
             {
-                var validate = true;
-                var addStudent = _mapper.Map<Student>(student);
-                foreach (var prop in typeof(StudentDTO).GetProperties())
+                var result = new AddListStudentResult();
+                var addList = new List<Student>();
+                foreach (var student in studentDTOs)
                 {
-                    var value = prop.GetValue(student);
-                    if ((_requiredProperties.Contains(prop.Name) && value is null)
-                        || (_validateValue.ContainsKey(prop.Name) && !(await _validateValue[prop.Name](student))))
+                    var validate = true;
+                    var addStudent = _mapper.Map<Student>(student);
+                    foreach (var prop in typeof(StudentDTO).GetProperties())
                     {
-                        result.UnacceptableStudents.Add(student);
-                        validate = false;
-                        break;
+                        var value = prop.GetValue(student);
+                        if ((_requiredProperties.Contains(prop.Name) && value is null)
+                            || (_validateValue.ContainsKey(prop.Name) && !(await _validateValue[prop.Name](student))))
+                        {
+                            result.UnacceptableStudents.Add(student);
+                            validate = false;
+                            break;
+                        }
+                        if (value is not null && _specialMapping.ContainsKey(prop.Name) && await _specialMapping[prop.Name](addStudent, value)) continue;
                     }
-                    if (value is not null && _specialMapping.ContainsKey(prop.Name) && await _specialMapping[prop.Name](addStudent, value)) continue;
-                }
-                if (!validate) continue;
+                    if (!validate) continue;
 
-                var newId = await GenerateStudentId(student.Course ?? throw new ArgumentNullException());
-                addStudent.Id = newId;
-                addList.Add(addStudent);
-            }
-            var res = await _studentRepository.AddStudentAsync(addList);
-            if (res.Success)
-            {
+                    var newId = await GenerateStudentId(student.Course ?? throw new ArgumentNullException());
+                    addStudent.Id = newId;
+                    addList.Add(addStudent);
+                }
+                var res = await _studentRepository.AddStudentAsync(addList);
                 result.AcceptableStudents = _mapper.Map<IEnumerable<StudentDTO>>(addList).ToList();
-                return Result<AddListStudentResult>.Ok(result, res.Message);
+                return Result<AddListStudentResult>.Ok(result);
             }
-            return Result<AddListStudentResult>.Fail(res.ErrorCode, res.ErrorMessage);
+            catch (Exception ex)
+            {
+                return Result<AddListStudentResult>.Fail("500", ex.Message);
+            }
+            
         }
 
 
@@ -203,18 +213,33 @@ namespace StudentManagement.BLL.Services.StudentService
         // Get student by id
         public async Task<Result<StudentDTO>> GetStudentByIdAsync(string studentId)
         {
-            var student = await _studentRepository.GetStudentByIdAsync(studentId);
-            return student != null
-                ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(student))
-                : Result<StudentDTO>.Fail("STUDENT_NOT_FOUND");
+            try
+            {
+                var student = await _studentRepository.GetStudentByIdAsync(studentId);
+                return student != null
+                    ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(student))
+                    : Result<StudentDTO>.Fail("STUDENT_NOT_FOUND");
+            }
+            catch (Exception ex)
+            {
+                return Result<StudentDTO>.Fail("500", ex.Message);
+            }
+            
         }
 
 
         // Get students by name
         public async Task<Result<IEnumerable<StudentDTO>>> GetStudentsByNameAsync(string name)
         {
-            var students = await _studentRepository.GetStudentsByNameAsync(name);
-            return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students), students.Message);
+            try
+            {
+                var students = await _studentRepository.GetStudentsByNameAsync(name);
+                return Result<IEnumerable<StudentDTO>>.Ok(_mapper.Map<IEnumerable<StudentDTO>>(students));
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<StudentDTO>>.Fail("500", ex.Message);
+            }
         }
 
 
@@ -225,36 +250,47 @@ namespace StudentManagement.BLL.Services.StudentService
         /// <returns></returns>
         public async Task<Result<string>> DeleteStudentByIdAsync(string studentId)
         {
-            var res = await _studentRepository.DeleteStudentAsync(studentId);
-            return res.Success ? Result<string>.Ok(studentId, res.Message) : Result<string>.Fail(res.ErrorCode, res.ErrorMessage);
+            try
+            {
+                await _studentRepository.DeleteStudentAsync(studentId);
+                return Result<string>.Ok(studentId);
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Fail("500", ex.Message);
+            }
         }
 
 
         // Update a student
         public async Task<Result<StudentDTO>> UpdateStudentAsync(string studentId, StudentDTO studentDTO)
         {
-            var resExistStudent =  await _studentRepository.GetStudentByIdAsync(studentId);
-            if (!resExistStudent.Success) return Result<StudentDTO>.Fail(resExistStudent.ErrorCode, resExistStudent.ErrorMessage);
-            if (resExistStudent.Data is null) return Result<StudentDTO>.Fail("STUDENT_NOT_FOUND", "Student is not found");
-
-
-            foreach(var prop in typeof(StudentDTO).GetProperties())
+            try
             {
-                var value = prop.GetValue(studentDTO);
-                if (_canNotUpdatProperties.Contains(prop.Name) || value is null) continue;
-                if (_validateValue.ContainsKey(prop.Name) && !(await _validateValue[prop.Name](studentDTO))) return Result<StudentDTO>.Fail("INVALID_VALUE", "Invalid value");
-                if (_specialMapping.ContainsKey(prop.Name) && await _specialMapping[prop.Name](resExistStudent.Data,value)) continue;
+                var resExistStudent = await _studentRepository.GetStudentByIdAsync(studentId);
+                if (resExistStudent is null) return Result<StudentDTO>.Fail("STUDENT_NOT_FOUND", "Student is not found");
 
-                var studentProp = typeof(Student).GetProperty(prop.Name);
-                if (studentProp != null)
+                foreach (var prop in typeof(StudentDTO).GetProperties())
                 {
-                    studentProp.SetValue(resExistStudent.Data, prop.GetValue(studentDTO));
+                    var value = prop.GetValue(studentDTO);
+                    if (_canNotUpdatProperties.Contains(prop.Name) || value is null) continue;
+                    if (_validateValue.ContainsKey(prop.Name) && !(await _validateValue[prop.Name](studentDTO))) return Result<StudentDTO>.Fail("INVALID_VALUE", "Invalid value");
+                    if (_specialMapping.ContainsKey(prop.Name) && await _specialMapping[prop.Name](resExistStudent, value)) continue;
+
+                    var studentProp = typeof(Student).GetProperty(prop.Name);
+                    if (studentProp != null)
+                    {
+                        studentProp.SetValue(resExistStudent, prop.GetValue(studentDTO));
+                    }
                 }
+
+                var res = await _studentRepository.UpdateStudentAsync(_mapper.Map<Student>(resExistStudent));
+                return Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent));
             }
-            
-            var res = await _studentRepository.UpdateStudentAsync(_mapper.Map<Student>(resExistStudent.Data));
-            return res.Success ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent.Data), res.Message) 
-                : Result<StudentDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            catch (Exception ex)
+            {
+                return Result<StudentDTO>.Fail("500", ex.Message);
+            }
         }
 
 

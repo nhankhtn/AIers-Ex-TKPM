@@ -22,6 +22,7 @@ namespace StudentManagement.Domain.Models
         /// </summary>
         [Key]
         [Column("id", TypeName = "uniqueidentifier")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
         /// <summary>
