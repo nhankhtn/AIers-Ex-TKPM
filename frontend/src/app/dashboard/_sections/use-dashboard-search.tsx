@@ -136,7 +136,7 @@ const useDashboardSearch = () => {
         label: "Tất cả",
       },
       ...statuses.map((s) => ({
-        value: normalizeString(s.name),
+        value: s.name,
         label: s.name,
       })),
     ],
@@ -146,7 +146,7 @@ const useDashboardSearch = () => {
         label: "Tất cả",
       },
       ...faculties.map((s) => ({
-        value: normalizeString(s.name),
+        value: s.name,
         label: s.name,
       })),
     ],
