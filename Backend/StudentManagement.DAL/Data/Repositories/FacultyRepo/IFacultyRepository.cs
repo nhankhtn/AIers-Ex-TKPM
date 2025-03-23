@@ -10,18 +10,18 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
 {
     public interface IFacultyRepository
     {
-        Task<Result<Faculty?>> GetFacultyByIdAsync(string id);
+        Task<Faculty?> GetFacultyByIdAsync(string id);
 
-        Task<Result<Faculty?>> GetFacultyByIdAsync(Guid id);
+        Task<Faculty?> GetFacultyByIdAsync(Guid id);
 
-        Task<Result<Faculty?>> GetFacultyByNameAsync(string name);
+        Task<Faculty?> GetFacultyByNameAsync(string name);
 
-        Task<Result<IEnumerable<Faculty>>> GetAllFacultiesAsync();
+        Task<IEnumerable<Faculty>> GetAllFacultiesAsync();
 
-        Task<Result<Faculty>> AddFacultyAsync(Faculty faculty);
+        Task<Faculty?> AddFacultyAsync(Faculty faculty);
 
-        Task<Result<Faculty>> UpdateFacultyAsync(Faculty faculty);
+        Task<Faculty?> UpdateFacultyAsync(Faculty faculty);
 
-        Task<Result<Faculty>> DeleteFacultyAsync(Faculty faculty);
+        Task DeleteFacultyAsync(Guid faculty);
     }
 }

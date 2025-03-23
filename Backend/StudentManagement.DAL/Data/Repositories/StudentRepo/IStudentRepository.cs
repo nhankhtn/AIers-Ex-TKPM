@@ -10,19 +10,19 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo;
 
 public interface IStudentRepository
 {
-    Task<Result<(IEnumerable<Student> students, int total)>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key);
+    Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key);
 
-    Task<Result<Student?>> GetStudentByIdAsync(string studentId);
+    Task<Student?> GetStudentByIdAsync(string studentId);
 
-    Task<Result<IEnumerable<Student?>>> GetStudentsByNameAsync(string name);
+    Task<IEnumerable<Student?>> GetStudentsByNameAsync(string name);
 
-    Task<Result<IEnumerable<Student>>> AddStudentAsync(IEnumerable<Student> students);
+    Task<IEnumerable<Student>> AddStudentAsync(IEnumerable<Student> students);
 
-    Task<Result<string>> UpdateStudentAsync(Student student);
+    Task<Student?> UpdateStudentAsync(Student student);
 
-    Task<Result<string>> DeleteStudentAsync(string studentId);
+    Task DeleteStudentAsync(string studentId);
 
-    Task<Result<string>> IsEmailDuplicateAsync(string email);
+    Task<bool> IsEmailDuplicateAsync(string email);
 
     Task<int> GetLatestStudentIdAsync(int course);
 

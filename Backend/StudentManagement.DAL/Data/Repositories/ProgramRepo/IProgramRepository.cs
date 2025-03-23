@@ -10,19 +10,17 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
 {
     public interface IProgramRepository
     {
-        Task<Result<Program?>> GetProgramByIdAsync(string id);
-        Task<Result<Program?>> GetProgramByIdAsync(Guid id);
+        Task<Program?> GetProgramByIdAsync(string id);
+        Task<Program?> GetProgramByIdAsync(Guid id);
+        Task<Program?> GetProgramByNameAsync(string name);
 
+        Task<IEnumerable<Program>> GetAllProgramsAsync();
 
-        Task<Result<Program?>> GetProgramByNameAsync(string name);
+        Task<Program?> AddProgramAsync(Program program);
 
-        Task<Result<IEnumerable<Program>>> GetAllProgramsAsync();
+        Task<Program?> UpdateProgramAsync(Program program);
 
-        Task<Result<Program>> AddProgramAsync(Program program);
-
-        Task<Result<Program>> UpdateProgramAsync(Program program);
-
-        Task<Result<Program>> DeleteProgramAsync(Program program);
+        Task DeleteProgramAsync(Guid programId);
 
     }
 }

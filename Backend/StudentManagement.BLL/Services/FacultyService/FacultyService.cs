@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using StudentManagement.BLL.DTOs.Faculty;
+using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,35 +23,75 @@ namespace StudentManagement.BLL.Services.FacultyService
             _mapper = mapper;
         }
 
-        public async Task<Result<FacultyDTO>> AddFacultyAsync(FacultyDTO facultyDTO)
+        public async Task<Result<FacultyDTO?>> AddFacultyAsync(FacultyDTO facultyDTO)
         {
-            var res = await _facultyRepository.AddFacultyAsync(_mapper.Map<Faculty>(facultyDTO));
-            if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-
-            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data), res.Message);
+            try
+            {
+                var faculty = _mapper.Map<Faculty>(facultyDTO);
+                var f = await _facultyRepository.AddFacultyAsync(faculty);
+                return Result<FacultyDTO?>.Ok(_mapper.Map<FacultyDTO>(f));
+            }
+            catch (Exception ex)
+            {
+                return Result<FacultyDTO?>.Fail("500", ex.Message);
+            }
         }
 
-        public async Task<Result<FacultyDTO>> UpdateFacultyAsync(string id, FacultyDTO facultyDTO)
+        public async Task<Result<FacultyDTO>> UpdateFacultyAsync(string id, FacultyDTO FacultyDTO)
         {
-            facultyDTO.Id = id;
-            var res = await _facultyRepository.UpdateFacultyAsync(_mapper.Map<Faculty>(facultyDTO));
-            if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
+            try
+            {
+                FacultyDTO.Id = id;
+                var studentStatus = _mapper.Map<StudentStatus>(FacultyDTO);
+                var existingStudentStatus = await _facultyRepository.GetFacultyByIdAsync(id.ToGuid());
+                if (existingStudentStatus == null)
+                {
+                    return Result<FacultyDTO>.Fail("404", "Student Status not found");
+                }
 
-            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data), res.Message);
+                foreach (var prop in typeof(StudentStatus).GetProperties())
+                {
+                    var value = prop.GetValue(studentStatus);
+                    if (value is null) continue;
+                    if (prop.GetValue(existingStudentStatus) == value) continue;
+                    prop.SetValue(existingStudentStatus, value);
+                }
+
+                var res = await _facultyRepository.UpdateFacultyAsync(existingStudentStatus);
+                return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res));
+            }
+            catch (Exception ex)
+            {
+                return Result<FacultyDTO>.Fail("500", ex.Message);
+            }
         }
 
         public async Task<Result<IEnumerable<FacultyDTO>>> GetAllFacultiesAsync()
         {
-            var res = await _facultyRepository.GetAllFacultiesAsync();
-            if (!res.Success) return Result<IEnumerable<FacultyDTO>>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<IEnumerable<FacultyDTO>>.Ok(_mapper.Map<IEnumerable<FacultyDTO>>(res.Data), res.Message);
+            try
+            {
+                var faculties = await _facultyRepository.GetAllFacultiesAsync();
+                return Result<IEnumerable<FacultyDTO>>.Ok(_mapper.Map<IEnumerable<FacultyDTO>>(faculties));
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<FacultyDTO>>.Fail("500", ex.Message);
+            }
         }
 
-        public async Task<Result<FacultyDTO>> DeleteFacultyAsync(string key)
+        public async Task<Result<string>> DeleteFacultyAsync(string id)
         {
-            var res = await _facultyRepository.DeleteFacultyAsync(new Faculty() { Id = key.ToGuid(), Name = key });
-            if (!res.Success) return Result<FacultyDTO>.Fail(res.ErrorCode, res.ErrorMessage);
-            return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res.Data), res.Message);
+            try
+            {
+                await _facultyRepository.DeleteFacultyAsync(id.ToGuid());
+                return Result<string>.Ok(id);
+            }
+            catch (Exception ex)
+            {
+                return Result<string>.Fail("500", ex.Message);
+            }
         }
+
+
     }
 }

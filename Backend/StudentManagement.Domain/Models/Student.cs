@@ -72,19 +72,19 @@ namespace StudentManagement.Domain.Models
         /// Gets or sets the student's permanent address.
         /// </summary>
         [Required]
-        [Column("permanent_address", TypeName = "nvarchar(200)")]
+        [Column("permanent_address", TypeName = "nvarchar(max)")]
         public string PermanentAddress { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the student's temporary address.
         /// </summary>
-        [Column("temporary_address", TypeName = "nvarchar(200)")]
+        [Column("temporary_address", TypeName = "nvarchar(max)")]
         public string? TemporaryAddress { get; set; }
 
         /// <summary>
         /// Gets or sets the student's mailing address.
         /// </summary>
-        [Column("mailing_address", TypeName="nvarchar(200)")]
+        [Column("mailing_address", TypeName= "nvarchar(max)")]
         public string? MailingAddress { get; set; } = string.Empty;
 
         /// <summary>
