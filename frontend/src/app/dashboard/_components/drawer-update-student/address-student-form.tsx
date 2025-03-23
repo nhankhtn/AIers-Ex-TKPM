@@ -51,13 +51,13 @@ const AddressStudentForm = ({
     [getDistrictOfProvincesPAApi.data]
   );
   const districtsTA = useMemo(
-    () => getDistrictOfProvincesPAApi.data?.districts || [],
-    [getDistrictOfProvincesPAApi.data]
+    () => getDistrictOfProvincesTAApi.data?.districts || [],
+    [getDistrictOfProvincesTAApi.data]
   );
 
   const districtsMA = useMemo(
-    () => getDistrictOfProvincesPAApi.data?.districts || [],
-    [getDistrictOfProvincesPAApi.data]
+    () => getDistrictOfProvincesMAApi.data?.districts || [],
+    [getDistrictOfProvincesMAApi.data]
   );
 
   const wardsPA = useMemo(
@@ -65,12 +65,12 @@ const AddressStudentForm = ({
     [getWardOfDistrictPAApi.data]
   );
   const wardsTA = useMemo(
-    () => getWardOfDistrictPAApi.data?.wards || [],
-    [getWardOfDistrictPAApi.data]
+    () => getWardOfDistrictTAApi.data?.wards || [],
+    [getWardOfDistrictTAApi.data]
   );
   const wardsMA = useMemo(
-    () => getWardOfDistrictPAApi.data?.wards || [],
-    [getWardOfDistrictPAApi.data]
+    () => getWardOfDistrictMAApi.data?.wards || [],
+    [getWardOfDistrictMAApi.data]
   );
   useEffect(() => {
     if (formik.values.permanentProvince) {
