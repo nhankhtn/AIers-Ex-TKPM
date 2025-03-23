@@ -120,7 +120,9 @@ namespace StudentManagement.DAL.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(10)")
+                        .HasDefaultValue("CCCD")
                         .HasColumnName("type");
 
                     b.HasKey("Id");
@@ -179,7 +181,9 @@ namespace StudentManagement.DAL.Migrations
 
                     b.Property<string>("Gender")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(10)")
+                        .HasDefaultValue("Male")
                         .HasColumnName("gender");
 
                     b.Property<string>("MailingAddress")

@@ -12,7 +12,7 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250323143739_InitialState")]
+    [Migration("20250323155710_InitialState")]
     partial class InitialState
     {
         /// <inheritdoc />
@@ -123,7 +123,9 @@ namespace StudentManagement.DAL.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(10)")
+                        .HasDefaultValue("CCCD")
                         .HasColumnName("type");
 
                     b.HasKey("Id");
@@ -182,7 +184,9 @@ namespace StudentManagement.DAL.Migrations
 
                     b.Property<string>("Gender")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(10)")
+                        .HasDefaultValue("Male")
                         .HasColumnName("gender");
 
                     b.Property<string>("MailingAddress")

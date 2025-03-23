@@ -70,7 +70,7 @@ namespace StudentManagement.DAL.Migrations
                     id = table.Column<string>(type: "varchar(8)", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     date_of_birth = table.Column<DateOnly>(type: "date", nullable: false),
-                    gender = table.Column<string>(type: "varchar(10)", nullable: false),
+                    gender = table.Column<string>(type: "varchar(10)", nullable: false, defaultValue: "Male"),
                     email = table.Column<string>(type: "varchar(50)", nullable: false),
                     course = table.Column<int>(type: "int", nullable: false),
                     phone = table.Column<string>(type: "varchar(10)", nullable: false),
@@ -110,7 +110,7 @@ namespace StudentManagement.DAL.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    type = table.Column<string>(type: "varchar(10)", nullable: false),
+                    type = table.Column<string>(type: "varchar(10)", nullable: false, defaultValue: "CCCD"),
                     number = table.Column<string>(type: "varchar(20)", nullable: false),
                     issued_date = table.Column<DateOnly>(type: "date", nullable: false),
                     expiry_date = table.Column<DateOnly>(type: "date", nullable: false),
