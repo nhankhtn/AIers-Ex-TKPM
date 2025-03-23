@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace StudentManagement.DAL.Migrations
 {
     /// <inheritdoc />
@@ -129,6 +131,38 @@ namespace StudentManagement.DAL.Migrations
                         principalTable: "students",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "faculties",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "Khoa Toán" },
+                    { new Guid("11111111-1111-1111-1111-111111111112"), "Khoa Công nghệ thông tin" },
+                    { new Guid("11111111-1111-1111-1111-111111111113"), "Khoa Hoá" },
+                    { new Guid("11111111-1111-1111-1111-111111111114"), "Khoa Lí" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "programs",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "Đại trà" },
+                    { new Guid("11111111-1111-1111-1111-111111111112"), "Chất lượng cao" },
+                    { new Guid("11111111-1111-1111-1111-111111111113"), "Tiên tiến" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "student_statuses",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "Đang học" },
+                    { new Guid("11111111-1111-1111-1111-111111111112"), "Đã tốt nghiệp" },
+                    { new Guid("11111111-1111-1111-1111-111111111113"), "Đã bảo lưu" },
+                    { new Guid("11111111-1111-1111-1111-111111111114"), "Đã nghỉ học" }
                 });
 
             migrationBuilder.CreateIndex(

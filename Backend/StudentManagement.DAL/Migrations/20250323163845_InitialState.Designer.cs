@@ -12,7 +12,7 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250323155710_InitialState")]
+    [Migration("20250323163845_InitialState")]
     partial class InitialState
     {
         /// <inheritdoc />
@@ -77,6 +77,28 @@ namespace StudentManagement.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("faculties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Name = "Khoa Toán"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111112"),
+                            Name = "Khoa Công nghệ thông tin"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111113"),
+                            Name = "Khoa Hoá"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111114"),
+                            Name = "Khoa Lí"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>
@@ -157,6 +179,23 @@ namespace StudentManagement.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("programs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Name = "Đại trà"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111112"),
+                            Name = "Chất lượng cao"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111113"),
+                            Name = "Tiên tiến"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
@@ -260,6 +299,28 @@ namespace StudentManagement.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("student_statuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Name = "Đang học"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111112"),
+                            Name = "Đã tốt nghiệp"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111113"),
+                            Name = "Đã bảo lưu"
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111114"),
+                            Name = "Đã nghỉ học"
+                        });
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>

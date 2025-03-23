@@ -72,6 +72,74 @@ namespace StudentManagement.DAL.Data
                 .HasForeignKey<Identity>(a => a.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Program>(b =>
+            {
+                b.HasData(
+                    new Program
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                        Name = "Đại trà"
+                    },
+                    new Program
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111112"),
+                        Name = "Chất lượng cao"
+                    },
+                    new Program
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111113"),
+                        Name = "Tiên tiến"
+                    });
+            });
+            modelBuilder.Entity<StudentStatus>(b =>
+            {
+                b.HasData(
+                    new StudentStatus
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                        Name = "Đang học"
+                    },
+                    new StudentStatus
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111112"),
+                        Name = "Đã tốt nghiệp"
+                    },
+                    new StudentStatus
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111113"),
+                        Name = "Đã bảo lưu"
+                    },
+                    new StudentStatus
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111114"),
+                        Name = "Đã nghỉ học"
+                    });
+            });
+            modelBuilder.Entity<Faculty>(b =>
+            {
+                b.HasData(
+                    new Faculty
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                        Name = "Khoa Toán"
+                    },
+                    new Faculty
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111112"),
+                        Name = "Khoa Công nghệ thông tin"
+                    },
+                    new Faculty
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111113"),
+                        Name = "Khoa Hoá"
+                    },
+                    new Faculty
+                    {
+                        Id = new Guid("11111111-1111-1111-1111-111111111114"),
+                        Name = "Khoa Lí"
+                    });
+            });
+
         }
     }
 }
