@@ -28,7 +28,7 @@ namespace StudentManagement.DAL.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            
+
 
             modelBuilder.Entity<Student>()
                 .Property(s => s.Gender)
@@ -39,6 +39,7 @@ namespace StudentManagement.DAL.Data
                 .Property(i => i.Type)
                 .HasConversion<string>()
                 .HasDefaultValue(IdentityType.CCCD);
+
 
             // Relationships
 
@@ -71,18 +72,6 @@ namespace StudentManagement.DAL.Data
                 .HasForeignKey<Identity>(a => a.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //modelBuilder.Entity<Student>()
-            //    .HasOne(a => a.Nationalities)
-            //    .WithOne(s => s.Student)
-            //    .HasForeignKey<StudentNationalities>(a => a.StudentId)
-            //    .OnDelete(DeleteBehavior.Cascade);
-
-
-            // SeedData(modelBuilder);
-
         }
-
-
-        
     }
 }

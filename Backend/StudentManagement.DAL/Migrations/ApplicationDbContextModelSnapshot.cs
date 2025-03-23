@@ -26,28 +26,34 @@ namespace StudentManagement.DAL.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("EndTimeUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(0)")
+                        .HasColumnName("end_time_utc");
 
                     b.Property<string>("ErrorMessage")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("error_message");
 
                     b.Property<bool>("IsSuccess")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasColumnName("is_success");
 
                     b.Property<string>("Metadata")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("meta_data");
 
                     b.Property<DateTime>("StartTimeUtc")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2(0)")
+                        .HasColumnName("start_time_utc");
 
                     b.HasKey("Id");
 
-                    b.ToTable("audit_entry");
+                    b.ToTable("audit_entries");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Faculty", b =>
@@ -67,7 +73,7 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("faculty");
+                    b.ToTable("faculties");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>
@@ -78,16 +84,15 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("country");
 
                     b.Property<string>("DocumentNumber")
                         .IsRequired()
                         .HasColumnType("varchar(20)")
-                        .HasColumnName("document_number");
+                        .HasColumnName("number");
 
-                    b.Property<DateTime>("ExpiryDate")
+                    b.Property<DateOnly>("ExpiryDate")
                         .HasColumnType("date")
                         .HasColumnName("expiry_date");
 
@@ -95,18 +100,18 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_chip");
 
-                    b.Property<DateTime>("IssueDate")
+                    b.Property<DateOnly>("IssueDate")
                         .HasColumnType("date")
-                        .HasColumnName("issue_date");
+                        .HasColumnName("issued_date");
 
                     b.Property<string>("IssuePlace")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("issue_place");
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(100)")
-                        .HasColumnName("notes");
+                        .HasColumnName("note");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
@@ -115,12 +120,13 @@ namespace StudentManagement.DAL.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(10)")
-                        .HasDefaultValue("CCCD")
                         .HasColumnName("type");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DocumentNumber")
+                        .IsUnique();
 
                     b.HasIndex("StudentId")
                         .IsUnique();
@@ -158,7 +164,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("int")
                         .HasColumnName("course");
 
-                    b.Property<DateTime>("DateOfBirth")
+                    b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date")
                         .HasColumnName("date_of_birth");
 
@@ -173,9 +179,7 @@ namespace StudentManagement.DAL.Migrations
 
                     b.Property<string>("Gender")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(10)")
-                        .HasDefaultValue("Male")
                         .HasColumnName("gender");
 
                     b.Property<string>("MailingAddress")
@@ -221,6 +225,9 @@ namespace StudentManagement.DAL.Migrations
 
                     b.HasIndex("FacultyId");
 
+                    b.HasIndex("Phone")
+                        .IsUnique();
+
                     b.HasIndex("ProgramId");
 
                     b.HasIndex("StatusId");
@@ -245,7 +252,7 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("student_status");
+                    b.ToTable("student_statuses");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Identity", b =>

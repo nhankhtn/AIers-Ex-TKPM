@@ -26,7 +26,7 @@ namespace StudentManagement.API
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             Console.WriteLine(connectionString);
-            // Đăng ký danh sách AuditEntry theo phạm vi Scoped
+           
             builder.Services.AddScoped<List<AuditEntry>>();
 
             // Đăng ký AuditInterceptor và inject List<AuditEntry> vào nó
