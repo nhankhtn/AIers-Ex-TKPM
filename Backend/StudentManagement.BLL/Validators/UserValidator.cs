@@ -1,4 +1,8 @@
-﻿using StudentManagement.BLL.DTOs.Students;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using PhoneNumbers;
+using StudentManagement.BLL.DTOs.Students;
+using StudentManagement.BLL.Services.EmailService;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentStatusRepo;
@@ -15,12 +19,15 @@ namespace StudentManagement.BLL.Validators
         private readonly IFacultyRepository _facultyRepository;
         private readonly IProgramRepository _programRepository;
         private readonly IStudentStatusRepository _studentStatusRepository;
+        private readonly IEmailService _emailService;
 
-        public UserValidator(IFacultyRepository facultyRepository, IProgramRepository programRepository, IStudentStatusRepository studentStatusRepository)
+
+        public UserValidator(IFacultyRepository facultyRepository, IProgramRepository programRepository, IStudentStatusRepository studentStatusRepository, IEmailService emailService)
         {
             _facultyRepository = facultyRepository;
             _programRepository = programRepository;
             _studentStatusRepository = studentStatusRepository;
+            _emailService = emailService;
         }
 
         public List<string> NeedValidateProperties { get; } = new List<string>
@@ -73,12 +80,16 @@ namespace StudentManagement.BLL.Validators
 
         private bool ValidateEmail (string email)
         {
-            return false;
+            return _emailService.ValidateEmailAsync(email).Result;
         }
 
         private bool ValidatePhone (string phone)
         {
-            return false;
+            if (string.IsNullOrEmpty(phone))
+                return false;
+            var phoneNumberUtil = PhoneNumberUtil.GetInstance();
+            var phoneNumber = phoneNumberUtil.Parse(phone, null);
+            return phoneNumberUtil.IsValidNumber(phoneNumber);
         }
 
         private async Task<bool> ValidateFaculty (string faculty)

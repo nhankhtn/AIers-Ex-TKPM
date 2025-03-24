@@ -23,6 +23,7 @@ namespace StudentManagement.DAL.Data
         public DbSet<Student> Students { get; set; }
         public DbSet<Identity> Identities { get; set; }
         public DbSet<AuditEntry> AuditEntries { get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -139,6 +140,10 @@ namespace StudentManagement.DAL.Data
                         Name = "Khoa Lí"
                     });
             });
+            modelBuilder.Entity<Setting>(b =>
+            b.HasData(
+                new Setting { Id =1 }
+            ));
 
         }
     }
