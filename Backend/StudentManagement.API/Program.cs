@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL;
@@ -7,6 +8,7 @@ using StudentManagement.BLL.Services.FacultyService;
 using StudentManagement.BLL.Services.ProgramService;
 using StudentManagement.BLL.Services.StudentService;
 using StudentManagement.BLL.Services.StudentStatusService;
+using StudentManagement.BLL.Validators;
 using StudentManagement.DAL.Data;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
@@ -64,6 +66,9 @@ namespace StudentManagement.API
             builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
             builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
             builder.Services.AddScoped<IStudentStatusRepository, StudentStatusRepository>();
+
+            // Validators
+            builder.Services.AddScoped<IUserValidator, UserValidator>();
 
 
             builder.Services.AddControllers();

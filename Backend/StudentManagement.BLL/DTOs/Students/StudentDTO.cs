@@ -40,5 +40,22 @@ namespace StudentManagement.BLL.DTOs.Students
         public string? Nationality { get; set; }
 
         public IdentityDTO? Identity { get; set; } = null!;
+
+
+        // These properties can be null
+        public static List<string> RequiredProperties = new List<string>
+        {
+            nameof(Name),
+            nameof(DateOfBirth),
+            nameof(Gender),
+            nameof(Course),
+            nameof(Phone),
+            nameof(PermanentAddress),
+            nameof(Program),
+            nameof(Status),
+            nameof(Faculty),
+            nameof(Nationality),
+            nameof(Identity)
+        };
     }
 }
