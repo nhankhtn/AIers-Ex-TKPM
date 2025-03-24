@@ -30,11 +30,11 @@ namespace StudentManagement.Domain.Models
         
         [Required]
         [Column("issued_date", TypeName="date")]
-        public DateOnly IssueDate { get; set; }
+        public DateTime IssueDate { get; set; }
 
         [Required]
         [Column("expiry_date", TypeName = "date")]
-        public DateOnly ExpiryDate { get; set; }
+        public DateTime ExpiryDate { get; set; }
 
         [Required]
         [Column("issue_place", TypeName = "nvarchar(100)")]

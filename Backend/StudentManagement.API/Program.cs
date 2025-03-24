@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL;
 using StudentManagement.BLL.Services.AddressService;
+using StudentManagement.BLL.Services.EmailService;
 using StudentManagement.BLL.Services.FacultyService;
 using StudentManagement.BLL.Services.ProgramService;
 using StudentManagement.BLL.Services.StudentService;
@@ -12,9 +13,11 @@ using StudentManagement.BLL.Validators;
 using StudentManagement.DAL.Data;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
+using StudentManagement.DAL.Data.Repositories.SettingRepository;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
 using StudentManagement.DAL.Data.Repositories.StudentStatusRepo;
 using StudentManagement.Domain.Models;
+using System.Text.Json;
 
 namespace StudentManagement.API
 {
@@ -28,7 +31,7 @@ namespace StudentManagement.API
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             Console.WriteLine(connectionString);
-           
+
             builder.Services.AddScoped<List<AuditEntry>>();
 
             // Đăng ký AuditInterceptor và inject List<AuditEntry> vào nó
@@ -60,12 +63,14 @@ namespace StudentManagement.API
             builder.Services.AddScoped<IStudentStatusService, StudentStatusService>();
             builder.Services.AddScoped<IStudentService, StudentService>();
             builder.Services.AddScoped<IAddressService, AddressService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             // Repo
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
             builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
             builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
             builder.Services.AddScoped<IStudentStatusRepository, StudentStatusRepository>();
+            builder.Services.AddScoped<ISettingRepository, SettingRepository>();
 
             // Validators
             builder.Services.AddScoped<IUserValidator, UserValidator>();
