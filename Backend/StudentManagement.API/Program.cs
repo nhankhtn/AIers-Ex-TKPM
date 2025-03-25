@@ -13,7 +13,7 @@ namespace StudentManagement.API
 
             var app = builder.Build();
 
-            app.UseCors("AllowAll");
+            app.ApplyCorsConfig();
 
             app.UseOpenApi();
 
