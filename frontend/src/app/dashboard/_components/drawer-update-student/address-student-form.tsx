@@ -2,6 +2,7 @@
 
 import { AddressApi } from "@/api/address";
 import RowStack from "@/components/row-stack";
+import { useMainContext } from "@/context";
 import useFunction from "@/hooks/use-function";
 import { Country } from "@/types/address";
 import { COUNTRY_DEFAULT } from "@/types/student";
@@ -31,7 +32,7 @@ const AddressStudentForm = ({
   open: boolean;
   countries: Country[];
 }) => {
-  const getProvincesApi = useFunction(AddressApi.getProvinces);
+  const { provinces } = useMainContext();
   const getDistrictOfProvincesPAApi = useFunction(
     AddressApi.getDistrictOfProvinces
   );
@@ -45,30 +46,18 @@ const AddressStudentForm = ({
   const getWardOfDistrictTAApi = useFunction(AddressApi.getWardOfDistrict);
   const getWardOfDistrictMAApi = useFunction(AddressApi.getWardOfDistrict);
 
-  useEffect(() => {
-    if (open) {
-      getProvincesApi.call({});
-    }
-    //  eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  const provinces = useMemo(
-    () => getProvincesApi.data || [],
-    [getProvincesApi.data]
-  );
-
   const districtsPA = useMemo(
     () => getDistrictOfProvincesPAApi.data?.districts || [],
     [getDistrictOfProvincesPAApi.data]
   );
   const districtsTA = useMemo(
-    () => getDistrictOfProvincesPAApi.data?.districts || [],
-    [getDistrictOfProvincesPAApi.data]
+    () => getDistrictOfProvincesTAApi.data?.districts || [],
+    [getDistrictOfProvincesTAApi.data]
   );
 
   const districtsMA = useMemo(
-    () => getDistrictOfProvincesPAApi.data?.districts || [],
-    [getDistrictOfProvincesPAApi.data]
+    () => getDistrictOfProvincesMAApi.data?.districts || [],
+    [getDistrictOfProvincesMAApi.data]
   );
 
   const wardsPA = useMemo(
@@ -76,12 +65,12 @@ const AddressStudentForm = ({
     [getWardOfDistrictPAApi.data]
   );
   const wardsTA = useMemo(
-    () => getWardOfDistrictPAApi.data?.wards || [],
-    [getWardOfDistrictPAApi.data]
+    () => getWardOfDistrictTAApi.data?.wards || [],
+    [getWardOfDistrictTAApi.data]
   );
   const wardsMA = useMemo(
-    () => getWardOfDistrictPAApi.data?.wards || [],
-    [getWardOfDistrictPAApi.data]
+    () => getWardOfDistrictMAApi.data?.wards || [],
+    [getWardOfDistrictMAApi.data]
   );
   useEffect(() => {
     if (formik.values.permanentProvince) {
@@ -93,18 +82,18 @@ const AddressStudentForm = ({
       getDistrictOfProvincesPAApi.call({ province_code: province.code });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.permanentProvince]);
+  }, [formik.values.permanentProvince, provinces]);
   useEffect(() => {
-    if (formik.values.temporaryCountry) {
+    if (formik.values.temporaryProvince) {
       const province = provinces.find(
-        (province) => province.name === formik.values.temporaryCountry
+        (province) => province.name === formik.values.temporaryProvince
       );
       if (!province) return;
 
       getDistrictOfProvincesTAApi.call({ province_code: province.code });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.temporaryCountry]);
+  }, [formik.values.temporaryProvince, provinces]);
 
   useEffect(() => {
     if (formik.values.mailingProvince) {
@@ -116,7 +105,7 @@ const AddressStudentForm = ({
       getDistrictOfProvincesMAApi.call({ province_code: province.code });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.mailingProvince]);
+  }, [formik.values.mailingProvince, provinces]);
 
   useEffect(() => {
     if (formik.values.permanentDistrict) {
@@ -128,7 +117,7 @@ const AddressStudentForm = ({
       getWardOfDistrictPAApi.call({ district_code: district.code });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.permanentDistrict]);
+  }, [formik.values.permanentDistrict, districtsPA]);
   useEffect(() => {
     if (formik.values.temporaryDistrict) {
       const district = districtsTA.find(
@@ -139,7 +128,7 @@ const AddressStudentForm = ({
       getWardOfDistrictTAApi.call({ district_code: district.code });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.temporaryDistrict]);
+  }, [formik.values.temporaryDistrict, districtsTA]);
   useEffect(() => {
     if (formik.values.mailingDistrict) {
       const district = districtsMA.find(
@@ -150,7 +139,7 @@ const AddressStudentForm = ({
       getWardOfDistrictMAApi.call({ district_code: district.code });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formik.values.mailingDistrict]);
+  }, [formik.values.mailingDistrict, districtsMA]);
 
   return (
     <>

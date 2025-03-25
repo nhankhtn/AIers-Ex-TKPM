@@ -43,6 +43,27 @@
 - **`next.config.ts`**: cấu hình Next.js (ví dụ: rewrites, redirects)
 - **`package.json`**: danh sách package, scripts
 - **`package-lock.json`**: khóa phiên bản package (đảm bảo cài đúng)
+<<<<<<< HEAD
+
+## Các chức năng chính
+### Màn hình xem, lọc, tìm kiếm sinh viên
+![alt text](Images/dashboard.png)
+### Các phím chức năng như thêm khoa, thêm chương trình, thêm trạng thái, thêm sinh viên mới, nhập/xuất file
+![alt text](Images/task.png)
+#### Giao diện thêm khoa
+![alt text](Images/faculty.png)
+#### Giao diện thêm chương trình
+![alt text](Images/program.png)
+#### Giao diện thêm trạng thái
+![alt text](Images/status.png)
+#### Giao diện import danh sách sinh viên
+![alt text](Images/import.png)
+#### Giao diện export danh sách sinh viên
+![alt text](Images/export.png)
+### Giao diện thêm/chỉnh sửa sinh viên 
+![alt text](Images/add_1.png)
+![alt text](Images/add_2.png)
+
 ## Hình ảnh minh chứng các chức năng của úng dụng
 ### Thêm logging mechanism để troubleshooting production issue & audit purposes
 - Kế thừa từ SaveChangesInterceptor để can thiệp vào quá trình SaveChanges của Entity Framework, từ đó ghi lại lịch sử thay đổi dữ liệu (audit logging) khi thao tác với database, nếu có lỗi sẽ thông báo vào error message. Logs sẽ được ghi vào database.
@@ -70,7 +91,7 @@ cd Backend
 ```sh
 dotnet ef database update -s ./StudentManagement.API -p ./StudentManagement.DAL
 ```
-
+#### Chạy script `data.sql` trong thư mục `Backend/scripts`
 
 #### Chạy Ctrl + F5 để Run Server
 Server hoạt động ở </br>

@@ -13,4 +13,4 @@ INSERT INTO faculty VALUES
 (1, N'Khoa Toán'), 
 (1, N'Khoa Công nghệ thông tin'), 
 (1, N'Khoa Hoá'), 
-(1, N'Khoa Lí'), 
+(1, N'Khoa Lí');

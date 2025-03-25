@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
   Button,
   TextField,
@@ -12,7 +12,6 @@ import {
   Drawer,
   Stack,
   Divider,
-  CircularProgress,
 } from "@mui/material";
 import {
   COUNTRY_DEFAULT,
@@ -24,11 +23,16 @@ import {
   validationStudent,
 } from "../../../../types/student";
 import { useFormik } from "formik";
-import useFunction from "@/hooks/use-function";
-import { AddressApi } from "@/api/address";
 import RowStack from "@/components/row-stack";
 import AddressStudentForm from "./address-student-form";
 import AdditionalInformationForm from "./addtional-infomation-form";
+import { useMainContext } from "@/context";
+
+const formatDate = (date: Date) => {
+  return date && !isNaN(new Date(date).getTime())
+    ? new Date(date).toISOString().split("T")[0]
+    : "";
+};
 
 export const parseStringToAddress = (addressString?: string) => {
   if (!addressString)
@@ -57,7 +61,7 @@ interface DrawerUpdateStudentProps {
   open: boolean;
   onClose: () => void;
   addStudent: (student: Student) => Promise<void>;
-  updateStudent: (student: Student) => Promise<void>;
+  updateStudent: (student: Student | Omit<Student,'email'>) => Promise<void>;
   faculties: Faculty[];
   statuses: Status[];
   programs: Program[];
@@ -65,15 +69,15 @@ interface DrawerUpdateStudentProps {
 
 export const IDENTITY_TYPES = [
   {
-    key: "cccd",
+    key: "CCCD",
     name: "Căn cước nhân dân",
   },
   {
-    key: "cmmd",
+    key: "CMND",
     name: "Chứng minh nhân dân",
   },
   {
-    key: "passport",
+    key: "Passport",
     name: "Hộ chiếu",
   },
 ];
@@ -88,17 +92,10 @@ function DrawerUpdateStudent({
   statuses,
   programs,
 }: DrawerUpdateStudentProps) {
-  const getCountriesApi = useFunction(AddressApi.getCountries);
-
-  const countries = useMemo(
-    () => getCountriesApi.data || [],
-    [getCountriesApi.data]
-  );
+  const { countries } = useMainContext();
 
   useEffect(() => {
-    if (open) {
-      getCountriesApi.call({});
-    } else {
+    if (!open) {
       formik.resetForm();
     }
     //  eslint-disable-next-line react-hooks/exhaustive-deps
@@ -178,7 +175,13 @@ function DrawerUpdateStudent({
       };
 
       if (student) {
-        await updateStudent(studentData);
+        
+        if (studentData.email === student.email) {
+          const { email, ...studentDataWithoutEmail } = studentData;
+          await updateStudent(studentDataWithoutEmail);
+        } else {
+          await updateStudent(studentData);
+        }
       } else {
         await addStudent(studentData);
       }
@@ -218,18 +221,20 @@ function DrawerUpdateStudent({
       mailingDetail: mailingAddress.detail || "",
 
       // Academic info
-      faculty: faculties.find((f) => f.id === student?.faculty)?.name || "",
+      faculty: faculties.find((f) => f.id === student?.faculty)?.id || "",
       course: student?.course || 0,
-      program: programs.find((p) => p.id === student?.program)?.name || "",
+      program: programs.find((p) => p.id === student?.program)?.id || "",
       phone: student?.phone || "",
-      status: statuses.find((s) => s.id === student?.status)?.name || "",
+      status: statuses.find((s) => s.id === student?.status)?.id || "",
 
       // Identity info
       identityType: student?.identity.type || 0,
       identityDocumentNumber: student?.identity.documentNumber || "",
-      identityIssueDate: student?.identity.issueDate || new Date(),
+      identityIssueDate: formatDate(student?.identity.issueDate || new Date()),
       identityIssuePlace: student?.identity.issuePlace || "",
-      identityExpiryDate: student?.identity.expiryDate || new Date(),
+      identityExpiryDate: formatDate(
+        student?.identity.expiryDate || new Date()
+      ),
       identityCountry: student?.identity.countryIssue || COUNTRY_DEFAULT,
       identityIsChip: !!student?.identity.isChip,
       identityNotes: student?.identity.notes || "",

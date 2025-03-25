@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 import {
   TextField,
   Select,
@@ -30,6 +30,7 @@ const AdditionalInformationForm = ({
   statuses: Status[];
   countries: Country[];
 }) => {
+  console.log("formik", formik);
   return (
     <>
       {/* Academic Information */}

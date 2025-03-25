@@ -17,7 +17,7 @@ namespace StudentManagement.BLL.Services.StudentStatusService
 
         Task<Result<StudentStatusDTO>> AddStudentStatusAsync(StudentStatusDTO studentStatusDTO);
 
-        Task<Result<StudentStatusDTO>> DeleteStudentStatusAsync(string key);
+        Task<Result<string>> DeleteStudentStatusAsync(string id);
 
     }
 }
