@@ -98,22 +98,26 @@ namespace StudentManagement.DAL.Data
                     new StudentStatus
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                        Name = "Đang học"
+                        Name = "Đang học",
+                        Order = 1,
                     },
                     new StudentStatus
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111112"),
-                        Name = "Đã tốt nghiệp"
+                        Name = "Đã tốt nghiệp",
+                        Order = 2,
                     },
                     new StudentStatus
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111113"),
-                        Name = "Đã bảo lưu"
+                        Name = "Đã bảo lưu",
+                        Order = 1,
                     },
                     new StudentStatus
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111114"),
-                        Name = "Đã nghỉ học"
+                        Name = "Đã nghỉ học",
+                        Order = 3,
                     });
             });
             modelBuilder.Entity<Faculty>(b =>

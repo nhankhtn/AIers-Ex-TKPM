@@ -53,6 +53,7 @@ namespace StudentManagement.BLL.Validators
         }
 
 
+
         private bool ValidateCourse (int course)
         {
             return course >= 2000;

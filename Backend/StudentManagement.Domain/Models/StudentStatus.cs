@@ -25,6 +25,11 @@ namespace StudentManagement.Domain.Models
         public string Name { get; set; } = string.Empty;
 
 
+        [Required]
+        [Column("order", TypeName = "int")]
+        public int Order { get; set; } = 0;
+
+
         public ICollection<Student> Students { get; set; } = null!;
     }
 }

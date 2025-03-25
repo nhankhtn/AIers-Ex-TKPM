@@ -141,7 +141,7 @@ namespace StudentManagement.BLL.Services.StudentService
                         var value = prop.GetValue(student);
                         if ((StudentDTO.RequiredProperties.Contains(prop.Name) && value is null)
                             || (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, student)))
-                            || (_studentChecker.NeedCheckedProperties.Contains(prop.Name) && !(await _studentChecker.StudentChecked(prop.Name, student))))
+                            || (_studentChecker.NeedCheckedProperties.Contains(prop.Name) && !(await _studentChecker.StudentChecked(prop.Name, student)).Result))
                         {
                             result.UnacceptableStudents.Add(student);
                             validate = false;
@@ -225,6 +225,7 @@ namespace StudentManagement.BLL.Services.StudentService
         {
             try
             {
+                studentDTO.Id = studentId;
                 var resExistStudent = await _studentRepository.GetStudentByIdAsync(studentId);
                 if (resExistStudent is null) return Result<StudentDTO>.Fail("STUDENT_NOT_FOUND", "Student is not found");
 
@@ -234,10 +235,12 @@ namespace StudentManagement.BLL.Services.StudentService
                     if (_canNotUpdatProperties.Contains(prop.Name) || value is null) continue;
 
                     if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, studentDTO))) 
-                        return Result<StudentDTO>.Fail("INVALID_VALUE", "Invalid value");
+                        return Result<StudentDTO>.Fail($"INVALID_{prop.Name.ToUpper()}", $"{prop.Name} not found");
 
-                    if (_studentChecker.NeedCheckedProperties.Contains(prop.Name) && !(await _studentChecker.StudentChecked(prop.Name, studentDTO)))
-                        return Result<StudentDTO>.Fail($"DUPLICATE_{prop.Name.ToUpper()}", "Duplicate value");
+                    if (_studentChecker.NeedCheckedProperties.Contains(prop.Name)) {
+                        var check = await _studentChecker.StudentChecked(prop.Name, studentDTO, true);
+                        if (!check.Result) return Result<StudentDTO>.Fail(check.ErrorCode);
+                    }
 
                     if (_specialMapping.ContainsKey(prop.Name) && _specialMapping[prop.Name](resExistStudent, value)) continue;
 

@@ -36,31 +36,57 @@ namespace StudentManagement.BLL.Services.Checker
         }
 
 
-        public async Task<bool> StudentChecked(string propertyName, StudentDTO student)
+        public async Task<(bool Result, string ErrorCode)> StudentChecked(string propertyName, StudentDTO student, bool isUpdate = false)
         {
             switch (propertyName)
             {
                 case nameof(StudentDTO.Email):
-                    return student.Email is null || await CheckEmailAsync(student.Email);
+                    return student.Email is null || await CheckEmailAsync(student.Email)
+                        ? (true, string.Empty)
+                        : (false, "DUPLICATE_EMAIL");
 
                 case nameof(StudentDTO.Phone):
-                    return student.Phone is null || await CheckPhoneAsync(student.Phone);
+                    return student.Phone is null || await CheckPhoneAsync(student.Phone)
+                        ? (true, string.Empty)
+                        : (false, "DUPLICATE_PHONE");
 
-                case nameof(StudentDTO.Faculty): 
-                    return student.Faculty is null || await CheckFacultyAsync(student.Faculty);
-                    ;
-                case nameof(StudentDTO.Program): 
-                    return student.Program is null || await CheckProgramAsync(student.Program);
-                    ;
-                case nameof(StudentDTO.Status): 
-                    return student.Status is null || await CheckStatusAsync(student.Status);
-                    ;
-                case nameof(StudentDTO.Identity): 
-                    return student.Identity?.DocumentNumber is null || await CheckDocumentNumberAsync(student.Identity.DocumentNumber);
-                    ;
+                case nameof(StudentDTO.Faculty):
+                    return student.Faculty is null || await CheckFacultyAsync(student.Faculty)
+                        ? (true, string.Empty)
+                        : (false, "INVALID_FACULTY");
 
-                default: return true;
+                case nameof(StudentDTO.Program):
+                    return student.Program is null || await CheckProgramAsync(student.Program)
+                        ? (true, string.Empty)
+                        : (false, "INVALID_PROGRAM");
+
+                case nameof(StudentDTO.Status):
+                    if (isUpdate)
+                        return student.Status is null || student.Id is null || await CheckUpdateStatusAsync(student.Id, student.Status)
+                            ? (true, string.Empty)
+                            : (false, "INVALID_STATUS_UPDATE");
+                    return student.Status is null || await CheckStatusAsync(student.Status)
+                        ? (true, string.Empty)
+                        : (false, "INVALID_STATUS");
+
+                case nameof(StudentDTO.Identity):
+                    return student.Identity?.DocumentNumber is null || await CheckDocumentNumberAsync(student.Identity.DocumentNumber)
+                        ? (true, string.Empty)
+                        : (false, "DUPLICATE_IDENTITY");
+
+                default:
+                    return (true, string.Empty);
             }
+        }
+
+
+        private async Task<bool> CheckUpdateStatusAsync(string id, string status)
+        {
+            var student = await _studentRepository.GetStudentByIdAsync(id);
+            var newStatus = await _studentStatusRepository.GetStudentStatusByIdAsync(status);
+            if (student is null || newStatus is null)
+                return false;
+            return newStatus.Order >= student.Status.Order;
         }
 
         public async Task<bool> CheckEmailAsync(string email)

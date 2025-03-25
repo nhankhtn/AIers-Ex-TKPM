@@ -11,16 +11,11 @@ namespace StudentManagement.BLL.DTOs.StudentStatus
     /// DTO for StudentStatus
     /// </summary>
     public class StudentStatusDTO
-    {
-        /// <summary>
-        /// StudentStatus's id
-        /// </summary>
+    { 
         public string? Id { get; set; }
 
-        /// <summary>
-        /// StudentStatus's name
-        /// </summary>
-        [Required(ErrorMessage = "NAME_REQUIRED")]
         public string? Name { get; set; }
+
+        public int? Order { get; set; }
     }
 }

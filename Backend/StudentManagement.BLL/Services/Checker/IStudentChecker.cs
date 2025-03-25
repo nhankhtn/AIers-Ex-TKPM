@@ -10,6 +10,6 @@ namespace StudentManagement.BLL.Services.Checker
     public interface IStudentChecker
     {
         List<string> NeedCheckedProperties { get; }
-        Task<bool> StudentChecked(string propertyName, StudentDTO value);
+        Task<(bool Result, string ErrorCode)> StudentChecked(string propertyName, StudentDTO value, bool isUpdate = false);
     }
 }
