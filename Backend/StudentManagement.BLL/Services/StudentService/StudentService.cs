@@ -7,6 +7,7 @@ using Microsoft.Identity.Client;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Identity;
 using StudentManagement.BLL.DTOs.Students;
+using StudentManagement.BLL.Services.Checker;
 using StudentManagement.BLL.Services.StudentService;
 using StudentManagement.BLL.Validators;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
@@ -32,7 +33,8 @@ namespace StudentManagement.BLL.Services.StudentService
         private readonly IFacultyRepository _facultyRepository;
         private readonly IProgramRepository _programRepository;
         private readonly IStudentStatusRepository _studentStatusRepository;
-        private readonly IUserValidator _userValidator;
+        private readonly IStudentValidator _userValidator;
+        private readonly IStudentChecker _studentChecker;
         private readonly IMapper _mapper;
 
         private readonly List<string> _canNotUpdatProperties = new List<string>() { nameof(StudentDTO.Id) };
@@ -42,7 +44,8 @@ namespace StudentManagement.BLL.Services.StudentService
         private Dictionary<int, int> generateIdCache = new Dictionary<int, int>();
 
         public StudentService(IStudentRepository studentRepository,
-            IFacultyRepository facultyRepository, IStudentStatusRepository studentStatusRepository, IProgramRepository programRepository, IUserValidator userValidator,
+            IFacultyRepository facultyRepository, IStudentStatusRepository studentStatusRepository, IProgramRepository programRepository, IStudentValidator userValidator,
+            IStudentChecker studentChecker,
             IMapper mapper)
         {
             _studentRepository = studentRepository ?? throw new ArgumentNullException(nameof(studentRepository));
@@ -50,8 +53,8 @@ namespace StudentManagement.BLL.Services.StudentService
             _programRepository = programRepository ?? throw new ArgumentNullException(nameof(programRepository));
             _studentStatusRepository = studentStatusRepository ?? throw new ArgumentNullException(nameof(studentStatusRepository));
             _userValidator = userValidator ?? throw new ArgumentNullException(nameof(userValidator));
+            _studentChecker = studentChecker ?? throw new ArgumentNullException(nameof(studentChecker));
             _mapper = mapper;
-
 
             _specialMapping = new()
             {
@@ -122,7 +125,7 @@ namespace StudentManagement.BLL.Services.StudentService
         }
 
 
-        // Add a new student
+        // Add new students
         public async Task<Result<AddListStudentResult>> AddListStudentAsync(IEnumerable<StudentDTO> studentDTOs)
         {
             try
@@ -137,7 +140,8 @@ namespace StudentManagement.BLL.Services.StudentService
                     {
                         var value = prop.GetValue(student);
                         if ((StudentDTO.RequiredProperties.Contains(prop.Name) && value is null)
-                            || (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(await _userValidator.StudentValidate(prop.Name, student))))
+                            || (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, student)))
+                            || (_studentChecker.NeedCheckedProperties.Contains(prop.Name) && !(await _studentChecker.StudentChecked(prop.Name, student))))
                         {
                             result.UnacceptableStudents.Add(student);
                             validate = false;
@@ -229,8 +233,11 @@ namespace StudentManagement.BLL.Services.StudentService
                     var value = prop.GetValue(studentDTO);
                     if (_canNotUpdatProperties.Contains(prop.Name) || value is null) continue;
 
-                    if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(await _userValidator.StudentValidate(prop.Name, studentDTO))) 
+                    if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, studentDTO))) 
                         return Result<StudentDTO>.Fail("INVALID_VALUE", "Invalid value");
+
+                    if (_studentChecker.NeedCheckedProperties.Contains(prop.Name) && !(await _studentChecker.StudentChecked(prop.Name, studentDTO)))
+                        return Result<StudentDTO>.Fail($"DUPLICATE_{prop.Name.ToUpper()}", "Duplicate value");
 
                     if (_specialMapping.ContainsKey(prop.Name) && _specialMapping[prop.Name](resExistStudent, value)) continue;
 

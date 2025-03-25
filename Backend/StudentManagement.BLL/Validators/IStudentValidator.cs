@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.BLL.Validators
 {
-    public interface IUserValidator
+    public interface IStudentValidator
     {
         List<string> NeedValidateProperties { get; }
-        Task<bool> StudentValidate(string propertyName, StudentDTO value);
+        bool StudentValidate(string propertyName, StudentDTO value);
     }
 }

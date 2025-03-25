@@ -15,6 +15,7 @@ using StudentManagement.DAL.Data;
 using StudentManagement.Domain.Models;
 using StudentManagement.BLL.Validators;
 using Microsoft.EntityFrameworkCore;
+using StudentManagement.BLL.Services.Checker;
 
 namespace StudentManagement.API.Startup
 {
@@ -66,7 +67,8 @@ namespace StudentManagement.API.Startup
             builder.Services.AddScoped<ISettingRepository, SettingRepository>();
 
             // Validators
-            builder.Services.AddScoped<IUserValidator, UserValidator>();
+            builder.Services.AddScoped<IStudentValidator, StudentValidator>();
+            builder.Services.AddScoped<IStudentChecker, StudentChecker>();
 
 
             builder.Services.AddControllers();

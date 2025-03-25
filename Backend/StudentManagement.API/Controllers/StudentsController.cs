@@ -68,6 +68,15 @@ namespace StudentManagement.API.Controllers
 
             if (result.Success)
             {
+                if (result.Data is null) return BadRequest(ApiResponse<AddListStudentResult>.BadRequest(data: result.Data));
+                if (result.Data.AcceptableStudents.Count == 0)
+                    return BadRequest(ApiResponse<AddListStudentResult>.BadRequest(data: result.Data));
+                else if (result.Data.UnacceptableStudents.Count > 0)
+                {
+                    return StatusCode(207, ApiResponse<AddListStudentResult>.Success(data: result.Data
+                    ));
+                }
+
                 return Ok(ApiResponse<AddListStudentResult>.Success(
                     data: result.Data
                 ));
