@@ -14,6 +14,7 @@ import {
   Divider,
 } from "@mui/material";
 import {
+  COUNTRY_CODE_DEFAULT,
   COUNTRY_DEFAULT,
   Faculty,
   Gender,
@@ -28,6 +29,7 @@ import AddressStudentForm from "./address-student-form";
 import AdditionalInformationForm from "./addtional-infomation-form";
 import { useMainContext } from "@/context";
 import BasicInfomationForm from "./basic-infomation-form";
+import { getOriginPhoneNumber, getPhoneNumberFormat } from "@/utils/phone-helper";
 
 const formatDate = (date: Date) => {
   return date && !isNaN(new Date(date).getTime())
@@ -169,7 +171,7 @@ function DrawerUpdateStudent({
         faculty: values.faculty,
         course: values.course,
         program: values.program,
-        phone: values.phone,
+        phone: getPhoneNumberFormat(values.phone, values.phoneCode),
         status: values.status,
         identity: identity,
         nationality: values.nationality,
@@ -189,7 +191,7 @@ function DrawerUpdateStudent({
     },
     [updateStudent, addStudent, student, onClose]
   );
-
+  console.log("student", student);
   const initialValues = useMemo(
     () => ({
       id: student?.id || "",
@@ -197,7 +199,8 @@ function DrawerUpdateStudent({
       dateOfBirth: student?.dateOfBirth.split("T")[0] || "",
       gender: student?.gender || Gender.Male,
       email: student?.email || "",
-
+      phone: getOriginPhoneNumber(student?.phone || "")?.originNumber || "",
+      phoneCode: getOriginPhoneNumber(student?.phone || "")?.countryCode || COUNTRY_CODE_DEFAULT,
       // Permanent address
       permanentCountry: permanentAddress.country || COUNTRY_DEFAULT,
       permanentProvince: permanentAddress.province || "",
@@ -225,7 +228,6 @@ function DrawerUpdateStudent({
       faculty: faculties.find((f) => f.id === student?.faculty)?.id || "",
       course: student?.course || 0,
       program: programs.find((p) => p.id === student?.program)?.id || "",
-      phone: student?.phone || "",
       status: statuses.find((s) => s.id === student?.status)?.id || "",
 
       // Identity info
@@ -288,7 +290,7 @@ function DrawerUpdateStudent({
         <Divider />
 
         
-        <BasicInfomationForm formik={formik} countries={countries} />
+        <BasicInfomationForm formik={formik} countries={countries}/>
 
         <Divider />
 

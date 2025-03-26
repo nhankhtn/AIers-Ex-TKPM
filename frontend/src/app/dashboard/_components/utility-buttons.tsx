@@ -30,9 +30,14 @@ import DrawerUpdateStudent from "./drawer-update-student/drawer-update-student";
 import { exportFiles } from "@/utils/files-helper";
 import useDashboardSearch from "../_sections/use-dashboard-search";
 
-function UtilityButtons() {
-  const { dialog, createStudentsApi, updateStudentsApi, students } =
-    useDashboardSearch();
+interface UtilityButtonsProps {
+  students: Student[];
+  handleAddStudent: (student: Student) => Promise<void>; 
+  handleUpdateStudent: (student: Student | Omit<Student, "email">) => Promise<void>;
+  dialog: any;
+  createStudentsApi: any;
+}
+function UtilityButtons({ students, handleAddStudent, handleUpdateStudent, dialog , createStudentsApi}: UtilityButtonsProps) {
   const {
     dialog: dialogFaculty,
     deleteFacultyApi,
@@ -62,22 +67,6 @@ function UtilityButtons() {
     null
   );
 
-  const handleAddStudent = useCallback(
-    async (student: Student) => {
-      await createStudentsApi.call([student]);
-    },
-    [createStudentsApi]
-  );
-
-  const handleUpdateStudent = useCallback(
-    async (student: Student | Omit<Student, "email">) => {
-      await updateStudentsApi.call({
-        id: student.id as string,
-        student,
-      });
-    },
-    [updateStudentsApi]
-  );
   const handleUpload = useCallback(
     async (file: File) => {
       const studentArr = await importFromExcel(file);

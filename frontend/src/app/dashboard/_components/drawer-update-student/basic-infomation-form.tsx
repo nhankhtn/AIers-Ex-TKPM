@@ -10,7 +10,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Gender } from "../../../../types/student";
-
+import RowStack from "@/components/row-stack";
+import { countriesPhoneFormat } from "@/utils/phone-helper";
 interface BasicInfomationFormProps {
   formik: any;
   countries: {
@@ -114,10 +115,28 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
             md: 6,
           }}
         >
+          <RowStack gap={1}>
+           <FormControl  sx={{ minWidth: "65px" }}>
+            <InputLabel>Quốc gia</InputLabel>
+            <Select
+              id="phoneCode"
+              label="Quốc tịch"
+              value={formik.values.phoneCode}
+              onChange={(event) =>
+                formik.setFieldValue("phoneCode", event.target.value)
+              }
+            >
+              {countriesPhoneFormat.map((country) => (
+                <MenuItem key={country.name} value={country.name}>
+                  {country.name}({country.format})
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
             id="phone"
-            label="Số điện thoại liên hệ"
-            fullWidth
+            label="Số điện thoại"
+            sx={{ flex: "1" }}
             variant="outlined"
             value={formik.values.phone}
             onChange={formik.handleChange}
@@ -126,6 +145,7 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
               formik.touched.phone && String(formik.errors.phone || "")
             }
           />
+          </RowStack>
         </Grid2>
         <Grid2
           size={{
