@@ -30,7 +30,7 @@ const AdditionalInformationForm = ({
   statuses: Status[];
   countries: Country[];
 }) => {
-  console.log("formik", formik);
+
   return (
     <>
       {/* Academic Information */}
@@ -47,7 +47,10 @@ const AdditionalInformationForm = ({
             <Select
               id='faculty'
               label='Khoa'
-              {...formik.getFieldProps("faculty")}
+              value={formik.values.faculty}
+              onChange={(event) =>
+                formik.setFieldValue("faculty", event.target.value)
+              }
               error={formik.touched.faculty && Boolean(formik.errors.faculty)}
             >
               {faculties.map((faculty) => (
@@ -72,7 +75,10 @@ const AdditionalInformationForm = ({
             <Select
               id='program'
               label='Chương trình'
-              {...formik.getFieldProps("program")}
+              value={formik.values.program}
+              onChange={(event) =>
+                formik.setFieldValue("program", event.target.value)
+              }
               error={formik.touched.program && Boolean(formik.errors.program)}
             >
               {programs.map((program) => (
@@ -98,7 +104,10 @@ const AdditionalInformationForm = ({
             type='number'
             fullWidth
             variant='outlined'
-            {...formik.getFieldProps("course")}
+            value={formik.values.course}
+            onChange={(event) =>
+              formik.setFieldValue("course", event.target.value)
+            }
             error={formik.touched.course && Boolean(formik.errors.course)}
             helperText={formik.touched.course && formik.errors.course}
           />
@@ -114,7 +123,10 @@ const AdditionalInformationForm = ({
             <Select
               id='status'
               label='Tình trạng sinh viên'
-              {...formik.getFieldProps("status")}
+              value={formik.values.status}
+              onChange={(event) =>
+                formik.setFieldValue("status", event.target.value)
+              }
               error={formik.touched.status && Boolean(formik.errors.status)}
             >
               {statuses.map((status) => (
@@ -146,7 +158,10 @@ const AdditionalInformationForm = ({
             <Select
               id='identityType'
               label='Loại giấy tờ'
-              {...formik.getFieldProps("identityType")}
+              value={formik.values.identityType}
+              onChange={(event) =>
+                formik.setFieldValue("identityType", event.target.value)
+              }
             >
               {IDENTITY_TYPES.map(({ key, name }) => (
                 <MenuItem key={key} value={key}>
@@ -167,7 +182,10 @@ const AdditionalInformationForm = ({
             label='Số giấy tờ'
             fullWidth
             variant='outlined'
-            {...formik.getFieldProps("identityDocumentNumber")}
+            value={formik.values.identityDocumentNumber}
+            onChange={(event) =>
+              formik.setFieldValue("identityDocumentNumber", event.target.value)
+            }
             error={
               formik.touched.identityDocumentNumber &&
               Boolean(formik.errors.identityDocumentNumber)
@@ -189,7 +207,10 @@ const AdditionalInformationForm = ({
             label='Nơi cấp'
             fullWidth
             variant='outlined'
-            {...formik.getFieldProps("identityIssuePlace")}
+            value={formik.values.indentityIssuePlace}
+            onChange={(event) =>
+              formik.setFieldValue("identityIssuePlace", event.target.value)
+            }
             error={
               formik.touched.identityIssuePlace &&
               Boolean(formik.errors.identityIssuePlace)
@@ -213,7 +234,9 @@ const AdditionalInformationForm = ({
             fullWidth
             variant='outlined'
             InputLabelProps={{ shrink: true }}
-            {...formik.getFieldProps("identityIssueDate")}
+            value={formik.values.identityIssueDate}
+            onChange={(event) =>
+              formik.setFieldValue("identityIssueDate", event.target.value)}
             error={
               formik.touched.identityIssueDate &&
               Boolean(formik.errors.identityIssueDate)
@@ -237,7 +260,9 @@ const AdditionalInformationForm = ({
             fullWidth
             variant='outlined'
             InputLabelProps={{ shrink: true }}
-            {...formik.getFieldProps("identityExpiryDate")}
+            value={formik.values.identityExpiryDate}
+            onChange={(event) =>
+              formik.setFieldValue("identityExpiryDate", event.target.value)}
             error={
               formik.touched.identityExpiryDate &&
               Boolean(formik.errors.identityExpiryDate)
@@ -254,7 +279,7 @@ const AdditionalInformationForm = ({
             md: 4,
           }}
         >
-          {formik.getFieldProps("identityType").value === "passport" && (
+          {formik.getFieldProps("identityType").value === "Passport" && (
             <FormControl fullWidth>
               <InputLabel>Quốc gia cấp</InputLabel>
               <Select
@@ -271,7 +296,7 @@ const AdditionalInformationForm = ({
             </FormControl>
           )}
         </Grid2>
-        {formik.getFieldProps("identityType").value === "passport" && (
+        {formik.getFieldProps("identityType").value === "Passport" && (
           <>
             <Grid2
               size={{
