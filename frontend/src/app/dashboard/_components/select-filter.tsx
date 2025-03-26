@@ -4,6 +4,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
 } from "@mui/material";
 
 interface SelectFilterProps {
@@ -23,6 +24,13 @@ interface SelectFilterProps {
 }
 
 const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
+  const handleChange = (key: string, event: SelectChangeEvent<string>) => {
+    if(event.target.value === "Tất cả") {
+      onChange(key, "");
+    }
+    else onChange(key, event.target.value);
+  }
+
   return (
     <Grid2 container spacing={1.5}>
       {configs.map(({ label, xs, key }, index) => (
@@ -31,15 +39,15 @@ const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
             <InputLabel>{label}</InputLabel>
             <Select
               margin='dense'
-              id='status'
+              id={key}
               label={label}
               fullWidth
               variant='outlined'
-              value={filter[key] || ""}
-              onChange={(e) => onChange(key, e.target.value as string)}
+              value={filter[key]===""?"Tất cả":filter[key]}
+              onChange={(e) => handleChange(key,e)}
             >
               {configs[index].options.map(({ value, label }) => (
-                <MenuItem key={value} value={value}>
+                <MenuItem key={value} value={label}>
                   {label}
                 </MenuItem>
               ))}
