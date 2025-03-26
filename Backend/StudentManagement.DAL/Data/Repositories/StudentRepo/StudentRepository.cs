@@ -129,6 +129,18 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             return student is not null;
         }
 
+        public async Task<bool> IsPhoneDuplicateAsync(string phone)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Phone == phone);
+            return student is not null;
+        }
+
+        public async Task<bool> IsDocumentNumberDuplicateAsync(string documentNumber)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Identity.DocumentNumber == documentNumber);
+            return student is not null;
+        }
+
         public async Task<int> GetLatestStudentIdAsync(int course)
         {
             // Lấy 2 số cuối của năm từ course

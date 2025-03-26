@@ -8,15 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Utils\**" />
-    <Compile Remove="Validators\**" />
     <EmbeddedResource Remove="Utils\**" />
-    <EmbeddedResource Remove="Validators\**" />
     <None Remove="Utils\**" />
-    <None Remove="Validators\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="libphonenumber-csharp" Version="8.13.55" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 

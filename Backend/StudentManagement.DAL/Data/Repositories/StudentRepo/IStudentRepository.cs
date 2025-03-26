@@ -24,6 +24,10 @@ public interface IStudentRepository
 
     Task<bool> IsEmailDuplicateAsync(string email);
 
+    Task<bool> IsPhoneDuplicateAsync(string phone);
+
+    Task<bool> IsDocumentNumberDuplicateAsync(string documentNumber);
+
     Task<int> GetLatestStudentIdAsync(int course);
 
 }

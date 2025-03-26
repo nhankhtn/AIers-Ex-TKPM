@@ -28,7 +28,7 @@ export interface Student {
 }
 
 export const COUNTRY_DEFAULT = "Vietnam";
-
+export const COUNTRY_CODE_DEFAULT = "VN";
 export enum Gender {
   Male = "Male",
   Female = "Female",

@@ -29,7 +29,7 @@ namespace StudentManagement.Domain.Models
         
         [Required]
         [Column("date_of_birth", TypeName = "date")]
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
         
         [Required]
@@ -47,7 +47,7 @@ namespace StudentManagement.Domain.Models
 
        
         [Required]
-        [Column("phone", TypeName = "varchar(10)")]
+        [Column("phone", TypeName = "varchar(20)")]
         public string Phone { get; set; } = string.Empty;
 
        

@@ -14,6 +14,7 @@ import {
   Divider,
 } from "@mui/material";
 import {
+  COUNTRY_CODE_DEFAULT,
   COUNTRY_DEFAULT,
   Faculty,
   Gender,
@@ -27,6 +28,8 @@ import RowStack from "@/components/row-stack";
 import AddressStudentForm from "./address-student-form";
 import AdditionalInformationForm from "./addtional-infomation-form";
 import { useMainContext } from "@/context";
+import BasicInfomationForm from "./basic-infomation-form";
+import { getOriginPhoneNumber, getPhoneNumberFormat } from "@/utils/phone-helper";
 
 const formatDate = (date: Date) => {
   return date && !isNaN(new Date(date).getTime())
@@ -168,7 +171,7 @@ function DrawerUpdateStudent({
         faculty: values.faculty,
         course: values.course,
         program: values.program,
-        phone: values.phone,
+        phone: getPhoneNumberFormat(values.phone, values.phoneCode),
         status: values.status,
         identity: identity,
         nationality: values.nationality,
@@ -188,7 +191,7 @@ function DrawerUpdateStudent({
     },
     [updateStudent, addStudent, student, onClose]
   );
-
+  console.log("student", student);
   const initialValues = useMemo(
     () => ({
       id: student?.id || "",
@@ -196,7 +199,8 @@ function DrawerUpdateStudent({
       dateOfBirth: student?.dateOfBirth.split("T")[0] || "",
       gender: student?.gender || Gender.Male,
       email: student?.email || "",
-
+      phone: getOriginPhoneNumber(student?.phone || "")?.originNumber || "",
+      phoneCode: getOriginPhoneNumber(student?.phone || "")?.countryCode || COUNTRY_CODE_DEFAULT,
       // Permanent address
       permanentCountry: permanentAddress.country || COUNTRY_DEFAULT,
       permanentProvince: permanentAddress.province || "",
@@ -224,7 +228,6 @@ function DrawerUpdateStudent({
       faculty: faculties.find((f) => f.id === student?.faculty)?.id || "",
       course: student?.course || 0,
       program: programs.find((p) => p.id === student?.program)?.id || "",
-      phone: student?.phone || "",
       status: statuses.find((s) => s.id === student?.status)?.id || "",
 
       // Identity info
@@ -246,6 +249,7 @@ function DrawerUpdateStudent({
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
+    validateOnChange: false,
     validationSchema: validationStudent,
     onSubmit: handleSubmit,
   });
@@ -285,129 +289,8 @@ function DrawerUpdateStudent({
 
         <Divider />
 
-        {/* Basic Information */}
-        <Typography variant='h6'>Thông tin cơ bản</Typography>
-        <Grid2 container spacing={2}>
-          <Grid2
-            size={{
-              xs: 12,
-              md: 6,
-            }}
-          >
-            <TextField
-              autoFocus
-              id='name'
-              label='Họ và tên'
-              fullWidth
-              variant='outlined'
-              {...formik.getFieldProps("name")}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={
-                formik.touched.name && String(formik.errors.name || "")
-              }
-            />
-          </Grid2>
-          <Grid2
-            size={{
-              xs: 12,
-              md: 6,
-            }}
-          >
-            <TextField
-              id='email'
-              label='Email'
-              type='email'
-              fullWidth
-              variant='outlined'
-              {...formik.getFieldProps("email")}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={
-                formik.touched.email && String(formik.errors.email || "")
-              }
-            />
-          </Grid2>
-          <Grid2
-            size={{
-              xs: 12,
-              md: 6,
-            }}
-          >
-            <TextField
-              id='dateOfBirth'
-              label='Ngày tháng năm sinh'
-              type='date'
-              fullWidth
-              variant='outlined'
-              InputLabelProps={{ shrink: true }}
-              {...formik.getFieldProps("dateOfBirth")}
-              error={
-                formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)
-              }
-              helperText={
-                formik.touched.dateOfBirth &&
-                String(formik.errors.dateOfBirth || "")
-              }
-            />
-          </Grid2>
-          <Grid2
-            size={{
-              xs: 12,
-              md: 6,
-            }}
-          >
-            <FormControl fullWidth>
-              <InputLabel>Giới tính</InputLabel>
-              <Select
-                id='gender'
-                label='Giới tính'
-                {...formik.getFieldProps("gender")}
-              >
-                <MenuItem value={Gender.Male}>Nam</MenuItem>
-                <MenuItem value={Gender.Female}>Nữ</MenuItem>
-                <MenuItem value={Gender.Other}>Khác</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid2>
-          <Grid2
-            size={{
-              xs: 12,
-              md: 6,
-            }}
-          >
-            <TextField
-              id='phone'
-              label='Số điện thoại liên hệ'
-              fullWidth
-              variant='outlined'
-              {...formik.getFieldProps("phone")}
-              error={formik.touched.phone && Boolean(formik.errors.phone)}
-              helperText={
-                formik.touched.phone && String(formik.errors.phone || "")
-              }
-            />
-          </Grid2>
-          <Grid2
-            size={{
-              xs: 12,
-              md: 6,
-            }}
-          >
-            <FormControl fullWidth>
-              <InputLabel>Quốc tịch</InputLabel>
-              <Select
-                id='nationality'
-                label='Quốc tịch'
-                {...formik.getFieldProps("nationality")}
-              >
-                {countries.map((country) => (
-                  <MenuItem key={country.name} value={country.name}>
-                    {country.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid2>
-        </Grid2>
+        
+        <BasicInfomationForm formik={formik} countries={countries}/>
 
         <Divider />
 

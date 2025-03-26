@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagement.DAL.Data;
 
@@ -11,9 +12,11 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250324145134_Edit_Phone")]
+    partial class Edit_Phone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,37 +198,6 @@ namespace StudentManagement.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("StudentManagement.Domain.Models.Setting", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EmailDomain")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("email_domain");
-
-                    b.Property<string>("EmailPattern")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("email_pattern");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Settings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            EmailDomain = "@gmail.com",
-                            EmailPattern = "^([\\w\\.\\-]+)@([\\w\\-]+)((\\.(\\w){2,3})+)$"
-                        });
-                });
-
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
                 {
                     b.Property<string>("Id")
@@ -321,10 +293,6 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("int")
-                        .HasColumnName("order");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
@@ -336,26 +304,22 @@ namespace StudentManagement.DAL.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Name = "Đang học",
-                            Order = 1
+                            Name = "Đang học"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111112"),
-                            Name = "Đã tốt nghiệp",
-                            Order = 2
+                            Name = "Đã tốt nghiệp"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111113"),
-                            Name = "Đã bảo lưu",
-                            Order = 1
+                            Name = "Đã bảo lưu"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111114"),
-                            Name = "Đã nghỉ học",
-                            Order = 3
+                            Name = "Đã nghỉ học"
                         });
                 });
 
