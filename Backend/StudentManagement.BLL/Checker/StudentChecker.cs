@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentManagement.BLL.Services.Checker
+namespace StudentManagement.BLL.Checker
 {
     public class StudentChecker : IStudentChecker
     {
@@ -72,7 +72,7 @@ namespace StudentManagement.BLL.Services.Checker
                 case nameof(StudentDTO.Identity):
                     return student.Identity?.DocumentNumber is null || await CheckDocumentNumberAsync(student.Identity.DocumentNumber)
                         ? (true, string.Empty)
-                        : (false, "DUPLICATE_IDENTITY");
+                        : (false, "DUPLICATE_DOCUMENT_NUMBER");
 
                 default:
                     return (true, string.Empty);
@@ -91,17 +91,17 @@ namespace StudentManagement.BLL.Services.Checker
 
         public async Task<bool> CheckEmailAsync(string email)
         {
-            return !(await _studentRepository.IsEmailDuplicateAsync(email));
+            return !await _studentRepository.IsEmailDuplicateAsync(email);
         }
 
         public async Task<bool> CheckPhoneAsync(string phone)
         {
-            return !(await _studentRepository.IsPhoneDuplicateAsync(phone));
+            return !await _studentRepository.IsPhoneDuplicateAsync(phone);
         }
 
         public async Task<bool> CheckDocumentNumberAsync(string documentNumber)
         {
-            return !(await _studentRepository.IsDocumentNumberDuplicateAsync(documentNumber));
+            return !await _studentRepository.IsDocumentNumberDuplicateAsync(documentNumber);
         }
 
         public async Task<bool> CheckFacultyAsync(string faculty)

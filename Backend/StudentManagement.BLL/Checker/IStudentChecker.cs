@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentManagement.BLL.Services.Checker
+namespace StudentManagement.BLL.Checker
 {
     public interface IStudentChecker
     {

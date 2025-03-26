@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Identity.Client;
+using StudentManagement.BLL.Checker;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Identity;
 using StudentManagement.BLL.DTOs.Students;
-using StudentManagement.BLL.Services.Checker;
 using StudentManagement.BLL.Services.StudentService;
 using StudentManagement.BLL.Validators;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
@@ -131,22 +131,44 @@ namespace StudentManagement.BLL.Services.StudentService
             try
             {
                 var result = new AddListStudentResult();
+                var errors = new List<(string errorCode, int index)>();
+                var index = 0;
                 var addList = new List<Student>();
                 foreach (var student in studentDTOs)
                 {
+                    index++;
                     var validate = true;
                     var addStudent = _mapper.Map<Student>(student);
                     foreach (var prop in typeof(StudentDTO).GetProperties())
                     {
                         var value = prop.GetValue(student);
-                        if ((StudentDTO.RequiredProperties.Contains(prop.Name) && value is null)
-                            || (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, student)))
-                            || (_studentChecker.NeedCheckedProperties.Contains(prop.Name) && !(await _studentChecker.StudentChecked(prop.Name, student)).Result))
+
+                        if (StudentDTO.RequiredProperties.Contains(prop.Name) && value is null)
                         {
                             result.UnacceptableStudents.Add(student);
+                            errors.Add(($"{prop.Name.ToUpper()}_REQUIRED", index));
                             validate = false;
                             break;
                         }
+                        if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, student)))
+                        {
+                            result.UnacceptableStudents.Add(student);
+                            errors.Add(($"INVALID_{prop.Name.ToUpper()}", index));
+                            validate = false;
+                            break;
+                        }
+                        if (_studentChecker.NeedCheckedProperties.Contains(prop.Name)) 
+                        {
+                            var checkResult = await _studentChecker.StudentChecked(prop.Name, student);
+                            if (!checkResult.Result)
+                            {
+                                result.UnacceptableStudents.Add(student);
+                                errors.Add((checkResult.ErrorCode, index));
+                                validate = false;
+                                break;
+                            }
+                        }
+
                         if (value is not null && _specialMapping.ContainsKey(prop.Name) && _specialMapping[prop.Name](addStudent, value)) continue;
                     }
                     if (!validate) continue;
@@ -157,7 +179,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 }
                 var res = await _studentRepository.AddStudentAsync(addList);
                 result.AcceptableStudents = _mapper.Map<IEnumerable<StudentDTO>>(addList).ToList();
-                return Result<AddListStudentResult>.Ok(result);
+                return Result<AddListStudentResult>.Multi(result, null, errors);
             }
             catch (Exception ex)
             {
