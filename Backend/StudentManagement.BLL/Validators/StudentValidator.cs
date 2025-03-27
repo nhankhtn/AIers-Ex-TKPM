@@ -67,12 +67,20 @@ namespace StudentManagement.BLL.Validators
 
         private bool ValidatePhone(string phone)
         {
-            if (string.IsNullOrEmpty(phone))
-                return false;
-            var phoneNumberUtil = PhoneNumberUtil.GetInstance();
-            var phoneNumber = phoneNumberUtil.Parse(phone, null);
+            try
+            {
+                if (string.IsNullOrEmpty(phone))
+                    return false;
+                var phoneNumberUtil = PhoneNumberUtil.GetInstance();
+                var phoneNumber = phoneNumberUtil.Parse(phone, null);
 
-            return phoneNumberUtil.IsValidNumber(phoneNumber);
+                return phoneNumberUtil.IsValidNumber(phoneNumber);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
         }
      
     }

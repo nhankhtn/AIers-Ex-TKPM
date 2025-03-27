@@ -15,7 +15,7 @@ using StudentManagement.DAL.Data;
 using StudentManagement.Domain.Models;
 using StudentManagement.BLL.Validators;
 using Microsoft.EntityFrameworkCore;
-using StudentManagement.BLL.Services.Checker;
+using StudentManagement.BLL.Checker;
 
 namespace StudentManagement.API.Startup
 {
