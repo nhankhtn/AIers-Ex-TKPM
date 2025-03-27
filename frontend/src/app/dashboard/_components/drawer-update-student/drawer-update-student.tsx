@@ -29,7 +29,10 @@ import AddressStudentForm from "./address-student-form";
 import AdditionalInformationForm from "./addtional-infomation-form";
 import { useMainContext } from "@/context";
 import BasicInfomationForm from "./basic-infomation-form";
-import { getOriginPhoneNumber, getPhoneNumberFormat } from "@/utils/phone-helper";
+import {
+  getOriginPhoneNumber,
+  getPhoneNumberFormat,
+} from "@/utils/phone-helper";
 
 const formatDate = (date: Date) => {
   return date && !isNaN(new Date(date).getTime())
@@ -64,7 +67,7 @@ interface DrawerUpdateStudentProps {
   open: boolean;
   onClose: () => void;
   addStudent: (student: Student) => Promise<void>;
-  updateStudent: (student: Student | Omit<Student,'email'>) => Promise<void>;
+  updateStudent: (student: Student | Omit<Student, "email">) => Promise<void>;
   faculties: Faculty[];
   statuses: Status[];
   programs: Program[];
@@ -178,7 +181,6 @@ function DrawerUpdateStudent({
       };
 
       if (student) {
-        
         if (studentData.email === student.email) {
           const { email, ...studentDataWithoutEmail } = studentData;
           await updateStudent(studentDataWithoutEmail);
@@ -191,7 +193,7 @@ function DrawerUpdateStudent({
     },
     [updateStudent, addStudent, student, onClose]
   );
-  console.log("student", student);
+
   const initialValues = useMemo(
     () => ({
       id: student?.id || "",
@@ -200,7 +202,9 @@ function DrawerUpdateStudent({
       gender: student?.gender || Gender.Male,
       email: student?.email || "",
       phone: getOriginPhoneNumber(student?.phone || "")?.originNumber || "",
-      phoneCode: getOriginPhoneNumber(student?.phone || "")?.countryCode || COUNTRY_CODE_DEFAULT,
+      phoneCode:
+        getOriginPhoneNumber(student?.phone || "")?.countryCode ||
+        COUNTRY_CODE_DEFAULT,
       // Permanent address
       permanentCountry: permanentAddress.country || COUNTRY_DEFAULT,
       permanentProvince: permanentAddress.province || "",
@@ -289,8 +293,7 @@ function DrawerUpdateStudent({
 
         <Divider />
 
-        
-        <BasicInfomationForm formik={formik} countries={countries}/>
+        <BasicInfomationForm formik={formik} countries={countries} />
 
         <Divider />
 
