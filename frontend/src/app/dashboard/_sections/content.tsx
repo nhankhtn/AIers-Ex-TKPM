@@ -31,6 +31,8 @@ const Content = () => {
     dialogConfirmDelete,
     getStudentsApi,
     deleteStudentsApi,
+    createStudentsApi,
+    updateStudentsApi,
     students,
     setFilter,
     pagination,
@@ -58,7 +60,7 @@ const Content = () => {
         <Typography variant='h5' fontWeight='bold'>
           Danh sách sinh viên
         </Typography>
-        <UtilityButtons />
+        <UtilityButtons students={students} createStudentsApi={createStudentsApi} updateStudentsApi={updateStudentsApi} dialog={dialog} />
       </RowStack>
       <RowStack mb={3} gap={2}>
         <Stack>
