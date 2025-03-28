@@ -43,7 +43,6 @@
 - **`next.config.ts`**: cấu hình Next.js (ví dụ: rewrites, redirects)
 - **`package.json`**: danh sách package, scripts
 - **`package-lock.json`**: khóa phiên bản package (đảm bảo cài đúng)
-<<<<<<< HEAD
 
 ## Các chức năng chính
 ### Màn hình xem, lọc, tìm kiếm sinh viên
@@ -68,6 +67,12 @@
 ### Thêm logging mechanism để troubleshooting production issue & audit purposes
 - Kế thừa từ SaveChangesInterceptor để can thiệp vào quá trình SaveChanges của Entity Framework, từ đó ghi lại lịch sử thay đổi dữ liệu (audit logging) khi thao tác với database, nếu có lỗi sẽ thông báo vào error message. Logs sẽ được ghi vào database.
 ![alt text](Images/image-2.png)
+## Minh chứng các chức năng tag3.0 
+### Thêm validate cho số điện thoại và email
+![alt text](Images/add_student_validate_phone_tag3.0.jpg)
+![alt text](Images/dialog_config_allowed_domain_email_tag3.0.jpg)
+### Thêm trường thứ tự cho status để ràng buộc khi cập nhật status
+![alt text](Images/dialog_settings_status_tag3.0.jpg)
 ## Hướng dẫn cài đặt & chạy chương trình
 ### Backend:
 
@@ -106,7 +111,7 @@ Server hoạt động ở </br>
 cd frontend                # Di chuyển vào thư mục frontend
 touch .env (Linux) hoặc New-Item -Path . -Name ".env" -ItemType "File" (Windows)       # Tạo file .env
 Trong file .env, định nghĩa biến 'NEXT_PUBLIC_HOST=http://localhost:5231' để gọi API với http
-npm install                # Cài đặt các dependencies cần thiết
+npm install                # Cài đặt các dependencies cần thiết (thay thế bằng npm install --force hoặc yarn install nếu gặp lỗi)  
 npm run build              # Biên dịch mã nguồn frontend
 npm start                  # Khởi chạy ứng dụng
 ```
