@@ -56,23 +56,9 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
 
         public async Task<Faculty?> UpdateFacultyAsync(Faculty faculty)
         {
-            //var existingFaculty = await _context.Faculties.FindAsync(faculty.Id);
-
-            //foreach (var prop in typeof(Faculty).GetProperties())
-            //{
-            //    var value = prop.GetValue(faculty);
-            //    if (value is null) continue;
-            //    if (prop.GetValue(existingFaculty) == value) continue;
-            //    prop.SetValue(existingFaculty, value);
-            //}
             _context.Faculties.Update(faculty);
             await _context.SaveChangesAsync();
             return faculty;
-        }
-
-        //private bool IsConnectDatabaseFailed(SqlException ex)
-        //{
-        //    return ex.Number == 10061;
-        //}
+        } 
     }
 }

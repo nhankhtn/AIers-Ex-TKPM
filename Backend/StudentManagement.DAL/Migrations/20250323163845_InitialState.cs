@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace StudentManagement.DAL.Migrations
 {
     /// <inheritdoc />
@@ -12,7 +14,23 @@ namespace StudentManagement.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "faculty",
+                name: "audit_entries",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    meta_data = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    start_time_utc = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
+                    end_time_utc = table.Column<DateTime>(type: "datetime2(0)", nullable: false),
+                    is_success = table.Column<bool>(type: "bit", nullable: false),
+                    error_message = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_audit_entries", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "faculties",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -20,7 +38,7 @@ namespace StudentManagement.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_faculty", x => x.id);
+                    table.PrimaryKey("PK_faculties", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,7 +54,7 @@ namespace StudentManagement.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "student_status",
+                name: "student_statuses",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -44,7 +62,7 @@ namespace StudentManagement.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_student_status", x => x.id);
+                    table.PrimaryKey("PK_student_statuses", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -53,14 +71,14 @@ namespace StudentManagement.DAL.Migrations
                 {
                     id = table.Column<string>(type: "varchar(8)", nullable: false),
                     name = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    date_of_birth = table.Column<DateTime>(type: "date", nullable: false),
+                    date_of_birth = table.Column<DateOnly>(type: "date", nullable: false),
                     gender = table.Column<string>(type: "varchar(10)", nullable: false, defaultValue: "Male"),
                     email = table.Column<string>(type: "varchar(50)", nullable: false),
                     course = table.Column<int>(type: "int", nullable: false),
                     phone = table.Column<string>(type: "varchar(10)", nullable: false),
-                    permanent_address = table.Column<string>(type: "nvarchar(100)", nullable: false),
-                    temporary_address = table.Column<string>(type: "nvarchar(100)", nullable: true),
-                    mailing_address = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    permanent_address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    temporary_address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    mailing_address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     program_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     status_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     faculty_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -70,9 +88,9 @@ namespace StudentManagement.DAL.Migrations
                 {
                     table.PrimaryKey("PK_students", x => x.id);
                     table.ForeignKey(
-                        name: "FK_students_faculty_faculty_id",
+                        name: "FK_students_faculties_faculty_id",
                         column: x => x.faculty_id,
-                        principalTable: "faculty",
+                        principalTable: "faculties",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -82,9 +100,9 @@ namespace StudentManagement.DAL.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_students_student_status_status_id",
+                        name: "FK_students_student_statuses_status_id",
                         column: x => x.status_id,
-                        principalTable: "student_status",
+                        principalTable: "student_statuses",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -95,13 +113,13 @@ namespace StudentManagement.DAL.Migrations
                 {
                     id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     type = table.Column<string>(type: "varchar(10)", nullable: false, defaultValue: "CCCD"),
-                    document_number = table.Column<string>(type: "varchar(20)", nullable: false),
-                    issue_date = table.Column<DateTime>(type: "date", nullable: false),
-                    issue_place = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    expiry_date = table.Column<DateTime>(type: "date", nullable: false),
-                    country = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    number = table.Column<string>(type: "varchar(20)", nullable: false),
+                    issued_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    expiry_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    issue_place = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    country = table.Column<string>(type: "nvarchar(50)", nullable: true),
                     is_chip = table.Column<bool>(type: "bit", nullable: false),
-                    notes = table.Column<string>(type: "nvarchar(100)", nullable: true),
+                    note = table.Column<string>(type: "nvarchar(100)", nullable: true),
                     student_id = table.Column<string>(type: "varchar(8)", nullable: false)
                 },
                 constraints: table =>
@@ -114,6 +132,50 @@ namespace StudentManagement.DAL.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "faculties",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "Khoa Toán" },
+                    { new Guid("11111111-1111-1111-1111-111111111112"), "Khoa Công nghệ thông tin" },
+                    { new Guid("11111111-1111-1111-1111-111111111113"), "Khoa Hoá" },
+                    { new Guid("11111111-1111-1111-1111-111111111114"), "Khoa Lí" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "programs",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "Đại trà" },
+                    { new Guid("11111111-1111-1111-1111-111111111112"), "Chất lượng cao" },
+                    { new Guid("11111111-1111-1111-1111-111111111113"), "Tiên tiến" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "student_statuses",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { new Guid("11111111-1111-1111-1111-111111111111"), "Đang học" },
+                    { new Guid("11111111-1111-1111-1111-111111111112"), "Đã tốt nghiệp" },
+                    { new Guid("11111111-1111-1111-1111-111111111113"), "Đã bảo lưu" },
+                    { new Guid("11111111-1111-1111-1111-111111111114"), "Đã nghỉ học" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_faculties_name",
+                table: "faculties",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_identity_documents_number",
+                table: "identity_documents",
+                column: "number",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_identity_documents_student_id",
@@ -128,8 +190,8 @@ namespace StudentManagement.DAL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_student_status_name",
-                table: "student_status",
+                name: "IX_student_statuses_name",
+                table: "student_statuses",
                 column: "name",
                 unique: true);
 
@@ -143,6 +205,12 @@ namespace StudentManagement.DAL.Migrations
                 name: "IX_students_faculty_id",
                 table: "students",
                 column: "faculty_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_students_phone",
+                table: "students",
+                column: "phone",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_students_program_id",
@@ -159,19 +227,22 @@ namespace StudentManagement.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "audit_entries");
+
+            migrationBuilder.DropTable(
                 name: "identity_documents");
 
             migrationBuilder.DropTable(
                 name: "students");
 
             migrationBuilder.DropTable(
-                name: "faculty");
+                name: "faculties");
 
             migrationBuilder.DropTable(
                 name: "programs");
 
             migrationBuilder.DropTable(
-                name: "student_status");
+                name: "student_statuses");
         }
     }
 }

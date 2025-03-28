@@ -68,8 +68,10 @@ namespace StudentManagement.API.Controllers
 
             if (result.Success)
             {
-                return Ok(ApiResponse<AddListStudentResult>.Success(
-                    data: result.Data
+                return StatusCode(207, ApiResponse<AddListStudentResult>.MultiStatus(
+                    data: result.Data,
+                    message: result.Message,
+                    errors: result.Errors?.Select(e => new ApiError() { Index = e.index, Code = e.errorCode }).ToList()
                 ));
             }
             return BadRequest(ApiResponse<string>.BadRequest(

@@ -26,7 +26,7 @@ namespace StudentManagement.DAL.Data
                 .Where(x => x.Entity is not AuditEntry && x.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
                 .Select(x => new AuditEntry
                 {
-                    Id = Guid.NewGuid(),
+                    //Id = Guid.NewGuid(),
                     StartTimeUtc = startTime,
                     Metadata = x.DebugView.LongView
                 }).ToList();

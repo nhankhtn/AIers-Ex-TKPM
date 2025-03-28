@@ -1,7 +1,7 @@
 INSERT INTO programs VALUES 
 (1, N'Đại trà'), 
 (2, N'Chất lượng cao'),
-(23, N'Tiên tiến');
+(3, N'Tiên tiến');
 
 INSERT INTO student_status VALUES 
 (1, N'Đang học'), 
@@ -11,6 +11,6 @@ INSERT INTO student_status VALUES
 
 INSERT INTO faculty VALUES 
 (1, N'Khoa Toán'), 
-(1, N'Khoa Công nghệ thông tin'), 
-(1, N'Khoa Hoá'), 
-(1, N'Khoa Lí'), 
+(2, N'Khoa Công nghệ thông tin'), 
+(3, N'Khoa Hoá'), 
+(4, N'Khoa Lí');

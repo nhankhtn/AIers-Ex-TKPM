@@ -8,11 +8,13 @@ import {
 } from "@/types/student";
 import { Typography } from "@mui/material";
 import { parseStringToAddress } from "../_components/drawer-update-student/drawer-update-student";
+import { formatDate } from "@/utils/format-date";
 
 export function objectToAddress(address: any) {
   return Object.entries(address)
     .map(([, value]) => value)
     .filter(Boolean)
+    .reverse()
     .join(", ");
 }
 
@@ -54,7 +56,7 @@ export const getTableConfig = ({
     headerLabel: "Ngày sinh",
     type: "string",
     renderCell: (data) => (
-      <Typography variant='body2'>{data.dateOfBirth}</Typography>
+      <Typography variant='body2'>{formatDate(data.dateOfBirth)}</Typography>
     ),
   },
   {

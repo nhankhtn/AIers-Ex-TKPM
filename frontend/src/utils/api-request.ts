@@ -62,9 +62,19 @@ const apiFetch = async (
   try {
     const response = await fetch(input, init);
     const result = await response.json();
-    if (!response.ok || (response.status !== 200 && response.status !== 201)) {
-      const message = `Lỗi: ${result.message || result.error.code || response.status}`;
-      throw new Error(message);
+    if (
+      !response.ok ||
+      (response.status !== 200 &&
+        response.status !== 201 &&
+        response.status !== 207)
+    ) {
+      const message = `Lỗi: ${
+        result.message ||
+        result.error.code ||
+        result.error.message ||
+        response.status
+      }`;
+      throw new Error("message");
     }
     return result;
   } catch (error) {

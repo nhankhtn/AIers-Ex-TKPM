@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Identity.Client;
+using StudentManagement.BLL.Checker;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Identity;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.Services.StudentService;
+using StudentManagement.BLL.Validators;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
@@ -31,76 +33,28 @@ namespace StudentManagement.BLL.Services.StudentService
         private readonly IFacultyRepository _facultyRepository;
         private readonly IProgramRepository _programRepository;
         private readonly IStudentStatusRepository _studentStatusRepository;
+        private readonly IStudentValidator _userValidator;
+        private readonly IStudentChecker _studentChecker;
         private readonly IMapper _mapper;
-
-        // These properties can be null
-        private readonly List<string> _requiredProperties = new List<string>
-        {
-            nameof(StudentDTO.Name),
-            nameof(StudentDTO.DateOfBirth),
-            nameof(StudentDTO.Gender),
-            nameof(StudentDTO.Course),
-            nameof(StudentDTO.Phone),
-            nameof(StudentDTO.PermanentAddress),
-            nameof(StudentDTO.Program),
-            nameof(StudentDTO.Status),
-            nameof(StudentDTO.Faculty),
-            nameof(StudentDTO.Nationality),
-            nameof(StudentDTO.Identity)
-        };
 
         private readonly List<string> _canNotUpdatProperties = new List<string>() { nameof(StudentDTO.Id) };
 
-
-        /// <summary>
-        /// Validate properties
-        /// </summary>
-        /// <returns></returns>
-        private readonly Dictionary<string, Func<StudentDTO, Task<bool>>> _validateValue = new() { };
-
-        /// <summary>
-        /// Special mapping
-        /// </summary>
-        private readonly Dictionary<string, Func<Student, object, Task<bool>>> _specialMapping = new() { };
-        private readonly Dictionary<string, Func<StudentDTO, object, Task<bool>>> _specialMappingReverse = new() { };
+        private readonly Dictionary<string, Func<Student, object, bool>> _specialMapping = new() { };
 
         private Dictionary<int, int> generateIdCache = new Dictionary<int, int>();
 
         public StudentService(IStudentRepository studentRepository,
-            IFacultyRepository facultyRepository, IStudentStatusRepository studentStatusRepository, IProgramRepository programRepository,
+            IFacultyRepository facultyRepository, IStudentStatusRepository studentStatusRepository, IProgramRepository programRepository, IStudentValidator userValidator,
+            IStudentChecker studentChecker,
             IMapper mapper)
         {
             _studentRepository = studentRepository ?? throw new ArgumentNullException(nameof(studentRepository));
             _facultyRepository = facultyRepository ?? throw new ArgumentNullException(nameof(facultyRepository));
             _programRepository = programRepository ?? throw new ArgumentNullException(nameof(programRepository));
             _studentStatusRepository = studentStatusRepository ?? throw new ArgumentNullException(nameof(studentStatusRepository));
+            _userValidator = userValidator ?? throw new ArgumentNullException(nameof(userValidator));
+            _studentChecker = studentChecker ?? throw new ArgumentNullException(nameof(studentChecker));
             _mapper = mapper;
-
-            _validateValue = new()
-            {
-                // Validate email
-                { nameof(StudentDTO.Email), async student
-                    => student.Email is not null && Regex.IsMatch(student.Email, @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$") && !(await _studentRepository.IsEmailDuplicateAsync(student.Email)) },
-
-                // Validate phone
-                { nameof(StudentDTO.Phone), student  => Task.FromResult(student.Phone is not null && Regex.IsMatch(student.Phone, @"^0\d{9,10}$")) },
-
-                // Validate course
-                
-                { nameof(StudentDTO.Course), student => Task.FromResult(student.Course > 2000 && student.Course < 2100) },
-
-                // Validate faculty
-                { nameof(StudentDTO.Faculty), async student => student.Faculty is not null && _facultyRepository is not null
-                && (await _facultyRepository.GetFacultyByIdAsync(student.Faculty)) is not null },
-
-                // Validate program
-                { nameof(StudentDTO.Program), async student => student.Program is not null
-                && (await _programRepository.GetProgramByIdAsync(student.Program)) is not null },
-            
-                // Validate status
-                { nameof(StudentDTO.Status), async student => student.Status is not null
-                && (await _studentStatusRepository.GetStudentStatusByIdAsync(student.Status)) is not null },
-            };
 
             _specialMapping = new()
             {
@@ -108,34 +62,34 @@ namespace StudentManagement.BLL.Services.StudentService
                     if (value is not null && value is string facultyId)
                     {
                         student.FacultyId = facultyId.ToGuid();
-                        return Task.FromResult(true);
+                        return true;
                     }
-                    return Task.FromResult(false);
+                    return false;
                 } },
                 { nameof(StudentDTO.Program), (student, value) => {
                     if (value is not null && value is string programId)
                     {
                         student.ProgramId = programId.ToGuid();
-                        return Task.FromResult(true);
+                        return true;
                     }
-                    return Task.FromResult(false);
+                    return false;
                 } },
                 { nameof(StudentDTO.Status), (student, value) => {
                     if (value is not null && value is string statusId)
                     {
                         student.StatusId = statusId.ToGuid();
-                        return Task.FromResult(true);
+                        return true;
                     }
-                    return Task.FromResult(false);
+                    return false;
                 } },
 
                 { nameof(StudentDTO.Gender), (student, value) => {
                     if (SetEnumValue(value, out Gender gender))
                     {
                         student.Gender = gender;
-                        return Task.FromResult(true);
+                        return true;
                     }
-                    return Task.FromResult(false);
+                    return false;
                 } },
 
                 { nameof(Student.Identity), (student, typeValue) =>
@@ -143,12 +97,15 @@ namespace StudentManagement.BLL.Services.StudentService
                     if (typeValue is not null && typeValue is IdentityDTO identityDTO)
                     {
                         student.Identity.Type = identityDTO.Type.ToEnum<IdentityType>();
-                        return Task.FromResult(true);
+                        return true;
                     }
-                    return Task.FromResult(false);
+                    return false;
                 } }
             };
         }
+
+
+
         // Get all students
         public async Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key)
         {
@@ -168,28 +125,51 @@ namespace StudentManagement.BLL.Services.StudentService
         }
 
 
-        // Add a new student
+        // Add new students
         public async Task<Result<AddListStudentResult>> AddListStudentAsync(IEnumerable<StudentDTO> studentDTOs)
         {
             try
             {
                 var result = new AddListStudentResult();
+                var errors = new List<(string errorCode, int index)>();
+                var index = 0;
                 var addList = new List<Student>();
                 foreach (var student in studentDTOs)
                 {
+                    index++;
                     var validate = true;
                     var addStudent = _mapper.Map<Student>(student);
                     foreach (var prop in typeof(StudentDTO).GetProperties())
                     {
                         var value = prop.GetValue(student);
-                        if ((_requiredProperties.Contains(prop.Name) && value is null)
-                            || (_validateValue.ContainsKey(prop.Name) && !(await _validateValue[prop.Name](student))))
+
+                        if (StudentDTO.RequiredProperties.Contains(prop.Name) && value is null)
                         {
                             result.UnacceptableStudents.Add(student);
+                            errors.Add(($"{prop.Name.ToUpper()}_REQUIRED", index));
                             validate = false;
                             break;
                         }
-                        if (value is not null && _specialMapping.ContainsKey(prop.Name) && await _specialMapping[prop.Name](addStudent, value)) continue;
+                        if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, student)))
+                        {
+                            result.UnacceptableStudents.Add(student);
+                            errors.Add(($"INVALID_{prop.Name.ToUpper()}", index));
+                            validate = false;
+                            break;
+                        }
+                        if (_studentChecker.NeedCheckedProperties.Contains(prop.Name)) 
+                        {
+                            var checkResult = await _studentChecker.StudentChecked(prop.Name, student);
+                            if (!checkResult.Result)
+                            {
+                                result.UnacceptableStudents.Add(student);
+                                errors.Add((checkResult.ErrorCode, index));
+                                validate = false;
+                                break;
+                            }
+                        }
+
+                        if (value is not null && _specialMapping.ContainsKey(prop.Name) && _specialMapping[prop.Name](addStudent, value)) continue;
                     }
                     if (!validate) continue;
 
@@ -199,7 +179,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 }
                 var res = await _studentRepository.AddStudentAsync(addList);
                 result.AcceptableStudents = _mapper.Map<IEnumerable<StudentDTO>>(addList).ToList();
-                return Result<AddListStudentResult>.Ok(result);
+                return Result<AddListStudentResult>.Multi(result, null, errors);
             }
             catch (Exception ex)
             {
@@ -267,6 +247,7 @@ namespace StudentManagement.BLL.Services.StudentService
         {
             try
             {
+                studentDTO.Id = studentId;
                 var resExistStudent = await _studentRepository.GetStudentByIdAsync(studentId);
                 if (resExistStudent is null) return Result<StudentDTO>.Fail("STUDENT_NOT_FOUND", "Student is not found");
 
@@ -274,8 +255,16 @@ namespace StudentManagement.BLL.Services.StudentService
                 {
                     var value = prop.GetValue(studentDTO);
                     if (_canNotUpdatProperties.Contains(prop.Name) || value is null) continue;
-                    if (_validateValue.ContainsKey(prop.Name) && !(await _validateValue[prop.Name](studentDTO))) return Result<StudentDTO>.Fail("INVALID_VALUE", "Invalid value");
-                    if (_specialMapping.ContainsKey(prop.Name) && await _specialMapping[prop.Name](resExistStudent, value)) continue;
+
+                    if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, studentDTO))) 
+                        return Result<StudentDTO>.Fail($"INVALID_{prop.Name.ToUpper()}", $"{prop.Name} not found");
+
+                    if (_studentChecker.NeedCheckedProperties.Contains(prop.Name)) {
+                        var check = await _studentChecker.StudentChecked(prop.Name, studentDTO, true);
+                        if (!check.Result) return Result<StudentDTO>.Fail(check.ErrorCode);
+                    }
+
+                    if (_specialMapping.ContainsKey(prop.Name) && _specialMapping[prop.Name](resExistStudent, value)) continue;
 
                     var studentProp = typeof(Student).GetProperty(prop.Name);
                     if (studentProp != null)
