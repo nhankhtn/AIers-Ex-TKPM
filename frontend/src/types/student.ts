@@ -53,6 +53,7 @@ export interface Program {
 export interface Status {
   id: string;
   name: string;
+  order: number;
 }
 
 export interface StudentFilter extends Partial<Student> {
@@ -88,70 +89,84 @@ export const mappingFiledStudent: Record<string, string> = {
   nationality: "Quốc tịch",
 };
 
-export const validationStudent = Yup.object().shape({
-  name: Yup.string().required("Vui lòng nhập họ và tên"),
-  dateOfBirth: Yup.string().required("Vui lòng nhập ngày tháng năm sinh"),
-  email: Yup.string()
-    .email("Email không hợp lệ")
-    .required("Vui lòng nhập email"),
+export const getValidationStudent = ({
+  allowedEmailDomain,
+}: {
+  allowedEmailDomain: string[];
+}) =>
+  Yup.object().shape({
+    name: Yup.string().required("Vui lòng nhập họ và tên"),
+    dateOfBirth: Yup.string().required("Vui lòng nhập ngày tháng năm sinh"),
+    email: Yup.string()
+      .email("Email không hợp lệ")
+      .test(
+        "domain-validation",
+        "Email phải thuộc một trong các domain hợp lệ",
+        (value) => {
+          if (!value) return false;
+          const domain = value.split("@")[1];
+          return allowedEmailDomain.includes(`@${domain}`);
+        }
+      )
+      .required("Vui lòng nhập email"),
 
-  // Permanent address validation
-  permanentProvince: Yup.string().required("Vui lòng chọn tỉnh/thành phố"),
-  permanentDistrict: Yup.string().required("Vui lòng chọn quận/huyện"),
-  permanentWard: Yup.string().required("Vui lòng chọn phường/xã"),
-  permanentDetail: Yup.string().required("Vui lòng nhập địa chỉ chi tiết"),
+    // Permanent address validation
+    permanentProvince: Yup.string().required("Vui lòng chọn tỉnh/thành phố"),
+    permanentDistrict: Yup.string().required("Vui lòng chọn quận/huyện"),
+    permanentWard: Yup.string().required("Vui lòng chọn phường/xã"),
+    permanentDetail: Yup.string().required("Vui lòng nhập địa chỉ chi tiết"),
 
-  // Temporary address validation (conditional)
-  temporaryProvince: Yup.string().when("useTemporaryAddress", {
-    is: true,
-    then: (schema) => schema.required("Vui lòng chọn tỉnh/thành phố"),
-  }),
-  temporaryDistrict: Yup.string().when("useTemporaryAddress", {
-    is: true,
-    then: (schema) => schema.required("Vui lòng chọn quận/huyện"),
-  }),
-  temporaryWard: Yup.string().when("useTemporaryAddress", {
-    is: true,
-    then: (schema) => schema.required("Vui lòng chọn phường/xã"),
-  }),
-  temporaryDetail: Yup.string().when("useTemporaryAddress", {
-    is: true,
-    then: (schema) => schema.required("Vui lòng nhập địa chỉ chi tiết"),
-  }),
+    // Temporary address validation (conditional)
+    temporaryProvince: Yup.string().when("useTemporaryAddress", {
+      is: true,
+      then: (schema) => schema.required("Vui lòng chọn tỉnh/thành phố"),
+    }),
+    temporaryDistrict: Yup.string().when("useTemporaryAddress", {
+      is: true,
+      then: (schema) => schema.required("Vui lòng chọn quận/huyện"),
+    }),
+    temporaryWard: Yup.string().when("useTemporaryAddress", {
+      is: true,
+      then: (schema) => schema.required("Vui lòng chọn phường/xã"),
+    }),
+    temporaryDetail: Yup.string().when("useTemporaryAddress", {
+      is: true,
+      then: (schema) => schema.required("Vui lòng nhập địa chỉ chi tiết"),
+    }),
 
-  // Mailing address validation (conditional)
-  mailingProvince: Yup.string().when("useMailingAddress", {
-    is: true,
-    then: (schema) => schema.required("Vui lòng chọn tỉnh/thành phố"),
-  }),
-  mailingDistrict: Yup.string().when("useMailingAddress", {
-    is: true,
-    then: (schema) => schema.required("Vui lòng chọn quận/huyện"),
-  }),
-  mailingWard: Yup.string().when("useMailingAddress", {
-    is: true,
-    then: (schema) => schema.required("Vui lòng chọn phường/xã"),
-  }),
-  mailingDetail: Yup.string().when("useMailingAddress", {
-    is: true,
-    then: (schema) => schema.required("Vui lòng nhập địa chỉ chi tiết"),
-  }),
+    // Mailing address validation (conditional)
+    mailingProvince: Yup.string().when("useMailingAddress", {
+      is: true,
+      then: (schema) => schema.required("Vui lòng chọn tỉnh/thành phố"),
+    }),
+    mailingDistrict: Yup.string().when("useMailingAddress", {
+      is: true,
+      then: (schema) => schema.required("Vui lòng chọn quận/huyện"),
+    }),
+    mailingWard: Yup.string().when("useMailingAddress", {
+      is: true,
+      then: (schema) => schema.required("Vui lòng chọn phường/xã"),
+    }),
+    mailingDetail: Yup.string().when("useMailingAddress", {
+      is: true,
+      then: (schema) => schema.required("Vui lòng nhập địa chỉ chi tiết"),
+    }),
 
-  // Academic info validation
-  faculty: Yup.string().required("Vui lòng chọn khoa"),
-  course: Yup.number()
-    .required("Vui lòng nhập khóa học")
-    .positive("Khóa học phải là số dương"),
-  program: Yup.string().required("Vui lòng chọn chương trình"),
-  phone: Yup.string().required("Vui lòng nhập số điện thoại"),
-  status: Yup.string().required("Vui lòng chọn tình trạng sinh viên"),
+    // Academic info validation
+    faculty: Yup.string().required("Vui lòng chọn khoa"),
+    course: Yup.number()
+      .required("Vui lòng nhập khóa học")
+      .positive("Khóa học phải là số dương"),
+    program: Yup.string().required("Vui lòng chọn chương trình"),
+    phone: Yup.string().required("Vui lòng nhập số điện thoại"),
+    status: Yup.string().required("Vui lòng chọn tình trạng sinh viên"),
 
-  // Identity validation
-  identityDocumentNumber: Yup.string().required("Vui lòng nhập số giấy tờ"),
-  identityIssueDate: Yup.string().required("Vui lòng nhập ngày cấp"),
-  identityIssuePlace: Yup.string().required("Vui lòng nhập nơi cấp"),
-  identityExpiryDate: Yup.string().required("Vui lòng nhập ngày hết hạn"),
-});
+    // Identity validation
+    identityDocumentNumber: Yup.string().required("Vui lòng nhập số giấy tờ"),
+    identityIssueDate: Yup.string().required("Vui lòng nhập ngày cấp"),
+    identityIssuePlace: Yup.string().required("Vui lòng nhập nơi cấp"),
+    identityExpiryDate: Yup.string().required("Vui lòng nhập ngày hết hạn"),
+  });
 
 export const mock_students: Student[] = [
   {

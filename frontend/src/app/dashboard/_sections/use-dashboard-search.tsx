@@ -9,8 +9,6 @@ import { useEffect, useMemo, useState } from "react";
 import { getFilterConfig } from "./filter-config";
 import { useFaculty } from "./use-faculty";
 import { useStatus } from "./use-status";
-import { useProgram } from "./use-program";
-import { normalizeString } from "@/utils/string-helper";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const useDashboardSearch = () => {
@@ -26,7 +24,6 @@ const useDashboardSearch = () => {
 
   const dialog = useDialog<Student>();
   const dialogConfirmDelete = useDialog<Student>();
-
   const getStudentsApi = useFunction(StudentApi.getStudents, {
     disableResetOnCall: true,
   });
@@ -51,7 +48,7 @@ const useDashboardSearch = () => {
     },
   });
   const createStudentsApi = useFunction(StudentApi.createStudent, {
-    successMessage: "Thêm sinh viên thành công",
+    hideSnackbarError: true,
     onSuccess: ({
       result,
     }: {
@@ -62,7 +59,6 @@ const useDashboardSearch = () => {
         };
       };
     }) => {
-      console.log("res: ", result);
       getStudentsApi.setData({
         data: [...students, ...result.data.acceptableStudents],
         total:

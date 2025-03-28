@@ -19,6 +19,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RowStack from "@/components/row-stack";
+import { downloadUrl } from "@/utils/url-handler";
 
 interface DialogImportFileProps {
   open: boolean;
@@ -239,12 +240,31 @@ const DialogImportFile = ({
             </Typography>
           )}
 
-          <Box sx={{ bgcolor: "primary.lighter", borderRadius: 1 }}>
-            <Typography variant='body2' color='primary.main'>
-              Tệp sẽ được xử lý sau khi tải lên. Vui lòng đảm bảo tệp đúng định
-              dạng.
+          <Stack gap={1}>
+            <Box sx={{ bgcolor: "primary.lighter", borderRadius: 1 }}>
+              <Typography variant='body2' color='primary.main'>
+                Tệp sẽ được xử lý sau khi tải lên. Vui lòng đảm bảo tệp đúng
+                định dạng.
+              </Typography>
+            </Box>
+            <Typography variant='body2'>
+              Download file mẫu tại{" "}
+              <Typography
+                component={"span"}
+                variant='body2'
+                color='primary'
+                sx={{ cursor: "pointer", textDecoration: "underline" }}
+                onClick={() =>
+                  downloadUrl(
+                    "/docs/student-template.xlsx",
+                    "[Mẫu] Tệp sinh viên.xlsx"
+                  )
+                }
+              >
+                đây
+              </Typography>
             </Typography>
-          </Box>
+          </Stack>
         </Stack>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 3 }}>
