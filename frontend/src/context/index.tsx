@@ -8,6 +8,7 @@ import { Country, Province } from "@/types/address";
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -24,6 +25,8 @@ export const initialSettings: SettingsProps = {
 
 interface ContextValue {
   getCountriesApi: UseFunctionReturnType<void, Country[]>;
+  updateSettingsApi: UseFunctionReturnType<string, void>;
+
   countries: Country[];
   provinces: Province[];
   settings: SettingsProps;
@@ -31,6 +34,8 @@ interface ContextValue {
 
 export const MainContext = createContext<ContextValue>({
   getCountriesApi: DEFAULT_FUNCTION_RETURN,
+  updateSettingsApi: DEFAULT_FUNCTION_RETURN,
+
   countries: [],
   provinces: [],
   settings: initialSettings,
@@ -53,6 +58,19 @@ const MainProvider = ({ children }: { children: ReactNode }) => {
     [getProvincesApi.data]
   );
 
+  const updateSettings = useCallback(
+    async (email: string) => {
+      await SettingApi.updateSettings(email);
+      getSettingsApi.setData({
+        domain: email,
+      });
+    },
+    [getSettingsApi]
+  );
+  const updateSettingsApi = useFunction(updateSettings, {
+    successMessage: "Cập nhật thành công",
+  });
+
   useEffect(() => {
     if (getSettingsApi.data) {
       const email = getSettingsApi.data.domain;
@@ -71,7 +89,13 @@ const MainProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <MainContext.Provider
-      value={{ getCountriesApi, countries, provinces, settings }}
+      value={{
+        getCountriesApi,
+        countries,
+        provinces,
+        settings,
+        updateSettingsApi,
+      }}
     >
       {children}
     </MainContext.Provider>
