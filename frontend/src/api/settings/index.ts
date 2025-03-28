@@ -10,8 +10,6 @@ export class SettingApi {
   }
 
   static async updateSettings(email: string): Promise<void> {
-    return await apiPut("/settings/email-domain", {
-      email,
-    });
+    return await apiPut("/settings/email-domain", email);
   }
 }
