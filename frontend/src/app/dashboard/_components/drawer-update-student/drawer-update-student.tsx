@@ -1,27 +1,15 @@
 "use client";
 import React, { useCallback, useEffect, useMemo } from "react";
-import {
-  Button,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Grid2,
-  Typography,
-  Drawer,
-  Stack,
-  Divider,
-} from "@mui/material";
+import { Button, Typography, Drawer, Stack, Divider } from "@mui/material";
 import {
   COUNTRY_CODE_DEFAULT,
   COUNTRY_DEFAULT,
   Faculty,
   Gender,
+  getValidationStudent,
   Program,
   Status,
   Student,
-  validationStudent,
 } from "../../../../types/student";
 import { useFormik } from "formik";
 import RowStack from "@/components/row-stack";
@@ -33,6 +21,7 @@ import {
   getOriginPhoneNumber,
   getPhoneNumberFormat,
 } from "@/utils/phone-helper";
+import useFunction from "@/hooks/use-function";
 
 const formatDate = (date: Date) => {
   return date && !isNaN(new Date(date).getTime())
@@ -98,8 +87,7 @@ function DrawerUpdateStudent({
   statuses,
   programs,
 }: DrawerUpdateStudentProps) {
-  const { countries } = useMainContext();
-
+  const { countries, settings } = useMainContext();
   useEffect(() => {
     if (!open) {
       formik.resetForm();
@@ -113,7 +101,6 @@ function DrawerUpdateStudent({
 
   const handleSubmit = useCallback(
     async (values: any) => {
-      onClose();
       const permanentAddress = {
         country: values.permanentCountry,
         province: values.permanentProvince,
@@ -181,17 +168,12 @@ function DrawerUpdateStudent({
       };
 
       if (student) {
-        if (studentData.email === student.email) {
-          const { email, ...studentDataWithoutEmail } = studentData;
-          await updateStudent(studentDataWithoutEmail);
-        } else {
-          await updateStudent(studentData);
-        }
+        await updateStudent(studentData);
       } else {
         await addStudent(studentData);
       }
     },
-    [updateStudent, addStudent, student, onClose]
+    [updateStudent, addStudent, student]
   );
 
   const initialValues = useMemo(
@@ -254,7 +236,9 @@ function DrawerUpdateStudent({
     initialValues,
     enableReinitialize: true,
     validateOnChange: false,
-    validationSchema: validationStudent,
+    validationSchema: getValidationStudent({
+      allowedEmailDomain: settings.allowedEmailDomains,
+    }),
     onSubmit: handleSubmit,
   });
 
@@ -285,6 +269,7 @@ function DrawerUpdateStudent({
               onClick={() => formik.handleSubmit()}
               color='primary'
               variant='contained'
+              disabled={formik.isSubmitting}
             >
               {student ? "Cập nhật" : "Thêm"}
             </Button>

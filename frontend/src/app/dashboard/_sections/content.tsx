@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback } from "react";
 import { Student } from "@/types/student";
 import {
@@ -29,8 +30,6 @@ const Content = () => {
     dialog,
     dialogConfirmDelete,
     getStudentsApi,
-    updateStudentsApi,
-    createStudentsApi,
     deleteStudentsApi,
     students,
     setFilter,
@@ -47,22 +46,7 @@ const Content = () => {
     },
     [deleteStudentsApi]
   );
-  const handleAddStudent = useCallback(
-    async (student: Student) => {
-      await createStudentsApi.call([student]);
-    },
-    [createStudentsApi]
-  );
 
-  const handleUpdateStudent = useCallback(
-    async (student: Student | Omit<Student, "email">) => {
-      await updateStudentsApi.call({
-        id: student.id as string,
-        student,
-      });
-    },
-    [updateStudentsApi]
-  );
   return (
     <Box sx={{ p: 3, maxWidth: "100%" }}>
       <RowStack
@@ -74,13 +58,7 @@ const Content = () => {
         <Typography variant='h5' fontWeight='bold'>
           Danh sách sinh viên
         </Typography>
-        <UtilityButtons
-          students={students}
-          handleAddStudent={handleAddStudent}
-          handleUpdateStudent={handleUpdateStudent}
-          dialog={dialog}
-          createStudentsApi={createStudentsApi}
-        />
+        <UtilityButtons />
       </RowStack>
       <RowStack mb={3} gap={2}>
         <Stack>

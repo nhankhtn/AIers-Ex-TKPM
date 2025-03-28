@@ -1,4 +1,5 @@
 import { AddressApi } from "@/api/address";
+import { SettingApi } from "@/api/settings";
 import useFunction, {
   DEFAULT_FUNCTION_RETURN,
   UseFunctionReturnType,
@@ -10,23 +11,37 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react";
+
+export interface SettingsProps {
+  allowedEmailDomains: string[];
+}
+
+export const initialSettings: SettingsProps = {
+  allowedEmailDomains: [],
+};
 
 interface ContextValue {
   getCountriesApi: UseFunctionReturnType<void, Country[]>;
   countries: Country[];
   provinces: Province[];
+  settings: SettingsProps;
 }
 
 export const MainContext = createContext<ContextValue>({
   getCountriesApi: DEFAULT_FUNCTION_RETURN,
   countries: [],
   provinces: [],
+  settings: initialSettings,
 });
 
 const MainProvider = ({ children }: { children: ReactNode }) => {
   const getCountriesApi = useFunction(AddressApi.getCountries);
   const getProvincesApi = useFunction(AddressApi.getProvinces);
+  const getSettingsApi = useFunction(SettingApi.getSettings);
+
+  const [settings, setSettings] = useState<SettingsProps>(initialSettings);
 
   const countries = useMemo(
     () => getCountriesApi.data || [],
@@ -39,13 +54,25 @@ const MainProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
+    if (getSettingsApi.data) {
+      const email = getSettingsApi.data.domain;
+      setSettings({
+        allowedEmailDomains: email.split(",").map((domain) => domain.trim()),
+      });
+    }
+  }, [getSettingsApi.data]);
+
+  useEffect(() => {
     getCountriesApi.call({});
     getProvincesApi.call({});
+    getSettingsApi.call({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <MainContext.Provider value={{ getCountriesApi, countries, provinces }}>
+    <MainContext.Provider
+      value={{ getCountriesApi, countries, provinces, settings }}
+    >
       {children}
     </MainContext.Provider>
   );

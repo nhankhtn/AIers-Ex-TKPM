@@ -32,6 +32,8 @@ import { useStatus } from "./use-status";
 import DrawerUpdateStudent from "../_components/drawer-update-student/drawer-update-student";
 import { isJSONString } from "@/utils/string-helper";
 import { objectToAddress } from "./table-config";
+import useDashboardSearch from "./use-dashboard-search";
+import DialogSettingsStatus from "../_components/dialog-settings-status";
 
 function parseAddress(address: string) {
   const parts = address.split(",").map((part) => part.trim());
@@ -45,22 +47,37 @@ function parseAddress(address: string) {
   };
 }
 
-interface UtilityButtonsProps {
-  students: Student[];
-  handleAddStudent: (student: Student) => Promise<void>;
-  handleUpdateStudent: (
-    student: Student | Omit<Student, "email">
-  ) => Promise<void>;
-  dialog: any;
-  createStudentsApi: any;
-}
-function UtilityButtons({
-  students,
-  handleAddStudent,
-  handleUpdateStudent,
-  dialog,
-  createStudentsApi,
-}: UtilityButtonsProps) {
+function UtilityButtons() {
+  const { updateStudentsApi, createStudentsApi, dialog, students } =
+    useDashboardSearch();
+  const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
+
+  const handleAddStudent = useCallback(
+    async (student: Student) => {
+      const res = await createStudentsApi.call([student]);
+      if ((res.data?.errors.length || 0) > 0) {
+        showSnackbarError(res.data?.errors.map((e) => e.code).join(", "));
+      } else {
+        showSnackbarSuccess("Thêm sinh viên thành công");
+        dialog.handleClose();
+      }
+    },
+    [createStudentsApi, dialog, showSnackbarError, showSnackbarSuccess]
+  );
+
+  const handleUpdateStudent = useCallback(
+    async (student: Student | Omit<Student, "email">) => {
+      const { error } = await updateStudentsApi.call({
+        id: student.id as string,
+        student,
+      });
+      if (!error) {
+        dialog.handleClose();
+      }
+    },
+    [updateStudentsApi, dialog]
+  );
+
   const {
     dialog: dialogFaculty,
     deleteFacultyApi,
@@ -84,7 +101,6 @@ function UtilityButtons({
   } = useStatus();
   const dialogExport = useDialog();
   const dialogImport = useDialog();
-  const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
 
   const [moreMenuAnchorEl, setMoreMenuAnchorEl] = useState<null | HTMLElement>(
     null
@@ -386,8 +402,7 @@ function UtilityButtons({
         items={programs}
         handleEditItem={(item) => updateProgramApi.call(item)}
       />
-      <DialogManagement
-        type={"status"}
+      <DialogSettingsStatus
         open={dialogStatus.open}
         onClose={dialogStatus.handleClose}
         handleAddItem={addStatusApi.call}
