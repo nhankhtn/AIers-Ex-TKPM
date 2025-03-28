@@ -17,8 +17,7 @@ namespace StudentManagement.API.Controllers
         public async Task<IActionResult> GetEmailDomain()
         {
             var result = await _emailService.GetEmailDomainAsync();
-            return Ok(result);
-           
+            return Ok(new { domain = result });    
         }
         
         [HttpPut("email-domain")]

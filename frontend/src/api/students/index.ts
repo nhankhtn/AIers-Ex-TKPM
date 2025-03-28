@@ -35,14 +35,12 @@ export class StudentApi {
     );
   }
 
-  static async createStudent(
-    students: Omit<Student, "id">[]
-  ): Promise<{
+  static async createStudent(students: Omit<Student, "id">[]): Promise<{
     data: {
       acceptableStudents: Student[];
       unacceptableStudents: Omit<Student, "id">[];
-    }
-
+    };
+    errors: { index: number; code: string }[];
   }> {
     return await apiPost("/students", students);
   }

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback } from "react";
 import { Student } from "@/types/student";
 import {
@@ -22,16 +23,13 @@ import { useStatus } from "./use-status";
 import SelectFilter from "../_components/select-filter";
 import { getTableConfig } from "./table-config";
 import DeleteIcon from "@mui/icons-material/Delete";
-import UtilityButtons from "../_components/utility-buttons";
-import DrawerUpdateStudent from "../_components/drawer-update-student";
+import UtilityButtons from "./utility-buttons";
 
 const Content = () => {
   const {
     dialog,
     dialogConfirmDelete,
     getStudentsApi,
-    updateStudentsApi,
-    createStudentsApi,
     deleteStudentsApi,
     students,
     setFilter,
@@ -48,22 +46,7 @@ const Content = () => {
     },
     [deleteStudentsApi]
   );
-  const handleAddStudent = useCallback(
-    async (student: Student) => {
-      await createStudentsApi.call([student]);
-    },
-    [createStudentsApi]
-  );
 
-  const handleUpdateStudent = useCallback(
-    async (student: Student | Omit<Student, "email">) => {
-      await updateStudentsApi.call({
-        id: student.id as string,
-        student,
-      });
-    },
-    [updateStudentsApi]
-  );
   return (
     <Box sx={{ p: 3, maxWidth: "100%" }}>
       <RowStack
@@ -72,16 +55,10 @@ const Content = () => {
           mb: 3,
         }}
       >
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant='h5' fontWeight='bold'>
           Danh sách sinh viên
         </Typography>
-        <UtilityButtons
-          students={students}
-          handleAddStudent={handleAddStudent}
-          handleUpdateStudent={handleUpdateStudent}
-          dialog={dialog}
-          createStudentsApi={createStudentsApi}
-        />
+        <UtilityButtons />
       </RowStack>
       <RowStack mb={3} gap={2}>
         <Stack>
@@ -107,10 +84,10 @@ const Content = () => {
               <PeopleIcon sx={{ color: "#1976d2", fontSize: 30 }} />
             </RowStack>
             <Box>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant='body2' color='text.secondary'>
                 Tổng số sinh viên
               </Typography>
-              <Typography variant="h5" fontWeight="bold">
+              <Typography variant='h5' fontWeight='bold'>
                 {getStudentsApi.data?.total || 0}
               </Typography>
             </Box>
@@ -154,19 +131,19 @@ const Content = () => {
             return (
               <RowStack gap={1}>
                 <Button
-                  variant="outlined"
-                  size="small"
+                  variant='outlined'
+                  size='small'
                   sx={{ borderRadius: "20px", whiteSpace: "nowrap" }}
                   onClick={() => dialog.handleOpen(row)}
                 >
                   Chỉnh sửa
                 </Button>
                 <IconButton
-                  size="small"
-                  color="error"
+                  size='small'
+                  color='error'
                   onClick={() => dialogConfirmDelete.handleOpen(row)}
                 >
-                  <DeleteIcon fontSize="small" />
+                  <DeleteIcon fontSize='small' />
                 </IconButton>
               </RowStack>
             );
@@ -175,7 +152,7 @@ const Content = () => {
         {students.length > 0 && (
           <CustomPagination
             pagination={pagination}
-            justifyContent="end"
+            justifyContent='end'
             px={2}
             pt={2}
             borderTop={1}
