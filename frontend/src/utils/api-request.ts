@@ -74,7 +74,7 @@ const apiFetch = async (
         result.error.message ||
         response.status
       }`;
-      throw new Error("message");
+      throw new Error(message);
     }
     return result;
   } catch (error) {
