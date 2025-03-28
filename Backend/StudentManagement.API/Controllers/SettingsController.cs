@@ -26,7 +26,9 @@ namespace StudentManagement.API.Controllers
             var result = await _emailService.SetEmailDomainAsync(domain);
             if (result)
             {
-                return NoContent();
+                return Ok(new {
+                    message = "Email domain has been updated successfully"
+                });
             }
             return BadRequest("Invalid domain format");
         }
