@@ -27,7 +27,7 @@ namespace StudentManagement.BLL.Services.EmailService
         {
             try
             {
-                if(!Regex.IsMatch(domain, @"^@[A-Za-z0-9.-]+(?<!-)\.[A-Za-z]{2,}$") || string.IsNullOrWhiteSpace(domain))
+                if(string.IsNullOrWhiteSpace(domain))
                 {
                     throw new ArgumentException("Invalid domain.");
                 }
