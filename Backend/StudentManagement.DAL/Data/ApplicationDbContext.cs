@@ -25,6 +25,13 @@ namespace StudentManagement.DAL.Data
         public DbSet<AuditEntry> AuditEntries { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
+        // add new dbset
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Class> Classes { get; set; }
+        public DbSet<ClassStudent> ClassStudents { get; set; }
+        public DbSet<RegisterCancellationHistory> RegisterCancellationHistories { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -72,6 +79,17 @@ namespace StudentManagement.DAL.Data
                 .WithOne(s => s.Student)
                 .HasForeignKey<Identity>(a => a.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<Class>()
+                .HasMany(e => e.Students)
+                .WithMany(e => e.Classes)
+                .UsingEntity<ClassStudent>(
+                    r => r.HasOne<Student>(e => e.Student).WithMany(e => e.ClassStudents).HasForeignKey(e => e.StudentId),
+                    l => l.HasOne<Class>(e => e.Class).WithMany(e => e.ClassStudents).HasForeignKey(e => e.ClassId)
+                );
+
+
 
             modelBuilder.Entity<Program>(b =>
             {
