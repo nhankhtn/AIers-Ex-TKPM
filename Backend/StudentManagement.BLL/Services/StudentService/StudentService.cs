@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -92,11 +93,12 @@ namespace StudentManagement.BLL.Services.StudentService
                     return false;
                 } },
 
-                { nameof(Student.Identity), (student, typeValue) =>
+                { nameof(Student.Identity), (student, value) =>
                 {
-                    if (typeValue is not null && typeValue is IdentityDTO identityDTO)
+                    if (value is not null && value is IdentityDTO identity)
                     {
-                        student.Identity.Type = identityDTO.Type.ToEnum<IdentityType>();
+                        student.Identity ??= new Identity();
+                        _mapper.Map(identity, student.Identity);
                         return true;
                     }
                     return false;
@@ -181,6 +183,10 @@ namespace StudentManagement.BLL.Services.StudentService
                 result.AcceptableStudents = _mapper.Map<IEnumerable<StudentDTO>>(addList).ToList();
                 return Result<AddListStudentResult>.Multi(result, null, errors);
             }
+            catch (DbUpdateException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("IX_identity_documents_number"))
+            {
+                return Result<AddListStudentResult>.Fail("DUPLICATE_DOCUMENT_NUMBER", "Document number is duplicated");
+            }
             catch (Exception ex)
             {
                 return Result<AddListStudentResult>.Fail("500", ex.Message);
@@ -256,7 +262,8 @@ namespace StudentManagement.BLL.Services.StudentService
                     var value = prop.GetValue(studentDTO);
                     if (_canNotUpdatProperties.Contains(prop.Name) || value is null) continue;
 
-                    if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, studentDTO))) 
+                    if (_userValidator.NeedValidateProperties.Contains(prop.Name) 
+                        && !(_userValidator.StudentValidate(prop.Name, studentDTO))) 
                         return Result<StudentDTO>.Fail($"INVALID_{prop.Name.ToUpper()}", $"{prop.Name} not found");
 
                     if (_studentChecker.NeedCheckedProperties.Contains(prop.Name)) {
@@ -273,8 +280,12 @@ namespace StudentManagement.BLL.Services.StudentService
                     }
                 }
 
-                var res = await _studentRepository.UpdateStudentAsync(_mapper.Map<Student>(resExistStudent));
+                var res = await _studentRepository.UpdateStudentAsync(resExistStudent);
                 return Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent));
+            }
+            catch (SqlException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("IX_identity_document_number"))
+            {
+                return Result<StudentDTO>.Fail("DUPLICATE_DOCUMENT_NUMBER", "Document number is duplicated");
             }
             catch (Exception ex)
             {

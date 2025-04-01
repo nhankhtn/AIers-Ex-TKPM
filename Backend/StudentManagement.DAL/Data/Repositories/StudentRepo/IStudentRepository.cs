@@ -22,11 +22,11 @@ public interface IStudentRepository
 
     Task DeleteStudentAsync(string studentId);
 
-    Task<bool> IsEmailDuplicateAsync(string email);
+    Task<Student?> GetStudentByEmailAsync(string email);
 
-    Task<bool> IsPhoneDuplicateAsync(string phone);
+    Task<Student?> GetStudentByPhoneAsync(string phone);
 
-    Task<bool> IsDocumentNumberDuplicateAsync(string documentNumber);
+    Task<Student?> GetStudentByDocumentNumberAsync(string documentNumber);
 
     Task<int> GetLatestStudentIdAsync(int course);
 

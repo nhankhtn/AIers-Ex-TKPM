@@ -67,7 +67,9 @@ namespace StudentManagement.BLL
                 .ForMember(dest => dest.CountryIssue, opt => opt.MapFrom(src => src.Country));
             CreateMap<IdentityDTO, Identity>()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToEnum<IdentityType>()))
-                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.CountryIssue));
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.CountryIssue))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
         }
     }
 }
