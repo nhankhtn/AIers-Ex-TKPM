@@ -10,6 +10,8 @@ using Xunit;
 
 namespace StudentManagement.Tests.Unit.Repository
 {
+    [Collection("ProgramRepository")]
+
     public class ProgramRepositoryTest
     {
         private readonly ApplicationDbContext _context;
@@ -17,13 +19,8 @@ namespace StudentManagement.Tests.Unit.Repository
 
         public ProgramRepositoryTest()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            _context = new ApplicationDbContext(options, new List<AuditEntry>());
+            _context = TestDbContextFactory.Create();
             _programRepository = new ProgramRepository(_context);
-            _context.Seed();
         }
 
         [Fact]
@@ -31,15 +28,15 @@ namespace StudentManagement.Tests.Unit.Repository
         {
             var programs = await _programRepository.GetAllProgramsAsync();
             Assert.NotNull(programs);
-            Assert.Equal(2, programs.Count());
+            Assert.Equal(3, programs.Count());
         }
 
         [Fact]
         public async Task GetProgramByIdAsync_ProgramExists_ReturnsProgram()
         {
-            var program = await _programRepository.GetProgramByIdAsync(TestDataSeeder.programs[0].Id);
+            var program = await _programRepository.GetProgramByIdAsync(TestDbContextFactory.Guid1.ToString());
             Assert.NotNull(program);
-            Assert.Equal(TestDataSeeder.programs[0].Id, program.Id);
+            Assert.Equal(TestDbContextFactory.Guid1, program.Id);
         }
 
         [Fact]
@@ -52,9 +49,11 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task GetProgramByNameAsync_ProgramExists_ReturnsProgram()
         {
-            var program = await _programRepository.GetProgramByNameAsync(TestDataSeeder.programs[0].Name);
+            var p = await _programRepository.GetProgramByIdAsync(TestDbContextFactory.Guid1.ToString());
+            Assert.NotNull(p);
+            var program = await _programRepository.GetProgramByNameAsync(p.Name);
             Assert.NotNull(program);
-            Assert.Equal(TestDataSeeder.programs[0].Name, program.Name);
+            Assert.Equal(p.Name, program.Name);
         }
 
         [Fact]
@@ -82,7 +81,7 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task UpdateProgramAsync_ProgramExists_UpdatesProgram()
         {
-            var program = await _programRepository.GetProgramByIdAsync(TestDataSeeder.programs[0].Id);
+            var program = await _programRepository.GetProgramByIdAsync(TestDbContextFactory.Guid1.ToString());
             Assert.NotNull(program);
             program.Name = "Chuong Trinh Cap Nhat";
 

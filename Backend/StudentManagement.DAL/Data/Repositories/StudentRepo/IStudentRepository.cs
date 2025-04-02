@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using StudentManagement.Domain.Utils;
 using StudentManagement.Domain.Models;
-using StudentManagement.DAL.Data.Utils;
 namespace StudentManagement.DAL.Data.Repositories.StudentRepo;
 
 public interface IStudentRepository

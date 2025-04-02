@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Identity.Client;
-using StudentManagement.DAL.Data.Utils;
 using StudentManagement.Domain.Attributes;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;

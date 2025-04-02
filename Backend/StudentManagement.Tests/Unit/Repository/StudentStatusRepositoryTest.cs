@@ -12,6 +12,7 @@ using Xunit;
 
 namespace StudentManagement.Tests.Unit.Repository
 {
+    [Collection("StudentRepository")]
     public class StatusRepositoryTest
     {
         private readonly ApplicationDbContext _context;
@@ -20,16 +21,9 @@ namespace StudentManagement.Tests.Unit.Repository
 
         public StatusRepositoryTest()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            var _audit = new List<AuditEntry>();
-            _context = new ApplicationDbContext(options, _audit);
+            _context = TestDbContextFactory.Create();
             _statusRepository = new StudentStatusRepository(_context);
             _studentRepository = new StudentRepository(_context);
-
-            _context.Seed();
         }
 
         [Fact]
@@ -43,9 +37,9 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task GetStatusByIdAsync_StatusExists_ReturnsStatus()
         {
-            var status = await _statusRepository.GetStudentStatusByIdAsync(TestDataSeeder.statuses[0].Id);
+            var status = await _statusRepository.GetStudentStatusByIdAsync(TestDbContextFactory.Guid1.ToString());
             Assert.NotNull(status);
-            Assert.Equal(TestDataSeeder.statuses[0].Id, status.Id);
+            Assert.Equal(TestDbContextFactory.Guid1, status.Id);
         }
 
         [Fact]
@@ -58,9 +52,11 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task GetStatusByNameAsync_StatusExists_ReturnsStatus()
         {
-            var status = await _statusRepository.GetStudentStatusByNameAsync(TestDataSeeder.statuses[0].Name);
+            var s = await _statusRepository.GetStudentStatusByIdAsync(TestDbContextFactory.Guid1.ToString());
+            Assert.NotNull(s);
+            var status = await _statusRepository.GetStudentStatusByNameAsync(s.Name);
             Assert.NotNull(status);
-            Assert.Equal(TestDataSeeder.statuses[0].Name, status.Name);
+            Assert.Equal(s.Name, status.Name);
         }
 
         [Fact]
@@ -88,7 +84,7 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task UpdateStatusAsync_StatusExists_UpdatesStatus()
         {
-            var status = await _statusRepository.GetStudentStatusByIdAsync(TestDataSeeder.statuses[0].Id);
+            var status = await _statusRepository.GetStudentStatusByIdAsync(TestDbContextFactory.Guid1.ToString());
             Assert.NotNull(status);
             status.Name = "Suspended";
 
@@ -101,7 +97,7 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task DeleteStatusAsync_StatusWithStudents_DeleteStudentsBeforeStatus()
         {
-            var status = await _statusRepository.GetStudentStatusByIdAsync(TestDataSeeder.statuses[0].Id);
+            var status = await _statusRepository.GetStudentStatusByIdAsync(TestDbContextFactory.Guid1.ToString());
             Assert.NotNull(status);
 
             var student = await _studentRepository.GetAllStudentsAsync(1, 10, null, null, status.Name, null);

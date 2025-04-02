@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -15,6 +16,7 @@ using StudentManagement.Domain.Enums;
 using StudentManagement.Domain.Models;
 namespace StudentManagement.Tests.Unit.Repository
 {
+    [Collection("StudentRepository")]
     public class StudentRepositoryTests
     {
         private readonly ApplicationDbContext _context;
@@ -22,15 +24,7 @@ namespace StudentManagement.Tests.Unit.Repository
 
         public StudentRepositoryTests()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                            .UseInMemoryDatabase("TestDatabase")  // Sử dụng cùng một tên database
-                            .Options;
-
-            _context = new ApplicationDbContext(options, null!);
-            _context.Database.EnsureDeleted();  // Xóa database hiện tại trước khi tạo mới
-            _context.Database.EnsureCreated();  // Tạo schema mới
-            _context.Seed();  // Seed lại dữ liệu
-
+            _context = TestDbContextFactory.Create();
             _studentRepository = new StudentRepository(_context);
         }
 
@@ -63,15 +57,14 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task GetStudentByNameAsync_StudentExist_ReturnsStudent()
         {
-
-            //Arrange
-            string name = "Tran Thi B";
+            var std = await _studentRepository.GetStudentByIdAsync("ST001");
+            Assert.NotNull(std);
             // Act
-            var students = await _studentRepository.GetStudentsByNameAsync(name);
+            var students = await _studentRepository.GetStudentsByNameAsync(std.Name);
             var student = students.FirstOrDefault();
             // Assert
             Assert.NotNull(student);
-            Assert.Equal(name, student.Name);
+            Assert.Equal(std.Name, student.Name);
         }
 
         [Fact]
@@ -94,9 +87,9 @@ namespace StudentManagement.Tests.Unit.Repository
                    PermanentAddress = "Da Nang, Vietnam",
                    TemporaryAddress = "Hue, Vietnam",
                    MailingAddress = "Da Nang, Vietnam",
-                   ProgramId = TestDataSeeder.programs[0].Id,
-                   StatusId = TestDataSeeder.statuses[0].Id,
-                   FacultyId = TestDataSeeder.faculties[1].Id,
+                   ProgramId = TestDbContextFactory.Guid1,
+                   StatusId = TestDbContextFactory.Guid1,
+                   FacultyId = TestDbContextFactory.Guid1,
                    Nationality = "Vietnam",
                    Identity = new Identity
                    {
@@ -117,9 +110,9 @@ namespace StudentManagement.Tests.Unit.Repository
                    PermanentAddress = "Da Nang, Vietnam",
                    TemporaryAddress = "Hue, Vietnam",
                    MailingAddress = "Da Nang, Vietnam",
-                   ProgramId = TestDataSeeder.programs[1].Id,
-                   StatusId = TestDataSeeder.statuses[1].Id,
-                   FacultyId = TestDataSeeder.faculties[1].Id,
+                   ProgramId = TestDbContextFactory.Guid1,
+                   StatusId = TestDbContextFactory.Guid2,
+                   FacultyId = TestDbContextFactory.Guid2,
                    Nationality = "Vietnam",
                    Identity = new Identity
                    {
@@ -168,22 +161,19 @@ namespace StudentManagement.Tests.Unit.Repository
             // Assert
             var student = await _studentRepository.GetStudentByIdAsync(studentId);
             Assert.Null(student);
-
-            // Add deleted student back
-            await _studentRepository.AddStudentAsync(new List<Student> { TestDataSeeder.students[1] });
         }
 
         [Fact]
         public async Task IsEmailExistAsync_EmailExist_ReturnsTrue()
         {
             // Arrange
-            string email = "nguyenvana@example.com";
+            string email = "john@gmail.com";
 
             // Act
-            var result = await _studentRepository.IsEmailDuplicateAsync(email);
+            var result = await _studentRepository.GetStudentByEmailAsync(email);
 
             // Assert
-            Assert.True(result);
+            Assert.NotNull(result);
         }
     }
 }

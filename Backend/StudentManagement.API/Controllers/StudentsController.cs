@@ -18,22 +18,18 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<IActionResult> GetAllStudents(int page, int limit, string? faculty, string? program, string? status, string? key)
+        public async Task<ActionResult<GetStudentsDTO>> GetAllStudents(int page, int limit, string? faculty, string? program, string? status, string? key)
         {
             var result = await _studentService.GetAllStudentsAsync(page, limit, faculty, program, status, key);
             if (result.Success)
             {
-                if (result.Data is null) return NotFound(ApiResponse<IEnumerable<StudentDTO>>.NotFound(
-                    error: new ApiError() { 
+                if (result.Data is null) return NotFound(new ApiResponse<string>(
+                    error: new ApiError() {
                         Code = result.ErrorCode,
                         Message = result.ErrorMessage
                     }
                 ));
-                return Ok(new
-                {
-                    data = result.Data.Students,
-                    total = result.Data.Total
-                });
+                return Ok(result.Data);
             }
             return NotFound(new
             {
@@ -48,7 +44,7 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddStudent(IEnumerable<StudentDTO> studentDTOs)
+        public async Task<ActionResult<ApiResponse<AddListStudentResult>>> AddStudent(IEnumerable<StudentDTO> studentDTOs)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +53,7 @@ namespace StudentManagement.API.Controllers
                 .Select(e => e.ErrorMessage)
                 .FirstOrDefault();
 
-                return BadRequest(ApiResponse<string>.BadRequest(
+                return BadRequest(ApiResponse<AddListStudentResult>.BadRequest(
                     error: new ApiError()
                     {
                         Code = firstError
@@ -74,7 +70,7 @@ namespace StudentManagement.API.Controllers
                     errors: result.Errors?.Select(e => new ApiError() { Index = e.index, Code = e.errorCode }).ToList()
                 ));
             }
-            return BadRequest(ApiResponse<string>.BadRequest(
+            return BadRequest(ApiResponse<AddListStudentResult>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
@@ -87,7 +83,7 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<StudentDTO>> UpdateStudent(string id, StudentDTO updateStudentDTO)
+        public async Task<ActionResult<ApiResponse<StudentDTO>>> UpdateStudent(string id, StudentDTO updateStudentDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -97,7 +93,7 @@ namespace StudentManagement.API.Controllers
                 .Select(e => e.ErrorMessage)
                 .FirstOrDefault();
 
-                return BadRequest(ApiResponse<string>.BadRequest(
+                return BadRequest(ApiResponse<StudentDTO>.BadRequest(
                     error: new ApiError()
                     {
                         Code = firstError
@@ -111,7 +107,7 @@ namespace StudentManagement.API.Controllers
                     data: result.Data
                 ));
             }
-            return BadRequest(ApiResponse<string>.BadRequest(
+            return BadRequest(ApiResponse<StudentDTO>.BadRequest(
                 error: new ApiError()
                 {
                     Code = result.ErrorCode,

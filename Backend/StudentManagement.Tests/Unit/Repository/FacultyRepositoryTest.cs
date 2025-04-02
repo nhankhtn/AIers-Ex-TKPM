@@ -12,6 +12,8 @@ using Xunit;
 
 namespace StudentManagement.Tests.Unit.Repository
 {
+    [Collection("FacultyRepository")]
+
     public class FacultyRepositoryTest
     {
         private readonly ApplicationDbContext _context;
@@ -20,16 +22,9 @@ namespace StudentManagement.Tests.Unit.Repository
 
         public FacultyRepositoryTest()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            var _audit = new List<AuditEntry>();
-            _context = new ApplicationDbContext(options, _audit);
+            _context = TestDbContextFactory.Create();
             _facultyRepository = new FacultyRepository(_context);
             _studentRepository = new StudentRepository(_context);
-
-            _context.Seed();
         }
 
         [Fact]
@@ -37,15 +32,15 @@ namespace StudentManagement.Tests.Unit.Repository
         {
             var faculties = await _facultyRepository.GetAllFacultiesAsync();
             Assert.NotNull(faculties);
-            Assert.Equal(2, faculties.Count());
+            Assert.Equal(3, faculties.Count());
         }
 
         [Fact]
         public async Task GetFacultyByIdAsync_FacultyExists_ReturnsFaculty()
         {
-            var faculty = await _facultyRepository.GetFacultyByIdAsync(TestDataSeeder.faculties[0].Id);
+            var faculty = await _facultyRepository.GetFacultyByIdAsync(TestDbContextFactory.Guid1);
             Assert.NotNull(faculty);
-            Assert.Equal(TestDataSeeder.faculties[0].Id, faculty.Id);
+            Assert.Equal(TestDbContextFactory.Guid1, faculty.Id);
         }
 
         [Fact]
@@ -58,9 +53,11 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task GetFacultyByNameAsync_FacultyExists_ReturnsFaculty()
         {
-            var faculty = await _facultyRepository.GetFacultyByNameAsync(TestDataSeeder.faculties[0].Name);
+            var f = await _facultyRepository.GetFacultyByIdAsync(TestDbContextFactory.Guid1.ToString());
+            Assert.NotNull(f);
+            var faculty = await _facultyRepository.GetFacultyByNameAsync(f.Name);
             Assert.NotNull(faculty);
-            Assert.Equal(TestDataSeeder.faculties[0].Name, faculty.Name);
+            Assert.Equal(f.Name, faculty.Name);
         }
 
         [Fact]
@@ -88,7 +85,7 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task UpdateFacultyAsync_FacultyExists_UpdatesFaculty()
         {
-            var faculty = await _facultyRepository.GetFacultyByIdAsync(TestDataSeeder.faculties[0].Id);
+            var faculty = await _facultyRepository.GetFacultyByIdAsync(TestDbContextFactory.Guid1.ToString());
             Assert.NotNull(faculty);
             faculty.Name = "Khoa Kinh Tế";
 
@@ -101,7 +98,7 @@ namespace StudentManagement.Tests.Unit.Repository
         [Fact]
         public async Task DeleteFacultyAsync_FacultyWithStudents_DeleteStudentsBeforeFaculty()
         {
-            var faculty = await _facultyRepository.GetFacultyByIdAsync(TestDataSeeder.faculties[0].Id);
+            var faculty = await _facultyRepository.GetFacultyByIdAsync(TestDbContextFactory.Guid1.ToString());
             Assert.NotNull(faculty);
 
             var student = await _studentRepository.GetAllStudentsAsync(1, 10, faculty.Name, null, null, null);

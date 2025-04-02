@@ -14,7 +14,7 @@ namespace StudentManagement.BLL.DTOs.Students
         /// <summary>
         /// List of students
         /// </summary>
-        public IEnumerable<StudentDTO> Students { get; set; } = new List<StudentDTO>();
+        public IEnumerable<StudentDTO> Data { get; set; } = new List<StudentDTO>();
         public int Total { get; set; }
     }
 }

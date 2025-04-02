@@ -45,7 +45,10 @@ namespace StudentManagement.BLL.Services.StudentService
         private Dictionary<int, int> generateIdCache = new Dictionary<int, int>();
 
         public StudentService(IStudentRepository studentRepository,
-            IFacultyRepository facultyRepository, IStudentStatusRepository studentStatusRepository, IProgramRepository programRepository, IStudentValidator userValidator,
+            IFacultyRepository facultyRepository, 
+            IStudentStatusRepository studentStatusRepository, 
+            IProgramRepository programRepository, 
+            IStudentValidator userValidator,
             IStudentChecker studentChecker,
             IMapper mapper)
         {
@@ -116,7 +119,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var res = await _studentRepository.GetAllStudentsAsync(page, pageSize, faculty, program, status, key);
                 return Result<GetStudentsDTO>.Ok(new GetStudentsDTO()
                 {
-                    Students = _mapper.Map<IEnumerable<StudentDTO>>(res.students),
+                    Data = _mapper.Map<IEnumerable<StudentDTO>>(res.students),
                     Total = res.total
                 });
             }
@@ -154,6 +157,8 @@ namespace StudentManagement.BLL.Services.StudentService
                         }
                         if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, student)))
                         {
+                            var koko = _userValidator.NeedValidateProperties.Contains(prop.Name);
+                            var kk = _userValidator.StudentValidate(prop.Name, student);
                             result.UnacceptableStudents.Add(student);
                             errors.Add(($"INVALID_{prop.Name.ToUpper()}", index));
                             validate = false;
@@ -193,7 +198,6 @@ namespace StudentManagement.BLL.Services.StudentService
             }
             
         }
-
 
 
         // Get student by id
@@ -283,7 +287,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var res = await _studentRepository.UpdateStudentAsync(resExistStudent);
                 return Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent));
             }
-            catch (SqlException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("IX_identity_document_number"))
+            catch (SqlException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("IX_identity_documents_number"))
             {
                 return Result<StudentDTO>.Fail("DUPLICATE_DOCUMENT_NUMBER", "Document number is duplicated");
             }
