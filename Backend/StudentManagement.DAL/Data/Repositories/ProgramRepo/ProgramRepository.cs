@@ -49,15 +49,6 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
 
         public async Task<Program?> UpdateProgramAsync(Program program)
         {
-            //var existingProgram = await _context.Programs.FindAsync(program.Id);
-
-            //foreach (var prop in typeof(Program).GetProperties())
-            //{
-            //    var value = prop.GetValue(program);
-            //    if (value is null) continue;
-            //    if (prop.GetValue(existingProgram) == value) continue;
-            //    prop.SetValue(existingProgram, value);
-            //}
             _context.Programs.Update(program);
             await _context.SaveChangesAsync();
             return program;
@@ -65,7 +56,8 @@ namespace StudentManagement.DAL.Data.Repositories.ProgramRepo
 
         public async Task DeleteProgramAsync(Guid programId)
         {
-            var existingProgram = new Program() { Id = programId };
+            var existingProgram = await _context.Programs.FindAsync(programId);
+            if (existingProgram is null) return;
             _context.Programs.Remove(existingProgram);
             await _context.SaveChangesAsync();
         }

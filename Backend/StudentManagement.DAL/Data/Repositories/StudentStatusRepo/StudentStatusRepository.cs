@@ -50,14 +50,6 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
 
         public async Task<StudentStatus?> UpdateStudentStatusAsync(StudentStatus studentStatus)
         {
-            //var existingStatus = await _context.StudentStatuses.FindAsync(studentStatus.Id);
-            //foreach (var prop in typeof(StudentStatus).GetProperties())
-            //{
-            //    var value = prop.GetValue(studentStatus);
-            //    if (value is null) continue;
-            //    if (prop.GetValue(existingStatus) == value) continue;
-            //    prop.SetValue(existingStatus, value);
-            //}
             _context.StudentStatuses.Update(studentStatus);
             await _context.SaveChangesAsync();
             return studentStatus;
@@ -65,7 +57,8 @@ namespace StudentManagement.DAL.Data.Repositories.StudentStatusRepo
 
         public async Task DeleteStudentStatusAsync(Guid statusId)
         {
-            var studentStatus = new StudentStatus() { Id = statusId };
+            var studentStatus = await _context.StudentStatuses.FindAsync(statusId);
+            if (studentStatus is null) return;
             _context.StudentStatuses.Remove(studentStatus);
             await _context.SaveChangesAsync();
         }

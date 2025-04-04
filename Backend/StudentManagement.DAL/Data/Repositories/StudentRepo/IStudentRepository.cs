@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using StudentManagement.Domain.Utils;
 using StudentManagement.Domain.Models;
-using StudentManagement.DAL.Data.Utils;
 namespace StudentManagement.DAL.Data.Repositories.StudentRepo;
 
 public interface IStudentRepository
@@ -22,11 +21,11 @@ public interface IStudentRepository
 
     Task DeleteStudentAsync(string studentId);
 
-    Task<bool> IsEmailDuplicateAsync(string email);
+    Task<Student?> GetStudentByEmailAsync(string email);
 
-    Task<bool> IsPhoneDuplicateAsync(string phone);
+    Task<Student?> GetStudentByPhoneAsync(string phone);
 
-    Task<bool> IsDocumentNumberDuplicateAsync(string documentNumber);
+    Task<Student?> GetStudentByDocumentNumberAsync(string documentNumber);
 
     Task<int> GetLatestStudentIdAsync(int course);
 
