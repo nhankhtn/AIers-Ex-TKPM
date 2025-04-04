@@ -157,8 +157,6 @@ namespace StudentManagement.BLL.Services.StudentService
                         }
                         if (_userValidator.NeedValidateProperties.Contains(prop.Name) && !(_userValidator.StudentValidate(prop.Name, student)))
                         {
-                            var koko = _userValidator.NeedValidateProperties.Contains(prop.Name);
-                            var kk = _userValidator.StudentValidate(prop.Name, student);
                             result.UnacceptableStudents.Add(student);
                             errors.Add(($"INVALID_{prop.Name.ToUpper()}", index));
                             validate = false;
@@ -287,7 +285,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var res = await _studentRepository.UpdateStudentAsync(resExistStudent);
                 return Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(resExistStudent));
             }
-            catch (SqlException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("IX_identity_documents_number"))
+            catch (DbUpdateException ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("IX_identity_documents_number"))
             {
                 return Result<StudentDTO>.Fail("DUPLICATE_DOCUMENT_NUMBER", "Document number is duplicated");
             }
