@@ -23,6 +23,8 @@ namespace StudentManagement.Domain.Models
 
         [Column("score")]
         public decimal Score { get; set; }
+
+        public RegisterCancellationHistory? RegisterCancellationHistories { get; set; } 
     }
 
     [Table("register_cancellation_history")]
@@ -32,13 +34,11 @@ namespace StudentManagement.Domain.Models
         [Key]
         public int Id { get; set; }
         [Column("class_id")]
-        public int ClassId { get; set; }
-        public Class Class { get; set; } = null!;
+        public int? ClassId { get; set; }
 
         [Column("student_id")]
-        public string StudentId { get; set; } = null!;
-        public Student Student { get; set; } = null!;
-        public DateTime Date { get; set; }
-        public ClassStudent ClassStudent { get; set; } = null!;
+        public string? StudentId { get; set; }
+        public DateTime Time { get; set; }
+        public ClassStudent? ClassStudent { get; set; } = null!;
     }
 }

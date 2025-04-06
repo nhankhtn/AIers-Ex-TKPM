@@ -36,6 +36,18 @@ namespace StudentManagement.DAL.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<ClassStudent>(
+                nestedBuilder =>
+                {
+                    nestedBuilder.HasKey(e => new { e.StudentId, e.ClassId });
+
+                    nestedBuilder.HasOne(e => e.RegisterCancellationHistories)
+                                 .WithOne(e => e.ClassStudent)
+                                 .HasPrincipalKey<ClassStudent>(e => new { e.StudentId, e.ClassId })
+                                 .HasForeignKey<RegisterCancellationHistory>(e => new { e.StudentId, e.ClassId })
+                                 .IsRequired();
+                }
+            );
 
 
             modelBuilder.Entity<Student>()
@@ -81,6 +93,9 @@ namespace StudentManagement.DAL.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
 
+
+            
+
             modelBuilder.Entity<Class>()
                 .HasMany(e => e.Students)
                 .WithMany(e => e.Classes)
@@ -88,6 +103,8 @@ namespace StudentManagement.DAL.Data
                     r => r.HasOne<Student>(e => e.Student).WithMany(e => e.ClassStudents).HasForeignKey(e => e.StudentId),
                     l => l.HasOne<Class>(e => e.Class).WithMany(e => e.ClassStudents).HasForeignKey(e => e.ClassId)
                 );
+
+            
 
 
 

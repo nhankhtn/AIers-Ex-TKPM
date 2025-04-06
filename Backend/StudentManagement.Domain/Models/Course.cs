@@ -25,7 +25,7 @@ namespace StudentManagement.Domain.Models
         public int Credits { get; set; }
 
         [Column("faculty_id")]
-        public int FacultyId { get; set; }
+        public Guid FacultyId { get; set; }
         public Faculty Faculty { get; set; } = null!;
 
         [Column("description", TypeName = "nvarchar(max)")]
@@ -35,8 +35,10 @@ namespace StudentManagement.Domain.Models
         [Column("required_course_id")]
         public int? RequiredCourseId { get; set; }
 
-        [Column("is_deleted")]
-        public bool IsDeleted { get; set; } = false;
+        [Column("deleted_at")]
+        public DateTime DeletedAt { get; set; }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
 
         public ICollection<Class> Classes { get; set; } = null!;
     }
