@@ -41,12 +41,12 @@ namespace StudentManagement.BLL.Checker
             switch (propertyName)
             {
                 case nameof(StudentDTO.Email):
-                    return student.Email is null || await CheckEmailAsync(student.Email)
+                    return student.Email is null || await CheckEmailAsync(student.Email, student.Id)
                         ? (true, string.Empty)
                         : (false, "DUPLICATE_EMAIL");
 
                 case nameof(StudentDTO.Phone):
-                    return student.Phone is null || await CheckPhoneAsync(student.Phone)
+                    return student.Phone is null || await CheckPhoneAsync(student.Phone, student.Id)
                         ? (true, string.Empty)
                         : (false, "DUPLICATE_PHONE");
 
@@ -70,7 +70,7 @@ namespace StudentManagement.BLL.Checker
                         : (false, "INVALID_STATUS");
 
                 case nameof(StudentDTO.Identity):
-                    return student.Identity?.DocumentNumber is null || await CheckDocumentNumberAsync(student.Identity.DocumentNumber)
+                    return student.Identity?.DocumentNumber is null || await CheckDocumentNumberAsync(student.Identity.DocumentNumber, student.Id)
                         ? (true, string.Empty)
                         : (false, "DUPLICATE_DOCUMENT_NUMBER");
 
@@ -89,19 +89,25 @@ namespace StudentManagement.BLL.Checker
             return newStatus.Order >= student.Status.Order;
         }
 
-        public async Task<bool> CheckEmailAsync(string email)
+        public async Task<bool> CheckEmailAsync(string email, string? userId = null)
         {
-            return !await _studentRepository.IsEmailDuplicateAsync(email);
+            var std = await _studentRepository.GetStudentByEmailAsync(email);
+            if (std is null) return true;
+            return userId is not null && std.Id == userId;
         }
 
-        public async Task<bool> CheckPhoneAsync(string phone)
+        public async Task<bool> CheckPhoneAsync(string phone, string? userId = null)
         {
-            return !await _studentRepository.IsPhoneDuplicateAsync(phone);
+            var std = await _studentRepository.GetStudentByPhoneAsync(phone);
+            if (std is null) return true;
+            return userId is not null && std.Id == userId;
         }
 
-        public async Task<bool> CheckDocumentNumberAsync(string documentNumber)
+        public async Task<bool> CheckDocumentNumberAsync(string documentNumber, string? userId = null)
         {
-            return !await _studentRepository.IsDocumentNumberDuplicateAsync(documentNumber);
+            var std = await _studentRepository.GetStudentByDocumentNumberAsync(documentNumber);
+            if (std is null) return true;
+            return userId is not null && std.Id == userId;
         }
 
         public async Task<bool> CheckFacultyAsync(string faculty)

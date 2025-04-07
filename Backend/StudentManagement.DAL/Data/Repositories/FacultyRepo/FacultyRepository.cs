@@ -29,8 +29,9 @@ namespace StudentManagement.DAL.Data.Repositories.FacultyRepo
 
         public async Task DeleteFacultyAsync(Guid faculty)
         {
-            var existingFaculty = new Faculty() { Id = faculty };
-            _context.Faculties.Remove(existingFaculty);
+            var facultyToDelete = await _context.Faculties.FindAsync(faculty);
+            if (facultyToDelete is null) return;
+            _context.Faculties.Remove(facultyToDelete);
             await _context.SaveChangesAsync();
         }
 

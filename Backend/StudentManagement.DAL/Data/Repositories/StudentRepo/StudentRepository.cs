@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Identity.Client;
-using StudentManagement.DAL.Data.Utils;
 using StudentManagement.Domain.Attributes;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -33,9 +33,6 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             _context = context;
         }
 
-        private Dictionary<int, int> generateIdCache = new Dictionary<int, int>();
-
-
         // Methods
 
         public async Task<IEnumerable<Student>> AddStudentAsync(IEnumerable<Student> students)
@@ -48,9 +45,18 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
         public async Task DeleteStudentAsync(string studentId)
         {
-            var student = new Student() { Id = studentId };
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var student = await _context.Students.FindAsync(studentId);
+                if (student is null) return;
+                _context.Students.Remove(student);
+
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key)
@@ -95,6 +101,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
         public async Task<Student?> GetStudentByIdAsync(string studentId)
         {
+            
             var student = await _context.Students
                     .Include(s => s.Faculty)
                     .Include(s => s.Program)
@@ -123,22 +130,22 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             return student;
         }
         
-        public async Task<bool> IsEmailDuplicateAsync(string email)
+        public async Task<Student?> GetStudentByEmailAsync(string email)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
-            return student is not null;
+            return student;
         }
 
-        public async Task<bool> IsPhoneDuplicateAsync(string phone)
+        public async Task<Student?> GetStudentByPhoneAsync(string phone)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Phone == phone);
-            return student is not null;
+            return student;
         }
 
-        public async Task<bool> IsDocumentNumberDuplicateAsync(string documentNumber)
+        public async Task<Student?> GetStudentByDocumentNumberAsync(string documentNumber)
         {
             var student = await _context.Students.FirstOrDefaultAsync(s => s.Identity.DocumentNumber == documentNumber);
-            return student is not null;
+            return student;
         }
 
         public async Task<int> GetLatestStudentIdAsync(int course)
@@ -155,10 +162,5 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             return student is null ? 0 : int.Parse(student.Id[4..]);
         }
 
-
-        //private bool IsConnectDatabaseFailed(SqlException ex)
-        //{
-        //    return ex.Number == 10061;
-        //}
     }
 } 
