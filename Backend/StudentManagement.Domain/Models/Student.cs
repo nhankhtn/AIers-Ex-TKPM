@@ -93,5 +93,8 @@ namespace StudentManagement.Domain.Models
 
        
         public Identity Identity { get; set; } = null!;
+
+        public ICollection<ClassStudent> ClassStudents { get; set; } = null!;
+        public ICollection<Class> Classes { get; set; } = null!;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using StudentManagement.BLL.DTOs.Course;
 using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.Identity;
 using StudentManagement.BLL.DTOs.Program;
@@ -69,6 +70,11 @@ namespace StudentManagement.BLL
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToEnum<IdentityType>()))
                 .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.CountryIssue))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            //Course
+            CreateMap<AddCourseDTO, Course>();
+            CreateMap<Course, AddCourseDTO>();
+
 
         }
     }
