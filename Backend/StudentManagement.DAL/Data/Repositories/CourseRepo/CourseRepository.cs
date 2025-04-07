@@ -17,10 +17,11 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
         {
             _context = context;
         }
-        public async Task AddCourseAsync(Course course)
+        public async Task<Course> AddCourseAsync(Course course)
         {
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
+            return course;
         }
 
         public async Task DeleteCourseAsync(int courseId)

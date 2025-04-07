@@ -36,7 +36,7 @@ namespace StudentManagement.Domain.Models
         public int? RequiredCourseId { get; set; }
 
         [Column("deleted_at")]
-        public DateTime DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 

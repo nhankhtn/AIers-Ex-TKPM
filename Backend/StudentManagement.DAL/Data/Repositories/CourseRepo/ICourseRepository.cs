@@ -11,7 +11,7 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
     {
         Task<IEnumerable<Course>> GetAllCoursesAsync();
         Task<Course?> GetCourseByIdAsync(int courseId);
-        Task AddCourseAsync(Course course);
+        Task<Course> AddCourseAsync(Course course);
         Task UpdateCourseAsync(Course course);
         Task DeleteCourseAsync(int courseId);
     }

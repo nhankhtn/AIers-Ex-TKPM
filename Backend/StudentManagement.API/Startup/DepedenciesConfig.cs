@@ -16,6 +16,8 @@ using StudentManagement.Domain.Models;
 using StudentManagement.BLL.Validators;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL.Checker;
+using StudentManagement.BLL.Services.CourseService;
+using StudentManagement.DAL.Data.Repositories.CourseRepo;
 
 namespace StudentManagement.API.Startup
 {
@@ -58,6 +60,7 @@ namespace StudentManagement.API.Startup
             builder.Services.AddScoped<IStudentService, StudentService>();
             builder.Services.AddScoped<IAddressService, AddressService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<ICourseService, CourseService>();
 
             // Repo
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -65,6 +68,7 @@ namespace StudentManagement.API.Startup
             builder.Services.AddScoped<IFacultyRepository, FacultyRepository>();
             builder.Services.AddScoped<IStudentStatusRepository, StudentStatusRepository>();
             builder.Services.AddScoped<ISettingRepository, SettingRepository>();
+            builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 
             // Validators
             builder.Services.AddScoped<IStudentValidator, StudentValidator>();
