@@ -11,5 +11,6 @@ namespace StudentManagement.BLL.Services.CourseService
     public interface ICourseService
     {
         Task<Result<AddCourseDTO>> AddCourseAsync(AddCourseDTO courseDTO);
+        Task<Result<int>> DeleteCourseAsync(int courseId);
     }
 }

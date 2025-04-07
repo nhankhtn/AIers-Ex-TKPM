@@ -16,7 +16,7 @@ namespace StudentManagement.BLL.DTOs.Course
         public Guid FacultyId { get; set; }
         public string Description { get; set; } = string.Empty;
         public int? RequiredCourseId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     }
 }

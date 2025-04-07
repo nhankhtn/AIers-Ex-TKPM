@@ -47,6 +47,12 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
             return course;
         }
 
+        public async Task<bool> HasAnyClassesAsync(int courseId)
+        {
+           var result = await _context.Classes.AnyAsync(c => c.CourseId == courseId);
+            return result;
+        }
+
         public async Task UpdateCourseAsync(Course course)
         {
             var updatedCourse = _context.Courses.Find(course.CourseId);
