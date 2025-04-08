@@ -81,6 +81,71 @@ namespace StudentManagement.BLL.Services.CourseService
             }
 
         }
+
+        public async Task<Result<List<GetCourseDTO>>> GetAllCourseAsync()
+        {
+            try
+            {
+                var courses = await _courseRepository.GetAllCoursesAsync();
+                var courseDTOs = new List<GetCourseDTO>();
+                foreach (var course in courses)
+                {
+                    courseDTOs.Add(_mapper.Map<GetCourseDTO>(course));
+                }
+                return Result<List<GetCourseDTO>>.Ok(courseDTOs);
+            }
+            catch (Exception ex)
+            {
+                return Result<List<GetCourseDTO>>.Fail("500", ex.Message);
+            }
+
+        }
+
+        public async Task<Result<GetCourseDTO>> GetAllCourseByIdAsync(int courseId)
+        {
+            try
+            {
+                var course = await _courseRepository.GetCourseByIdAsync(courseId);
+                return Result<GetCourseDTO>.Ok(_mapper.Map<GetCourseDTO>(course));
+            }
+            catch(Exception ex)
+            {
+                return Result<GetCourseDTO>.Fail("500", ex.Message);
+            }
+        
+        }
+
+        public async Task<Result<UpdateCourseDTO>> UpdateCourseByIdAsync(int courseId, UpdateCourseDTO courseDTO)
+        {
+            var course = await _courseRepository.GetCourseByIdAsync(courseId);
+            if(course is null)
+            {
+                return Result<UpdateCourseDTO>.Fail("404", "Course Not Found");
+            }
+            var checkHasStudentInCouse = await _courseRepository.CheckHasAnyStudentInCourseAsync(courseId);
+            if (!checkHasStudentInCouse && courseDTO.Credits != course.Credits)
+            {
+                return Result<UpdateCourseDTO>.Fail("400", "The course already has enrolled students");
+            }
+            try
+            {
+               
+                course.Credits = courseDTO.Credits;
+                course.CourseName = courseDTO.CourseName;
+                course.Description = courseDTO.Description;
+                course.FacultyId = courseDTO.FacultyId;
+                var result = await _courseRepository.UpdateCourseAsync(course);
+
+                return Result<UpdateCourseDTO>.Ok(courseDTO);
+                
+            }
+            catch(Exception ex)
+            {
+                return Result<UpdateCourseDTO>.Fail("500", ex.Message);
+            }
+
+
+        }
     }
     
 }

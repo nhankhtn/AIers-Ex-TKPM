@@ -12,5 +12,9 @@ namespace StudentManagement.BLL.Services.CourseService
     {
         Task<Result<AddCourseDTO>> AddCourseAsync(AddCourseDTO courseDTO);
         Task<Result<int>> DeleteCourseAsync(int courseId);
+        Task<Result<UpdateCourseDTO>> UpdateCourseByIdAsync(int courdeId, UpdateCourseDTO course);
+
+        Task<Result<List<GetCourseDTO>>> GetAllCourseAsync();
+        Task<Result<GetCourseDTO>> GetAllCourseByIdAsync(int courseId);
     }
 }

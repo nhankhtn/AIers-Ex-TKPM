@@ -75,7 +75,13 @@ namespace StudentManagement.BLL
             CreateMap<AddCourseDTO, Course>();
             CreateMap<Course, AddCourseDTO>();
 
+            CreateMap<UpdateCourseDTO, Course>();
+            CreateMap<Course, UpdateCourseDTO>();
 
+            CreateMap<Course, GetCourseDTO>()
+                .ForMember(dest => dest.FacultyName, act => act.MapFrom(src => src.Faculty.Name))
+                .ForMember(dest => dest.RequiredCourseName, act => act.MapFrom(src => src.RequiredCourse!.CourseName))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }
