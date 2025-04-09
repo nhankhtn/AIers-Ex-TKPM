@@ -11,6 +11,7 @@ namespace StudentManagement.BLL.DTOs.Course
 {
     public class AddCourseDTO
     {
+        public string CourseId { get; set; } = null!;
         public string CourseName { get; set; } = null!;
         public int Credits { get; set; }
         public Guid FacultyId { get; set; }

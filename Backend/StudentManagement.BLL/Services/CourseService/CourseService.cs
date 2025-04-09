@@ -30,7 +30,7 @@ namespace StudentManagement.BLL.Services.CourseService
 
                 if (courseDTO.RequiredCourseId != null)
                 {
-                    var existingCourse = await _courseRepository.GetCourseByIdAsync((int)course.RequiredCourseId!);
+                    var existingCourse = await _courseRepository.GetCourseByIdAsync(course.RequiredCourseId!);
                     if (existingCourse == null)
                     {
                         return Result<AddCourseDTO>.Fail("404", "Required course not found");
@@ -46,17 +46,17 @@ namespace StudentManagement.BLL.Services.CourseService
             }
         }
 
-        public async Task<Result<int>> DeleteCourseAsync(int courseId)
+        public async Task<Result<string>> DeleteCourseAsync(string courseId)
         {
             var course = await _courseRepository.GetCourseByIdAsync(courseId);
             if (course == null)
             {
-                return Result<int>.Fail("404", "Course not found");
+                return Result<string>.Fail("404", "Course not found");
             }
             // accept deleted within 30 minutes start created at
             if (course.CreatedAt.AddMinutes(30) < DateTime.Now)
             {
-                return Result<int>.Fail("400", "Course cannot be deleted after 30 minutes");
+                return Result<string>.Fail("400", "Course cannot be deleted after 30 minutes");
             }
             
             try
@@ -72,36 +72,42 @@ namespace StudentManagement.BLL.Services.CourseService
                 {
                     await _courseRepository.DeleteCourseAsync(courseId);
                 }
-                var res = Result<int>.Ok(courseId);
+                var res = Result<string>.Ok(courseId);
                 return res;
             }
             catch (Exception ex)
             {
-                return Result<int>.Fail("500", ex.Message);
+                return Result<string>.Fail("500", ex.Message);
             }
 
         }
 
-        public async Task<Result<List<GetCourseDTO>>> GetAllCourseAsync()
+        public async Task<Result<GetAllCoursesDTO>> GetAllCourseAsync(int page, int limit, Guid? facultyId, string? courseId, bool isDeleted)
         {
             try
             {
-                var courses = await _courseRepository.GetAllCoursesAsync();
+                var (courses, total) = await _courseRepository.GetAllCoursesAsync(page, limit, facultyId, courseId, isDeleted);
                 var courseDTOs = new List<GetCourseDTO>();
                 foreach (var course in courses)
                 {
                     courseDTOs.Add(_mapper.Map<GetCourseDTO>(course));
                 }
-                return Result<List<GetCourseDTO>>.Ok(courseDTOs);
+                var res = new GetAllCoursesDTO
+                { 
+                    courses = courseDTOs,
+                    Total = total
+                };
+
+                return Result<GetAllCoursesDTO>.Ok(res);
             }
             catch (Exception ex)
             {
-                return Result<List<GetCourseDTO>>.Fail("500", ex.Message);
+                return Result<GetAllCoursesDTO>.Fail("500", ex.Message);
             }
 
         }
 
-        public async Task<Result<GetCourseDTO>> GetAllCourseByIdAsync(int courseId)
+        public async Task<Result<GetCourseDTO>> GetAllCourseByIdAsync(string courseId)
         {
             try
             {
@@ -115,7 +121,7 @@ namespace StudentManagement.BLL.Services.CourseService
         
         }
 
-        public async Task<Result<UpdateCourseDTO>> UpdateCourseByIdAsync(int courseId, UpdateCourseDTO courseDTO)
+        public async Task<Result<UpdateCourseDTO>> UpdateCourseByIdAsync(string courseId, UpdateCourseDTO courseDTO)
         {
             var course = await _courseRepository.GetCourseByIdAsync(courseId);
             if(course is null)
