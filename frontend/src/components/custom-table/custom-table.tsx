@@ -50,7 +50,6 @@ export function CustomTable<P, T extends { id: P; [key: string]: any }>(
     rowsPerPageOptions,
     ...stackProps
   } = props;
-
   const [_sortModel, setSortModel] = useState<CustomTableSortModel<P, T>>();
   const sortModel = onChangeSortModel ? customSortModel : _sortModel;
   const [isMounted, setIsMounted] = useState(false);
