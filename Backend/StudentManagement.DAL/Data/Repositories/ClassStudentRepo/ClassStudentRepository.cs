@@ -24,8 +24,8 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
         public async Task DeleteClassStudentAsync(int classId, string studentId)
         {
             //var classStudent = _context.ClassStudents.Find();
-            var classStudent = _context.ClassStudents
-                .FirstOrDefault(cs => cs.ClassId == classId && cs.StudentId == studentId);
+            var classStudent = await _context.ClassStudents
+                .FirstOrDefaultAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
             if (classStudent == null)
             {
                 throw new ArgumentNullException("ClassStudent not found");
@@ -34,10 +34,26 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<ClassStudent>> GetAllClassStudentsAsync()
+        public async Task<IEnumerable<ClassStudent>> GetClassStudentsAsync(int? classId = null, string? studentId = null, int? page = null, int? limit = null)
         {
-            var classStudents = await _context.ClassStudents.ToListAsync();
-            return classStudents;
+            var query = _context.ClassStudents.AsQueryable();
+
+            if (classId.HasValue)
+            {
+                query = query.Where(cs => cs.ClassId == classId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(studentId))
+            {
+                query = query.Where(cs => cs.StudentId == studentId);
+            }
+
+            if (page.HasValue && limit.HasValue)
+            {
+                query = query.Skip((page.Value - 1) * limit.Value).Take(limit.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<ClassStudent?> GetClassStudentByIdAsync(int classId, string studentId)

@@ -9,7 +9,6 @@ namespace StudentManagement.API.Utils
     /// <typeparam name="T"></typeparam>
     public class ApiResponse<T>
     {
-
         /// <summary>
         /// Data
         /// </summary>
@@ -67,8 +66,9 @@ namespace StudentManagement.API.Utils
             string? title = null,
             T? data = default,
             ApiError? error = null,
-            string? message = null)
-            => new ApiResponse<T>(data, error, message);
+            string? message = null,
+            List<ApiError>? errors = null)
+            => new ApiResponse<T>(data, error, message) { Errors = errors };
 
         /// <summary>
         /// NotFound response
@@ -108,10 +108,11 @@ namespace StudentManagement.API.Utils
         /// <returns></returns>
         public static ApiResponse<T> MultiStatus(
                 T? data = default,
+                ApiError? error = null,
                 string? message = null,
                 List<ApiError>? errors = null
             )
-            => new ApiResponse<T>(data, null, message) { Errors = errors };
+            => new ApiResponse<T>(data, error, message) { Errors = errors };
     }
 
     // Class ApiError

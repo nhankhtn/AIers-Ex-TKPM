@@ -20,16 +20,16 @@ namespace StudentManagement.Domain.Utils
         {
             Success = success;
             Data = data;
-            Message = message; 
+            Message = message;
             ErrorCode = errorCode;
             ErrorMessage = errorMessage;
         }
 
-        public static Result<T> Ok(T? data = default, string? message = null) 
+        public static Result<T> Ok(T? data = default, string? message = null)
             => new Result<T>(true, data, message, null, null);
-        public static Result<T> Fail(string? errorCode = null, string? errorMessage = null) 
-            => new Result<T>(false, default, null, errorCode, errorMessage);
-        public static Result<T> Multi(T? data, string? message = null, List<(string errorCode, int index)>? errors = null)
-            => new Result<T>(true, data, message, null, null) { Errors = errors };
+        public static Result<T> Fail(string? errorCode = null, string? errorMessage = null, List<(string errorCode, int index)>? errors = null)
+            => new Result<T>(false, default, null, errorCode, errorMessage) { Errors = errors };
+        public static Result<T> Multi(T? data, string? errorCode, string? message = null, List<(string errorCode, int index)>? errors = null)
+            => new Result<T>(true, data, message, errorCode, null) { Errors = errors };
     }
 }

@@ -126,23 +126,17 @@ namespace StudentManagement.Tests.Unit.Controller
             {
                 new StudentDTO { Id = "ST006", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john22@gmail.com", Course = 2022, Phone = "+84363459789", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "666"} },
                 new StudentDTO { Id = "ST007", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john223@gmail.com", Course = 2022, Phone = "+84363459700", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "777"} },
-                new StudentDTO { Id = "ST008", Name = "Jane Doe", DateOfBirth = new DateTime(2001, 2, 2), Gender = "Female", Email = "jane@gmail.com", Course = 2022, Phone = "+84334567890", PermanentAddress = "Address 2", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "UK", Identity = new IdentityDTO { DocumentNumber = "888" } },
             };
 
-            var result = await _studentsController.AddStudent(students);
+            var result = await _studentsController.AddStudents(students);
 
-            var actionResult = Assert.IsType<ActionResult<ApiResponse<AddListStudentResult>>>(result);
+            var actionResult = Assert.IsType<ActionResult<ApiResponse<IEnumerable<StudentDTO>>>>(result);
             var okResult = Assert.IsType<ObjectResult>(actionResult.Result);
 
-            Assert.Equal(207, okResult.StatusCode);
-
-            var response = Assert.IsType<ApiResponse<AddListStudentResult>>(okResult.Value);
+            var response = Assert.IsType<ApiResponse<IEnumerable<StudentDTO>>>(okResult.Value);
 
             Assert.NotNull(response.Data);
-            Assert.IsType<AddListStudentResult>(response.Data);
-            Assert.Equal(2, response.Data.AcceptableStudents.Count());
-            Assert.NotEmpty(response.Data.UnacceptableStudents);
-            Assert.Equal("DUPLICATE_PHONE", response?.Errors?[0].Code);
+            Assert.Equal(2, response.Data.Count());
         }
 
         [Fact]

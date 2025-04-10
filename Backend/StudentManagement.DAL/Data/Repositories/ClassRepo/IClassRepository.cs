@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
 {
     public interface IClassRepository
     {
-        Task<IEnumerable<Class>> GetAllClassesAsync();
+        Task<IEnumerable<Class>> GetClassesAsync(string? course = null);
         Task<Class?> GetClassByIdAsync(int id);
         Task AddClassAsync(Class classEntity);
         Task UpdateClassAsync(Class classEntity);

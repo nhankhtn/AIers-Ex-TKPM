@@ -16,6 +16,7 @@ namespace StudentManagement.API.Controllers
         {
             _courseService = courseService;
         }
+
         [HttpPost()]
         public async Task<IActionResult> AddCourse(AddCourseDTO courseDTO)
         {

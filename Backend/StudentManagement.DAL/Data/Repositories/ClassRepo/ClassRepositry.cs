@@ -32,10 +32,11 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Class>> GetAllClassesAsync()
+        public async Task<IEnumerable<Class>> GetClassesAsync(string? course = null)
         {
-            var classes = await _context.Classes.ToListAsync();
-            return classes;
+            return await _context.Classes
+                    .Where(c => course == null || c.Course.CourseName.Contains(course))
+                    .ToListAsync();
         }
 
         public async Task<Class?> GetClassByIdAsync(int id)
@@ -46,23 +47,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
 
         public async Task UpdateClassAsync(Class classEntity)
         {
-            var existingClass = _context.Classes.Find(classEntity.Id);
-            if (existingClass == null)
-            {
-                throw new Exception("Class not found");
-            }
-            
-            existingClass.AcademicYear = classEntity.AcademicYear;
-            existingClass.CourseId = classEntity.CourseId;
-            existingClass.Semester = classEntity.Semester;
-            existingClass.TeacherName = classEntity.TeacherName;
-            existingClass.MaxStudents = classEntity.MaxStudents;
-            existingClass.Room = classEntity.Room;
-            existingClass.DayOfWeek = classEntity.DayOfWeek;
-            existingClass.StartTime = classEntity.StartTime;
-            existingClass.EndTime = classEntity.EndTime;
-            existingClass.Deadline = classEntity.Deadline;
-
+            _context.Update(classEntity);
             await _context.SaveChangesAsync();
         }
     }
