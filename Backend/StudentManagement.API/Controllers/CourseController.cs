@@ -33,14 +33,14 @@ namespace StudentManagement.API.Controllers
             ));
         }
 
-        [HttpDelete("{courseId:int}")]
-        public async Task<IActionResult> DeleteCourse(int courseId)
+        [HttpDelete("{courseId}")]
+        public async Task<IActionResult> DeleteCourse(string courseId)
         {
             var result = await _courseService.DeleteCourseAsync(courseId);
             if (result.Success)
             {
                 //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] khi gặp này thì kiểu int có default là 0 khôn có giá trị null nên báo lỗi
-                return Ok(ApiResponse<string>.Success(data: result.Data.ToString(), message: result.Message));
+                return Ok(ApiResponse<string>.Success(data: result.Data, message: result.Message));
             }
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
@@ -51,8 +51,8 @@ namespace StudentManagement.API.Controllers
             ));
         }
 
-        [HttpPut("{courseId:int}")]
-        public async Task<IActionResult> UpdateCourseById(int courseId, UpdateCourseDTO course)
+        [HttpPut("{courseId}")]
+        public async Task<IActionResult> UpdateCourseById(string courseId, UpdateCourseDTO course)
         {
             var result = await _courseService.UpdateCourseByIdAsync(courseId, course);
             if (result.Success)
@@ -68,14 +68,14 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<IActionResult> GetAllStudent()
+        public async Task<IActionResult> GetAllStudent(int page, int limit, Guid? facultyId, string? courseId, bool isDeleted = false)
         {
-            var result = await _courseService.GetAllCourseAsync();
+            var result = await _courseService.GetAllCourseAsync(page, limit, facultyId, courseId, isDeleted);
             if (result.Success)
             {
-                return Ok(ApiResponse<List<GetCourseDTO>>.Success(data: result.Data, message: result.Message));
+                return Ok(ApiResponse<GetAllCoursesDTO>.Success(data: result.Data, message: result.Message));
             }
-            return BadRequest(ApiResponse<List<GetCourseDTO>>.BadRequest(
+            return BadRequest(ApiResponse<GetAllCoursesDTO>.BadRequest(
                 error: new ApiError
                 {
                     Code = result.ErrorCode,
@@ -83,8 +83,8 @@ namespace StudentManagement.API.Controllers
                 }));
         }
 
-        [HttpGet("{courseId:int}")]
-        public async Task<IActionResult> GetStudentById(int courseId)
+        [HttpGet("{courseId}")]
+        public async Task<IActionResult> GetStudentById(string courseId)
         {
             var result = await _courseService.GetAllCourseByIdAsync(courseId);
             if (result.Success)
@@ -98,7 +98,5 @@ namespace StudentManagement.API.Controllers
                     Message = result.ErrorMessage
                 }));
         }
-
-
     }
 }

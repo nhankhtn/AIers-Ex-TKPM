@@ -9,14 +9,14 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
 {
     public interface ICourseRepository
     {
-        Task<IEnumerable<Course>> GetAllCoursesAsync();
-        Task<Course?> GetCourseByIdAsync(int courseId);
+        Task<(IEnumerable<Course>, int)> GetAllCoursesAsync(int page, int limit, Guid? facultyId, string? courseId, bool isDeleted);
+        Task<Course?> GetCourseByIdAsync(string courseId);
         Task<Course> AddCourseAsync(Course course);
         Task<Course> UpdateCourseAsync(Course course);
-        Task DeleteCourseAsync(int courseId);
+        Task DeleteCourseAsync(string courseId);
 
-        Task<bool> HasAnyClassesAsync(int courseId);
+        Task<bool> HasAnyClassesAsync(string courseId);
 
-        Task<bool> CheckHasAnyStudentInCourseAsync(int courseId);
+        Task<bool> CheckHasAnyStudentInCourseAsync(string courseId);
     }
 }

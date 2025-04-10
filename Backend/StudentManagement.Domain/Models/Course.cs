@@ -13,9 +13,9 @@ namespace StudentManagement.Domain.Models
     [Index(nameof(CourseName), IsUnique = true)]
     public class Course
     {
-        [Column("id")]
+        [Column("id", TypeName ="varchar(10)")]
         [Key]
-        public int CourseId { get; set; }
+        public string CourseId { get; set; } = null!;
 
         [Column("name", TypeName ="nvarchar(50)")]
         public string CourseName { get; set; } = null!;
@@ -33,7 +33,7 @@ namespace StudentManagement.Domain.Models
         public Course? RequiredCourse { get; set; }
 
         [Column("required_course_id")]
-        public int? RequiredCourseId { get; set; }
+        public string? RequiredCourseId { get; set; }
 
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }

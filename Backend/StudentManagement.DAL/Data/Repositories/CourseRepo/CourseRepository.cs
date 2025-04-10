@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Identity.Client;
 using StudentManagement.Domain.Models;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
             return course;
         }
 
-        public async Task<bool> CheckHasAnyStudentInCourseAsync(int courseId)
+        public async Task<bool> CheckHasAnyStudentInCourseAsync(string courseId)
         {
             var query = await (from c in _context.Classes
                         join s in _context.ClassStudents on c.Id equals s.ClassId
@@ -34,7 +35,7 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
             return query;
         }
 
-        public async Task DeleteCourseAsync(int courseId)
+        public async Task DeleteCourseAsync(string courseId)
         {
             var course = _context.Courses.Find(courseId);
             if (course == null)
@@ -45,7 +46,7 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
+        public async Task<(IEnumerable<Course>, int)> GetAllCoursesAsync(int page, int limit, Guid? facultyId, string? courseId, bool isDeleted)
         {
             //var courses = await _context.Courses.ToListAsync();
             //var query = await (from c in _context.Courses
@@ -61,18 +62,33 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
             //    query[i].c.Faculty.Name = query[i].f.Name;
             //    courses.Add(query[i].c);
             //}
-            var courses = await _context.Courses.Include(c => c.RequiredCourse).Include(c => c.Faculty).ToListAsync();
+            var courses = _context.Courses.Include(c => c.RequiredCourse).Include(c => c.Faculty).AsQueryable();
+            // chuyen doi thanh AsQueryAble de co the dung LINQ nang cao nhu where, select, order by
+            if (facultyId != null)
+            {
+                courses = courses.Where(c => c.FacultyId == facultyId);
+            }
+            if (!string.IsNullOrWhiteSpace(courseId))
+            {
+                courses = courses.Where(c => c.CourseId.Contains(courseId!));
+            }
+            if (isDeleted)
+            {
+                courses = courses.Where(c => c.DeletedAt != null);
+            }
+            var total = courses.Count();
+            var res = await courses.Skip((page - 1) * limit).Take(limit).ToListAsync();
 
-            return courses;
+            return (res, total);
         }
 
-        public async Task<Course?> GetCourseByIdAsync(int courseId)
+        public async Task<Course?> GetCourseByIdAsync(string courseId)
         {
             var course = await _context.Courses.Include(c => c.RequiredCourse).Include(c => c.Faculty).FirstOrDefaultAsync(c => c.CourseId == courseId);
             return course;
         }
 
-        public async Task<bool> HasAnyClassesAsync(int courseId)
+        public async Task<bool> HasAnyClassesAsync(string courseId)
         {
            var result = await _context.Classes.AnyAsync(c => c.CourseId == courseId);
             return result;

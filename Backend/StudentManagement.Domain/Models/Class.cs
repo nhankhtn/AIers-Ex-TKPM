@@ -19,7 +19,7 @@ namespace StudentManagement.Domain.Models
         public int AcademicYear { get; set; }
 
         [Column("course_id")]
-        public int CourseId { get; set; }
+        public string CourseId { get; set; } = null!;
         public Course Course { get; set; } = null!;
 
         [Column("semester")]

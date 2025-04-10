@@ -12,7 +12,7 @@ namespace StudentManagement.BLL.DTOs.Course
     public class GetCourseDTO
     {
         
-        public int CourseId { get; set; }
+        public string CourseId { get; set; } = null!;
         public string CourseName { get; set; } = null!;
         public int Credits { get; set; }
         public Guid FacultyId { get; set; }
@@ -24,4 +24,11 @@ namespace StudentManagement.BLL.DTOs.Course
         public DateTime CreatedAt { get; set; }
 
     }
+
+    public class GetAllCoursesDTO 
+    {
+        public List<GetCourseDTO> courses { get; set; } = new List<GetCourseDTO>();
+        public int Total { get; set; } = 0;
+    }
+
 }
