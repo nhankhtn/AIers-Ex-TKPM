@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL.DTOs.Class;
+using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.DAL.Data.Repositories.ClassRepo;
+using StudentManagement.DAL.Data.Repositories.CourseRepo;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
@@ -16,29 +18,34 @@ namespace StudentManagement.BLL.Services.ClassService
     public class ClassService : IClassService
     {
         private readonly IClassRepository _classRepository;
+        private readonly ICourseRepository _courseRepository;
         private readonly IMapper _mapper;
 
-        public ClassService(IClassRepository classRepository, IMapper mapper)
+        public ClassService(IClassRepository classRepository, ICourseRepository courseRepository, IMapper mapper)
         {
             _classRepository = classRepository;
+            _courseRepository = courseRepository;
             _mapper = mapper;
         }
 
 
-        public async Task<Result<AddClassDTO>> AddClassAsync(AddClassDTO addClassDTO)
+        public async Task<Result<GetClassDTO>> AddClassAsync(AddClassDTO addClassDTO)
         {
             try
             {
-                await _classRepository.AddClassAsync(_mapper.Map<Class>(addClassDTO));
-                return Result<AddClassDTO>.Ok(addClassDTO);
+                var course = await _courseRepository.GetCourseByIdAsync(addClassDTO.CourseId);
+                if (course is null || course.DeletedAt < DateTime.Now) 
+                    return Result<GetClassDTO>.Fail("COURSE_NOT_FOUND");
+                var _class = await _classRepository.AddClassAsync(_mapper.Map<Class>(addClassDTO));
+                return Result<GetClassDTO>.Ok(_mapper.Map<GetClassDTO>(_class));
             }
             catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("FK_classes_courses_course_id"))
             {
-                return Result<AddClassDTO>.Fail("COURSE_NOT_FOUND");
+                return Result<GetClassDTO>.Fail("COURSE_NOT_FOUND");
             }
             catch(Exception)
             {
-                return Result<AddClassDTO>.Fail("ADD_CLASS_FAILED");
+                return Result<GetClassDTO>.Fail("ADD_CLASS_FAILED");
             }
         }
         //FK_classes_courses_course_id
@@ -58,16 +65,19 @@ namespace StudentManagement.BLL.Services.ClassService
             }
         }
 
-        public async Task<Result<IEnumerable<GetClassDTO>>> GetClassesAsync(string? course = null)
+        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? courseId = null, int? page = null, int? limit = null)
         {
             try
             {
-                var classes = await _classRepository.GetClassesAsync(course);
-                return Result<IEnumerable<GetClassDTO>>.Ok(_mapper.Map<IEnumerable<GetClassDTO>>(classes));
+                var classes = await _classRepository.GetClassesAsync(courseId, page, limit);
+                return Result<GetClassesDTO>.Ok(new GetClassesDTO {
+                     Classes = _mapper.Map<IEnumerable<GetClassDTO>>(classes),
+                     Total = classes.Count()
+                });
             }
             catch (Exception)
             {
-                return Result<IEnumerable<GetClassDTO>>.Fail("GET_CLASSES_FAILED");
+                return Result<GetClassesDTO>.Fail("GET_CLASSES_FAILED");
             }
         }
 

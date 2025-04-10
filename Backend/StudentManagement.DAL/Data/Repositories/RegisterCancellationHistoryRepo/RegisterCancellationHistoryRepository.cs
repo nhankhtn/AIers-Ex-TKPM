@@ -21,6 +21,17 @@ namespace StudentManagement.DAL.Data.Repositories.RegisterCancellationHistoryRep
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            var registerCancellationHistory = await _context.RegisterCancellationHistories.FindAsync(id);
+            if (registerCancellationHistory == null)
+            {
+                throw new ArgumentException("Register Cancellation History Not Found");
+            }
+            _context.RegisterCancellationHistories.Remove(registerCancellationHistory);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<ICollection<RegisterCancellationHistory>> GetAllAsync()
         {
             var registerCancellationHistories = await _context.RegisterCancellationHistories.ToListAsync();

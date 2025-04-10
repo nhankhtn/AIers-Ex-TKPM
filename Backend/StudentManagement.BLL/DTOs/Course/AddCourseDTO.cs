@@ -11,11 +11,12 @@ namespace StudentManagement.BLL.DTOs.Course
 {
     public class AddCourseDTO
     {
+        public string CourseId { get; set; } = null!;
         public string CourseName { get; set; } = null!;
         public int Credits { get; set; }
         public Guid FacultyId { get; set; }
         public string Description { get; set; } = string.Empty;
-        public int? RequiredCourseId { get; set; }
+        public string? RequiredCourseId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     }

@@ -68,7 +68,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var res = await _studentRepository.GetAllStudentsAsync(page, pageSize, faculty, program, status, key);
                 return Result<GetStudentsDTO>.Ok(new GetStudentsDTO()
                 {
-                    Data = _mapper.Map<IEnumerable<StudentDTO>>(res.students),
+                    Students = _mapper.Map<IEnumerable<StudentDTO>>(res.students),
                     Total = res.total
                 });
             }
@@ -85,10 +85,11 @@ namespace StudentManagement.BLL.Services.StudentService
             try
             {
                 bool allValid = true;
-                int index = 0;
+                int index = -1;
                 var errors = new List<(string errorCode, int index)>();
                 foreach (var student in studentDTOs)
                 {
+                    index++;
                     var validRes = _userValidator.StudentValidate(student);
                     if (!validRes.IsValid)
                     {

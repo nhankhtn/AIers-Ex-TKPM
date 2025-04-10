@@ -15,10 +15,11 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
         {
             _context = context;
         }
-        public async Task AddClassStudentAsync(ClassStudent classStudent)
+        public async Task<ClassStudent?> AddClassStudentAsync(ClassStudent classStudent)
         {
             _context.ClassStudents.Add(classStudent);
             await _context.SaveChangesAsync();
+            return classStudent;
         }
 
         public async Task DeleteClassStudentAsync(int classId, string studentId)
@@ -60,6 +61,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
         {
             //var classStudent = await _context.ClassStudents.FindAsync(id);
             var classStudent = await _context.ClassStudents
+                .Include(cs => cs.RegisterCancellationHistories)
                 .FirstOrDefaultAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
             return classStudent;
         }
@@ -76,6 +78,17 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
             existingClassStudent.Score = classStudent.Score;
             _context.ClassStudents.Update(existingClassStudent);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<ClassStudent?>> GetClassStudentByIdAndCourseAsync(string studentId, string courseId)
+        {
+            var classStudents = await _context.ClassStudents
+                .Include(c => c.Class)
+                .ThenInclude(c => c.Course)
+                .Where(cs => cs.StudentId == studentId && cs.Class.CourseId == courseId)
+                .ToListAsync();
+
+            return classStudents;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace StudentManagement.BLL.DTOs.ClassStudent
 {
     public class GetClassStudentsDTO
     {
-        public IEnumerable<GetClassStudentDTO> Data { get; set; } = null!;
+        public IEnumerable<GetClassStudentDTO> ClassStudents { get; set; } = null!;
         public int Total { get; set; } = 0;
     }
 }

@@ -11,10 +11,10 @@ namespace StudentManagement.BLL.Services.CourseService
     public interface ICourseService
     {
         Task<Result<AddCourseDTO>> AddCourseAsync(AddCourseDTO courseDTO);
-        Task<Result<int>> DeleteCourseAsync(int courseId);
-        Task<Result<UpdateCourseDTO>> UpdateCourseByIdAsync(int courdeId, UpdateCourseDTO course);
+        Task<Result<string>> DeleteCourseAsync(string courseId);
+        Task<Result<UpdateCourseDTO>> UpdateCourseByIdAsync(string courdeId, UpdateCourseDTO course);
 
-        Task<Result<List<GetCourseDTO>>> GetAllCourseAsync();
-        Task<Result<GetCourseDTO>> GetAllCourseByIdAsync(int courseId);
+        Task<Result<GetAllCoursesDTO>> GetAllCourseAsync(int page, int limit, Guid? facultyId, string? courseId, bool isDeleted);
+        Task<Result<GetCourseDTO>> GetAllCourseByIdAsync(string courseId);
     }
 }

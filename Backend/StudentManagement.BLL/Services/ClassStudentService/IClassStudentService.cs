@@ -11,7 +11,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
 {
     public interface IClassStudentService
     {
-        Task<Result<AddStudentToClassDTO>> AddStudentAsync(AddStudentToClassDTO addStudentToClassDTO);
+        Task<Result<GetClassStudentDTO>> AddStudentAsync(AddStudentToClassDTO addStudentToClassDTO);
 
         Task<Result<RegisterCancelationDTO>> RegisterCancelationAsync(RegisterCancelationDTO registerCancelationDTO);
 

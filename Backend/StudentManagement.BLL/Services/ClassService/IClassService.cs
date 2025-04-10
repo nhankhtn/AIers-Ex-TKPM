@@ -10,11 +10,11 @@ namespace StudentManagement.BLL.Services.ClassService
 {
     public interface IClassService
     {
-        Task<Result<AddClassDTO>> AddClassAsync(AddClassDTO addClassDTO);
+        Task<Result<GetClassDTO>> AddClassAsync(AddClassDTO addClassDTO);
 
         Task<Result<GetClassDTO>> GetClassAsync(int classId);
 
-        Task<Result<IEnumerable<GetClassDTO>>> GetClassesAsync(string? course = null); 
+        Task<Result<GetClassesDTO>> GetClassesAsync(string? courseId = null, int? page = null, int? limit = null); 
 
         Task<Result<GetClassDTO>> DeleteClassAsync(int classId);
 

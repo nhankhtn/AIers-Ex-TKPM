@@ -69,8 +69,9 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("int")
                         .HasColumnName("academic_year");
 
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int")
+                    b.Property<string>("CourseId")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("course_id");
 
                     b.Property<int>("DayOfWeek")
@@ -137,12 +138,9 @@ namespace StudentManagement.DAL.Migrations
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Course", b =>
                 {
-                    b.Property<int>("CourseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("CourseId")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseId"));
 
                     b.Property<string>("CourseName")
                         .IsRequired()
@@ -170,8 +168,8 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("faculty_id");
 
-                    b.Property<int?>("RequiredCourseId")
-                        .HasColumnType("int")
+                    b.Property<string>("RequiredCourseId")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("required_course_id");
 
                     b.HasKey("CourseId");

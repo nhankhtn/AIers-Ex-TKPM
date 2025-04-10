@@ -12,8 +12,8 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250406145643_ScoreTable")]
-    partial class ScoreTable
+    [Migration("20250409133820_EditTypeCourseId")]
+    partial class EditTypeCourseId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,8 +72,9 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("int")
                         .HasColumnName("academic_year");
 
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int")
+                    b.Property<string>("CourseId")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("course_id");
 
                     b.Property<int>("DayOfWeek")
@@ -140,12 +141,9 @@ namespace StudentManagement.DAL.Migrations
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Course", b =>
                 {
-                    b.Property<int>("CourseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("CourseId")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseId"));
 
                     b.Property<string>("CourseName")
                         .IsRequired()
@@ -160,7 +158,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("int")
                         .HasColumnName("credits");
 
-                    b.Property<DateTime>("DeletedAt")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("deleted_at");
 
@@ -173,8 +171,8 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("faculty_id");
 
-                    b.Property<int?>("RequiredCourseId")
-                        .HasColumnType("int")
+                    b.Property<string>("RequiredCourseId")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("required_course_id");
 
                     b.HasKey("CourseId");

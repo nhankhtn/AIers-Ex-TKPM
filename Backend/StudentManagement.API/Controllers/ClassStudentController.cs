@@ -68,16 +68,16 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<AddStudentToClassDTO>>> AddClassStudent(AddStudentToClassDTO addStudentToClassDTO)
+        public async Task<ActionResult<ApiResponse<GetClassStudentDTO>>> AddClassStudent(AddStudentToClassDTO addStudentToClassDTO)
         {
             var result = await _classStudentService.AddStudentAsync(addStudentToClassDTO);
             if (result.Success)
             {
-                return Ok(ApiResponse<AddStudentToClassDTO>.Success(
+                return Ok(ApiResponse<GetClassStudentDTO>.Success(
                     data: result.Data
                 ));
             }
-            return BadRequest(ApiResponse<AddStudentToClassDTO>.BadRequest(
+            return BadRequest(ApiResponse<GetClassStudentDTO>.BadRequest(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,

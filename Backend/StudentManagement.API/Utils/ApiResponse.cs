@@ -13,7 +13,8 @@ namespace StudentManagement.API.Utils
         /// Data
         /// </summary>
         [JsonPropertyName("data")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition =JsonIgnoreCondition.WhenWritingDefault)]
         public T? Data { get; set; }
 
         /// <summary>

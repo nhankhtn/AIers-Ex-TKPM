@@ -10,9 +10,7 @@ namespace StudentManagement.BLL.DTOs.Class
     {
         public int? Id { get; set; }
         public int? AcademicYear { get; set; }
-        public int? CourseId { get; set; }
-
-
+        public string? CourseId { get; set; }
         public int? Semester { get; set; }
 
         public string? TeacherName { get; set; } = string.Empty;
@@ -29,4 +27,12 @@ namespace StudentManagement.BLL.DTOs.Class
 
         public DateTime? Deadline { get; set; }
     }
+
+
+    public class GetClassesDTO
+    {
+        public IEnumerable<GetClassDTO> Classes { get; set; } = new List<GetClassDTO>();
+        public int Total { get; set; } = 0;
+    }
+
 }

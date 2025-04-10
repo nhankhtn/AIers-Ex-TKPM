@@ -17,12 +17,12 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<AddClassDTO>>> AddClass(AddClassDTO addClassDTO)
+        public async Task<ActionResult<ApiResponse<GetClassDTO>>> AddClass(AddClassDTO addClassDTO)
         {
             var result = await _classService.AddClassAsync(addClassDTO);
             if (!result.Success)
             { 
-                return BadRequest(new ApiResponse<AddClassDTO>
+                return BadRequest(new ApiResponse<GetClassDTO>
                 {
                     Error = new ApiError
                     {
@@ -31,7 +31,7 @@ namespace StudentManagement.API.Controllers
                     }
                 });  
             }
-            return Ok(new ApiResponse<AddClassDTO>
+            return Ok(new ApiResponse<GetClassDTO>
             {
                 Data = result.Data
             });
@@ -61,24 +61,22 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<GetClassDTO>>>> GetClasses(string? course = null)
+        public async Task<ActionResult<ApiResponse<GetClassesDTO>>> GetClasses(string? courseId = null, int? page = null, int? limit = null)
         {
-            var result = await _classService.GetClassesAsync(course);
+            var result = await _classService.GetClassesAsync(courseId, page, limit);
             if (!result.Success)
             {
-                return BadRequest(new ApiResponse<IEnumerable<GetClassDTO>>
-                {
-                    Error = new ApiError
+                return BadRequest(ApiResponse<string>.BadRequest(
+                    error: new ApiError
                     {
                         Code = result.ErrorCode,
                         Message = result.ErrorMessage
                     }
-                });
+                ));
             }
-            return Ok(new ApiResponse<IEnumerable<GetClassDTO>>
-            {
-                Data = result.Data
-            });
+            return Ok(ApiResponse<GetClassesDTO>.Success(
+                    data: result.Data
+                ));
         }
 
 

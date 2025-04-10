@@ -13,7 +13,7 @@ namespace StudentManagement.BLL.DTOs.Class
     {
         public int AcademicYear { get; set; }
 
-        public int CourseId { get; set; }
+        public string CourseId { get; set; } = string.Empty;
 
         public int Semester { get; set; }
 
