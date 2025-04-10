@@ -70,8 +70,8 @@ const apiFetch = async (
     ) {
       const message = `Lỗi: ${
         result.message ||
-        result.error.code ||
         result.error.message ||
+        result.error.code ||
         response.status
       }`;
       throw new Error(message);

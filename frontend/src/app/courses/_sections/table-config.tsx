@@ -1,47 +1,35 @@
 import { Box, Typography } from "@mui/material";
 import type { Course } from "@/types/course";
 import type { CustomTableConfig } from "@/components/custom-table/custom-table.types";
-import { Faculty } from "@/types/student";
 
-export const getTableConfig = (
-  faculties: Faculty[]
-): CustomTableConfig<string, Course>[] => [
+export const getTableConfig = (): CustomTableConfig<string, Course>[] => [
   {
-    key: "id",
+    key: "courseId",
     headerLabel: "Mã khóa học",
-    sortable: true,
     textAlign: "left" as const,
-    renderCell: (course) => course.id,
+    renderCell: (course) => course.courseId,
   },
   {
-    key: "name",
+    key: "courseName",
     headerLabel: "Tên khóa học",
-    sortable: true,
     textAlign: "left" as const,
-    renderCell: (course) => course.name,
+    renderCell: (course) => course.courseName,
   },
   {
     key: "faculty",
     headerLabel: "Khoa",
-    sortable: true,
     textAlign: "left" as const,
-    renderCell: (course) => (
-      <Typography variant="body2">
-        {faculties.find((f) => f.id === course.faculty)?.name}
-      </Typography>
-    ),
+    renderCell: (course) => course.facultyName,
   },
   {
     key: "credits",
     headerLabel: "Tín chỉ",
-    sortable: true,
     textAlign: "center" as const,
     renderCell: (course) => course.credits,
   },
   {
     key: "requiredCourseId",
     headerLabel: "Môn tiên quyết",
-    sortable: false,
     textAlign: "left" as const,
     renderCell: (course) => (
       <Box>
@@ -66,7 +54,6 @@ export const getTableConfig = (
   {
     key: "isDeleted",
     headerLabel: "Trạng thái",
-    sortable: true,
     textAlign: "center" as const,
     renderCell: (course) =>
       !course.isDeleted ? (

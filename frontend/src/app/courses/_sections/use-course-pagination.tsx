@@ -4,65 +4,37 @@ import usePagination from "@/hooks/use-pagination";
 import { CourseApi, CourseResponse, GetCourseRequest } from "@/api/course";
 import type { Course } from "@/types/course";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useFaculty } from "@/app/dashboard/_sections/use-faculty";
 
 export const useCoursePagination = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { faculties } = useFaculty();
   const [filter, setFilter] = useState({
     key: "",
     faculty: "",
+    status: "",
   });
 
   const getCoursesApi = useFunction<GetCourseRequest, CourseResponse>(
     (params) => CourseApi.getCourses(params),
     {
       disableResetOnCall: true,
+      onSuccess: ({ result }) => {
+      },
     }
   );
-
   const courses = useMemo(
-    () => getCoursesApi.data?.data || [],
+    () => getCoursesApi.data?.data.courses || [],
     [getCoursesApi.data]
   );
 
   const pagination = usePagination({
-    count: getCoursesApi.data?.total || 0,
+    count: getCoursesApi.data?.data.total || 0,
     initialRowsPerPage: 10,
   });
 
-  const addCourseApi = useFunction<Omit<Course, "id">, Course>(
-    (course) => CourseApi.createCourse(course),
-    {
-      successMessage: "Thêm khóa học thành công",
-      onSuccess: ({ result }) => {
-        if (result) {
-          getCoursesApi.call({
-            page: pagination.page + 1,
-            limit: pagination.rowsPerPage,
-            ...(filter.key ? { key: filter.key } : {}),
-            ...(filter.faculty ? { faculty: filter.faculty } : {}),
-          });
-        }
-      },
-    }
-  );
 
-  const updateCourseApi = useFunction<
-    { id: string; course: Partial<Course> },
-    Course
-  >(({ id, course }) => CourseApi.updateCourse({ id, course }), {
-    successMessage: "Cập nhật khóa học thành công",
-    onSuccess: ({ result }) => {
-      if (result) {
-        getCoursesApi.call({
-          page: pagination.page + 1,
-          limit: pagination.rowsPerPage,
-          ...(filter.key ? { key: filter.key } : {}),
-          ...(filter.faculty ? { faculty: filter.faculty } : {}),
-        });
-      }
-    },
-  });
 
   const deleteCourseApi = useFunction<string, Course>(
     (id) => CourseApi.deleteCourse(id),
@@ -73,8 +45,9 @@ export const useCoursePagination = () => {
           getCoursesApi.call({
             page: pagination.page + 1,
             limit: pagination.rowsPerPage,
-            ...(filter.key ? { key: filter.key } : {}),
-            ...(filter.faculty ? { faculty: filter.faculty } : {}),
+            ...(filter.key ? { courseId: filter.key } : {}),
+            ...(filter.faculty ? { facultyId: faculties.find(f => f.name === filter.faculty)?.id } : {}),
+            ...(filter.status ? { isDeleted: filter.status === "Đang hoạt động" ? false : true } : {}),
           });
         }
       },
@@ -84,18 +57,20 @@ export const useCoursePagination = () => {
   useEffect(() => {
     const key = searchParams.get("key") || "";
     const faculty = searchParams.get("faculty") || "";
-
+    const status = searchParams.get("status") || "";
     setFilter((prev) => ({
       ...prev,
       key: key || "",
       faculty: faculty || "",
+      status: status || "",
     }));
 
     getCoursesApi.call({
-      page: pagination.page + 1,
+      page: 1,
       limit: pagination.rowsPerPage,
-      ...(key ? { key } : {}),
-      ...(faculty ? { faculty } : {}),
+      ...(key ? { courseId: key } : {}),
+      ...(faculty ? { facultyId: faculties.find(f => f.name === faculty)?.id } : {}),
+      ...(filter.status ? { isDeleted: filter.status === "Đang hoạt động" ? false : true } : {}),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, pagination.rowsPerPage, searchParams]);
@@ -115,8 +90,6 @@ export const useCoursePagination = () => {
 
   return {
     getCoursesApi,
-    addCourseApi,
-    updateCourseApi,
     deleteCourseApi,
     courses,
     pagination,

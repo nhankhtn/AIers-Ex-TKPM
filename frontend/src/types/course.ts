@@ -2,14 +2,15 @@ import { Faculty } from "./student"
 
 export interface Course {
   id: string
-  name: string
+  courseId: string
+  courseName: string
   credits: number
-  faculty: Faculty["id"]
+  facultyId: Faculty["id"]
+  facultyName?: string
   description: string
   requiredCourseId?: string
   requiredCourseName?: string
   isDeleted?: string
-
 }
 
 export interface CourseGrade {

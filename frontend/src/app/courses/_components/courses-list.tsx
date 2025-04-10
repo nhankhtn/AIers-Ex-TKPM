@@ -38,7 +38,10 @@ import { useCoursePagination } from "../_sections/use-course-pagination";
 import CustomPagination from "@/components/custom-pagination";
 import RowStack from "@/components/row-stack";
 import { useFaculty } from "@/app/dashboard/_sections/use-faculty";
+import SelectFilter from "@/app/dashboard/_components/select-filter";
+
 export function CourseList() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
@@ -47,6 +50,35 @@ export function CourseList() {
   const { courses, deleteCourseApi, pagination, filter, setFilter } =
     useCoursePagination();
   const { faculties } = useFaculty();
+
+  const filterConfig = [
+    {
+      label: "Khoa",
+      key: "faculty",
+      options: [
+        {
+          value: "",
+          label: "Tất cả",
+        },
+        ...faculties.map((f) => ({
+          value: f.name,
+          label: f.name,
+        })),
+      ],
+      xs: 6,
+    },
+    {
+      label: "Trạng thái",
+      key: "status",
+      options: [
+        { value: "", label: "Tất cả" },
+        { value: "active", label: "Đang hoạt động" },
+        { value: "inactive", label: "Không hoạt động" },
+      ],
+      xs: 6,
+    },
+  ];
+
   const handleMenuOpen = (
     event: MouseEvent<HTMLButtonElement>,
     course: Course
@@ -68,7 +100,7 @@ export function CourseList() {
 
   const handleDeleteConfirm = async (): Promise<void> => {
     if (selectedCourse) {
-      await deleteCourseApi.call(selectedCourse.id);
+      await deleteCourseApi.call(selectedCourse.courseId);
       setDeleteDialogOpen(false);
     }
   };
@@ -96,19 +128,33 @@ export function CourseList() {
         </Typography>
       </RowStack>
 
-      <RowStack mb={3} gap={2}>
+      <RowStack mb={3} gap={2} justifyContent="space-between">
         <Stack flex={1}>
           <TextField
             placeholder="Tìm kiếm khóa học..."
             variant="outlined"
             fullWidth
-            value={filter.key}
-            onChange={(e) =>
-              setFilter((prev) => ({ ...prev, key: e.target.value }))
-            }
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              if (e.target.value === "") {
+                setFilter((prev) => ({ ...prev, key: "" }));
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setFilter((prev) => ({ ...prev, key: searchQuery }));
+              }
+            }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">
+                <InputAdornment
+                  position="start"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() =>
+                    setFilter((prev) => ({ ...prev, key: searchQuery }))
+                  }
+                >
                   <SearchIcon />
                 </InputAdornment>
               ),
@@ -116,30 +162,27 @@ export function CourseList() {
           />
         </Stack>
 
-        <FormControl sx={{ minWidth: 180 }}>
-          <InputLabel id="department-filter-label">Khoa</InputLabel>
-          <Select
-            labelId="department-filter-label"
-            id="department-filter"
-            value={filter.faculty}
-            label="Khoa"
-            onChange={(e) =>
-              setFilter((prev) => ({ ...prev, faculty: e.target.value }))
-            }
-          >
-            {faculties.map((faculty) => (
-              <MenuItem key={faculty.id} value={faculty.id}>
-                {faculty.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Stack width={500}>
+          <SelectFilter
+            configs={filterConfig}
+            filter={filter as any}
+            onChange={(key: string, value: string) => {
+              setFilter((prev) => ({
+                ...prev,
+                [key]: value,
+              }));
+            }}
+          />
+        </Stack>
       </RowStack>
 
       <Stack height={300}>
         <CustomTable
-          rows={courses}
-          configs={getTableConfig(faculties)}
+          rows={courses.map((course) => ({
+            ...course,
+            id: course.courseId,
+          }))}
+          configs={getTableConfig()}
           renderRowActions={renderRowActions}
           loading={false}
           emptyState={
@@ -169,7 +212,7 @@ export function CourseList() {
       >
         <MenuItem
           component={Link}
-          href={`/courses/${menuCourse?.id}`}
+          href={`/courses/${menuCourse?.courseId}`}
           onClick={handleMenuClose}
         >
           <ListItemIcon>
@@ -179,7 +222,7 @@ export function CourseList() {
         </MenuItem>
         <MenuItem
           component={Link}
-          href={`/classes/new?courseId=${menuCourse?.id}`}
+          href={`/classes/new?courseId=${menuCourse?.courseId}`}
           onClick={handleMenuClose}
         >
           <ListItemIcon>
@@ -213,7 +256,7 @@ export function CourseList() {
               <>
                 Bạn có chắc chắn muốn xóa khóa học{" "}
                 <strong>
-                  {selectedCourse.id}: {selectedCourse.name}
+                  {selectedCourse.courseId}: {selectedCourse.courseName}
                 </strong>
                 ?
                 <br />

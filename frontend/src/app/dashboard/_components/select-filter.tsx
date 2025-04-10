@@ -1,3 +1,4 @@
+import RowStack from "@/components/row-stack";
 import {
   FormControl,
   Grid2,
@@ -29,12 +30,13 @@ const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
       onChange(key, "");
     }
     else onChange(key, event.target.value);
+    console.log(event.target.value)
   }
 
   return (
-    <Grid2 container spacing={1.5}>
+    <RowStack spacing={1.5} >
       {configs.map(({ label, xs, key }, index) => (
-        <Grid2 size={{ xs: xs }} key={key}>
+        <Grid2 size={{ xs: xs }} key={key} sx={{ width: "100%" }}>
           <FormControl fullWidth>
             <InputLabel>{label}</InputLabel>
             <Select
@@ -55,7 +57,7 @@ const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
           </FormControl>
         </Grid2>
       ))}
-    </Grid2>
+    </RowStack>
   );
 };
 

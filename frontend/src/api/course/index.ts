@@ -5,21 +5,32 @@ import { apiDelete, apiGet, apiPost, apiPut, getFormData } from "@/utils/api-req
 export type GetCourseRequest = {
   page: number;
   limit: number;
-  key?: string;
-  faculty?: string;
+  courseId?: string;
+  facultyId?: string;
+  isDeleted?: boolean;
 };
 
-export type CourseResponse = ResponseWithTotal<Course[]>;
+export type CourseResponse = {
+  data: {
+    courses: Course[];
+    total: number;
+  };
+};
 
 export class CourseApi {
   static async getCourses(params: GetCourseRequest): Promise<CourseResponse> {
+    console.log(params);
     return await apiGet(
       "/course",
       getFormData(params)
     );
   }
 
-  static async createCourse(course: Omit<Course, "id">): Promise<Course> {
+  static async getCourse(id: Course["courseId"]): Promise<{ data: Course }> {
+    return await apiGet(`/course/${id}`, {});
+  }
+
+  static async createCourse(course: Omit<Course, "courseId">): Promise<Course> {
     return await apiPost("/course", course);
   }
 
@@ -27,13 +38,13 @@ export class CourseApi {
     id,
     course,
   }: {
-    id: Course["id"];
+    id: Course["courseId"];
     course: Partial<Course>;
   }): Promise<Course> {
     return await apiPut(`/course/${id}`, course);
   }
 
-  static async deleteCourse(id: Course["id"]): Promise<Course> {
+  static async deleteCourse(id: Course["courseId"]): Promise<Course> {
     return await apiDelete(`/course/${id}`, {});
   }
 } 
