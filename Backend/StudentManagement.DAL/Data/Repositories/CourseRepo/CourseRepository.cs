@@ -21,6 +21,11 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
         }
         public async Task<Course> AddCourseAsync(Course course)
         {
+            var courseNames = await _context.Courses.Select(c => c.CourseName).ToListAsync();   
+            if(courseNames != null && courseNames.Contains(course.CourseName))
+            {
+                throw new ArgumentException("Duplicate name");
+            }
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
             return course;
@@ -28,11 +33,13 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
 
         public async Task<bool> CheckHasAnyStudentInCourseAsync(string courseId)
         {
-            var query = await (from c in _context.Classes
-                        join s in _context.ClassStudents on c.Id equals s.ClassId
-                        where c.CourseId == courseId
-                        select s.StudentId).AnyAsync();
-            return query;
+            var classes = await _context.Classes.Where(cl => cl.CourseId == courseId).Include(cl => cl.Students).ToListAsync();
+            foreach(var cl in classes)
+            {
+                if (cl.Students != null && cl.Students.Count > 0)
+                    return false;
+            }
+            return true;
         }
 
         public async Task DeleteCourseAsync(string courseId)
@@ -96,13 +103,18 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
 
         public async Task<Course> UpdateCourseAsync(Course course)
         {
+            
             var updatedCourse = _context.Courses.Find(course.CourseId);
             
             if(updatedCourse == null)
             {
                 throw new Exception("Course not found");
             }
-
+            var courseNames = await _context.Courses.Where(c => c.CourseId != course.CourseId).Select(c => c.CourseName).ToListAsync();
+            if (courseNames != null && courseNames.Contains(course.CourseName))
+            {
+                throw new ArgumentException("Duplicate name");
+            }
             updatedCourse.CourseName = course.CourseName;
             updatedCourse.Credits = course.Credits;
             updatedCourse.Description = course.Description;
