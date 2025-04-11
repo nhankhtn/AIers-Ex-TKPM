@@ -1,10 +1,13 @@
-import { ClassForm } from "@/app/classes/_component/class-form"
+import { ClassForm } from "@/app/classes/_components/class-form";
+import { Box, Typography } from "@mui/material";
 
 export default function NewClassPage() {
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-3xl font-bold">Mở lớp học mới</h1>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <Typography variant="h4" fontWeight="bold">
+        Mở lớp học mới
+      </Typography>
       <ClassForm />
-    </div>
-  )
+    </Box>
+  );
 }

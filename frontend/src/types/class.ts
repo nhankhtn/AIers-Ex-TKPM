@@ -1,25 +1,25 @@
 export interface Class {
   id: number
-  code: string
-  courseId: number
-  courseCode: string
-  courseName: string
-  instructor: string
-  year: string
+  courseId: string
+  teacherName: string
+  academicYear: number
   semester: number
-  schedule: string
+  startTime: number
+  endTime: number
   room: string
   maxStudents: number
-  enrolledStudents: number
+  deadline: string
 }
 
 export type ClassFormData = {
-  code: string
-  courseId: number | string
-  year: string
+  id: number
+  courseId:  string
+  academicYear: string
   semester: string
-  instructor: string
+  teacherName: string
   maxStudents: number | string
-  schedule: string
+  startTime: number
+  endTime: number
   room: string
+  deadline: string
 }

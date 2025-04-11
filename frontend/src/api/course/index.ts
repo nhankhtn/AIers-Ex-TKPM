@@ -11,19 +11,21 @@ export type GetCourseRequest = {
 };
 
 export type CourseResponse = ResponseWithTotal<Course[]>;
+export type CourseByIdResponse = {
+  data: Course
+};
 export type CourseDeleted = {
   data: string;
 }
 export class CourseApi {
   static async getCourses(params: GetCourseRequest): Promise<CourseResponse> {
-    console.log(params);
     return await apiGet(
       "/course",
       getFormData(params)
     );
   }
 
-  static async getCourse(id: Course["courseId"]): Promise<CourseResponse> {
+  static async getCourse(id: Course["courseId"]): Promise<CourseByIdResponse> {
     return await apiGet(`/course/${id}`, {});
 }
 

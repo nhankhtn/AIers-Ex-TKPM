@@ -23,7 +23,8 @@ import type { Course } from "@/types/course";
 import { Faculty } from "@/types/student";
 import { useFaculty } from "@/app/dashboard/_sections/use-faculty";
 import { useCourseSearch } from "../_sections/use-course-search";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { CourseApi } from "@/api/course";
 
 interface CourseFormProps {
   course?: Course | null;
@@ -62,11 +63,24 @@ export function CourseForm({ course = null }: CourseFormProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
+  const handleSearch = useCallback(
+    (inputValue: string) => {
+      if (inputValue) {
+        searchCourses({ page: 1, limit: 20, courseId: inputValue });
+      }
+    },
+    [searchCourses]
+  );
+
   useEffect(() => {
-    if (searchTerm) {
-      searchCourses({ page: 1, limit: 20, courseId: searchTerm });
+    if (course) {
+      CourseApi.getCourse(course.courseId).then((response) => {
+        if (response?.data) {
+          setSelectedCourse(response.data);
+        }
+      });
     }
-  }, [searchTerm, searchCourses]);
+  }, [course]);
   const formik = useFormik({
     initialValues: {
       courseId: course?.courseId || "",
@@ -218,9 +232,8 @@ export function CourseForm({ course = null }: CourseFormProps) {
               value={selectedCourse}
               onChange={(_, newValue) => handleCourseSelect(newValue)}
               onInputChange={(_, newInputValue) => {
-                setSearchTerm(newInputValue);
+                handleSearch(newInputValue);
                 if (!newInputValue) {
-                  console.log("clear");
                   setSelectedCourse(null);
                 }
               }}

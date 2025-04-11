@@ -5,13 +5,9 @@ import type { Course } from "@/types/course";
 import { useRouter } from "next/navigation";
 export const useCourseSearch = () => {
   const router = useRouter();
-  const getCoursesApi = useFunction<GetCourseRequest, CourseResponse>(
-    (params) => CourseApi.getCourses(params),
-    {
-      disableResetOnCall: true,
-    }
-  );
-
+  const getCoursesApi = useFunction(CourseApi.getCourses, {
+    disableResetOnCall: true,
+  });
   const courses = useMemo(
     () => getCoursesApi.data?.data || [],
     [getCoursesApi.data]
