@@ -31,7 +31,7 @@ namespace StudentManagement.BLL.DTOs.Class
 
     public class GetClassesDTO
     {
-        public IEnumerable<GetClassDTO> Classes { get; set; } = new List<GetClassDTO>();
+        public IEnumerable<GetClassDTO> Data { get; set; } = new List<GetClassDTO>();
         public int Total { get; set; } = 0;
     }
 

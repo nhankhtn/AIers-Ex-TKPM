@@ -44,12 +44,12 @@ namespace StudentManagement.API.Controllers
         //}
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<GetClassStudentsDTO>>> GetClassStudents(int? classId = null, string? studentId = null, int? page = null, int? limit = null)
+        public async Task<ActionResult<GetClassStudentsDTO>> GetClassStudents(int? classId = null, string? studentId = null, int? page = null, int? limit = null)
         {
             var result = await _classStudentService.GetClassStudentsAsync(classId, studentId, page, limit);
             if (result.Success)
             {
-                if (result.Data is null) return NotFound(new ApiResponse<GetClassStudentsDTO>(
+                if (result.Data is null) return NotFound(new ApiResponse<string>(
                     error: new ApiError()
                     {
                         Code = result.ErrorCode,
@@ -58,7 +58,7 @@ namespace StudentManagement.API.Controllers
                 ));
                 return Ok(result.Data);
             }
-            return NotFound(new ApiResponse<GetClassStudentsDTO>(
+            return NotFound(new ApiResponse<string>(
                 error: new ApiError()
                 {
                     Code = result.ErrorCode,

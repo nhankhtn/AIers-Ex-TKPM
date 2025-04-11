@@ -108,7 +108,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                 var res = await _classStudentRepository.GetClassStudentsAsync(classId, studentId, page, limit);
                 return Result<GetClassStudentsDTO>.Ok(new GetClassStudentsDTO()
                 {
-                    ClassStudents = _mapper.Map<IEnumerable<GetClassStudentDTO>>(res),
+                    Data = _mapper.Map<IEnumerable<GetClassStudentDTO>>(res),
                     Total = res.Count()
                 });
             }

@@ -61,7 +61,7 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<GetClassesDTO>>> GetClasses(string? courseId = null, int? page = null, int? limit = null)
+        public async Task<ActionResult<GetClassesDTO>> GetClasses(string? courseId = null, int? page = null, int? limit = null)
         {
             var result = await _classService.GetClassesAsync(courseId, page, limit);
             if (!result.Success)
@@ -74,9 +74,7 @@ namespace StudentManagement.API.Controllers
                     }
                 ));
             }
-            return Ok(ApiResponse<GetClassesDTO>.Success(
-                    data: result.Data
-                ));
+            return Ok(result.Data);
         }
 
 

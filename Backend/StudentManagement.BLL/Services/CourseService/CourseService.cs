@@ -94,7 +94,7 @@ namespace StudentManagement.BLL.Services.CourseService
                 }
                 var res = new GetAllCoursesDTO
                 { 
-                    courses = courseDTOs,
+                    Data = courseDTOs,
                     Total = total
                 };
 

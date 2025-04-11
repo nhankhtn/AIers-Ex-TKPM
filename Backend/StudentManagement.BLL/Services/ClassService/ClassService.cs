@@ -71,7 +71,7 @@ namespace StudentManagement.BLL.Services.ClassService
             {
                 var classes = await _classRepository.GetClassesAsync(courseId, page, limit);
                 return Result<GetClassesDTO>.Ok(new GetClassesDTO {
-                     Classes = _mapper.Map<IEnumerable<GetClassDTO>>(classes),
+                     Data = _mapper.Map<IEnumerable<GetClassDTO>>(classes),
                      Total = classes.Count()
                 });
             }

@@ -19,22 +19,20 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<ApiResponse<GetStudentsDTO>>> GetAllStudents(int page, int limit, string? faculty, string? program, string? status, string? key)
+        public async Task<ActionResult<GetStudentsDTO>> GetAllStudents(int page, int limit, string? faculty, string? program, string? status, string? key)
         {
             var result = await _studentService.GetAllStudentsAsync(page, limit, faculty, program, status, key);
             if (result.Success)
             {
-                if (result.Data is null) return NotFound(ApiResponse<GetStudentsDTO>.NotFound(
+                if (result.Data is null) return NotFound(ApiResponse<string>.NotFound(
                     error: new ApiError() {
                         Code = result.ErrorCode,
                         Message = result.ErrorMessage
                     }
                 ));
-                return Ok(ApiResponse<GetStudentsDTO>.Success(
-                        data: result.Data
-                    ));
+                return Ok(result.Data);
             }
-            return BadRequest(ApiResponse<GetStudentsDTO>.BadRequest(
+            return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
                 {
                     Code = result.ErrorCode,

@@ -74,7 +74,7 @@ namespace StudentManagement.API.Controllers
             var result = await _courseService.GetAllCourseAsync(page, limit, facultyId, courseId, isDeleted);
             if (result.Success)
             {
-                return Ok(ApiResponse<GetAllCoursesDTO>.Success(data: result.Data, message: result.Message));
+                return Ok(result.Data);
             }
             return BadRequest(ApiResponse<GetAllCoursesDTO>.BadRequest(
                 error: new ApiError

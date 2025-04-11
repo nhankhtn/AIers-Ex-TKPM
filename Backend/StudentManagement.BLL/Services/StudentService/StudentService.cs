@@ -68,7 +68,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var res = await _studentRepository.GetAllStudentsAsync(page, pageSize, faculty, program, status, key);
                 return Result<GetStudentsDTO>.Ok(new GetStudentsDTO()
                 {
-                    Students = _mapper.Map<IEnumerable<StudentDTO>>(res.students),
+                    Data = _mapper.Map<IEnumerable<StudentDTO>>(res.students),
                     Total = res.total
                 });
             }
