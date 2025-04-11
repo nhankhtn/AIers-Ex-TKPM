@@ -12,12 +12,12 @@ namespace StudentManagement.BLL.Services.ClassService
     {
         Task<Result<GetClassDTO>> AddClassAsync(AddClassDTO addClassDTO);
 
-        Task<Result<GetClassDTO>> GetClassAsync(int classId);
+        Task<Result<GetClassDTO>> GetClassAsync(string classId);
 
-        Task<Result<GetClassesDTO>> GetClassesAsync(string? courseId = null, int? page = null, int? limit = null); 
+        Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semeter = null, int? page = null, int? limit = null); 
 
-        Task<Result<GetClassDTO>> DeleteClassAsync(int classId);
+        Task<Result<GetClassDTO>> DeleteClassAsync(string classId);
 
-        Task<Result<GetClassDTO>> UpdateClassAsync(int classId, UpdateClassDTO updateClassDTO);
+        Task<Result<GetClassDTO>> UpdateClassAsync(string classId, UpdateClassDTO updateClassDTO);
     }
 }

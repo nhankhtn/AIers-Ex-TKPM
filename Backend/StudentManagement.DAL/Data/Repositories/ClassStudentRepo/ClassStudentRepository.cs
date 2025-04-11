@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagement.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +24,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
             return classStudent;
         }
 
-        public async Task DeleteClassStudentAsync(int classId, string studentId)
+        public async Task DeleteClassStudentAsync(string classId, string studentId)
         {
             //var classStudent = _context.ClassStudents.Find();
             var classStudent = await _context.ClassStudents
@@ -35,13 +37,13 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<ClassStudent>> GetClassStudentsAsync(int? classId = null, string? studentId = null, int? page = null, int? limit = null)
+        public async Task<IEnumerable<ClassStudent>> GetClassStudentsAsync(string? classId = null, string? studentId = null, int? page = null, int? limit = null)
         {
             var query = _context.ClassStudents.AsQueryable();
 
-            if (classId.HasValue)
+            if (!string.IsNullOrEmpty(classId))
             {
-                query = query.Where(cs => cs.ClassId == classId.Value);
+                query = query.Where(cs => cs.ClassId == classId);
             }
 
             if (!string.IsNullOrEmpty(studentId))
@@ -57,7 +59,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
             return await query.ToListAsync();
         }
 
-        public async Task<ClassStudent?> GetClassStudentByIdAsync(int classId, string studentId)
+        public async Task<ClassStudent?> GetClassStudentByIdAsync(string classId, string studentId)
         {
             //var classStudent = await _context.ClassStudents.FindAsync(id);
             var classStudent = await _context.ClassStudents

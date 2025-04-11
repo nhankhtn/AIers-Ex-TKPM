@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace StudentManagement.Domain.Models
     public class ClassStudent
     {
         [Column("class_id")]
-        public int ClassId { get; set; }
+        public string ClassId { get; set; } = null!;
         public Class Class { get; set; } = null!;
 
         [Column("student_id")]
@@ -34,7 +35,7 @@ namespace StudentManagement.Domain.Models
         [Key]
         public int Id { get; set; }
         [Column("class_id")]
-        public int? ClassId { get; set; }
+        public string? ClassId { get; set; }
 
         [Column("student_id")]
         public string? StudentId { get; set; }

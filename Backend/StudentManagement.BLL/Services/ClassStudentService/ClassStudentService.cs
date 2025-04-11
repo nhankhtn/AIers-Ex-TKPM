@@ -101,7 +101,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             }
         }
 
-        public async Task<Result<GetClassStudentsDTO>> GetClassStudentsAsync(int? classId = null, string? studentId = null, int? page = null, int? limit = null)
+        public async Task<Result<GetClassStudentsDTO>> GetClassStudentsAsync(string? classId = null, string? studentId = null, int? page = null, int? limit = null)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             }
         }
 
-        public async Task<Result<GetClassStudentDTO>> UpdateClassStudentAsync(int classId, string studentId, UpdateClassStudentDTO updateClassStudentDTO)
+        public async Task<Result<GetClassStudentDTO>> UpdateClassStudentAsync(string classId, string studentId, UpdateClassStudentDTO updateClassStudentDTO)
         {
             try
             {

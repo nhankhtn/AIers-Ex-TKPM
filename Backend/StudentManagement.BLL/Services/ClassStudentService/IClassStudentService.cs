@@ -15,8 +15,8 @@ namespace StudentManagement.BLL.Services.ClassStudentService
 
         Task<Result<RegisterCancelationDTO>> RegisterCancelationAsync(RegisterCancelationDTO registerCancelationDTO);
 
-        Task<Result<GetClassStudentsDTO>> GetClassStudentsAsync(int? classId = null, string? studentId = null, int? page = null, int? limit = null);
+        Task<Result<GetClassStudentsDTO>> GetClassStudentsAsync(string? classId = null, string? studentId = null, int? page = null, int? limit = null);
 
-        Task<Result<GetClassStudentDTO>> UpdateClassStudentAsync(int classId, string studentId, UpdateClassStudentDTO updateClassStudentDTO);
+        Task<Result<GetClassStudentDTO>> UpdateClassStudentAsync(string classId, string studentId, UpdateClassStudentDTO updateClassStudentDTO);
     }
 }

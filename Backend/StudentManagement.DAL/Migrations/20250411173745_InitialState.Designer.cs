@@ -12,8 +12,8 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409133820_EditTypeCourseId")]
-    partial class EditTypeCourseId
+    [Migration("20250411173745_InitialState")]
+    partial class InitialState
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,12 +61,9 @@ namespace StudentManagement.DAL.Migrations
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Class", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                    b.Property<string>("ClassId")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AcademicYear")
                         .HasColumnType("int")
@@ -111,7 +108,7 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("teacher_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("ClassId");
 
                     b.HasIndex("CourseId");
 
@@ -124,8 +121,8 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("varchar(8)")
                         .HasColumnName("student_id");
 
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int")
+                    b.Property<string>("ClassId")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("class_id");
 
                     b.Property<decimal>("Score")
@@ -335,8 +332,9 @@ namespace StudentManagement.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClassId")
-                        .HasColumnType("int")
+                    b.Property<string>("ClassId")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("class_id");
 
                     b.Property<string>("StudentId")

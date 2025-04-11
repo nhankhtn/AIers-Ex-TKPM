@@ -11,9 +11,9 @@ namespace StudentManagement.Domain.Models
     [Table("classes")]
     public class Class
     {
+        [Column("id", TypeName = "varchar(10)")]
         [Key]
-        [Column("id")]
-        public int Id { get; set; }
+        public string ClassId { get; set; } = null!;
 
         [Column("academic_year")]
         public int AcademicYear { get; set; }

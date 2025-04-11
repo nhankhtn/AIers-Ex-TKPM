@@ -8,17 +8,19 @@ namespace StudentManagement.BLL.DTOs.Class
 {
     public class UpdateClassDTO
     {
+        public string? ClassId { get; set; } = null!;
+
         public int? AcademicYear { get; set; }
 
         public string? CourseId { get; set; }
 
         public int? Semester { get; set; }
 
-        public string? TeacherName { get; set; } = string.Empty;
+        public string? TeacherName { get; set; } = null!;
 
         public int? MaxStudents { get; set; }
 
-        public string? Room { get; set; } = string.Empty;
+        public string? Room { get; set; } = null!;
 
         public int? DayOfWeek { get; set; }
 

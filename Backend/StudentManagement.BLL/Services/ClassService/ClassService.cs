@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +40,10 @@ namespace StudentManagement.BLL.Services.ClassService
                 var _class = await _classRepository.AddClassAsync(_mapper.Map<Class>(addClassDTO));
                 return Result<GetClassDTO>.Ok(_mapper.Map<GetClassDTO>(_class));
             }
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("duplicate"))
+            {
+                return Result<GetClassDTO>.Fail("DUPLICATE_CLASS_ID");
+            }
             catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("FK_classes_courses_course_id"))
             {
                 return Result<GetClassDTO>.Fail("COURSE_NOT_FOUND");
@@ -50,7 +55,7 @@ namespace StudentManagement.BLL.Services.ClassService
         }
         //FK_classes_courses_course_id
 
-        public async Task<Result<GetClassDTO>> GetClassAsync(int classId)
+        public async Task<Result<GetClassDTO>> GetClassAsync(string classId)
         {
             try
             {
@@ -65,11 +70,11 @@ namespace StudentManagement.BLL.Services.ClassService
             }
         }
 
-        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? courseId = null, int? page = null, int? limit = null)
+        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semeter = null, int? page = null, int? limit = null)
         {
             try
             {
-                var classes = await _classRepository.GetClassesAsync(courseId, page, limit);
+                var classes = await _classRepository.GetClassesAsync(classId, semeter, page, limit);
                 return Result<GetClassesDTO>.Ok(new GetClassesDTO {
                      Data = _mapper.Map<IEnumerable<GetClassDTO>>(classes),
                      Total = classes.Count()
@@ -81,12 +86,12 @@ namespace StudentManagement.BLL.Services.ClassService
             }
         }
 
-        public async Task<Result<GetClassDTO>> DeleteClassAsync(int id)
+        public async Task<Result<GetClassDTO>> DeleteClassAsync(string id)
         {
             try
             {
                 await _classRepository.DeleteClassAsync(id);
-                return Result<GetClassDTO>.Ok(new GetClassDTO { Id = id });
+                return Result<GetClassDTO>.Ok(new GetClassDTO { ClassId = id });
             }
             catch (Exception)
             {
@@ -94,7 +99,7 @@ namespace StudentManagement.BLL.Services.ClassService
             }
         }
 
-        public async Task<Result<GetClassDTO>> UpdateClassAsync(int classId, UpdateClassDTO updateClassDTO)
+        public async Task<Result<GetClassDTO>> UpdateClassAsync(string classId, UpdateClassDTO updateClassDTO)
         {
             try
             {

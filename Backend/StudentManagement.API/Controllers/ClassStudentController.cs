@@ -44,7 +44,7 @@ namespace StudentManagement.API.Controllers
         //}
 
         [HttpGet]
-        public async Task<ActionResult<GetClassStudentsDTO>> GetClassStudents(int? classId = null, string? studentId = null, int? page = null, int? limit = null)
+        public async Task<ActionResult<GetClassStudentsDTO>> GetClassStudents(string? classId = null, string? studentId = null, int? page = null, int? limit = null)
         {
             var result = await _classStudentService.GetClassStudentsAsync(classId, studentId, page, limit);
             if (result.Success)
@@ -107,7 +107,7 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ApiResponse<GetClassStudentDTO>>> UpdateClassStudent(int classId, string studentId, UpdateClassStudentDTO updateClassStudentDTO)
+        public async Task<ActionResult<ApiResponse<GetClassStudentDTO>>> UpdateClassStudent(string classId, string studentId, UpdateClassStudentDTO updateClassStudentDTO)
         {
             var result = await _classStudentService.UpdateClassStudentAsync(classId, studentId, updateClassStudentDTO);
             if (result.Success)
