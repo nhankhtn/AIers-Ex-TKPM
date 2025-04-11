@@ -9,9 +9,10 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
 {
     public interface IClassStudentRepository
     {
-        Task<IEnumerable<ClassStudent>> GetAllClassStudentsAsync();
+        Task<IEnumerable<ClassStudent>> GetClassStudentsAsync(int? classId = null, string? studentId = null, int? page = null, int? limit = null);
         Task<ClassStudent?> GetClassStudentByIdAsync(int classId, string studentId);
-        Task AddClassStudentAsync(ClassStudent classStudent);
+        Task<IEnumerable<ClassStudent?>> GetClassStudentByIdAndCourseAsync(string studentId, string courseId);
+        Task<ClassStudent?> AddClassStudentAsync(ClassStudent classStudent);
         Task UpdateClassStudentAsync(ClassStudent classStudent);
         Task DeleteClassStudentAsync(int classId, string studentId);
     }

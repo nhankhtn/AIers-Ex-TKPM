@@ -15,17 +15,18 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
         {
             _context = context;
         }
-        public async Task AddClassStudentAsync(ClassStudent classStudent)
+        public async Task<ClassStudent?> AddClassStudentAsync(ClassStudent classStudent)
         {
             _context.ClassStudents.Add(classStudent);
             await _context.SaveChangesAsync();
+            return classStudent;
         }
 
         public async Task DeleteClassStudentAsync(int classId, string studentId)
         {
             //var classStudent = _context.ClassStudents.Find();
-            var classStudent = _context.ClassStudents
-                .FirstOrDefault(cs => cs.ClassId == classId && cs.StudentId == studentId);
+            var classStudent = await _context.ClassStudents
+                .FirstOrDefaultAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
             if (classStudent == null)
             {
                 throw new ArgumentNullException("ClassStudent not found");
@@ -34,16 +35,33 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<ClassStudent>> GetAllClassStudentsAsync()
+        public async Task<IEnumerable<ClassStudent>> GetClassStudentsAsync(int? classId = null, string? studentId = null, int? page = null, int? limit = null)
         {
-            var classStudents = await _context.ClassStudents.ToListAsync();
-            return classStudents;
+            var query = _context.ClassStudents.AsQueryable();
+
+            if (classId.HasValue)
+            {
+                query = query.Where(cs => cs.ClassId == classId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(studentId))
+            {
+                query = query.Where(cs => cs.StudentId == studentId);
+            }
+
+            if (page.HasValue && limit.HasValue)
+            {
+                query = query.Skip((page.Value - 1) * limit.Value).Take(limit.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<ClassStudent?> GetClassStudentByIdAsync(int classId, string studentId)
         {
             //var classStudent = await _context.ClassStudents.FindAsync(id);
             var classStudent = await _context.ClassStudents
+                .Include(cs => cs.RegisterCancellationHistories)
                 .FirstOrDefaultAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
             return classStudent;
         }
@@ -60,6 +78,17 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
             existingClassStudent.Score = classStudent.Score;
             _context.ClassStudents.Update(existingClassStudent);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<ClassStudent?>> GetClassStudentByIdAndCourseAsync(string studentId, string courseId)
+        {
+            var classStudents = await _context.ClassStudents
+                .Include(c => c.Class)
+                .ThenInclude(c => c.Course)
+                .Where(cs => cs.StudentId == studentId && cs.Class.CourseId == courseId)
+                .ToListAsync();
+
+            return classStudents;
         }
     }
 }

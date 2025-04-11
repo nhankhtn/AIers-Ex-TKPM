@@ -35,7 +35,9 @@ namespace StudentManagement.BLL.Services.CourseService
                     {
                         return Result<AddCourseDTO>.Fail("404", "Required course not found");
                     }
+                    
                 }
+
 
                 var c = await _courseRepository.AddCourseAsync(course);
                 return Result<AddCourseDTO>.Ok(_mapper.Map<AddCourseDTO>(c));
@@ -94,7 +96,7 @@ namespace StudentManagement.BLL.Services.CourseService
                 }
                 var res = new GetAllCoursesDTO
                 { 
-                    courses = courseDTOs,
+                    Data = courseDTOs,
                     Total = total
                 };
 

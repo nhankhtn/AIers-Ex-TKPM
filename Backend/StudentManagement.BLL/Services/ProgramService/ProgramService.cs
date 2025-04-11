@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.Program;
 using StudentManagement.BLL.DTOs.StudentStatus;
@@ -33,6 +34,10 @@ namespace StudentManagement.BLL.Services.ProgramService
                 var p = await _programRepository.AddProgramAsync(program);
                 return Result<ProgramDTO?>.Ok(_mapper.Map<ProgramDTO>(p));
             }
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
+            {
+                return Result<ProgramDTO?>.Fail("DUPLICATE_PROGRAM_NAME");
+            }
             catch (Exception ex)
             {
                 return Result<ProgramDTO?>.Fail("500", ex.Message);
@@ -61,6 +66,10 @@ namespace StudentManagement.BLL.Services.ProgramService
 
                 var res = await _programRepository.UpdateProgramAsync(existingStudentStatus);
                 return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res));
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
+            {
+                return Result<ProgramDTO>.Fail("DUPLICATE_PROGRAM_NAME");
             }
             catch (Exception ex)
             {
@@ -93,7 +102,5 @@ namespace StudentManagement.BLL.Services.ProgramService
                 return Result<string>.Fail("500", ex.Message);
             }
         }
-
-        
     }
 }

@@ -19,7 +19,7 @@ namespace StudentManagement.BLL.DTOs.Course
         public string FacultyName { get; set; } = null!;
         public string Description { get; set; } = string.Empty;
         public string? RequiredCourseName { get; set; }
-        public int? RequiredCourseId { get; set; }   
+        public string? RequiredCourseId { get; set; }   
         public DateTime? DeletedAt { get; set; }     
         public DateTime CreatedAt { get; set; }
 
@@ -27,7 +27,7 @@ namespace StudentManagement.BLL.DTOs.Course
 
     public class GetAllCoursesDTO 
     {
-        public List<GetCourseDTO> courses { get; set; } = new List<GetCourseDTO>();
+        public List<GetCourseDTO> Data { get; set; } = new List<GetCourseDTO>();
         public int Total { get; set; } = 0;
     }
 

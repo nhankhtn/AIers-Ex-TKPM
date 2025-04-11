@@ -3,6 +3,7 @@ using StudentManagement.API.Utils;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.Services.StudentService;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace StudentManagement.API.Controllers
@@ -23,7 +24,7 @@ namespace StudentManagement.API.Controllers
             var result = await _studentService.GetAllStudentsAsync(page, limit, faculty, program, status, key);
             if (result.Success)
             {
-                if (result.Data is null) return NotFound(new ApiResponse<string>(
+                if (result.Data is null) return NotFound(ApiResponse<string>.NotFound(
                     error: new ApiError() {
                         Code = result.ErrorCode,
                         Message = result.ErrorMessage
@@ -31,75 +32,46 @@ namespace StudentManagement.API.Controllers
                 ));
                 return Ok(result.Data);
             }
-            return NotFound(new
-            {
-                error = new
+            return BadRequest(ApiResponse<string>.BadRequest(
+                error: new ApiError()
                 {
-                    code = result.ErrorCode,
-                    message = result.ErrorMessage
+                    Code = result.ErrorCode,
+                    Message = result.ErrorMessage
                 }
-            });
-        }
-
-
-
-        [HttpPost]
-        public async Task<ActionResult<ApiResponse<AddListStudentResult>>> AddStudent(IEnumerable<StudentDTO> studentDTOs)
-        {
-            if (!ModelState.IsValid)
-            {
-                var firstError = ModelState.Values
-                .SelectMany(x => x.Errors)
-                .Select(e => e.ErrorMessage)
-                .FirstOrDefault();
-
-                return BadRequest(ApiResponse<AddListStudentResult>.BadRequest(
-                    error: new ApiError()
-                    {
-                        Code = firstError
-                    }
-                ));
-            }
-            var result = await _studentService.AddListStudentAsync(studentDTOs);
-
-            if (result.Success)
-            {
-                return StatusCode(207, ApiResponse<AddListStudentResult>.MultiStatus(
-                    data: result.Data,
-                    message: result.Message,
-                    errors: result.Errors?.Select(e => new ApiError() { Index = e.index, Code = e.errorCode }).ToList()
-                ));
-            }
-            return BadRequest(ApiResponse<AddListStudentResult>.BadRequest(
-                    error: new ApiError()
-                    {
-                        Code = result.ErrorCode,
-                        Message = result.ErrorMessage
-                    }
             ));
         }
 
 
+        [HttpPost]
+        public async Task<ActionResult<ApiResponse<IEnumerable<StudentDTO>>>> AddStudents(IEnumerable<StudentDTO> studentDTOs)
+        {
+            var result = await _studentService.AddListStudentAsync(studentDTOs);
+
+            if (result.Success)
+            {
+                return Ok(ApiResponse<IEnumerable<StudentDTO>>.Success(
+                    data: result.Data
+                ));
+            }
+            return BadRequest(ApiResponse<IEnumerable<StudentDTO>>.BadRequest(
+                    error: new ApiError()
+                    {
+                        Code = result.ErrorCode,
+                        Message = result.ErrorMessage
+                    },
+                    errors: result.Errors?.Select(e => new ApiError()
+                    {
+                        Index = e.index,
+                        Code = e.errorCode,
+                        Message = result.ErrorMessage
+                    }).ToList()
+            ));
+        }
 
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<StudentDTO>>> UpdateStudent(string id, StudentDTO updateStudentDTO)
         {
-            if (!ModelState.IsValid)
-            {
-                Console.WriteLine("Model is not valid");
-                var firstError = ModelState.Values
-                .SelectMany(x => x.Errors)
-                .Select(e => e.ErrorMessage)
-                .FirstOrDefault();
-
-                return BadRequest(ApiResponse<StudentDTO>.BadRequest(
-                    error: new ApiError()
-                    {
-                        Code = firstError
-                    }
-                ));
-            }
             var result = await _studentService.UpdateStudentAsync(id, updateStudentDTO);
             if (result.Success)
             {

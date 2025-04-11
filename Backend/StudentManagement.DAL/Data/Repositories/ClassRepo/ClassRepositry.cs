@@ -15,10 +15,11 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
         {
             _context = context;
         }
-        public async Task AddClassAsync(Class classEntity)
+        public async Task<Class?> AddClassAsync(Class classEntity)
         {
             _context.Classes.Add(classEntity);
             await _context.SaveChangesAsync();
+            return classEntity;
         }
 
         public async Task DeleteClassAsync(int id)
@@ -32,38 +33,48 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Class>> GetAllClassesAsync()
+        public async Task<IEnumerable<Class>> GetClassesAsync(string? courseId = null, int? page = null, int? limit = null)
         {
-            var classes = await _context.Classes.ToListAsync();
-            return classes;
+            var query = _context.Classes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(courseId))
+            {
+                query = query.Where(c => c.CourseId == courseId);
+            }
+
+            if (page.HasValue && limit.HasValue)
+            {
+                query = query.Skip((page.Value - 1) * limit.Value).Take(limit.Value);
+            }
+
+            return await query.Include(c => c.Course).ToListAsync();
         }
 
         public async Task<Class?> GetClassByIdAsync(int id)
         {
-            var classEntity = await _context.Classes.FindAsync(id);
+            var classEntity = await _context.Classes
+                .Where(c => c.Id == id)
+                .Include(c => c.Course)
+                .FirstOrDefaultAsync();
+
             return classEntity;
         }
 
         public async Task UpdateClassAsync(Class classEntity)
         {
-            var existingClass = _context.Classes.Find(classEntity.Id);
-            if (existingClass == null)
-            {
-                throw new Exception("Class not found");
-            }
-            
-            existingClass.AcademicYear = classEntity.AcademicYear;
-            existingClass.CourseId = classEntity.CourseId;
-            existingClass.Semester = classEntity.Semester;
-            existingClass.TeacherName = classEntity.TeacherName;
-            existingClass.MaxStudents = classEntity.MaxStudents;
-            existingClass.Room = classEntity.Room;
-            existingClass.DayOfWeek = classEntity.DayOfWeek;
-            existingClass.StartTime = classEntity.StartTime;
-            existingClass.EndTime = classEntity.EndTime;
-            existingClass.Deadline = classEntity.Deadline;
-
+            _context.Update(classEntity);
             await _context.SaveChangesAsync();
         }
+
+        //public async Task<IEnumerable<Class?>> GetStudentJoinedClassesAsync(string studentId, string courseId)
+        //{
+        //    var classes = await _context.Classes
+        //        .Include(c => c.ClassStudents)
+        //        .ThenInclude(cs => cs.Student)
+        //        .Where(c => c.CourseId == courseId && c.ClassStudents.Any(cs => cs.StudentId == studentId))
+        //        .ToListAsync();
+
+        //    return classes;
+        //}
     }
 }

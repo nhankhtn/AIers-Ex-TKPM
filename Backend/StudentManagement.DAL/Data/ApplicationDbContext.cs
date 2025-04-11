@@ -106,8 +106,6 @@ namespace StudentManagement.DAL.Data
 
             
 
-
-
             modelBuilder.Entity<Program>(b =>
             {
                 b.HasData(

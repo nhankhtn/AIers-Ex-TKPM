@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Conventions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.IdentityModel.Tokens;
+using StudentManagement.BLL.DTOs.Class;
+using StudentManagement.BLL.DTOs.ClassStudent;
 using StudentManagement.BLL.DTOs.Course;
 using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.Identity;
@@ -12,7 +16,9 @@ using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,15 +36,34 @@ namespace StudentManagement.BLL
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()))
                 .ForMember(dest => dest.Identity, opt => opt.MapFrom(src => src.Identity));
 
+
             CreateMap<StudentDTO, Student>()
                 .ForMember(dest => dest.Faculty, opt => opt.Ignore())
                 .ForMember(dest => dest.Program, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.Ignore())
-                .ForMember(dest => dest.FacultyId, opt => opt.MapFrom(src => src.Faculty.ToGuid()))
-                .ForMember(dest => dest.ProgramId, opt => opt.MapFrom(src => src.Program.ToGuid()))
-                .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => src.Status.ToGuid()))
-                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToEnum<Gender>()))
-                .ForMember(dest => dest.Identity, opt => opt.MapFrom(src => src.Identity));
+                .ForMember(dest => dest.FacultyId, opt => {
+                    opt.PreCondition(src => src.Faculty != null);
+                    opt.MapFrom(src => src.Faculty.ToGuid());
+                })
+                .ForMember(dest => dest.ProgramId, opt => {
+                    opt.PreCondition(src => src.Program != null);
+                    opt.MapFrom(src => src.Program.ToGuid());
+                })
+                .ForMember(dest => dest.StatusId, opt => {
+                    opt.PreCondition(src => src.Status != null);
+                    opt.MapFrom(src => src.Status.ToGuid());
+                })
+                .ForMember(dest => dest.Gender, opt => {
+                    opt.PreCondition(src => src.Gender != null);
+                    opt.MapFrom(src => src.Gender.ToEnum<Gender>());
+                })
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                    srcMember != null &&
+                    (!(srcMember is DateTime) || !((DateTime)srcMember).Equals(default(DateTime))) &&
+                    (!(srcMember is int) || !((int)srcMember).Equals(default(int))) &&
+                    (!(srcMember is bool) || !((bool)srcMember).Equals(default(bool)))
+                ));
+
 
 
             // Faculty
@@ -66,10 +91,25 @@ namespace StudentManagement.BLL
             CreateMap<Identity, IdentityDTO>()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
                 .ForMember(dest => dest.CountryIssue, opt => opt.MapFrom(src => src.Country));
+
             CreateMap<IdentityDTO, Identity>()
-                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToEnum<IdentityType>()))
-                .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.CountryIssue))
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForMember(dest => dest.Type, opt =>
+                {
+                    opt.PreCondition(src => src.Type != null);
+                    opt.MapFrom(src => src.Type.ToEnum<IdentityType>());
+                })
+                .ForMember(dest => dest.Country, opt =>
+                {
+                    opt.PreCondition(src => src.CountryIssue != null);
+                    opt.MapFrom(src => src.CountryIssue);
+                })
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                    srcMember != null &&
+                    (!(srcMember is DateTime) || !((DateTime)srcMember).Equals(default(DateTime))) &&
+                    (!(srcMember is int) || !((int)srcMember).Equals(default(int))) &&
+                    (!(srcMember is bool) || !((bool)srcMember).Equals(default(bool)))
+                ));
+
 
             //Course
             CreateMap<AddCourseDTO, Course>();
@@ -82,6 +122,41 @@ namespace StudentManagement.BLL
                 .ForMember(dest => dest.FacultyName, act => act.MapFrom(src => src.Faculty.Name))
                 .ForMember(dest => dest.RequiredCourseName, act => act.MapFrom(src => src.RequiredCourse!.CourseName))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Class
+            CreateMap<AddClassDTO, Class>();
+            CreateMap<Class, AddClassDTO>();
+
+            CreateMap<Class, GetClassDTO>();
+
+            CreateMap<UpdateClassDTO, Class>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                    srcMember != null &&
+                    (!(srcMember is DateTime) || !((DateTime)srcMember).Equals(default(DateTime))) &&
+                    (!(srcMember is int) || !((int)srcMember).Equals(default(int))) &&
+                    (!(srcMember is bool) || !((bool)srcMember).Equals(default(bool))) &&
+                    (!(srcMember is Guid) || !((Guid)srcMember).Equals(default(Guid))) &&
+                    (!(srcMember is string) || !string.IsNullOrEmpty((string)srcMember)) &&
+                    (!(srcMember is decimal) || !((decimal)srcMember).Equals(default(decimal)))
+                ));
+
+            // ClassStudent
+            CreateMap<AddStudentToClassDTO,  ClassStudent>();
+
+            CreateMap<ClassStudent, GetClassStudentDTO>();
+
+            CreateMap<UpdateClassStudentDTO, ClassStudent>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                    srcMember != null &&
+                    (!(srcMember is DateTime) || !((DateTime)srcMember).Equals(default(DateTime))) &&
+                    (!(srcMember is int) || !((int)srcMember).Equals(default(int))) &&
+                    (!(srcMember is bool) || !((bool)srcMember).Equals(default(bool))) &&
+                    (!(srcMember is Guid) || !((Guid)srcMember).Equals(default(Guid))) &&
+                    (!(srcMember is string) || !string.IsNullOrEmpty((string)srcMember)) &&
+                    (!(srcMember is decimal) || !((decimal)srcMember).Equals(default(decimal)))
+                )); ;
+
+            CreateMap<RegisterCancelationDTO, RegisterCancellationHistory>();
         }
     }
 }

@@ -18,6 +18,11 @@ using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL.Checker;
 using StudentManagement.BLL.Services.CourseService;
 using StudentManagement.DAL.Data.Repositories.CourseRepo;
+using StudentManagement.DAL.Data.Repositories.ClassRepo;
+using StudentManagement.DAL.Data.Repositories.ClassStudentRepo;
+using StudentManagement.DAL.Data.Repositories.RegisterCancellationHistoryRepo;
+using StudentManagement.BLL.Services.ClassService;
+using StudentManagement.BLL.Services.ClassStudentService;
 
 namespace StudentManagement.API.Startup
 {
@@ -61,6 +66,10 @@ namespace StudentManagement.API.Startup
             builder.Services.AddScoped<IAddressService, AddressService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ICourseService, CourseService>();
+            builder.Services.AddScoped<IClassService, ClassService>();
+            builder.Services.AddScoped<IClassStudentService, ClassStudentService>();
+            builder.Services.AddScoped<IRegisterCancellationHistoryRepository, RegisterCancellationHistoryRepository>();
+
 
             // Repo
             builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -69,6 +78,9 @@ namespace StudentManagement.API.Startup
             builder.Services.AddScoped<IStudentStatusRepository, StudentStatusRepository>();
             builder.Services.AddScoped<ISettingRepository, SettingRepository>();
             builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+            builder.Services.AddScoped<IClassRepository, ClassRepositry>();
+            builder.Services.AddScoped<IClassStudentRepository, ClassStudentRepository>();
+            builder.Services.AddScoped<IRegisterCancellationHistoryRepository, RegisterCancellationHistoryRepository>();
 
             // Validators
             builder.Services.AddScoped<IStudentValidator, StudentValidator>();
