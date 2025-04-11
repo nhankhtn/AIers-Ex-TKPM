@@ -13,7 +13,7 @@ export const useCourseSearch = () => {
   );
 
   const courses = useMemo(
-    () => getCoursesApi.data?.data.courses || [],
+    () => getCoursesApi.data?.data || [],
     [getCoursesApi.data]
   );
 

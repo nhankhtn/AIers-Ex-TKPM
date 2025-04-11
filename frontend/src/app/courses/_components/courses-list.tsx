@@ -4,23 +4,12 @@ import { useState, type MouseEvent } from "react";
 import Link from "next/link";
 import {
   Box,
-  Paper,
   TextField,
   InputAdornment,
   IconButton,
   Menu,
   MenuItem,
   ListItemIcon,
-  Chip,
-  FormControl,
-  InputLabel,
-  Select,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  type SelectChangeEvent,
   Typography,
   Stack,
 } from "@mui/material";
@@ -28,9 +17,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import WarningIcon from "@mui/icons-material/Warning";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { Button } from "@mui/material";
 import type { Course } from "@/types/course";
 import { CustomTable } from "@/components/custom-table";
 import { getTableConfig } from "../_sections/table-config";
@@ -39,11 +26,13 @@ import CustomPagination from "@/components/custom-pagination";
 import RowStack from "@/components/row-stack";
 import { useFaculty } from "@/app/dashboard/_sections/use-faculty";
 import SelectFilter from "@/app/dashboard/_components/select-filter";
+import { paths } from "@/paths";
+import { useDialog } from "@/hooks/use-dialog";
+import DialogConfirmDeleteCourse from "./dialog-confirm-delete-course";
 
 export function CourseList() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const deleteDialog = useDialog<Course>();
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [menuCourse, setMenuCourse] = useState<Course | null>(null);
 
@@ -92,16 +81,17 @@ export function CourseList() {
     setMenuCourse(null);
   };
 
-  const handleDeleteClick = (course: Course): void => {
-    setSelectedCourse(course);
-    setDeleteDialogOpen(true);
-    handleMenuClose();
+  const handleDeleteClick = (course: Course) => {
+    deleteDialog.handleOpen(course);
+    console.log(deleteDialog.data);
   };
 
-  const handleDeleteConfirm = async (): Promise<void> => {
-    if (selectedCourse) {
-      await deleteCourseApi.call(selectedCourse.courseId);
-      setDeleteDialogOpen(false);
+  const handleConfirmDelete = () => {
+    if (deleteDialog.data) {
+      deleteCourseApi.call(deleteDialog.data.courseId);
+      deleteDialog.handleClose();
+      setMenuCourse(null);
+      setMenuAnchorEl(null);
     }
   };
 
@@ -178,7 +168,7 @@ export function CourseList() {
 
       <Stack height={300}>
         <CustomTable
-          rows={courses.map((course) => ({
+          rows={courses.map((course: Course) => ({
             ...course,
             id: course.courseId,
           }))}
@@ -212,7 +202,7 @@ export function CourseList() {
       >
         <MenuItem
           component={Link}
-          href={`/courses/${menuCourse?.courseId}`}
+          href={paths.courses.edit.replace(":id", menuCourse?.courseId ?? "")}
           onClick={handleMenuClose}
         >
           <ListItemIcon>
@@ -222,7 +212,7 @@ export function CourseList() {
         </MenuItem>
         <MenuItem
           component={Link}
-          href={`/classes/new?courseId=${menuCourse?.courseId}`}
+          href={paths.classes.create.replace(":id", menuCourse?.courseId ?? "")}
           onClick={handleMenuClose}
         >
           <ListItemIcon>
@@ -241,44 +231,14 @@ export function CourseList() {
         </MenuItem>
       </Menu>
 
-      {/* Delete confirmation dialog */}
-      <Dialog
-        open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-      >
-        <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <WarningIcon color="error" />
-          Xác nhận xóa khóa học
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {selectedCourse && (
-              <>
-                Bạn có chắc chắn muốn xóa khóa học{" "}
-                <strong>
-                  {selectedCourse.courseId}: {selectedCourse.courseName}
-                </strong>
-                ?
-                <br />
-                <br />
-                Lưu ý: Chỉ có thể xóa khóa học trong vòng 30 phút sau khi tạo và
-                chưa có lớp học nào được mở.
-              </>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Hủy</Button>
-          <Button
-            onClick={handleDeleteConfirm}
-            color="error"
-            variant="contained"
-            disabled={deleteCourseApi.loading}
-          >
-            {deleteCourseApi.loading ? "Đang xóa..." : "Xóa khóa học"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {deleteDialog.data && (
+        <DialogConfirmDeleteCourse
+          open={deleteDialog.open}
+          onClose={deleteDialog.handleClose}
+          onConfirm={handleConfirmDelete}
+          data={deleteDialog.data}
+        />
+      )}
     </Box>
   );
 }

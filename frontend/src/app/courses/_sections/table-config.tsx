@@ -35,14 +35,14 @@ export const getTableConfig = (): CustomTableConfig<string, Course>[] => [
       <Box>
         {course.requiredCourseId ? (
           <>
-            <Typography component="span" sx={{ fontWeight: "medium" }}>
+            <Typography component="span">
               {course.requiredCourseId}
             </Typography>
             <Typography
               component="span"
-              sx={{ color: "text.secondary", ml: 1 }}
+              sx={{ color: "text.secondary", ml: 1, fontSize: "14px" }}
             >
-              {course.requiredCourseName}
+              - {course.requiredCourseName}
             </Typography>
           </>
         ) : (

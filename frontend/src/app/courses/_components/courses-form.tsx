@@ -32,7 +32,7 @@ interface CourseFormProps {
 const validationSchema = Yup.object().shape({
   courseId: Yup.string()
     .required("Vui lòng nhập mã khóa học")
-    .matches(/^[A-Z0-9]+$/, "Mã khóa học chỉ được chứa chữ hoa và số"),
+    .matches(/^[a-zA-Z0-9]+$/, "Mã khóa học chỉ được chứa chữ và số"),
   courseName: Yup.string()
     .required("Vui lòng nhập tên khóa học")
     .min(3, "Tên khóa học phải có ít nhất 3 ký tự"),

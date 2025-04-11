@@ -4,7 +4,7 @@ import { Box, Typography, Button } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { CourseList } from "../_components/courses-list";
 import Link from "next/link";
-
+import { paths } from "@/paths";
 export default function Content() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -22,7 +22,7 @@ export default function Content() {
           variant="contained"
           startIcon={<AddCircleIcon />}
           component={Link}
-          href="/courses/new"
+          href={paths.courses.create}
         >
           Thêm khóa học mới
         </Button>

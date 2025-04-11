@@ -10,13 +10,10 @@ export type GetCourseRequest = {
   isDeleted?: boolean;
 };
 
-export type CourseResponse = {
-  data: {
-    courses: Course[];
-    total: number;
-  };
-};
-
+export type CourseResponse = ResponseWithTotal<Course[]>;
+export type CourseDeleted = {
+  data: string;
+}
 export class CourseApi {
   static async getCourses(params: GetCourseRequest): Promise<CourseResponse> {
     console.log(params);
@@ -26,9 +23,9 @@ export class CourseApi {
     );
   }
 
-  static async getCourse(id: Course["courseId"]): Promise<{ data: Course }> {
+  static async getCourse(id: Course["courseId"]): Promise<CourseResponse> {
     return await apiGet(`/course/${id}`, {});
-  }
+}
 
   static async createCourse(course: Omit<Course, "courseId">): Promise<Course> {
     return await apiPost("/course", course);
@@ -44,7 +41,7 @@ export class CourseApi {
     return await apiPut(`/course/${id}`, course);
   }
 
-  static async deleteCourse(id: Course["courseId"]): Promise<Course> {
+  static async deleteCourse(id: Course["courseId"]): Promise<CourseDeleted> {
     return await apiDelete(`/course/${id}`, {});
   }
 } 
