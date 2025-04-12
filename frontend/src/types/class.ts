@@ -1,5 +1,6 @@
 export interface Class {
-  id: number
+  id: string
+  classId: string
   courseId: string
   teacherName: string
   academicYear: number
@@ -9,17 +10,5 @@ export interface Class {
   room: string
   maxStudents: number
   deadline: string
-}
-
-export type ClassFormData = {
-  id: number
-  courseId:  string
-  academicYear: string
-  semester: string
-  teacherName: string
-  maxStudents: number | string
-  startTime: number
-  endTime: number
-  room: string
-  deadline: string
+  dayOfWeek: number
 }

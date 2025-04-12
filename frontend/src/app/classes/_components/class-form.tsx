@@ -12,7 +12,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormHelperText,
   Divider,
   Autocomplete,
 } from "@mui/material";
@@ -29,7 +28,7 @@ interface ClassFormProps {
 }
 
 const validationSchema = Yup.object().shape({
-  id: Yup.string()
+  classId: Yup.string()
     .required("Mã lớp học không được để trống")
     .matches(
       /^[a-zA-Z0-9-]+$/,
@@ -70,6 +69,9 @@ const validationSchema = Yup.object().shape({
   deadline: Yup.date()
     .required("Vui lòng chọn hạn đăng ký")
     .min(new Date(), "Hạn đăng ký phải lớn hơn ngày hiện tại"),
+  dayOfWeek: Yup.number()
+    .required("Vui lòng chọn ngày trong tuần")
+    .oneOf([2, 3, 4, 5, 6, 7, 8], "Ngày trong tuần không hợp lệ"),
 });
 
 export function ClassForm({ classData = null }: ClassFormProps) {
@@ -87,7 +89,6 @@ export function ClassForm({ classData = null }: ClassFormProps) {
   );
 
   useEffect(() => {
-    console.log("classData", classData);
     if (classData) {
       CourseApi.getCourse(classData.courseId).then((response) => {
         if (response?.data) {
@@ -99,7 +100,7 @@ export function ClassForm({ classData = null }: ClassFormProps) {
 
   const formik = useFormik({
     initialValues: {
-      id: classData?.id || "",
+      classId: classData?.classId || "",
       courseId: classData?.courseId || "",
       teacherName: classData?.teacherName || "",
       academicYear: classData?.academicYear || 2025,
@@ -108,8 +109,9 @@ export function ClassForm({ classData = null }: ClassFormProps) {
       startTime: classData?.startTime || 7,
       endTime: classData?.endTime || 9,
       maxStudents: classData?.maxStudents || 40,
+      dayOfWeek: classData?.dayOfWeek || 2,
       deadline:
-        classData?.deadline ||
+        classData?.deadline.toString().split("T")[0] ||
         new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
           .toISOString()
           .split("T")[0],
@@ -120,16 +122,13 @@ export function ClassForm({ classData = null }: ClassFormProps) {
         console.log("Submitting class:", values);
         if (classData) {
           await updateClassApi.call({
-            id: classData.id.toString(),
-            class: {
-              ...values,
-              id: parseInt(values.id as string),
-            },
+            classId: classData.classId.toString(),
+            class: values,
           });
         } else {
           await addClassApi.call({
             ...values,
-            id: parseInt(values.id as string),
+            id: values.classId,
           });
         }
       } catch (error) {
@@ -139,7 +138,6 @@ export function ClassForm({ classData = null }: ClassFormProps) {
   });
 
   const handleCourseSelect = (course: Course | null) => {
-    console.log("course", course);
     setSelectedCourse(course);
     formik.setFieldValue("courseId", course?.courseId || "");
   };
@@ -150,7 +148,7 @@ export function ClassForm({ classData = null }: ClassFormProps) {
         <Typography variant="h6" gutterBottom>
           {classData ? "Chỉnh sửa lớp học" : "Mở lớp học mới"}
         </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
+        <Typography variant="body2" color="text.secondary">
           Nhập thông tin chi tiết về lớp học. Các trường có dấu * là bắt buộc.
         </Typography>
 
@@ -161,14 +159,14 @@ export function ClassForm({ classData = null }: ClassFormProps) {
             <TextField
               required
               id="id"
-              name="id"
+              name="classId"
               label="Mã lớp học"
               fullWidth
               variant="outlined"
-              value={formik.values.id}
+              value={formik.values.classId}
               onChange={formik.handleChange}
-              error={formik.touched.id && Boolean(formik.errors.id)}
-              helperText={formik.touched.id && formik.errors.id}
+              error={formik.touched.classId && Boolean(formik.errors.classId)}
+              helperText={formik.touched.classId && formik.errors.classId}
               placeholder="VD: CS101-01"
               disabled={!!classData}
             />
@@ -316,6 +314,26 @@ export function ClassForm({ classData = null }: ClassFormProps) {
             />
           </Grid2>
 
+          <Grid2 size={{ xs: 12, md: 6 }}>
+            <FormControl fullWidth required>
+              <InputLabel id="dayOfWeek-label">Ngày học</InputLabel>
+              <Select
+                labelId="dayOfWeek-label"
+                id="dayOfWeek"
+                name="dayOfWeek"
+                value={formik.values.dayOfWeek}
+                onChange={formik.handleChange}
+              >
+                <MenuItem value={2}>Thứ 2</MenuItem>
+                <MenuItem value={3}>Thứ 3</MenuItem>
+                <MenuItem value={4}>Thứ 4</MenuItem>
+                <MenuItem value={5}>Thứ 5</MenuItem>
+                <MenuItem value={6}>Thứ 6</MenuItem>
+                <MenuItem value={7}>Thứ 7</MenuItem>
+                <MenuItem value={8}>Chủ nhật</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required

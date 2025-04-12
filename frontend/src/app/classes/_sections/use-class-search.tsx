@@ -33,12 +33,12 @@ export const useClassSearch = () => {
   );
 
   const updateClassApi = useFunction<
-    { id: string; class: Partial<Class> },
+    { classId: string; class: Partial<Class> },
     Class
   >(
     (params) =>
       ClassApi.updateClass({
-        id: parseInt(params.id),
+        classId: params.classId,
         classData: params.class,
       }),
     {
@@ -49,15 +49,6 @@ export const useClassSearch = () => {
     }
   );
 
-  const deleteClassApi = useFunction<number, ClassDeleted>(
-    (id) => ClassApi.deleteClass(id),
-    {
-      successMessage: "Xóa lớp học thành công",
-      onSuccess: () => {
-        router.push("/classes");
-      },
-    }
-  );
 
   return {
     getClassesApi,
@@ -65,6 +56,5 @@ export const useClassSearch = () => {
     searchClasses,
     addClassApi,
     updateClassApi,
-    deleteClassApi,
   };
 };

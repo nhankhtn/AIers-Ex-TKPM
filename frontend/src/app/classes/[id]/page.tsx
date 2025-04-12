@@ -9,7 +9,7 @@ export default async function EditClassPage({
   params: { id: string };
 }) {
   const { id } = await params;
-  const response = await ClassApi.getClass(parseInt(id));
+  const response = await ClassApi.getClass(id);
   if (!response || Object.keys(response).length === 0) {
     notFound();
   }

@@ -5,8 +5,8 @@ import { apiDelete, apiGet, apiPost, apiPut, getFormData } from "@/utils/api-req
 export type GetClassRequest = {
   page: number;
   limit: number;
-  courseId?: string;
-  semester?: string;
+  classId?: string;
+  semester?: number;
 };
 
 export type ClassResponse = ResponseWithTotal<Class[]>;
@@ -20,14 +20,17 @@ export type ClassDeleted = {
 }
 export class ClassApi {
   static async getClasses(params: GetClassRequest): Promise<ClassResponse> {
-    return await apiGet(
+    console.log("params", params);
+    const res=  await apiGet(
       "/class",
       getFormData(params)
     );
+    console.log("res", res);
+    return res;
   }
 
-  static async getClass(id: Class["id"]): Promise<ClassByIdResponse> {
-    return await apiGet(`/class/${id}`, {});
+  static async getClass(classId: Class["classId"]): Promise<ClassByIdResponse> {
+    return await apiGet(`/class/${classId}`, {});
   }
 
   static async createClass(classData: Class): Promise<Class> {
@@ -35,16 +38,16 @@ export class ClassApi {
   }
 
   static async updateClass({
-    id,
+    classId,
     classData,
   }: {
-    id: Class["id"];
+    classId: Class["classId"];
     classData: Partial<Class>;
   }): Promise<Class> {
-    return await apiPut(`/class/${id}`, classData);
+    return await apiPut(`/class/${classId}`, classData);
   }
 
-  static async deleteClass(id: Class["id"]): Promise<ClassDeleted> {
-    return await apiDelete(`/class/${id}`, {});
+  static async deleteClass(classId: Class["classId"]): Promise<ClassDeleted> {
+    return await apiDelete(`/class/${classId}`, {});
   }
 }

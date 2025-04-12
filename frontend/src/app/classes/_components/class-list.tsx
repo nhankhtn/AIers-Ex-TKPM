@@ -92,7 +92,7 @@ export function ClassList(): JSX.Element {
 
   const handleConfirmDelete = useCallback(() => {
     if (deleteDialog.data) {
-      deleteClassApi.call(deleteDialog.data.id);
+      deleteClassApi.call(deleteDialog.data.classId);
       deleteDialog.handleClose();
       setMenuClass(null);
       setMenuAnchorEl(null);
@@ -112,14 +112,6 @@ export function ClassList(): JSX.Element {
     [handleMenuOpen]
   );
 
-  const tableRows = useMemo(
-    () =>
-      classes.map((classData: Class) => ({
-        ...classData,
-        id: classData.id,
-      })),
-    [classes]
-  );
 
   return (
     <Box sx={{ maxWidth: "100%" }}>
@@ -144,12 +136,12 @@ export function ClassList(): JSX.Element {
             onChange={(e) => {
               setSearchQuery(e.target.value);
               if (e.target.value === "") {
-                setFilter({ ...filter, courseId: "" });
+                setFilter({ ...filter, classId: "" });
               }
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                setFilter({ ...filter, courseId: searchQuery });
+                setFilter({ ...filter, classId: searchQuery });
               }
             }}
             InputProps={{
@@ -157,7 +149,7 @@ export function ClassList(): JSX.Element {
                 <InputAdornment
                   position="start"
                   sx={{ cursor: "pointer" }}
-                  onClick={() => setFilter({ ...filter, courseId: searchQuery })}
+                  onClick={() => setFilter({ ...filter, classId: searchQuery })}
                 >
                   <SearchIcon />
                 </InputAdornment>
@@ -182,7 +174,10 @@ export function ClassList(): JSX.Element {
 
       <Stack>
         <CustomTable
-          rows={tableRows}
+          rows={classes.map((classData) => ({
+              ...classData,
+              id: classData.classId,
+            }))}
           configs={getTableConfig()}
           renderRowActions={renderRowActions}
           loading={false}
@@ -215,7 +210,7 @@ export function ClassList(): JSX.Element {
           component={Link}
           href={paths.classes.edit.replace(
             ":id",
-            menuClass?.id.toString() ?? ""
+            menuClass?.classId ?? ""
           )}
           onClick={handleMenuClose}
         >

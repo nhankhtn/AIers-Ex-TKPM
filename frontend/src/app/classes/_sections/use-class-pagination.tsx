@@ -9,7 +9,7 @@ export const useClassPagination = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState({
-    courseId: "",
+    classId: "",
     semester: "",
   });
 
@@ -27,8 +27,8 @@ export const useClassPagination = () => {
     initialRowsPerPage: 10,
   });
 
-  const deleteClassApi = useFunction<number, ClassDeleted>(
-    (id) => ClassApi.deleteClass(id),
+  const deleteClassApi = useFunction<string, ClassDeleted>(
+    (classId) => ClassApi.deleteClass(classId),
     {
       successMessage: "Xóa lớp học thành công",
       onSuccess: ({ result }) => {
@@ -36,7 +36,7 @@ export const useClassPagination = () => {
           getClassesApi.setData({
             data:
               getClassesApi.data?.data.filter(
-                (classData) => classData.id !== result.data.id
+                (classData) => classData.classId !== result.data.classId
               ) || [],
             total: (getClassesApi.data?.total || 0) - 1,
           });
@@ -62,20 +62,19 @@ export const useClassPagination = () => {
   }, [filter, router]);
 
   const fetchClasses = useCallback(() => {
-    const courseId = searchParams.get("courseId") || "";
+    const classId = searchParams.get("classId") || "";
     const semester = searchParams.get("semester") || "";
-
     handleFilterChange({
-      courseId: courseId || "",
+      classId: classId || "",
       semester: semester || "",
     });
-
+    const semesterNumber = semester === "Học kỳ 1" ? 1 : semester === "Học kỳ 2" ? 2 : semester === "Học kỳ hè" ? 3 : 2;
     getClassesApi.call({
       page: pagination.page + 1,
       limit: pagination.rowsPerPage,
-      ...(courseId ? { courseId } : {}),
+      ...(classId ? { classId } : {}),
       ...(semester
-        ? { semester }
+        ? { semester: semesterNumber }
         : {}),
     });
   }, [

@@ -3,12 +3,20 @@ import type { Class } from "@/types/class";
 import type { CustomTableConfig } from "@/components/custom-table/custom-table.types";
 import { format } from "date-fns";
 
-export const getTableConfig = (): CustomTableConfig<number, Class>[] => [
+export const getTableConfig = (): CustomTableConfig<string, Class>[] => [
   {
-    key: "id",
+    key: "classId",
     headerLabel: "Mã lớp",
     textAlign: "left" as const,
-    renderCell: (classData) => classData.id,
+    renderCell: (classData) => {
+      return (
+        <Box>
+          <Typography variant="body2" fontWeight="medium">
+            {classData.classId}
+          </Typography>
+        </Box>
+      );
+    },
   },
   {
     key: "course",
@@ -50,6 +58,15 @@ export const getTableConfig = (): CustomTableConfig<number, Class>[] => [
     headerLabel: "Phòng học",
     textAlign: "left" as const,
     renderCell: (classData) => classData.room,
+  },
+  {
+    key: "dayOfWeek",
+    headerLabel: "Ngày học",
+    textAlign: "left" as const,
+    renderCell: (classData) => 
+      <Typography>
+        {classData.dayOfWeek !== 8 ? "Thứ " + classData.dayOfWeek : "Chủ nhật"}
+      </Typography>
   },
   {
     key: "time",
