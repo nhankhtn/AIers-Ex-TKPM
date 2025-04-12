@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Identity.Client;
 using StudentManagement.API.Utils;
 using StudentManagement.BLL.DTOs.Class;
@@ -61,9 +62,9 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<GetClassesDTO>> GetClasses(string? courseId = null, int? page = null, int? limit = null)
+        public async Task<ActionResult<GetClassesDTO>> GetClasses(string? classId = null, int? semeter = null, int? page = null, int? limit = null)
         {
-            var result = await _classService.GetClassesAsync(courseId, page, limit);
+            var result = await _classService.GetClassesAsync(classId, semeter, page, limit);
             if (!result.Success)
             {
                 return BadRequest(ApiResponse<string>.BadRequest(
