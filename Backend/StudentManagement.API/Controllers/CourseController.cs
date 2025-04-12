@@ -23,7 +23,7 @@ namespace StudentManagement.API.Controllers
             var result = await _courseService.AddCourseAsync(courseDTO);
             if (result.Success)
             {
-                return Ok(ApiResponse<AddCourseDTO>.Success(data : result.Data, message: result.Message));
+                return Ok(result.Data);
             }
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
@@ -41,7 +41,7 @@ namespace StudentManagement.API.Controllers
             if (result.Success)
             {
                 //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] khi gặp này thì kiểu int có default là 0 khôn có giá trị null nên báo lỗi
-                return Ok(ApiResponse<string>.Success(data: result.Data, message: result.Message));
+                return Ok(result.Data);
             }
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
@@ -58,7 +58,7 @@ namespace StudentManagement.API.Controllers
             var result = await _courseService.UpdateCourseByIdAsync(courseId, course);
             if (result.Success)
             {
-                return Ok(ApiResponse<UpdateCourseDTO>.Success(data: result.Data, message: result.Message));
+                return Ok(result.Data);
             }
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
@@ -90,7 +90,7 @@ namespace StudentManagement.API.Controllers
             var result = await _courseService.GetAllCourseByIdAsync(courseId);
             if (result.Success)
             {
-                return Ok(ApiResponse<GetCourseDTO>.Success(data: result.Data, message: result.Message));
+                return Ok(result.Data);
             }
             return BadRequest(ApiResponse<GetCourseDTO>.BadRequest(
                 error: new ApiError
