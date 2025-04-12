@@ -80,3 +80,5 @@ export const StudentCols = [
   },
 
 ];
+
+export const drawerWidth = 240;

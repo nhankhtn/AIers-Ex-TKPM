@@ -56,9 +56,9 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<GetClassesDTO>> GetClasses(string? classId = null, int? semeter = null, int? page = null, int? limit = null)
+        public async Task<ActionResult<GetClassesDTO>> GetClasses(string? classId = null, int? semester = null, int? page = null, int? limit = null)
         {
-            var result = await _classService.GetClassesAsync(classId, semeter, page, limit);
+            var result = await _classService.GetClassesAsync(classId, semester, page, limit);
             if (!result.Success)
             {
                 return BadRequest(ApiResponse<string>.BadRequest(

@@ -70,11 +70,11 @@ namespace StudentManagement.BLL.Services.ClassService
             }
         }
 
-        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semeter = null, int? page = null, int? limit = null)
+        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semester = null, int? page = null, int? limit = null)
         {
             try
             {
-                var classes = await _classRepository.GetClassesAsync(classId, semeter, page, limit);
+                var classes = await _classRepository.GetClassesAsync(classId, semester, page, limit);
                 return Result<GetClassesDTO>.Ok(new GetClassesDTO {
                      Data = _mapper.Map<IEnumerable<GetClassDTO>>(classes),
                      Total = classes.Count()
