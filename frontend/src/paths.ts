@@ -21,4 +21,7 @@ export const paths = {
   transcripts: {
     index: "/transcripts",
   },
+  grades: {
+    index: "/grades",
+  },
 };

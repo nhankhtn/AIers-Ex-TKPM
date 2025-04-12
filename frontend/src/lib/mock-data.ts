@@ -95,7 +95,7 @@ export const mockCourses: Course[] = [
 // Mock data for classes
 export const mockClasses = [
   {
-    id: 1,
+    id: "1",
     code: "CS101-01",
     courseId: 1,
     courseCode: "CS101",
@@ -109,7 +109,7 @@ export const mockClasses = [
     enrolledStudents: 38,
   },
   {
-    id: 2,
+    id: "2",
     code: "CS101-02",
     courseId: 1,
     courseCode: "CS101",
@@ -123,7 +123,7 @@ export const mockClasses = [
     enrolledStudents: 40,
   },
   {
-    id: 3,
+    id: "3",
     code: "CS202-01",
     courseId: 2,
     courseCode: "CS202",
@@ -137,7 +137,7 @@ export const mockClasses = [
     enrolledStudents: 30,
   },
   {
-    id: 4,
+    id: "4",
     code: "MATH101-01",
     courseId: 5,
     courseCode: "MATH101",
@@ -151,7 +151,7 @@ export const mockClasses = [
     enrolledStudents: 45,
   },
   {
-    id: 5,
+    id: "5",
     code: "MATH201-01",
     courseId: 6,
     courseCode: "MATH201",
@@ -165,7 +165,7 @@ export const mockClasses = [
     enrolledStudents: 40,
   },
   {
-    id: 6,
+    id: "6",
     code: "CS303-01",
     courseId: 3,
     courseCode: "CS303",
@@ -183,35 +183,35 @@ export const mockClasses = [
 // Mock data for students
 export const mockStudents = [
   {
-    id: 1,
+    id: "1",
     code: "SV001",
     name: "Nguyễn Văn A",
     department: "Công nghệ thông tin",
     batch: "K62",
   },
   {
-    id: 2,
+    id: "2",
     code: "SV002",
     name: "Trần Thị B",
     department: "Công nghệ thông tin",
     batch: "K62",
   },
   {
-    id: 3,
+    id: "3",
     code: "SV003",
     name: "Lê Văn C",
     department: "Công nghệ thông tin",
     batch: "K62",
   },
   {
-    id: 4,
+    id: "4",
     code: "SV004",
     name: "Phạm Thị D",
     department: "Toán học",
     batch: "K62",
   },
   {
-    id: 5,
+    id: "5",
     code: "SV005",
     name: "Hoàng Văn E",
     department: "Vật lý",
@@ -222,58 +222,58 @@ export const mockStudents = [
 // Mock data for registrations
 export const mockRegistrations = [
   {
-    id: 1,
-    studentId: 1,
-    classId: 1,
+    id: "1",
+    studentId: "1",
+    classId: "1",
     registrationDate: "2023-08-15T10:30:00",
     status: "active",
   },
   {
-    id: 2,
-    studentId: 1,
-    classId: 4,
+    id: "2",
+    studentId: "1",
+    classId: "4",
     registrationDate: "2023-08-15T10:35:00",
     status: "active",
   },
   {
-    id: 3,
-    studentId: 2,
-    classId: 1,
+    id: "3",
+    studentId: "2",
+    classId: "1",
     registrationDate: "2023-08-16T09:20:00",
     status: "active",
   },
   {
-    id: 4,
-    studentId: 2,
-    classId: 3,
+    id: "4",
+    studentId: "2",
+    classId: "3",
     registrationDate: "2023-08-16T09:25:00",
     status: "active",
   },
   {
-    id: 5,
-    studentId: 3,
-    classId: 2,
+    id: "5",
+    studentId: "3",
+    classId: "2",
     registrationDate: "2023-08-17T14:10:00",
     status: "cancelled",
   },
   {
-    id: 6,
-    studentId: 3,
-    classId: 5,
+    id: "6",
+    studentId: "3",
+    classId: "5",
     registrationDate: "2023-08-17T14:15:00",
     status: "active",
   },
   {
-    id: 7,
-    studentId: 4,
-    classId: 4,
+    id: "7",
+    studentId: "4",
+    classId: "4",
     registrationDate: "2023-08-18T11:05:00",
     status: "active",
   },
   {
-    id: 8,
-    studentId: 5,
-    classId: 4,
+    id: "8",
+    studentId: "5",
+    classId: "4",
     registrationDate: "2023-08-19T10:30:00",
     status: "active",
   },
@@ -401,3 +401,6 @@ export const mockTranscriptData = {
     completedCredits: 7,
   },
 }
+
+
+

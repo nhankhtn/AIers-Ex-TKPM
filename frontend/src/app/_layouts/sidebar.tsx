@@ -33,6 +33,11 @@ const navItems = [
     icon: PlaylistAddCheckIcon,
   },
   {
+    title: "Quản lý điểm số",
+    href: "/grades",
+    icon: PeopleIcon,
+  },
+  {
     title: "Bảng điểm",
     href: "/transcripts",
     icon: SchoolIcon,
