@@ -76,7 +76,8 @@ const validationSchema = Yup.object().shape({
 
 export function ClassForm({ classData = null }: ClassFormProps) {
   const router = useRouter();
-  const { courses, searchCourses } = useCourseSearch();
+  const { courses, searchCourses, getCourseApi } = useCourseSearch();
+
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const { addClassApi, updateClassApi } = useClassSearch();
   const handleSearch = useCallback(
@@ -89,13 +90,14 @@ export function ClassForm({ classData = null }: ClassFormProps) {
   );
 
   useEffect(() => {
-    if (classData) {
-      CourseApi.getCourse(classData.courseId).then((response) => {
-        if (response?.data) {
-          setSelectedCourse(response.data);
-        }
-      });
-    }
+    const fetchCourse = async () => {
+      if (classData) {
+        const response = await getCourseApi.call(classData.courseId);
+        setSelectedCourse(response.data?.data || null);
+      }
+    };
+    fetchCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classData]);
 
   const formik = useFormik({
@@ -119,11 +121,10 @@ export function ClassForm({ classData = null }: ClassFormProps) {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        console.log("Submitting class:", values);
         if (classData) {
           await updateClassApi.call({
             classId: classData.classId.toString(),
-            class: values,
+            classData: values,
           });
         } else {
           await addClassApi.call({
@@ -176,6 +177,7 @@ export function ClassForm({ classData = null }: ClassFormProps) {
             <Autocomplete
               id="courseId"
               options={courses}
+              disabled={getCourseApi.loading}
               getOptionLabel={(option) =>
                 `${option.courseId} - ${option.courseName}`
               }

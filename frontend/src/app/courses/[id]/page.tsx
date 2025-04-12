@@ -1,24 +1,42 @@
+"use client";
 import { Box, Typography } from "@mui/material";
 import { CourseForm } from "../_components/courses-form";
 import { useCourseSearch } from "../_sections/use-course-search";
-import { CourseApi } from "@/api/course";
-import { notFound } from "next/navigation";
-export default async function EditCoursePage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = await params;
-  const course = await CourseApi.getCourse(id);
-  if (!course || Object.keys(course).length === 0) {
-    notFound();
-  }
+import { useParams,useRouter } from "next/navigation";
+import { useEffect } from "react";
+export default function EditCoursePage() {
+  const { id } = useParams();
+  const router = useRouter();
+  const { getCourseApi } = useCourseSearch();
+  useEffect(() => {
+    const fetchCourse = async () => {
+      if (!id) return;
+      const response = await getCourseApi.call(id as string);
+      if ( !response.data || Object.keys(response.data).length === 0) {
+        router.replace("/noCourseFound");
+      }
+    };
+    fetchCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <Typography variant="h4" component="h1" fontWeight="bold">
         Sửa khóa học
       </Typography>
-      <CourseForm course={course?.data} />
+      {getCourseApi.loading && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <Typography variant="h6">Loading...</Typography>
+        </Box>
+      )}
+      {getCourseApi.data && <CourseForm course={getCourseApi.data.data} />}
     </Box>
   );
 }

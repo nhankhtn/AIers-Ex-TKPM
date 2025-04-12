@@ -58,7 +58,7 @@ const validationSchema = Yup.object().shape({
 export function CourseForm({ course = null }: CourseFormProps) {
   const router = useRouter();
   const { faculties } = useFaculty();
-  const { courses, searchCourses, addCourseApi, updateCourseApi } =
+  const { courses, searchCourses, addCourseApi, updateCourseApi, getCourseApi } =
     useCourseSearch();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -73,13 +73,14 @@ export function CourseForm({ course = null }: CourseFormProps) {
   );
 
   useEffect(() => {
-    if (course) {
-      CourseApi.getCourse(course.courseId).then((response) => {
-        if (response?.data) {
-          setSelectedCourse(response.data);
-        }
-      });
-    }
+    const fetchCourse = async () => {
+      if (course) {
+        const response = await getCourseApi.call(course.courseId);
+        setSelectedCourse(response.data?.data || null);
+      }
+    };
+    fetchCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [course]);
   const formik = useFormik({
     initialValues: {
@@ -94,7 +95,6 @@ export function CourseForm({ course = null }: CourseFormProps) {
     validationSchema,
     onSubmit: async (values) => {
       try {
-        console.log("Submitting course:", values);
         const { requiredCourseId, ...postCourse } = values;
         let postCourseData: Course = {
           id: course?.courseId || "",

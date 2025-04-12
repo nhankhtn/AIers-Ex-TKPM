@@ -10,36 +10,36 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
 import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck"
 import PeopleIcon from "@mui/icons-material/People"
 import SchoolIcon from "@mui/icons-material/School"
-
+import { paths } from "@/paths"
 const navItems = [
   {
     title: "Quản lý sinh viên",
-    href: "/dashboard",
+    href: paths.dashboard.index,
     icon: HomeIcon,
   },
   {
     title: "Quản lý khóa học",
-    href: "/courses",
+    href: paths.courses.index,
     icon: MenuBookIcon,
   },
   {
     title: "Quản lý lớp học",
-    href: "/classes",
+    href: paths.classes.index,
     icon: CalendarMonthIcon,
   },
   {
     title: "Đăng ký khóa học",
-    href: "/registrations",
+    href: paths.registrations.index,
     icon: PlaylistAddCheckIcon,
   },
   {
     title: "Quản lý điểm số",
-    href: "/grades",
+    href: paths.grades.index,
     icon: PeopleIcon,
   },
   {
     title: "Bảng điểm",
-    href: "/transcripts",
+    href: paths.transcripts.index,
     icon: SchoolIcon,
   },
 ]

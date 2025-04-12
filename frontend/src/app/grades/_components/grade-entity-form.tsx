@@ -179,7 +179,6 @@ export function GradeEntryForm() {
 
   const handleSaveGrades = (): void => {
     // In a real app, this would call an API to save the grades
-    console.log("Saving grades:", studentGrades)
 
     // Simulate successful save
     setSaveSuccess(true)

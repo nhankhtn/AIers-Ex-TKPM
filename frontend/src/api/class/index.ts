@@ -20,13 +20,7 @@ export type ClassDeleted = {
 }
 export class ClassApi {
   static async getClasses(params: GetClassRequest): Promise<ClassResponse> {
-    console.log("params", params);
-    const res=  await apiGet(
-      "/class",
-      getFormData(params)
-    );
-    console.log("res", res);
-    return res;
+    return await apiGet("/class", getFormData(params));
   }
 
   static async getClass(classId: Class["classId"]): Promise<ClassByIdResponse> {

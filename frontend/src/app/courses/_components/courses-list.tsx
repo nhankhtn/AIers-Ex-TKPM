@@ -83,7 +83,6 @@ export function CourseList() {
 
   const handleDeleteClick = (course: Course) => {
     deleteDialog.handleOpen(course);
-    console.log(deleteDialog.data);
   };
 
   const handleConfirmDelete = () => {

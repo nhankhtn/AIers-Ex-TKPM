@@ -3,6 +3,7 @@ import useFunction from "@/hooks/use-function";
 import { CourseApi, CourseResponse, GetCourseRequest } from "@/api/course";
 import type { Course } from "@/types/course";
 import { useRouter } from "next/navigation";
+import { paths } from "@/paths";
 export const useCourseSearch = () => {
   const router = useRouter();
   const getCoursesApi = useFunction(CourseApi.getCourses, {
@@ -12,26 +13,23 @@ export const useCourseSearch = () => {
     () => getCoursesApi.data?.data || [],
     [getCoursesApi.data]
   );
-
+  const getCourseApi = useFunction(CourseApi.getCourse, {
+    disableResetOnCall: true,
+  });
   const searchCourses = (params: GetCourseRequest) => {
     return getCoursesApi.call(params);
   };
-  const addCourseApi = useFunction<Course, Course>(
-    (course) => CourseApi.createCourse(course),
-    {
-      successMessage: "Thêm khóa học thành công",
-      onSuccess: () => {
-        router.push("/courses");
+  const addCourseApi = useFunction(CourseApi.createCourse, {
+    successMessage: "Thêm khóa học thành công",
+    onSuccess: () => {
+        router.push(paths.courses.index);
       },
     }
   );
-  const updateCourseApi = useFunction<
-    { id: string; course: Partial<Course> },
-    Course
-  >(({ id, course }) => CourseApi.updateCourse({ id, course }), {
+  const updateCourseApi = useFunction(CourseApi.updateCourse, {
     successMessage: "Cập nhật khóa học thành công",
     onSuccess: ({ result }) => {
-      router.push("/courses");
+      router.push(paths.courses.index);
     },
   });
   return {
@@ -39,6 +37,7 @@ export const useCourseSearch = () => {
     courses,
     searchCourses,
     addCourseApi,
+    getCourseApi,
     updateCourseApi,
   };
 };

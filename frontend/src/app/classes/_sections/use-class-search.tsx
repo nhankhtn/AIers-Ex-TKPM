@@ -3,16 +3,19 @@ import useFunction from "@/hooks/use-function";
 import { ClassApi, ClassResponse, GetClassRequest, ClassDeleted } from "@/api/class";
 import type { Class } from "@/types/class";
 import { useRouter } from "next/navigation";
-
+import { paths } from "@/paths";
 export const useClassSearch = () => {
   const router = useRouter();
-  const getClassesApi = useFunction<GetClassRequest, ClassResponse>(
-    (params) => ClassApi.getClasses(params),
+  const getClassesApi = useFunction(ClassApi.getClasses,
     {
       disableResetOnCall: true,
     }
   );
-
+  const getClassApi = useFunction(ClassApi.getClass,
+    {
+      disableResetOnCall: true,
+    }
+  );
   const classes = useMemo(
     () => getClassesApi.data?.data || [],
     [getClassesApi.data]
@@ -22,29 +25,20 @@ export const useClassSearch = () => {
     return getClassesApi.call(params);
   };
 
-  const addClassApi = useFunction<Class, Class>(
-    (classData) => ClassApi.createClass(classData),
+  const addClassApi = useFunction(ClassApi.createClass,
     {
       successMessage: "Thêm lớp học thành công",
       onSuccess: () => {
-        router.push("/classes");
+        router.push(paths.classes.index);
       },
     }
   );
 
-  const updateClassApi = useFunction<
-    { classId: string; class: Partial<Class> },
-    Class
-  >(
-    (params) =>
-      ClassApi.updateClass({
-        classId: params.classId,
-        classData: params.class,
-      }),
+  const updateClassApi = useFunction(ClassApi.updateClass,
     {
       successMessage: "Cập nhật lớp học thành công",
       onSuccess: () => {
-        router.push("/classes");
+        router.push(paths.classes.index);
       },
     }
   );
@@ -55,6 +49,7 @@ export const useClassSearch = () => {
     classes,
     searchClasses,
     addClassApi,
+    getClassApi,
     updateClassApi,
   };
 };

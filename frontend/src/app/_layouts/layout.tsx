@@ -5,15 +5,13 @@ import { Box, Drawer, AppBar, Toolbar, IconButton } from "@mui/material"
 import MenuIcon from "@mui/icons-material/Menu"
 import Sidebar from "./sidebar"
 import RowStack from "@/components/row-stack"
-const drawerWidth = 240
+import { drawerWidth } from "@/constants"
+import { useDialog } from "@/hooks/use-dialog"
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const { handleOpen, handleClose, open } = useDialog();
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen)
-  }
 
   return (
     <RowStack sx= {{ p: 3}}>
@@ -30,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             color="inherit"
             aria-label="open drawer"
             edge="start"
-            onClick={handleDrawerToggle}
+            onClick={handleOpen}
             sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
@@ -40,8 +38,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Mobile drawer */}
         <Drawer
           variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
+          open={open}
+          onClose={handleClose}
           ModalProps={{
             keepMounted: true, // Better open performance on mobile
           }}

@@ -29,8 +29,7 @@ export const useCoursePagination = () => {
     initialRowsPerPage: 10,
   });
 
-  const deleteCourseApi = useFunction<string, CourseDeleted>(
-    (id) => CourseApi.deleteCourse(id),
+  const deleteCourseApi = useFunction(CourseApi.deleteCourse,
     {
       successMessage: "Xóa khóa học thành công",
       onSuccess: ({ result }) => {

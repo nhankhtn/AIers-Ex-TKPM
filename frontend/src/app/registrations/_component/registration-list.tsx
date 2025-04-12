@@ -111,7 +111,6 @@ export default function RegistrationList({
 
   const handleCancelConfirm = (): void => {
     // In a real app, this would call an API to cancel the registration
-    console.log(`Cancelling registration: ${selectedRegistration?.id}`);
     setCancelDialogOpen(false);
   };
 

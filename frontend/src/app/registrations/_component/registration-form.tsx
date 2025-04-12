@@ -54,12 +54,7 @@ export function RegistrationForm() {
     onSubmit: async (values) => {
       try {
         // In a real app, this would call an API to register the student
-        console.log(
-          "Registering student:",
-          values.studentId,
-          "for classes:",
-          values.selectedClasses
-        );
+
 
         // Simulate successful registration
         setRegistrationStatus({

@@ -30,7 +30,6 @@ const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
       onChange(key, "");
     }
     else onChange(key, event.target.value);
-    console.log(event.target.value)
   }
 
   return (
