@@ -39,7 +39,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
 
             if (!string.IsNullOrEmpty(classId))
             {
-                query = query.Where(c => c.ClassId == classId);
+                query = query.Where(c => c.ClassId.Contains(classId));
             }
 
             if (semeter != null)
