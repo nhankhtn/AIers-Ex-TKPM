@@ -41,7 +41,7 @@ namespace StudentManagement.API.Controllers
             if (result.Success)
             {
                 //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] khi gặp này thì kiểu int có default là 0 khôn có giá trị null nên báo lỗi
-                return Ok(result.Data);
+                return Ok(ApiResponse<string>.Success(data: result.Data, message: result.Message));
             }
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
