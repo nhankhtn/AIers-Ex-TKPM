@@ -14,7 +14,7 @@ namespace StudentManagement.BLL.Services.ClassService
 
         Task<Result<GetClassDTO>> GetClassAsync(string classId);
 
-        Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semeter = null, int? page = null, int? limit = null); 
+        Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semester = null, int? page = null, int? limit = null); 
 
         Task<Result<GetClassDTO>> DeleteClassAsync(string classId);
 

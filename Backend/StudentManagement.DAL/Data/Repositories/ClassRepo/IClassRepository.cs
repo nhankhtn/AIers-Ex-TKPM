@@ -10,7 +10,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
 {
     public interface IClassRepository
     {
-        Task<IEnumerable<Class>> GetClassesAsync(string? classId = null, int? semeter = null, int? page = null, int? limit = null);
+        Task<IEnumerable<Class>> GetClassesAsync(string? classId = null, int? semester = null, int? page = null, int? limit = null);
         Task<Class?> GetClassByIdAsync(string id);
         Task<Class?> AddClassAsync(Class classEntity);
         Task UpdateClassAsync(Class classEntity);
