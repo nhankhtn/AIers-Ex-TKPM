@@ -32,10 +32,7 @@ namespace StudentManagement.API.Controllers
                     }
                 });  
             }
-            return Ok(new ApiResponse<GetClassDTO>
-            {
-                Data = result.Data
-            });
+            return Ok(result.Data);
         }
 
 
@@ -54,10 +51,7 @@ namespace StudentManagement.API.Controllers
                     }
                 });
             }
-            return Ok(new ApiResponse<GetClassDTO>
-            {
-                Data = result.Data
-            });
+            return Ok(result.Data);
         }
 
 
@@ -95,10 +89,7 @@ namespace StudentManagement.API.Controllers
                     }
                 });
             }
-            return Ok(new ApiResponse<GetClassDTO>
-            {
-                Data = result.Data
-            });
+            return Ok(result.Data);
         }
 
 
@@ -118,10 +109,7 @@ namespace StudentManagement.API.Controllers
                     }
                 });
             }
-            return Ok(new ApiResponse<GetClassDTO>
-            {
-                Data = result.Data
-            });
+            return Ok(result.Data);
         }
     }
 }
