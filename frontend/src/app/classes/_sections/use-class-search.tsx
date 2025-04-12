@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import useFunction from "@/hooks/use-function";
-import { ClassApi, ClassResponse, GetClassRequest, ClassDeleted } from "@/api/class";
+import { ClassApi, ClassResponse, GetClassRequest } from "@/api/class";
 import type { Class } from "@/types/class";
 import { useRouter } from "next/navigation";
 import { paths } from "@/paths";

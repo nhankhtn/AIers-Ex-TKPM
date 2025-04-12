@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import useFunction from "@/hooks/use-function";
 import usePagination from "@/hooks/use-pagination";
-import { CourseApi, CourseDeleted, CourseResponse, GetCourseRequest } from "@/api/course";
+import { CourseApi} from "@/api/course";
 import type { Course } from "@/types/course";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFaculty } from "@/app/dashboard/_sections/use-faculty";
@@ -32,11 +32,11 @@ export const useCoursePagination = () => {
   const deleteCourseApi = useFunction(CourseApi.deleteCourse,
     {
       successMessage: "Xóa khóa học thành công",
-      onSuccess: ({ result }) => {
-        if (result) {
+      onSuccess: ({ payload }) => {
+        if (payload) {
           getCoursesApi.setData(
             {
-              data: getCoursesApi.data?.data.filter((course) => course.courseId !== result.data) || [],
+              data: getCoursesApi.data?.data.filter((course) => course.courseId !== payload) || [],
               total: (getCoursesApi.data?.total || 0) - 1
             }
           );

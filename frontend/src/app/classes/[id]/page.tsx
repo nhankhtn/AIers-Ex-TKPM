@@ -38,7 +38,7 @@ export default function EditClassPage() {
           <Typography variant="h6">Loading...</Typography>
         </Box>
       )}
-      {getClassApi.data && <ClassForm classData={getClassApi.data.data} />}
+      {getClassApi.data && <ClassForm classData={getClassApi.data} />}
     </Box>
   );
 }

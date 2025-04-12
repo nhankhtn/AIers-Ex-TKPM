@@ -93,7 +93,7 @@ export function ClassForm({ classData = null }: ClassFormProps) {
     const fetchCourse = async () => {
       if (classData) {
         const response = await getCourseApi.call(classData.courseId);
-        setSelectedCourse(response.data?.data || null);
+        setSelectedCourse(response.data || null);
       }
     };
     fetchCourse();

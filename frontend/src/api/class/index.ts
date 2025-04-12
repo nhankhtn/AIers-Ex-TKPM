@@ -11,19 +11,12 @@ export type GetClassRequest = {
 
 export type ClassResponse = ResponseWithTotal<Class[]>;
 
-export type ClassByIdResponse = {
-  data: Class;
-};
-
-export type ClassDeleted = {
-  data: Class;
-}
 export class ClassApi {
   static async getClasses(params: GetClassRequest): Promise<ClassResponse> {
     return await apiGet("/class", getFormData(params));
   }
 
-  static async getClass(classId: Class["classId"]): Promise<ClassByIdResponse> {
+  static async getClass(classId: Class["classId"]): Promise<Class> {
     return await apiGet(`/class/${classId}`, {});
   }
 
@@ -41,7 +34,7 @@ export class ClassApi {
     return await apiPut(`/class/${classId}`, classData);
   }
 
-  static async deleteClass(classId: Class["classId"]): Promise<ClassDeleted> {
+  static async deleteClass(classId: Class["classId"]): Promise<Class> {
     return await apiDelete(`/class/${classId}`, {});
   }
 }
