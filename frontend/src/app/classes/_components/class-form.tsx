@@ -137,10 +137,10 @@ export function ClassForm({ classData = null }: ClassFormProps) {
     },
   });
 
-  const handleCourseSelect = (course: Course | null) => {
+  const handleCourseSelect = useCallback((course: Course | null) => {
     setSelectedCourse(course);
     formik.setFieldValue("courseId", course?.courseId || "");
-  };
+  }, [formik]);
 
   return (
     <Paper sx={{ p: 3 }}>
