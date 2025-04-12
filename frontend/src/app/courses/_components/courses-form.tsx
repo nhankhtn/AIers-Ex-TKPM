@@ -76,7 +76,7 @@ export function CourseForm({ course = null }: CourseFormProps) {
     const fetchCourse = async () => {
       if (course) {
         const response = await getCourseApi.call(course.courseId);
-        setSelectedCourse(response.data?.data || null);
+        setSelectedCourse(response.data || null);
       }
     };
     fetchCourse();

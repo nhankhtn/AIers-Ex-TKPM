@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import useFunction from "@/hooks/use-function";
 import usePagination from "@/hooks/use-pagination";
-import { ClassApi, ClassResponse, GetClassRequest, ClassDeleted } from "@/api/class";
+import { ClassApi, ClassResponse, GetClassRequest } from "@/api/class";
 import type { Class } from "@/types/class";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -35,7 +35,7 @@ export const useClassPagination = () => {
           getClassesApi.setData({
             data:
               getClassesApi.data?.data.filter(
-                (classData) => classData.classId !== result.data.classId
+                (classData) => classData.classId !== result.classId
               ) || [],
             total: (getClassesApi.data?.total || 0) - 1,
           });

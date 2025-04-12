@@ -36,7 +36,7 @@ export default function EditCoursePage() {
           <Typography variant="h6">Loading...</Typography>
         </Box>
       )}
-      {getCourseApi.data && <CourseForm course={getCourseApi.data.data} />}
+      {getCourseApi.data && <CourseForm course={getCourseApi.data} />}
     </Box>
   );
 }
