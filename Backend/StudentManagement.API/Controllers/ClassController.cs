@@ -39,7 +39,7 @@ namespace StudentManagement.API.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<GetClassDTO>>> GetClass(int id)
+        public async Task<ActionResult<ApiResponse<GetClassDTO>>> GetClass(string id)
         {
             var result = await _classService.GetClassAsync(id);
             if (!result.Success)
@@ -80,7 +80,7 @@ namespace StudentManagement.API.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task<ActionResult<ApiResponse<GetClassDTO>>> DeleteClass(int id)
+        public async Task<ActionResult<ApiResponse<GetClassDTO>>> DeleteClass(string id)
         {
             var result = await _classService.DeleteClassAsync(id);
             if (!result.Success)
@@ -103,7 +103,7 @@ namespace StudentManagement.API.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<ActionResult<ApiResponse<GetClassDTO>>> UpdateClass(int id, UpdateClassDTO updateClassDTO)
+        public async Task<ActionResult<ApiResponse<GetClassDTO>>> UpdateClass(string id, UpdateClassDTO updateClassDTO)
         {
             var result = await _classService.UpdateClassAsync(id, updateClassDTO);
             if (!result.Success)

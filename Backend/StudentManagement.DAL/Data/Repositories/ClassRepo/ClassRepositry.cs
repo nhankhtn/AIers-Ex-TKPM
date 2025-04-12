@@ -22,7 +22,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             return classEntity;
         }
 
-        public async Task DeleteClassAsync(int id)
+        public async Task DeleteClassAsync(string id)
         {
             var existingClass = _context.Classes.Find(id);
             if(existingClass == null)
@@ -33,13 +33,18 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Class>> GetClassesAsync(string? courseId = null, int? page = null, int? limit = null)
+        public async Task<IEnumerable<Class>> GetClassesAsync(string? classId, int? semeter = null, int? page = null, int? limit = null)
         {
             var query = _context.Classes.AsQueryable();
 
-            if (!string.IsNullOrEmpty(courseId))
+            if (!string.IsNullOrEmpty(classId))
             {
-                query = query.Where(c => c.CourseId == courseId);
+                query = query.Where(c => c.ClassId == classId);
+            }
+
+            if (semeter != null)
+            {
+                query = query.Where(c => c.Semester == semeter);
             }
 
             if (page.HasValue && limit.HasValue)
@@ -50,10 +55,10 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             return await query.Include(c => c.Course).ToListAsync();
         }
 
-        public async Task<Class?> GetClassByIdAsync(int id)
+        public async Task<Class?> GetClassByIdAsync(string id)
         {
             var classEntity = await _context.Classes
-                .Where(c => c.Id == id)
+                .Where(c => c.ClassId == id)
                 .Include(c => c.Course)
                 .FirstOrDefaultAsync();
 
@@ -65,16 +70,5 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             _context.Update(classEntity);
             await _context.SaveChangesAsync();
         }
-
-        //public async Task<IEnumerable<Class?>> GetStudentJoinedClassesAsync(string studentId, string courseId)
-        //{
-        //    var classes = await _context.Classes
-        //        .Include(c => c.ClassStudents)
-        //        .ThenInclude(cs => cs.Student)
-        //        .Where(c => c.CourseId == courseId && c.ClassStudents.Any(cs => cs.StudentId == studentId))
-        //        .ToListAsync();
-
-        //    return classes;
-        //}
     }
 }

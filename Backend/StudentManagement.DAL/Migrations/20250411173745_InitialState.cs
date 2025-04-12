@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace StudentManagement.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class EditTypeCourseId : Migration
+    public partial class InitialState : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -155,8 +155,7 @@ namespace StudentManagement.DAL.Migrations
                 name: "classes",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<string>(type: "varchar(10)", nullable: false),
                     academic_year = table.Column<int>(type: "int", nullable: false),
                     course_id = table.Column<string>(type: "varchar(10)", nullable: false),
                     semester = table.Column<int>(type: "int", nullable: false),
@@ -209,7 +208,7 @@ namespace StudentManagement.DAL.Migrations
                 name: "class_student",
                 columns: table => new
                 {
-                    class_id = table.Column<int>(type: "int", nullable: false),
+                    class_id = table.Column<string>(type: "varchar(10)", nullable: false),
                     student_id = table.Column<string>(type: "varchar(8)", nullable: false),
                     score = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -236,7 +235,7 @@ namespace StudentManagement.DAL.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    class_id = table.Column<int>(type: "int", nullable: false),
+                    class_id = table.Column<string>(type: "varchar(10)", nullable: false),
                     student_id = table.Column<string>(type: "varchar(8)", nullable: false),
                     Time = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },

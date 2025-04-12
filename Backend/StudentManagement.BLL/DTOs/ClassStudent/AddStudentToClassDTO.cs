@@ -10,7 +10,7 @@ namespace StudentManagement.BLL.DTOs.ClassStudent
 {
     public class AddStudentToClassDTO
     {
-        public int ClassId { get; set; }
+        public string ClassId { get; set; } = null!;
 
         public string StudentId { get; set; } = null!;
 
