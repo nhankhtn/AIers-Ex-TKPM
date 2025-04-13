@@ -1,43 +1,44 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Box, Drawer, AppBar, Toolbar, IconButton } from "@mui/material"
-import MenuIcon from "@mui/icons-material/Menu"
-import Sidebar from "./sidebar"
-import RowStack from "@/components/row-stack"
-import { drawerWidth } from "@/constants"
-import { useDialog } from "@/hooks/use-dialog"
-
+import { useState } from "react";
+import { Box, Drawer, AppBar, Toolbar, IconButton } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import Sidebar from "./sidebar";
+import RowStack from "@/components/row-stack";
+import { DRAWER_WIDTH } from "@/constants";
+import { useDialog } from "@/hooks/use-dialog";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { handleOpen, handleClose, open } = useDialog();
 
-
   return (
-    <RowStack sx= {{ p: 3}}>
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 }, }}>
-      <AppBar
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          display: {  sm: "none", },
-        }}
+    <RowStack sx={{ p: 3 }}>
+      <Box
+        component='nav'
+        sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleOpen}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+        <AppBar
+          sx={{
+            width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+            ml: { sm: `${DRAWER_WIDTH}px` },
+            display: { sm: "none" },
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              color='inherit'
+              aria-label='open drawer'
+              edge='start'
+              onClick={handleOpen}
+              sx={{ mr: 2, display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
         {/* Mobile drawer */}
         <Drawer
-          variant="temporary"
+          variant='temporary'
           open={open}
           onClose={handleClose}
           ModalProps={{
@@ -45,7 +46,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           }}
           sx={{
             display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: DRAWER_WIDTH,
+            },
           }}
         >
           <Sidebar />
@@ -53,10 +57,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Desktop drawer */}
         <Drawer
-          variant="permanent"
+          variant='permanent'
           sx={{
             display: { xs: "none", sm: "block" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: DRAWER_WIDTH,
+            },
           }}
           open
         >
@@ -65,17 +72,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </Box>
 
       <Box
-        component="main"
+        component='main'
         sx={{
           marginTop: { xs: 8, sm: 0 },
           overflow: "auto",
-          flex:1,
+          flex: 1,
           minHeight: "100vh",
         }}
       >
         {children}
       </Box>
     </RowStack>
-  )
+  );
 }
-
