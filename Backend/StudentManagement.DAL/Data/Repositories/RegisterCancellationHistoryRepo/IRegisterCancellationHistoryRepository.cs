@@ -13,7 +13,6 @@ namespace StudentManagement.DAL.Data.Repositories.RegisterCancellationHistoryRep
         Task<RegisterCancellationHistory?> GetByIdAsync(int id);
         Task AddAsync(RegisterCancellationHistory registerCancellationHistory);
         Task UpdateAsync(RegisterCancellationHistory registerCancellationHistory);
-
         Task DeleteAsync(int id);
     }
 }

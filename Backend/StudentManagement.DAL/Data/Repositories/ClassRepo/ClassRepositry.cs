@@ -70,5 +70,21 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             _context.Update(classEntity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<int> GetCreditsAsync(string classId)
+        {
+            var classEntity = await _context.Classes.FindAsync(classId);
+            var course = await _context.Courses.FindAsync(classEntity?.CourseId);
+            if (course == null) return 0;
+            return course.Credits;
+        }
+
+        public async Task<string> GetCourseNameAsync(string classId)
+        {
+            var classEntity = await _context.Classes.FindAsync(classId);
+            var course = await _context.Courses.FindAsync(classEntity?.CourseId);
+            if (course == null) return "";
+            return course.CourseName;
+        }
     }
 }

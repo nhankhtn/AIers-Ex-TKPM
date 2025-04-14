@@ -1,4 +1,6 @@
-﻿using StudentManagement.BLL.DTOs.ClassStudent;
+﻿using StudentManagement.BLL.DTOs.Class;
+using StudentManagement.BLL.DTOs.ClassStudent;
+using StudentManagement.BLL.DTOs.Score;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.Domain.Utils;
 using System;
@@ -11,12 +13,17 @@ namespace StudentManagement.BLL.Services.ClassStudentService
 {
     public interface IClassStudentService
     {
-        Task<Result<GetClassStudentDTO>> AddStudentAsync(AddStudentToClassDTO addStudentToClassDTO);
+        Task<Result<IEnumerable<GetClassStudentDTO>>> AddStudentAsync(string studentId, IEnumerable<string> classIds);
 
         Task<Result<RegisterCancelationDTO>> RegisterCancelationAsync(RegisterCancelationDTO registerCancelationDTO);
 
         Task<Result<GetClassStudentsDTO>> GetClassStudentsAsync(string? classId = null, string? studentId = null, int? page = null, int? limit = null);
 
-        Task<Result<GetClassStudentDTO>> UpdateClassStudentAsync(string classId, string studentId, UpdateClassStudentDTO updateClassStudentDTO);
+        Task<Result<IEnumerable<GetScoreDTO>>> UpdateScoresAsync(string classId, IEnumerable<UpdateScoreDTO> updateScoresDTO);
+        Task<Result<IEnumerable<GetScoreDTO>>> GetScoresAsync(string classId);
+
+        Task<Result<StudentTranscriptDTO>> GetStudentTranscriptAsync(string studentId);
+
+        Task<Result<IEnumerable<GetClassDTO>>> GetRegisterableClassesAsync(string studentId);
     }
 }

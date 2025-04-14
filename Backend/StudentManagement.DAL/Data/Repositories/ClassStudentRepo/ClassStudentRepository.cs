@@ -70,15 +70,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
 
         public async Task UpdateClassStudentAsync(ClassStudent classStudent)
         {
-            //var existingClassStudent = _context.ClassStudents.Find(classStudent.ClassId);
-            var existingClassStudent = await _context.ClassStudents
-                .FirstOrDefaultAsync(cs => cs.ClassId == classStudent.ClassId && cs.StudentId == classStudent.StudentId);
-            if (existingClassStudent == null)
-            {
-                throw new ArgumentNullException("ClassStudent not found");
-            }
-            existingClassStudent.Score = classStudent.Score;
-            _context.ClassStudents.Update(existingClassStudent);
+            _context.ClassStudents.Update(classStudent);
             await _context.SaveChangesAsync();
         }
 
@@ -91,6 +83,12 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
                 .ToListAsync();
 
             return classStudents;
+        }
+
+        public Task<int> GetNumberOfStudentsInClassAsync(string classId)
+        {
+            var numberOfStudents = _context.ClassStudents.Where(cs => cs.ClassId == classId).CountAsync();
+            return numberOfStudents;
         }
     }
 }
