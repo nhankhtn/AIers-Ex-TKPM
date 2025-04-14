@@ -61,7 +61,7 @@ namespace StudentManagement.BLL.Services.StudentService
 
 
         // Get all students
-        public async Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key)
+        public async Task<Result<GetStudentsDTO>> GetAllStudentsAsync(int? page, int? pageSize, string? faculty, string? program, string? status, string? key)
         {
             try
             {

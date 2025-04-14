@@ -84,11 +84,11 @@ namespace StudentManagement.BLL.Services.ClassService
             }
         }
 
-        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semester = null, int? page = null, int? limit = null)
+        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semester = null, int? year = null, int? page = null, int? limit = null)
         {
             try
             {
-                var classes = await _classRepository.GetClassesAsync(classId, semester, page, limit);
+                var classes = await _classRepository.GetClassesAsync(classId, semester, year, page, limit);
 
                 var data = _mapper.Map<IEnumerable<GetClassDTO>>(classes);
                 foreach(var c in data)

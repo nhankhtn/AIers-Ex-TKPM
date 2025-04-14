@@ -33,7 +33,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Class>> GetClassesAsync(string? classId, int? semester = null, int? page = null, int? limit = null)
+        public async Task<IEnumerable<Class>> GetClassesAsync(string? classId, int? semester = null, int? year = null, int? page = null, int? limit = null)
         {
             var query = _context.Classes.AsQueryable();
 
@@ -46,6 +46,11 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             {
                 query = query.Where(c => c.Semester == semester);
             }
+
+            if (year != null)
+            {
+                query = query.Where(c => c.AcademicYear == year);
+            }    
 
             if (page.HasValue && limit.HasValue)
             {

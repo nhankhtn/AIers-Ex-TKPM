@@ -59,44 +59,45 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             }
         }
 
-        public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key)
+        public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int? page = null, int? pageSize = null, string? faculty = null, string? program = null, string? status = null
+            , string? key = null)
         {
-            var students = _context.Students
-                    .Include(s => s.Faculty)
-                    .Include(s => s.Program)
-                    .Include(s => s.Status)
-                    .Include(s => s.Identity)
-                    .AsQueryable();
+            var query = _ = _context.Students
+                .Include(s => s.Faculty)
+                .Include(s => s.Program)
+                .Include(s => s.Status)
+                .Include(s => s.Identity)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(faculty))
             {
-                students = students.Where(s => s.Faculty.Name == faculty);
+                query = query.Where(s => s.Faculty.Name.Contains(faculty));
             }
+
             if (!string.IsNullOrEmpty(program))
             {
-                students = students.Where(s => s.Program.Name == program);
+                query = query.Where(s => s.Program.Name.Contains(program));
             }
+
             if (!string.IsNullOrEmpty(status))
             {
-                students = students.Where(s => s.Status.Name == status);
+                query = query.Where(s => s.Status.Name.Contains(status));
             }
 
             if (!string.IsNullOrEmpty(key))
             {
-                var keywords = key.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                foreach (var keyword in keywords)
-                {
-                    students = students.Where(s => s.Name.Contains(keyword) || s.Id.Contains(keyword));
-                }
+                query = query.Where(s => s.Name.Contains(key) || s.Email.Contains(key) || s.Phone.Contains(key));
             }
 
-            var total = await students.CountAsync();
+            var total = await query.CountAsync();
 
-            var studentPage = await students.Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            if (page.HasValue && pageSize.HasValue)
+            {
+                query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
+            }
 
-            return (studentPage, total);
+            var students = await query.ToListAsync();
+            return (students, total);
         }
 
         public async Task<Student?> GetStudentByIdAsync(string studentId)
