@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { useMemo, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import {
   Box,
@@ -40,33 +40,36 @@ export function CourseList() {
     useCoursePagination();
   const { faculties } = useFaculty();
 
-  const filterConfig = [
-    {
-      label: "Khoa",
-      key: "faculty",
-      options: [
-        {
-          value: "",
-          label: "Tất cả",
-        },
-        ...faculties.map((f) => ({
-          value: f.name,
-          label: f.name,
-        })),
-      ],
-      xs: 6,
-    },
-    {
-      label: "Trạng thái",
-      key: "status",
-      options: [
-        { value: "", label: "Tất cả" },
-        { value: "active", label: "Đang hoạt động" },
-        { value: "inactive", label: "Không hoạt động" },
-      ],
-      xs: 6,
-    },
-  ];
+  const filterConfig = useMemo(
+    () => [
+      {
+        label: "Khoa",
+        key: "faculty",
+        options: [
+          {
+            value: "",
+            label: "Tất cả",
+          },
+          ...faculties.map((f) => ({
+            value: f.name,
+            label: f.name,
+          })),
+        ],
+        xs: 6,
+      },
+      {
+        label: "Trạng thái",
+        key: "status",
+        options: [
+          { value: "", label: "Tất cả" },
+          { value: "active", label: "Đang hoạt động" },
+          { value: "inactive", label: "Không hoạt động" },
+        ],
+        xs: 6,
+      },
+    ],
+    [faculties]
+  );
 
   const handleMenuOpen = (
     event: MouseEvent<HTMLButtonElement>,
@@ -96,11 +99,11 @@ export function CourseList() {
 
   const renderRowActions = (course: Course) => (
     <IconButton
-      aria-label="more"
+      aria-label='more'
       onClick={(e) => handleMenuOpen(e, course)}
-      size="small"
+      size='small'
     >
-      <MoreVertIcon fontSize="small" />
+      <MoreVertIcon fontSize='small' />
     </IconButton>
   );
 
@@ -112,16 +115,16 @@ export function CourseList() {
           mb: 3,
         }}
       >
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant='h5' fontWeight='bold'>
           Danh sách khóa học
         </Typography>
       </RowStack>
 
-      <RowStack mb={3} gap={2} justifyContent="space-between">
+      <RowStack mb={3} gap={2} justifyContent='space-between'>
         <Stack flex={1}>
           <TextField
-            placeholder="Tìm kiếm khóa học..."
-            variant="outlined"
+            placeholder='Tìm kiếm khóa học...'
+            variant='outlined'
             fullWidth
             value={searchQuery}
             onChange={(e) => {
@@ -138,7 +141,7 @@ export function CourseList() {
             InputProps={{
               startAdornment: (
                 <InputAdornment
-                  position="start"
+                  position='start'
                   sx={{ cursor: "pointer" }}
                   onClick={() =>
                     setFilter((prev) => ({ ...prev, key: searchQuery }))
@@ -183,7 +186,7 @@ export function CourseList() {
         {courses.length > 0 && (
           <CustomPagination
             pagination={pagination}
-            justifyContent="end"
+            justifyContent='end'
             px={2}
             pt={2}
             borderTop={1}
@@ -205,7 +208,7 @@ export function CourseList() {
           onClick={handleMenuClose}
         >
           <ListItemIcon>
-            <EditIcon fontSize="small" />
+            <EditIcon fontSize='small' />
           </ListItemIcon>
           Chỉnh sửa
         </MenuItem>
@@ -215,7 +218,7 @@ export function CourseList() {
           onClick={handleMenuClose}
         >
           <ListItemIcon>
-            <AddCircleIcon fontSize="small" />
+            <AddCircleIcon fontSize='small' />
           </ListItemIcon>
           Mở lớp học
         </MenuItem>
@@ -224,7 +227,7 @@ export function CourseList() {
           sx={{ color: "error.main" }}
         >
           <ListItemIcon>
-            <DeleteIcon fontSize="small" color="error" />
+            <DeleteIcon fontSize='small' color='error' />
           </ListItemIcon>
           Xóa
         </MenuItem>

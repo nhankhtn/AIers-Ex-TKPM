@@ -5,7 +5,7 @@ import {
   apiGet,
   apiPost,
   apiPut,
-  getFormData,
+  removeEmptyKeys,
 } from "@/utils/api-request";
 
 export type GetStudentRequest = {
@@ -25,7 +25,7 @@ export class StudentApi {
   }: GetStudentRequest): Promise<StudentResponse> {
     return await apiGet(
       "/students",
-      getFormData({
+      removeEmptyKeys({
         page,
         limit,
         key,
@@ -36,11 +36,11 @@ export class StudentApi {
   }
 
   static async createStudent(students: Omit<Student, "id">[]): Promise<{
-    data: {
-      acceptableStudents: Student[];
-      unacceptableStudents: Omit<Student, "id">[];
-    };
-    errors: { index: number; code: string }[];
+    data: Student[];
+    errors?: {
+      index: number;
+      code: string;
+    }[];
   }> {
     return await apiPost("/students", students);
   }

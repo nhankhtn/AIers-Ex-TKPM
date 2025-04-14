@@ -53,21 +53,23 @@ interface UtilityButtonsProps {
   createStudentsApi: any;
   updateStudentsApi: any;
 }
-function UtilityButtons({ students, dialog, createStudentsApi, updateStudentsApi }: UtilityButtonsProps) {
-
+function UtilityButtons({
+  students,
+  dialog,
+  createStudentsApi,
+  updateStudentsApi,
+}: UtilityButtonsProps) {
   const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
 
   const handleAddStudent = useCallback(
     async (student: Student) => {
       const res = await createStudentsApi.call([student]);
-      if ((res.data?.errors.length || 0) > 0) {
-        showSnackbarError(res.data?.errors.map((e: { code: any; }) => e.code).join(", "));
-      } else {
+      if (!res.error) {
         showSnackbarSuccess("Thêm sinh viên thành công");
         dialog.handleClose();
       }
     },
-    [createStudentsApi, dialog, showSnackbarError, showSnackbarSuccess]
+    [createStudentsApi, dialog, showSnackbarSuccess]
   );
 
   const handleUpdateStudent = useCallback(

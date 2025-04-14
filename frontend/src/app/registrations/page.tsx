@@ -10,10 +10,6 @@ import RegistrationList from "./registration-list";
 export default function RegistrationsPage() {
   const [value, setValue] = useState<number>(0);
 
-  const handleChange = (_event: SyntheticEvent, newValue: number): void => {
-    setValue(newValue);
-  };
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <Typography variant='h4' component='h1' fontWeight='bold'>
@@ -24,7 +20,9 @@ export default function RegistrationsPage() {
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={value}
-            onChange={handleChange}
+            onChange={(_event: SyntheticEvent, newValue: number): void => {
+              setValue(newValue);
+            }}
             aria-label='registration tabs'
           >
             <Tab label='Đăng ký mới' id='tab-0' aria-controls='tabpanel-0' />

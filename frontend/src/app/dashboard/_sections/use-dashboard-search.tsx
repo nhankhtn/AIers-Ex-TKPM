@@ -10,6 +10,7 @@ import { getFilterConfig } from "./filter-config";
 import { useFaculty } from "./use-faculty";
 import { useStatus } from "./use-status";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useStudentContext } from "@/context/student-student-context";
 
 const useDashboardSearch = () => {
   const router = useRouter();
@@ -24,9 +25,7 @@ const useDashboardSearch = () => {
 
   const dialog = useDialog<Student>();
   const dialogConfirmDelete = useDialog<Student>();
-  const getStudentsApi = useFunction(StudentApi.getStudents, {
-    disableResetOnCall: true,
-  });
+  const { getStudentsApi } = useStudentContext();
 
   const students = useMemo(
     () => getStudentsApi.data?.data || [],
@@ -48,22 +47,16 @@ const useDashboardSearch = () => {
     },
   });
   const createStudentsApi = useFunction(StudentApi.createStudent, {
-    hideSnackbarError: true,
     onSuccess: ({
       result,
     }: {
       result: {
-        data: {
-          acceptableStudents: Student[];
-          unacceptableStudents: Omit<Student, "id">[];
-        };
+        data: Student[];
       };
     }) => {
       getStudentsApi.setData({
-        data: [...students, ...result.data.acceptableStudents],
-        total:
-          (getStudentsApi.data?.total || 0) +
-          result.data.acceptableStudents.length,
+        data: [...students, ...result.data],
+        total: (getStudentsApi.data?.total || 0) + result.data.length,
       });
     },
   });

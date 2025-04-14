@@ -2,7 +2,6 @@
 
 import { AddressApi } from "@/api/address";
 import RowStack from "@/components/row-stack";
-import { useMainContext } from "@/context";
 import useFunction from "@/hooks/use-function";
 import { Country } from "@/types/address";
 import { InfoOutlined } from "@mui/icons-material";
@@ -17,6 +16,7 @@ import { useEffect, useMemo } from "react";
 import PermanentAddress from "./permanent-address";
 import TemporaryAddress from "./temporary-address";
 import MailingAddress from "./mailing-address";
+import { useMainContext } from "@/context/main/main-context";
 
 const AddressStudentForm = ({
   formik,
@@ -139,12 +139,12 @@ const AddressStudentForm = ({
   return (
     <>
       <Typography variant='h6'>Địa chỉ thường trú</Typography>
-      <PermanentAddress 
-        formik={formik} 
-        countries={countries} 
-        provinces={provinces} 
-        districtsPA={districtsPA} 
-        wardsPA={wardsPA} 
+      <PermanentAddress
+        formik={formik}
+        countries={countries}
+        provinces={provinces}
+        districtsPA={districtsPA}
+        wardsPA={wardsPA}
       />
       {/* Temporary Address */}
       <Box>
@@ -178,12 +178,13 @@ const AddressStudentForm = ({
         </RowStack>
 
         {formik.values.useTemporaryAddress && (
-          <TemporaryAddress 
-            formik={formik} 
-            countries={countries} 
-            provinces={provinces} 
-            districtsTA={districtsTA} 
-            wardsTA={wardsTA}/>
+          <TemporaryAddress
+            formik={formik}
+            countries={countries}
+            provinces={provinces}
+            districtsTA={districtsTA}
+            wardsTA={wardsTA}
+          />
         )}
       </Box>
 
@@ -219,12 +220,13 @@ const AddressStudentForm = ({
         </RowStack>
 
         {formik.values.useMailingAddress && (
-          <MailingAddress 
-            formik={formik} 
-            countries={countries} 
-            provinces={provinces} 
-            districtsMA={districtsMA} 
-            wardsMA={wardsMA}/>
+          <MailingAddress
+            formik={formik}
+            countries={countries}
+            provinces={provinces}
+            districtsMA={districtsMA}
+            wardsMA={wardsMA}
+          />
         )}
       </Box>
     </>
