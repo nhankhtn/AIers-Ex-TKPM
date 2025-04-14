@@ -9,9 +9,7 @@ namespace StudentManagement.BLL.DTOs.ClassStudent
     public class GetClassStudentDTO
     {
         public string ClassId { get; set; } = null!;
-
+        public string CourseName { get; set; } = null!;
         public string StudentId { get; set; } = null!;
-
-        public decimal Score { get; set; } = 0;
     }
 }

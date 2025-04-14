@@ -36,18 +36,14 @@ namespace StudentManagement.DAL.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ClassStudent>(
-                nestedBuilder =>
-                {
-                    nestedBuilder.HasKey(e => new { e.StudentId, e.ClassId });
+            modelBuilder.Entity<ClassStudent>(buider =>
+            {
+                buider.HasKey(cs => new { cs.ClassId, cs.StudentId });
+            });
 
-                    nestedBuilder.HasOne(e => e.RegisterCancellationHistories)
-                                 .WithOne(e => e.ClassStudent)
-                                 .HasPrincipalKey<ClassStudent>(e => new { e.StudentId, e.ClassId })
-                                 .HasForeignKey<RegisterCancellationHistory>(e => new { e.StudentId, e.ClassId })
-                                 .IsRequired();
-                }
-            );
+            modelBuilder.Entity<RegisterCancellationHistory>(buider =>             {
+                buider.HasKey(rch => rch.Id);
+            });
 
 
             modelBuilder.Entity<Student>()
@@ -59,7 +55,6 @@ namespace StudentManagement.DAL.Data
                 .Property(i => i.Type)
                 .HasConversion<string>()
                 .HasDefaultValue(IdentityType.CCCD);
-
 
             // Relationships
 
@@ -93,15 +88,12 @@ namespace StudentManagement.DAL.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
 
-
-            
-
             modelBuilder.Entity<Class>()
                 .HasMany(e => e.Students)
                 .WithMany(e => e.Classes)
                 .UsingEntity<ClassStudent>(
-                    r => r.HasOne<Student>(e => e.Student).WithMany(e => e.ClassStudents).HasForeignKey(e => e.StudentId),
-                    l => l.HasOne<Class>(e => e.Class).WithMany(e => e.ClassStudents).HasForeignKey(e => e.ClassId)
+                    r => r.HasOne<Student>(e => e.Student).WithMany(e => e.ClassStudents).HasForeignKey(e => e.StudentId).OnDelete(DeleteBehavior.Cascade),
+                    l => l.HasOne<Class>(e => e.Class).WithMany(e => e.ClassStudents).HasForeignKey(e => e.ClassId).OnDelete(DeleteBehavior.Cascade)
                 );
 
             
@@ -181,7 +173,6 @@ namespace StudentManagement.DAL.Data
             b.HasData(
                 new Setting { Id =1 }
             ));
-
         }
     }
 }

@@ -29,4 +29,6 @@ public interface IStudentRepository
 
     Task<int> GetLatestStudentIdAsync(int course);
 
+    Task<string> GetStudentNameAsync(string id);
+
 }

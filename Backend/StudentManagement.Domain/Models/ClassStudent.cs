@@ -23,7 +23,19 @@ namespace StudentManagement.Domain.Models
         public Student Student { get; set; } = null!;
 
         [Column("score")]
-        public decimal Score { get; set; }
+        public double MidTermScore { get; set; }
+
+        [Column("final_score")]
+        public double FinalScore { get; set; }
+
+        [Column("GPA")]
+        public double TotalScore { get; set; }
+
+        [Column("grade")]
+        public char Grade { get; set; }
+
+        [Column("is_passed")]
+        public bool IsPassed { get; set; }
 
         public RegisterCancellationHistory? RegisterCancellationHistories { get; set; } 
     }
@@ -40,6 +52,5 @@ namespace StudentManagement.Domain.Models
         [Column("student_id")]
         public string? StudentId { get; set; }
         public DateTime Time { get; set; }
-        public ClassStudent? ClassStudent { get; set; } = null!;
     }
 }
