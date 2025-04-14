@@ -162,5 +162,12 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
             return student is null ? 0 : int.Parse(student.Id[4..]);
         }
 
+        public async Task<string> GetStudentNameAsync(string id)
+        {
+            var student = await _context.Students.FindAsync(id);
+
+            return student?.Name ?? string.Empty;
+        }
+
     }
 } 

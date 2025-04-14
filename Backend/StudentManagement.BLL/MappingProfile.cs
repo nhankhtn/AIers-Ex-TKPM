@@ -9,6 +9,7 @@ using StudentManagement.BLL.DTOs.Course;
 using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.Identity;
 using StudentManagement.BLL.DTOs.Program;
+using StudentManagement.BLL.DTOs.Score;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.Domain.Enums;
@@ -127,7 +128,8 @@ namespace StudentManagement.BLL
             CreateMap<AddClassDTO, Class>();
             CreateMap<Class, AddClassDTO>();
 
-            CreateMap<Class, GetClassDTO>();
+            CreateMap<Class, GetClassDTO>()
+                .ForMember(dest => dest.CourseName, act => act.MapFrom(src => src.Course.CourseName));
 
             CreateMap<UpdateClassDTO, Class>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
@@ -145,7 +147,7 @@ namespace StudentManagement.BLL
 
             CreateMap<ClassStudent, GetClassStudentDTO>();
 
-            CreateMap<UpdateClassStudentDTO, ClassStudent>()
+            CreateMap<UpdateScoreDTO, ClassStudent>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
                     srcMember != null &&
                     (!(srcMember is DateTime) || !((DateTime)srcMember).Equals(default(DateTime))) &&
@@ -154,7 +156,10 @@ namespace StudentManagement.BLL
                     (!(srcMember is Guid) || !((Guid)srcMember).Equals(default(Guid))) &&
                     (!(srcMember is string) || !string.IsNullOrEmpty((string)srcMember)) &&
                     (!(srcMember is decimal) || !((decimal)srcMember).Equals(default(decimal)))
-                )); ;
+                ));
+
+            CreateMap<ClassStudent, GetScoreDTO>()
+                .ForMember(dest => dest.StudentName, act => act.MapFrom(src => src.Student.Name));
 
             CreateMap<RegisterCancelationDTO, RegisterCancellationHistory>();
         }

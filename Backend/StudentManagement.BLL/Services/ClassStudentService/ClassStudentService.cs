@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Azure;
 using Microsoft.EntityFrameworkCore;
+using StudentManagement.BLL.DTOs.Class;
 using StudentManagement.BLL.DTOs.ClassStudent;
+using StudentManagement.BLL.DTOs.Score;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.DAL.Data.Repositories.ClassRepo;
 using StudentManagement.DAL.Data.Repositories.ClassStudentRepo;
@@ -40,48 +42,71 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             _mapper = mapper;
         }
 
-        public async Task<Result<GetClassStudentDTO>> AddStudentAsync(AddStudentToClassDTO addStudentToClassDTO)
+        public async Task<Result<IEnumerable<GetClassStudentDTO>>> AddStudentAsync(string studentId, IEnumerable<string> classIds)
         {
             try
             {
-                var _class = await _classRepository.GetClassByIdAsync(addStudentToClassDTO.ClassId);
-                if (_class is null) 
-                    return Result<GetClassStudentDTO>.Fail("CLASS_NOT_FOUND");
+                var student = await _studentRepository.GetStudentByIdAsync(studentId);
+                if (student == null)
+                    return Result<IEnumerable<GetClassStudentDTO>>.Fail("STUDENT_NOT_FOUND");
 
-                var preCouseRequired = _class.Course.RequiredCourseId;
-                if (preCouseRequired != null)
+                var registerSuccessfulClasses = new List<GetClassStudentDTO>();
+
+                foreach (var classId in classIds)
                 {
-                    var studentJoinedClasses = await _classStudentRepository.GetClassStudentByIdAndCourseAsync(addStudentToClassDTO.StudentId, preCouseRequired);
-                    bool isPassed = false;
-                    foreach(var c in studentJoinedClasses)
+                    var _class = await _classRepository.GetClassByIdAsync(classId);
+                    if (_class == null) continue;
+                    if (await _classStudentRepository.GetClassStudentByIdAsync(classId, studentId) != null) continue;
+                    var requiredPreCourse = _class.Course.RequiredCourseId;
+                    if (requiredPreCourse != null)
                     {
-                        if (c == null) continue;
-                        if (c.Score >= 5)
+                        var studentJoinedClass = await _classStudentRepository.GetClassStudentByIdAndCourseAsync(studentId, requiredPreCourse);
+                        bool isPassed = false;
+                        foreach(var c in studentJoinedClass)
                         {
-                            isPassed = true;
-                            break;
+                            if (c == null) continue;
+                            if (c.TotalScore >= 4)
+                            {
+                                isPassed = true;
+                                break;
+                            }
                         }
+                        if (isPassed) registerSuccessfulClasses.Add(new GetClassStudentDTO()
+                        {
+                            StudentId = studentId,
+                            ClassId = classId,
+                            CourseName = await _classRepository.GetCourseNameAsync(classId),
+                        });
                     }
-                    if (!isPassed)
-                        return Result<GetClassStudentDTO>.Fail("STUDENT_NOT_PASSED_PRE_COURSE");
+                    else
+                    {
+                        registerSuccessfulClasses.Add(new GetClassStudentDTO()
+                        {
+                            StudentId = studentId,
+                            ClassId = classId,
+                            CourseName = await _classRepository.GetCourseNameAsync(classId),
+                        });
+                    }
+                    var classStudent = await _classStudentRepository.AddClassStudentAsync(new ClassStudent()
+                    {
+                        StudentId = studentId,
+                        ClassId = classId,
+                        MidTermScore = 0,
+                        FinalScore = 0,
+                        TotalScore = 0,
+                        IsPassed = false,
+                    });
                 }
 
-                var classStudent = await _classStudentRepository.AddClassStudentAsync(_mapper.Map<ClassStudent>(addStudentToClassDTO));
-                return Result<GetClassStudentDTO>.Ok(_mapper.Map<GetClassStudentDTO>(classStudent));
+                return Result<IEnumerable<GetClassStudentDTO>>.Ok(registerSuccessfulClasses);
             }
             catch(DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("PK_class_student"))
             {
-                var classStudent = await _classStudentRepository.GetClassStudentByIdAsync(addStudentToClassDTO.ClassId, addStudentToClassDTO.StudentId);
-                if (classStudent != null && classStudent.RegisterCancellationHistories != null)
-                {
-                    await _registerCancellationHistoryRepository.DeleteAsync(classStudent.RegisterCancellationHistories.Id);
-                    return Result<GetClassStudentDTO>.Ok(_mapper.Map<GetClassStudentDTO>(classStudent));
-                }
-                return Result<GetClassStudentDTO>.Fail("STUDENT_ALREADY_IN_CLASS");
+                return Result<IEnumerable<GetClassStudentDTO>>.Fail("DUPLICATE_CLASS_STUDENT_ID");
             }
             catch(Exception)
             {
-                return Result<GetClassStudentDTO>.Fail("ADD_STUDENT_TO_CLASS_FAILED");
+                return Result<IEnumerable<GetClassStudentDTO>>.Fail("ADD_STUDENT_TO_CLASS_FAILED");
             }
         }
 
@@ -89,10 +114,14 @@ namespace StudentManagement.BLL.Services.ClassStudentService
         {
             try
             {
-                // await _classStudentRepository.DeleteClassStudentAsync(registerCancelationDTO.ClassId, registerCancelationDTO.StudentId);
+                var _class = await _classRepository.GetClassByIdAsync(registerCancelationDTO.ClassId);
+                if (_class is null)
+                    return Result<RegisterCancelationDTO>.Fail("CLASS_NOT_FOUND");
+
                 var registerCancellationHistory = _mapper.Map<RegisterCancellationHistory>(registerCancelationDTO);
                 registerCancellationHistory.Time = DateTime.Now;
                 await _registerCancellationHistoryRepository.AddAsync(registerCancellationHistory);
+                await _classStudentRepository.DeleteClassStudentAsync(registerCancelationDTO.ClassId, registerCancelationDTO.StudentId);
                 return Result<RegisterCancelationDTO>.Ok(registerCancelationDTO);
             }
             catch (Exception)
@@ -118,20 +147,150 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             }
         }
 
-        public async Task<Result<GetClassStudentDTO>> UpdateClassStudentAsync(string classId, string studentId, UpdateClassStudentDTO updateClassStudentDTO)
+        public async Task<Result<IEnumerable<GetScoreDTO>>> UpdateScoresAsync(string classId, IEnumerable<UpdateScoreDTO> updateScoresDTO)
         {
             try
             {
-                var classStudent = await _classStudentRepository.GetClassStudentByIdAsync(classId, studentId);
-                if (classStudent is null)
-                    return Result<GetClassStudentDTO>.Fail("CLASS_STUDENT_NOT_FOUND");
-                _mapper.Map(updateClassStudentDTO, classStudent);
-                await _classStudentRepository.UpdateClassStudentAsync(classStudent);
-                return Result<GetClassStudentDTO>.Ok(_mapper.Map<GetClassStudentDTO>(classStudent));
+                var result = new List<GetScoreDTO>();
+                var _class = await _classRepository.GetClassByIdAsync(classId);
+                if (_class is null)
+                    return Result<IEnumerable<GetScoreDTO>>.Fail("CLASS_NOT_FOUND");
+
+                foreach (var updateScoreDTO in updateScoresDTO)
+                {
+                    var classStudent = await _classStudentRepository.GetClassStudentByIdAsync(_class.ClassId, updateScoreDTO.StudentId);
+                    if (classStudent is null) continue;
+
+                    _mapper.Map(updateScoreDTO, classStudent);
+                    classStudent.TotalScore = classStudent.FinalScore * 0.6 + classStudent.MidTermScore * 0.4;
+                    classStudent.IsPassed = classStudent.TotalScore >= 4;
+
+                    if (classStudent.TotalScore < 4) classStudent.Grade = 'F';
+                    else if (classStudent.TotalScore < 5.5) classStudent.Grade = 'D';
+                    else if (classStudent.TotalScore < 7) classStudent.Grade = 'C';
+                    else if (classStudent.TotalScore < 8.5) classStudent.Grade = 'B';
+                    else classStudent.Grade = 'A';
+
+                    await _classStudentRepository.UpdateClassStudentAsync(classStudent);
+
+                    var cs = _mapper.Map<GetScoreDTO>(classStudent);
+                    cs.StudentName = await _studentRepository.GetStudentNameAsync(cs.StudentId);
+                    result.Add(cs);
+                }
+                
+                return Result<IEnumerable<GetScoreDTO>>.Ok(result);
             }
             catch (Exception)
             {
-                return Result<GetClassStudentDTO>.Fail("UPDATE_CLASS_STUDENTS_FAILED");
+                return Result<IEnumerable<GetScoreDTO>>.Fail("UPDATE_CLASS_STUDENTS_FAILED");
+            }
+        }
+
+        public async Task<Result<IEnumerable<GetScoreDTO>>> GetScoresAsync(string classId)
+        {
+            try
+            {
+                var allStudentInClass = await _classStudentRepository.GetClassStudentsAsync(classId, null, null, null);
+                var data = _mapper.Map<IEnumerable<GetScoreDTO>>(allStudentInClass);
+                foreach(var c in data)
+                {
+                    c.StudentName = await _studentRepository.GetStudentNameAsync(c.StudentId);
+                }
+                return Result<IEnumerable<GetScoreDTO>>.Ok(data);
+            }
+            catch (Exception)
+            {
+                return Result<IEnumerable<GetScoreDTO>>.Fail("GET_SCORES_FAILED");
+            }
+        }
+
+        public async Task<Result<StudentTranscriptDTO>> GetStudentTranscriptAsync(string studentId)
+        {
+            var student = await _studentRepository.GetStudentByIdAsync(studentId);
+            if (student == null) 
+                return Result<StudentTranscriptDTO>.Fail("STUDENT_NOT_FOUND");
+
+            var allJoinedClasses = await _classStudentRepository.GetClassStudentsAsync(null, studentId, null, null);
+
+            int totalCredit = 0;
+            int passedCredit = 0;
+            double totalScore = 0;
+            var data = new List<TranscriptRow>();
+
+            foreach(var c in allJoinedClasses)
+            {
+                int credit = await _classRepository.GetCreditsAsync(c.ClassId);
+                totalCredit += credit;
+                if (c.IsPassed)
+                {
+                    passedCredit += credit;
+                    totalScore += c.TotalScore * credit;
+                }
+                data.Add(new TranscriptRow()
+                {
+                    ClassId = c.ClassId,
+                    CourseName = await _classRepository.GetCourseNameAsync(c.ClassId),
+                    Credit = credit,
+                    TotalScore = Math.Round(c.TotalScore, 2),
+                    Grade = c.Grade
+                });
+            }
+
+            return Result<StudentTranscriptDTO>.Ok(new StudentTranscriptDTO()
+            {
+                Transcript = data,
+                StudentId = student.Id,
+                StudentName = student.Name,
+                FacultyName = student.Faculty.Name,
+                Course = student.Course,
+                TotalCredit = totalCredit,
+                PassedCredit = passedCredit,
+                GPA = passedCredit != 0 ? Math.Round(totalScore / passedCredit, 2) : 0
+            });
+        }
+
+        public async Task<Result<IEnumerable<GetClassDTO>>> GetRegisterableClassesAsync(string studentId)
+        {
+            try
+            {
+                var allClasses = await _classRepository.GetClassesAsync(null, null, null, null);
+                var registerableClasses = new List<GetClassDTO>();
+
+                foreach (var c in allClasses)
+                {
+                    var classStudent = await _classStudentRepository.GetClassStudentByIdAsync(c.ClassId, studentId); 
+                    if (classStudent != null) continue;
+                    var requiredPreCourse = c.Course.RequiredCourseId;
+                    if (requiredPreCourse != null)
+                    {
+                        var studentJoinedClasses = await _classStudentRepository.GetClassStudentByIdAndCourseAsync(studentId, requiredPreCourse);
+                        bool isPassed = false;
+                        foreach (var _c in studentJoinedClasses)
+                        {
+                            if (_c == null) continue;
+                            if (_c.TotalScore >= 4)
+                            {
+                                isPassed = true;
+                                break;
+                            }
+                        }
+                        if (!isPassed) continue;
+                        var classDTO = _mapper.Map<GetClassDTO>(c);
+                        classDTO.CurrentStudents = await _classStudentRepository.GetNumberOfStudentsInClassAsync(c.ClassId);
+                        registerableClasses.Add(classDTO);
+                    }
+                    else
+                    {
+                        var classDTO = _mapper.Map<GetClassDTO>(c);
+                        classDTO.CurrentStudents = await _classStudentRepository.GetNumberOfStudentsInClassAsync(c.ClassId);
+                        registerableClasses.Add(classDTO);
+                    }
+                }
+                return Result<IEnumerable<GetClassDTO>>.Ok(registerableClasses);
+            }
+            catch(Exception)
+            {
+                return Result<IEnumerable<GetClassDTO>>.Fail("GET_REGISTERABLE_CLASSES_FAILED");
             }
         }
     }

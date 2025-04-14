@@ -13,7 +13,9 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
         Task<ClassStudent?> GetClassStudentByIdAsync(string classId, string studentId);
         Task<IEnumerable<ClassStudent?>> GetClassStudentByIdAndCourseAsync(string studentId, string courseId);
         Task<ClassStudent?> AddClassStudentAsync(ClassStudent classStudent);
-        Task UpdateClassStudentAsync(ClassStudent classStudent);
         Task DeleteClassStudentAsync(string classId, string studentId);
+        Task UpdateClassStudentAsync(ClassStudent classStudent);
+        Task<int> GetNumberOfStudentsInClassAsync(string classId);
+
     }
 }

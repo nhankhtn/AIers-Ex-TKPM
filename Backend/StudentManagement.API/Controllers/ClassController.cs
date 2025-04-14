@@ -32,39 +32,14 @@ namespace StudentManagement.API.Controllers
                     }
                 });  
             }
-            return Ok(new ApiResponse<GetClassDTO>
-            {
-                Data = result.Data
-            });
-        }
-
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<GetClassDTO>>> GetClass(string id)
-        {
-            var result = await _classService.GetClassAsync(id);
-            if (!result.Success)
-            {
-                return BadRequest(new ApiResponse<GetClassDTO>
-                {
-                    Error = new ApiError
-                    {
-                        Code = result.ErrorCode,
-                        Message = result.ErrorMessage
-                    }
-                });
-            }
-            return Ok(new ApiResponse<GetClassDTO>
-            {
-                Data = result.Data
-            });
+            return Ok(result.Data);
         }
 
 
         [HttpGet]
-        public async Task<ActionResult<GetClassesDTO>> GetClasses(string? classId = null, int? semeter = null, int? page = null, int? limit = null)
+        public async Task<ActionResult<GetClassesDTO>> GetClasses(string? classId = null, int? semester = null, int? page = null, int? limit = null)
         {
-            var result = await _classService.GetClassesAsync(classId, semeter, page, limit);
+            var result = await _classService.GetClassesAsync(classId, semester, page, limit);
             if (!result.Success)
             {
                 return BadRequest(ApiResponse<string>.BadRequest(
@@ -95,10 +70,7 @@ namespace StudentManagement.API.Controllers
                     }
                 });
             }
-            return Ok(new ApiResponse<GetClassDTO>
-            {
-                Data = result.Data
-            });
+            return Ok(result.Data);
         }
 
 
@@ -118,10 +90,7 @@ namespace StudentManagement.API.Controllers
                     }
                 });
             }
-            return Ok(new ApiResponse<GetClassDTO>
-            {
-                Data = result.Data
-            });
+            return Ok(result.Data);
         }
     }
 }

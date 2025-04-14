@@ -50,7 +50,7 @@ const Content = () => {
   );
 
   return (
-    <Box sx={{ p: 3, maxWidth: "100%" }}>
+    <Box sx={{ maxWidth: "100%" }}>
       <RowStack
         sx={{
           justifyContent: "space-between",

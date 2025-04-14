@@ -23,7 +23,7 @@ namespace StudentManagement.API.Controllers
             var result = await _courseService.AddCourseAsync(courseDTO);
             if (result.Success)
             {
-                return Ok(ApiResponse<AddCourseDTO>.Success(data : result.Data, message: result.Message));
+                return Ok(result.Data);
             }
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
@@ -58,7 +58,7 @@ namespace StudentManagement.API.Controllers
             var result = await _courseService.UpdateCourseByIdAsync(courseId, course);
             if (result.Success)
             {
-                return Ok(ApiResponse<UpdateCourseDTO>.Success(data: result.Data, message: result.Message));
+                return Ok(result.Data);
             }
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
@@ -90,7 +90,7 @@ namespace StudentManagement.API.Controllers
             var result = await _courseService.GetAllCourseByIdAsync(courseId);
             if (result.Success)
             {
-                return Ok(ApiResponse<GetCourseDTO>.Success(data: result.Data, message: result.Message));
+                return Ok(result.Data);
             }
             return BadRequest(ApiResponse<GetCourseDTO>.BadRequest(
                 error: new ApiError

@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL.DTOs.Class;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.DAL.Data.Repositories.ClassRepo;
+using StudentManagement.DAL.Data.Repositories.ClassStudentRepo;
 using StudentManagement.DAL.Data.Repositories.CourseRepo;
+using StudentManagement.DAL.Data.Repositories.RegisterCancellationHistoryRepo;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
@@ -19,13 +21,21 @@ namespace StudentManagement.BLL.Services.ClassService
     public class ClassService : IClassService
     {
         private readonly IClassRepository _classRepository;
+        private readonly IClassStudentRepository _classStudentRepostory;
+        private readonly IRegisterCancellationHistoryRepository _registerCancellationHistoryRepository;
         private readonly ICourseRepository _courseRepository;
         private readonly IMapper _mapper;
 
-        public ClassService(IClassRepository classRepository, ICourseRepository courseRepository, IMapper mapper)
+        public ClassService(IClassRepository classRepository, 
+            ICourseRepository courseRepository, 
+            IClassStudentRepository classStudentRepository, 
+            IRegisterCancellationHistoryRepository registerCancellationHistoryRepository,
+            IMapper mapper)
         {
             _classRepository = classRepository;
             _courseRepository = courseRepository;
+            _classStudentRepostory = classStudentRepository;
+            _registerCancellationHistoryRepository = registerCancellationHistoryRepository;
             _mapper = mapper;
         }
 
@@ -62,7 +72,11 @@ namespace StudentManagement.BLL.Services.ClassService
                 var _class = await _classRepository.GetClassByIdAsync(classId);
                 if (_class is null)
                     return Result<GetClassDTO>.Fail("CLASS_NOT_FOUND");
-                return Result<GetClassDTO>.Ok(_mapper.Map<GetClassDTO>(_class));
+
+                var classDTO = _mapper.Map<GetClassDTO>(_class);
+                classDTO.CurrentStudents = await _classStudentRepostory.GetNumberOfStudentsInClassAsync(classId);
+
+                return Result<GetClassDTO>.Ok(classDTO);
             }
             catch (Exception)
             {
@@ -70,13 +84,20 @@ namespace StudentManagement.BLL.Services.ClassService
             }
         }
 
-        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semeter = null, int? page = null, int? limit = null)
+        public async Task<Result<GetClassesDTO>> GetClassesAsync(string? classId = null, int? semester = null, int? page = null, int? limit = null)
         {
             try
             {
-                var classes = await _classRepository.GetClassesAsync(classId, semeter, page, limit);
+                var classes = await _classRepository.GetClassesAsync(classId, semester, page, limit);
+
+                var data = _mapper.Map<IEnumerable<GetClassDTO>>(classes);
+                foreach(var c in data)
+                {
+                    c.CurrentStudents = await _classStudentRepostory.GetNumberOfStudentsInClassAsync(c.ClassId ?? "");
+                }
+
                 return Result<GetClassesDTO>.Ok(new GetClassesDTO {
-                     Data = _mapper.Map<IEnumerable<GetClassDTO>>(classes),
+                     Data = data,
                      Total = classes.Count()
                 });
             }

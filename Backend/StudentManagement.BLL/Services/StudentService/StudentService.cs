@@ -90,6 +90,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 foreach (var student in studentDTOs)
                 {
                     index++;
+                    student.Id = null; // Reset Id for new students
                     var validRes = _userValidator.StudentValidate(student);
                     if (!validRes.IsValid)
                     {

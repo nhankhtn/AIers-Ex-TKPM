@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.BLL.DTOs.ClassStudent
 {
+
+    public class AddStudentToClassesDTO
+    {
+        public IEnumerable<string> ClassId { get; set; } = null!;
+    }
+
     public class AddStudentToClassDTO
     {
         public string ClassId { get; set; } = null!;

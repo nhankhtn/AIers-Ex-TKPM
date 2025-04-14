@@ -73,7 +73,7 @@ namespace StudentManagement.API.Controllers
                 ));
         }
 
-        [HttpDelete("id/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFaculty(string id)
         {
             var result = await _facultyService.DeleteFacultyAsync(id);
@@ -91,22 +91,22 @@ namespace StudentManagement.API.Controllers
                 ));
         }
 
-        [HttpDelete("name/{name}")]
-        public async Task<IActionResult> DeleteFacultyByName(string name)
-        {
-            var result = await _facultyService.DeleteFacultyAsync(name);
-            if (result.Success) return Ok(ApiResponse<string>.Success(
-                    data: result.Data,
-                    message: result.Message
-                ));
+        //[HttpDelete("name/{name}")]
+        //public async Task<IActionResult> DeleteFacultyByName(string name)
+        //{
+        //    var result = await _facultyService.DeleteFacultyAsync(name);
+        //    if (result.Success) return Ok(ApiResponse<string>.Success(
+        //            data: result.Data,
+        //            message: result.Message
+        //        ));
 
-            return BadRequest(ApiResponse<string>.BadRequest(
-                    error: new ApiError()
-                    {
-                        Code = result.ErrorCode,
-                        Message = result.ErrorMessage
-                    }
-                ));
-        }
+        //    return BadRequest(ApiResponse<string>.BadRequest(
+        //            error: new ApiError()
+        //            {
+        //                Code = result.ErrorCode,
+        //                Message = result.ErrorMessage
+        //            }
+        //        ));
+        //}
     }
 }

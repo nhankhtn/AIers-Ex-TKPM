@@ -5,6 +5,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { theme } from "@/theme";
 import "@/theme/global.css";
 import { SnackbarProvider } from "@/app/_layouts/snackbar-provider";
+import Layout from "./_layouts/layout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,12 +28,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AppRouterCacheProvider options={{ key: "css" }}>
           <CssBaseline />
           <SnackbarProvider>
-            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+            <ThemeProvider theme={theme}>
+              <Layout>{children}</Layout>
+            </ThemeProvider>
           </SnackbarProvider>
         </AppRouterCacheProvider>
       </body>

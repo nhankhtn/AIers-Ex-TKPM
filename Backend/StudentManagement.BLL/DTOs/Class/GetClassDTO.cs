@@ -11,11 +11,14 @@ namespace StudentManagement.BLL.DTOs.Class
         public string? ClassId { get; set; }
         public int? AcademicYear { get; set; }
         public string? CourseId { get; set; }
-        public int? Semester { get; set; }
 
+        public string? CourseName { get; set; }
+        public int? Semester { get; set; }
         public string? TeacherName { get; set; } = null!;
 
         public int? MaxStudents { get; set; }
+
+        public int? CurrentStudents { get; set; } = 0;
 
         public string? Room { get; set; } = null!;
 
