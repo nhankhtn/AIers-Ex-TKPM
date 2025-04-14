@@ -19,7 +19,7 @@ namespace StudentManagement.API.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<GetStudentsDTO>> GetAllStudents(int page, int limit, string? faculty, string? program, string? status, string? key)
+        public async Task<ActionResult<GetStudentsDTO>> GetAllStudents(int? page, int? limit, string? faculty, string? program, string? status, string? key)
         {
             var result = await _studentService.GetAllStudentsAsync(page, limit, faculty, program, status, key);
             if (result.Success)

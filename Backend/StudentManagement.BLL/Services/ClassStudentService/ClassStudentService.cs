@@ -55,7 +55,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                 foreach (var classId in classIds)
                 {
                     var _class = await _classRepository.GetClassByIdAsync(classId);
-                    if (_class == null) continue;
+                    if (_class == null || _class.Deadline < DateTime.Now) continue;
                     if (await _classStudentRepository.GetClassStudentByIdAsync(classId, studentId) != null) continue;
                     var requiredPreCourse = _class.Course.RequiredCourseId;
                     if (requiredPreCourse != null)
@@ -258,6 +258,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
 
                 foreach (var c in allClasses)
                 {
+                    if (c.Deadline < DateTime.Now) continue; 
                     var classStudent = await _classStudentRepository.GetClassStudentByIdAsync(c.ClassId, studentId); 
                     if (classStudent != null) continue;
                     var requiredPreCourse = c.Course.RequiredCourseId;
