@@ -9,17 +9,24 @@ const useRegistrationsSearch = () => {
   const getStudentsApi = useFunction(StudentApi.getStudents, {
     disableResetOnCall: true,
   });
-  const [filter, setFilter] = useState<Partial<Class>>({});
-  const getClassesApi = useFunction(ClassApi.getClasses, {
+  const [filter, setFilter] = useState({
+    semester: "",
+    academicYear: "2025",
+  });
+  const getRegisterableClassApi = useFunction(StudentApi.getRegisterableClass, {
     disableResetOnCall: true,
   });
   const pagination = usePagination({
-    count: getClassesApi.data?.total || 0,
+    count: getRegisterableClassApi.data?.data?.length || 0,
     initialRowsPerPage: 10,
   });
   const classes = useMemo(
-    () => getClassesApi.data?.data || [],
-    [getClassesApi.data]
+    () =>
+      (getRegisterableClassApi.data?.data || []).slice(
+        (pagination.page - 1) * pagination.rowsPerPage,
+        pagination.page * pagination.rowsPerPage
+      ),
+    [getRegisterableClassApi.data, pagination.page, pagination.rowsPerPage]
   );
 
   const classFilterConfig = useMemo(
@@ -29,7 +36,7 @@ const useRegistrationsSearch = () => {
         key: "semester",
         options: [
           {
-            value: "",
+            value: "Tất cả",
             label: "Tất cả",
           },
           {
@@ -56,16 +63,16 @@ const useRegistrationsSearch = () => {
             label: "2025",
           },
           {
-            value: "1",
-            label: "Học kì 1",
+            value: "2024",
+            label: "2024",
           },
           {
-            value: "2",
-            label: "Học kì 2",
+            value: "2023",
+            label: "2023",
           },
           {
-            value: "3",
-            label: "Học kì 3",
+            value: "2022",
+            label: "2022",
           },
         ],
         xs: 6,
@@ -73,15 +80,6 @@ const useRegistrationsSearch = () => {
     ],
     []
   );
-
-  useEffect(() => {
-    getClassesApi.call({
-      page: pagination.page,
-      limit: pagination.rowsPerPage,
-      semester: filter.semester,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.page, pagination.rowsPerPage]);
 
   const students = useMemo(
     () => getStudentsApi.data?.data || [],
@@ -100,10 +98,11 @@ const useRegistrationsSearch = () => {
     students,
     getStudentsApi,
     pagination,
-    getClassesApi,
+    getRegisterableClassApi,
     classes,
     filter,
     setFilter,
+    classFilterConfig,
   };
 };
 

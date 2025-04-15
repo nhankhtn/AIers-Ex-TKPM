@@ -7,6 +7,7 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import { useCallback } from "react";
 
 interface SelectFilterProps {
   configs: {
@@ -25,15 +26,17 @@ interface SelectFilterProps {
 }
 
 const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
-  const handleChange = (key: string, event: SelectChangeEvent<string>) => {
-    if(event.target.value === "Tất cả") {
-      onChange(key, "");
-    }
-    else onChange(key, event.target.value);
-  }
+  const handleChange = useCallback(
+    (key: string, event: SelectChangeEvent<string>) => {
+      if (event.target.value === "Tất cả") {
+        onChange(key, "");
+      } else onChange(key, event.target.value);
+    },
+    [onChange]
+  );
 
   return (
-    <RowStack spacing={1.5} >
+    <RowStack spacing={1.5}>
       {configs.map(({ label, xs, key }, index) => (
         <Grid2 size={{ xs: xs }} key={key} sx={{ width: "100%" }}>
           <FormControl fullWidth>
@@ -44,11 +47,11 @@ const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
               label={label}
               fullWidth
               variant='outlined'
-              value={filter[key]===""?"Tất cả":filter[key]}
-              onChange={(e) => handleChange(key,e)}
+              value={filter[key] === "" ? "Tất cả" : filter[key]}
+              onChange={(e) => handleChange(key, e)}
             >
               {configs[index].options.map(({ value, label }) => (
-                <MenuItem key={value} value={label}>
+                <MenuItem key={value} value={value}>
                   {label}
                 </MenuItem>
               ))}

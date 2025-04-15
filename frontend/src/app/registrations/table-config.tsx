@@ -6,7 +6,9 @@ export const getClassesTableConfig = (): CustomTableConfig<string, Class>[] => [
   {
     key: "code",
     headerLabel: "Mã lớp",
-    renderCell: (data) => <Typography variant='body2'>{data.id}</Typography>,
+    renderCell: (data) => (
+      <Typography variant='body2'>{data.classId}</Typography>
+    ),
   },
   {
     key: "name",

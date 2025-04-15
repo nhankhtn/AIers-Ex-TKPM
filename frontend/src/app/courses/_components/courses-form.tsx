@@ -15,16 +15,13 @@ import {
   FormHelperText,
   Divider,
   Autocomplete,
-  CircularProgress,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import type { Course } from "@/types/course";
-import { Faculty } from "@/types/student";
-import { useFaculty } from "@/app/dashboard/_sections/use-faculty";
 import { useCourseSearch } from "../_sections/use-course-search";
 import { useCallback, useEffect, useState } from "react";
-import { CourseApi } from "@/api/course";
+import { useMainContext } from "@/context/main/main-context";
 
 interface CourseFormProps {
   course?: Course | null;
@@ -57,7 +54,7 @@ const validationSchema = Yup.object().shape({
 
 export function CourseForm({ course = null }: CourseFormProps) {
   const router = useRouter();
-  const { faculties } = useFaculty();
+  const { faculties } = useMainContext();
   const {
     courses,
     searchCourses,

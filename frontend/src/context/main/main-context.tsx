@@ -1,10 +1,13 @@
 import { AddressApi } from "@/api/address";
+import { FacultyApi } from "@/api/faculty";
 import { SettingApi } from "@/api/settings";
 import useFunction, {
   DEFAULT_FUNCTION_RETURN,
   UseFunctionReturnType,
 } from "@/hooks/use-function";
+import { ResponseWithData } from "@/types";
 import { Country, Province } from "@/types/address";
+import { Faculty } from "@/types/student";
 import {
   createContext,
   ReactNode,
@@ -26,25 +29,32 @@ export const initialSettings: SettingsProps = {
 interface ContextValue {
   getCountriesApi: UseFunctionReturnType<void, Country[]>;
   updateSettingsApi: UseFunctionReturnType<string, void>;
+  getFacultiesApi: UseFunctionReturnType<void, ResponseWithData<Faculty[]>>;
 
   countries: Country[];
   provinces: Province[];
   settings: SettingsProps;
+  faculties: Faculty[];
 }
 
 export const MainContext = createContext<ContextValue>({
   getCountriesApi: DEFAULT_FUNCTION_RETURN,
   updateSettingsApi: DEFAULT_FUNCTION_RETURN,
+  getFacultiesApi: DEFAULT_FUNCTION_RETURN,
 
   countries: [],
   provinces: [],
   settings: initialSettings,
+  faculties: [],
 });
 
 const MainProvider = ({ children }: { children: ReactNode }) => {
   const getCountriesApi = useFunction(AddressApi.getCountries);
   const getProvincesApi = useFunction(AddressApi.getProvinces);
   const getSettingsApi = useFunction(SettingApi.getSettings);
+  const getFacultiesApi = useFunction(FacultyApi.getFaculty, {
+    disableResetOnCall: true,
+  });
 
   const [settings, setSettings] = useState<SettingsProps>(initialSettings);
 
@@ -56,6 +66,11 @@ const MainProvider = ({ children }: { children: ReactNode }) => {
   const provinces = useMemo(
     () => getProvincesApi.data || [],
     [getProvincesApi.data]
+  );
+
+  const faculties = useMemo(
+    () => getFacultiesApi.data?.data || [],
+    [getFacultiesApi.data]
   );
 
   const updateSettings = useCallback(
@@ -84,6 +99,7 @@ const MainProvider = ({ children }: { children: ReactNode }) => {
     getCountriesApi.call({});
     getProvincesApi.call({});
     getSettingsApi.call({});
+    getFacultiesApi.call({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -91,10 +107,12 @@ const MainProvider = ({ children }: { children: ReactNode }) => {
     <MainContext.Provider
       value={{
         getCountriesApi,
+        getFacultiesApi,
         countries,
         provinces,
         settings,
         updateSettingsApi,
+        faculties,
       }}
     >
       {children}

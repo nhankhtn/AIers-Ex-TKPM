@@ -34,6 +34,7 @@ import { isJSONString } from "@/utils/string-helper";
 import { objectToAddress } from "./table-config";
 import useDashboardSearch from "./use-dashboard-search";
 import DialogSettingsStatus from "../_components/dialog-settings-status";
+import { useMainContext } from "@/context/main/main-context";
 
 function parseAddress(address: string) {
   const parts = address.split(",").map((part) => part.trim());
@@ -84,13 +85,12 @@ function UtilityButtons({
     },
     [updateStudentsApi, dialog]
   );
-
+  const { faculties } = useMainContext();
   const {
     dialog: dialogFaculty,
     deleteFacultyApi,
     addFacultyApi,
     updateFacultyApi,
-    faculties,
   } = useFaculty();
   const {
     dialog: dialogProgram,

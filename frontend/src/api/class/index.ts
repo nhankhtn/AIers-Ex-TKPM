@@ -1,12 +1,19 @@
 import { ResponseWithTotal } from "@/types";
 import { Class } from "@/types/class";
-import { apiDelete, apiGet, apiPost, apiPut, getFormData } from "@/utils/api-request";
+import {
+  apiDelete,
+  apiGet,
+  apiPost,
+  apiPut,
+  getFormData,
+} from "@/utils/api-request";
 
 export type GetClassRequest = {
   page: number;
   limit: number;
   classId?: string;
   semester?: number;
+  year?: number;
 };
 
 export type ClassResponse = ResponseWithTotal<Class[]>;
@@ -36,5 +43,20 @@ export class ClassApi {
 
   static async deleteClass(classId: Class["classId"]): Promise<Class> {
     return await apiDelete(`/class/${classId}`, {});
+  }
+
+  static async getClassScores(classId: string) {
+    return await apiGet(`/score?classId=${classId}`);
+  }
+
+  static async createScoresStudent(
+    classId: string,
+    scores: {
+      studentId: string;
+      midTermScore: number;
+      finalScore: number;
+    }[]
+  ) {
+    return await apiPost(`/score?classId=${classId}`, scores);
   }
 }

@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import useFunction from "@/hooks/use-function";
 import usePagination from "@/hooks/use-pagination";
-import { CourseApi} from "@/api/course";
-import type { Course } from "@/types/course";
+import { CourseApi } from "@/api/course";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useFaculty } from "@/app/dashboard/_sections/use-faculty";
+import { useMainContext } from "@/context/main/main-context";
 
 export const useCoursePagination = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { faculties } = useFaculty();
+  const { faculties } = useMainContext();
   const [filter, setFilter] = useState({
     key: "",
     faculty: "",
@@ -29,21 +28,20 @@ export const useCoursePagination = () => {
     initialRowsPerPage: 10,
   });
 
-  const deleteCourseApi = useFunction(CourseApi.deleteCourse,
-    {
-      successMessage: "Xóa khóa học thành công",
-      onSuccess: ({ payload }) => {
-        if (payload) {
-          getCoursesApi.setData(
-            {
-              data: getCoursesApi.data?.data.filter((course) => course.courseId !== payload) || [],
-              total: (getCoursesApi.data?.total || 0) - 1
-            }
-          );
-        }
-      },
-    }
-  );
+  const deleteCourseApi = useFunction(CourseApi.deleteCourse, {
+    successMessage: "Xóa khóa học thành công",
+    onSuccess: ({ payload }) => {
+      if (payload) {
+        getCoursesApi.setData({
+          data:
+            getCoursesApi.data?.data.filter(
+              (course) => course.courseId !== payload
+            ) || [],
+          total: (getCoursesApi.data?.total || 0) - 1,
+        });
+      }
+    },
+  });
 
   useEffect(() => {
     const key = searchParams.get("key") || "";

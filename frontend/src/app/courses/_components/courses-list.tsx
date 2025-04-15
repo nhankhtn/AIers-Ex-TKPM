@@ -24,11 +24,11 @@ import { getTableConfig } from "../_sections/table-config";
 import { useCoursePagination } from "../_sections/use-course-pagination";
 import CustomPagination from "@/components/custom-pagination";
 import RowStack from "@/components/row-stack";
-import { useFaculty } from "@/app/dashboard/_sections/use-faculty";
 import SelectFilter from "@/app/dashboard/_components/select-filter";
 import { paths } from "@/paths";
 import { useDialog } from "@/hooks/use-dialog";
 import DialogConfirmDeleteCourse from "./dialog-confirm-delete-course";
+import { useMainContext } from "@/context/main/main-context";
 
 export function CourseList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,7 +38,7 @@ export function CourseList() {
 
   const { courses, deleteCourseApi, pagination, filter, setFilter } =
     useCoursePagination();
-  const { faculties } = useFaculty();
+  const { faculties } = useMainContext();
 
   const filterConfig = useMemo(
     () => [

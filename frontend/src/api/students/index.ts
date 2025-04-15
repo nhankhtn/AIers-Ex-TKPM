@@ -1,4 +1,5 @@
-import { ResponseWithTotal } from "@/types";
+import { ResponseWithData, ResponseWithTotal } from "@/types";
+import { Class } from "@/types/class";
 import { Student, StudentFilter } from "@/types/student";
 import {
   apiDelete,
@@ -58,4 +59,29 @@ export class StudentApi {
   static async deleteStudent(id: Student["id"]): Promise<void> {
     return await apiDelete(`/students/${id}`, {});
   }
+
+  static async registerClass({
+    studentId,
+    classIds,
+  }: {
+    studentId: string;
+    classIds: string[];
+  }) {
+    return await apiPost(`/ClassStudent/${studentId}`, classIds);
+  }
+
+  static async getRegisterableClass(
+    studentId: string
+  ): Promise<ResponseWithData<Class[]>> {
+    return await apiGet(
+      `/ClassStudent/registerable-classes?studentId=${studentId}`
+    );
+  }
+
+  static async getStudentTranscript(studentId: string) {
+    return await apiGet(`/score/transcript?studentId=${studentId}`);
+  }
 }
+// : Promise<
+//     ResponseWithData<{ classId: string; courseName: string; studentId: string }>
+//   >
