@@ -10,8 +10,8 @@ import {
 } from "@/utils/api-request";
 
 export type GetStudentRequest = {
-  page: number;
-  limit: number;
+  page: number | null;
+  limit: number | null;
   key?: string;
 } & Partial<StudentFilter>;
 export type StudentResponse = ResponseWithTotal<Student[]>;

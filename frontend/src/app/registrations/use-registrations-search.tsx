@@ -103,8 +103,8 @@ const useRegistrationsSearch = () => {
 
   useEffect(() => {
     getStudentsApi.call({
-      page: 1,
-      limit: 10,
+      page: null,
+      limit: null,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -62,6 +62,17 @@ export interface StudentFilter extends Partial<Student> {
   faculty: string;
 }
 
+export interface StudentScore {
+  id: string;
+  studentId: string;
+  studentName: string;
+  midTermScore: number;
+  finalScore: number;
+  totalScore: number;
+  grade: string | null;
+  isPassed: boolean;
+}
+
 export const mappingFiledStudent: Record<string, string> = {
   id: "Mã sinh viên",
   name: "Họ và tên",

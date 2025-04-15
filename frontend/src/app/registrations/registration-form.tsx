@@ -19,6 +19,8 @@ import {
   AlertTitle,
   type SelectChangeEvent,
   Stack,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import WarningIcon from "@mui/icons-material/Warning";
@@ -94,7 +96,7 @@ export function RegistrationForm() {
           <Stack sx={{ gap: 3 }}>
             <FormControl fullWidth required>
               <InputLabel id='student-select-label'>Sinh viên</InputLabel>
-              <Select
+              {/* <Select
                 labelId='student-select-label'
                 id='student-select'
                 value={selectedStudent?.id || ""}
@@ -110,7 +112,20 @@ export function RegistrationForm() {
                     {student.name}
                   </MenuItem>
                 ))}
-              </Select>
+              </Select> */}
+              <Autocomplete
+                id='student-autocomplete'
+                options={students}
+                getOptionLabel={(option) => option.name}
+                value={selectedStudent}
+                onChange={(event, newValue) => {
+                  setSelectedStudent(newValue);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} label='Sinh viên' variant='outlined' />
+                )}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+              />
             </FormControl>
 
             {selectedStudent && (
