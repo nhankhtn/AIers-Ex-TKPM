@@ -30,27 +30,27 @@ namespace StudentManagement.BLL.Validators
             _studentStatusRepository = studentStatusRepository;
         }
 
-        public async Task<(bool IsValid, string ErrorCode)> StudentCheckAsync(StudentDTO studentDTO, bool isUpdate = false)
+        public async Task<(bool IsValid, string ErrorCode, string ErrorMessage)> StudentCheckAsync(StudentDTO studentDTO, bool isUpdate = false)
         {
             if ((!isUpdate || studentDTO.Email is not null) && !await CheckEmailAsync(studentDTO.Email, studentDTO.Id))
-                return (false, "DUPLICATE_EMAIL");
+                return (false, "DUPLICATE_EMAIL", "Email đã tồn tại.");
 
             if ((!isUpdate || studentDTO.Phone is not null) && !await CheckPhoneAsync(studentDTO.Phone, studentDTO.Id))
-                return (false, "DUPLICATE_PHONE");
+                return (false, "DUPLICATE_PHONE", "Số điện thoại đã tồn tại");
 
             if ((!isUpdate || studentDTO.Faculty is not null) && !await CheckFacultyAsync(studentDTO.Faculty))
-                return (false, "INVALID_FACULTY");
+                return (false, "INVALID_FACULTY", "Mã khoa không hợp lệ.");
 
             if ((!isUpdate || studentDTO.Program is not null) && !await CheckProgramAsync(studentDTO.Program))
-                return (false, "INVALID_PROGRAM");
+                return (false, "INVALID_PROGRAM", "Mã chương trình không hợp lệ.");
 
             if ((!isUpdate || studentDTO.Status is not null) && !await CheckStatusAsync(studentDTO.Status, studentDTO.Id))
-                return (false, "INVALID_STATUS");
+                return (false, "INVALID_STATUS", "Trạng thái sinh viên không hợp lệ");
 
             if ((!isUpdate || studentDTO.Identity?.DocumentNumber is not null) && !await CheckDocumentNumberAsync(studentDTO.Identity?.DocumentNumber, studentDTO.Id))
-                return (false, "DUPLICATE_DOCUMENT_NUMBER");
+                return (false, "DUPLICATE_DOCUMENT_NUMBER", "Số giấy tờ đã tồn tại.");
 
-            return (true, string.Empty);
+            return (true, string.Empty, string.Empty);
         }
 
         private async Task<bool> CheckStatusAsync(string? status, string? id)

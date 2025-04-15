@@ -19,7 +19,5 @@ namespace StudentManagement.BLL.DTOs.ClassStudent
         public string ClassId { get; set; } = null!;
 
         public string StudentId { get; set; } = null!;
-
-        public decimal Score { get; set; } = 0;
     }
 }

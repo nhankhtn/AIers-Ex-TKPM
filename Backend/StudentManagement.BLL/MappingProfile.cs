@@ -162,6 +162,8 @@ namespace StudentManagement.BLL
                 .ForMember(dest => dest.StudentName, act => act.MapFrom(src => src.Student.Name));
 
             CreateMap<RegisterCancelationDTO, RegisterCancellationHistory>();
+            CreateMap<RegisterCancellationHistory, RegisterCancelationHistoryRow>();
+
         }
     }
 }

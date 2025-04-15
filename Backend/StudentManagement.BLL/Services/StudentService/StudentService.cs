@@ -86,7 +86,7 @@ namespace StudentManagement.BLL.Services.StudentService
             {
                 bool allValid = true;
                 int index = -1;
-                var errors = new List<(string errorCode, int index)>();
+                var errors = new List<(string errorCode, string errorMessage, int index)>();
                 foreach (var student in studentDTOs)
                 {
                     index++;
@@ -95,21 +95,21 @@ namespace StudentManagement.BLL.Services.StudentService
                     if (!validRes.IsValid)
                     {
                         allValid = false;
-                        errors.Add((validRes.ErrorCode, index));
+                        errors.Add((validRes.ErrorCode, validRes.ErrorMessage, index));
                         continue;
                     }
                     var checkRes = await _studentChecker.StudentCheckAsync(student);
                     if (!checkRes.IsValid)
                     {
                         allValid = false;
-                        errors.Add((checkRes.ErrorCode, index));
+                        errors.Add((checkRes.ErrorCode, validRes.ErrorMessage, index));
                         continue;
                     }
                 }
                 if (!allValid)
                 {
                     var errorMessages = errors.Select(e => $"Error at index {e.index}: {e.errorCode}").ToList();
-                    return Result<IEnumerable<StudentDTO>>.Fail("ADD_STUDENTS_FAILED", null, errors);
+                    return Result<IEnumerable<StudentDTO>>.Fail("ADD_STUDENTS_FAILED", "Thêm sinh viên thất bại", errors);
                 }
 
                 // Generate Id for all
@@ -140,7 +140,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 var student = await _studentRepository.GetStudentByIdAsync(studentId);
                 return student != null
                     ? Result<StudentDTO>.Ok(_mapper.Map<StudentDTO>(student))
-                    : Result<StudentDTO>.Fail("STUDENT_NOT_FOUND");
+                    : Result<StudentDTO>.Fail("STUDENT_NOT_FOUND", ErrorMessages.StudentNotFound);
             }
             catch (Exception ex)
             {
@@ -202,7 +202,7 @@ namespace StudentManagement.BLL.Services.StudentService
                 }
 
                 var resExistStudent = await _studentRepository.GetStudentByIdAsync(studentId);
-                if (resExistStudent is null) return Result<StudentDTO>.Fail("STUDENT_NOT_FOUND", "Student is not found");
+                if (resExistStudent is null) return Result<StudentDTO>.Fail("STUDENT_NOT_FOUND", ErrorMessages.StudentNotFound);
 
                 _mapper.Map(studentDTO, resExistStudent);
 

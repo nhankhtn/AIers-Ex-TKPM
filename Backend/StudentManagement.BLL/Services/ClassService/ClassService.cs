@@ -71,7 +71,7 @@ namespace StudentManagement.BLL.Services.ClassService
             {
                 var _class = await _classRepository.GetClassByIdAsync(classId);
                 if (_class is null)
-                    return Result<GetClassDTO>.Fail("CLASS_NOT_FOUND");
+                    return Result<GetClassDTO>.Fail("CLASS_NOT_FOUND", ErrorMessages.ClassNotFound);
 
                 var classDTO = _mapper.Map<GetClassDTO>(_class);
                 classDTO.CurrentStudents = await _classStudentRepostory.GetNumberOfStudentsInClassAsync(classId);
@@ -80,7 +80,7 @@ namespace StudentManagement.BLL.Services.ClassService
             }
             catch (Exception)
             {
-                return Result<GetClassDTO>.Fail("GET_CLASS_FAILED");
+                return Result<GetClassDTO>.Fail("GET_CLASS_FAILED", "Lấy lớp thất bại.");
             }
         }
 
@@ -103,7 +103,7 @@ namespace StudentManagement.BLL.Services.ClassService
             }
             catch (Exception)
             {
-                return Result<GetClassesDTO>.Fail("GET_CLASSES_FAILED");
+                return Result<GetClassesDTO>.Fail("GET_CLASSES_FAILED", "Lấy danh sách lớp thất bại.");
             }
         }
 
@@ -111,12 +111,15 @@ namespace StudentManagement.BLL.Services.ClassService
         {
             try
             {
+                var _class = await _classRepository.GetClassByIdAsync(id);
+                if (_class is null)
+                    return Result<GetClassDTO>.Fail("CLASS_NOT_FOUND", ErrorMessages.ClassNotFound);
                 await _classRepository.DeleteClassAsync(id);
                 return Result<GetClassDTO>.Ok(new GetClassDTO { ClassId = id });
             }
             catch (Exception)
             {
-                return Result<GetClassDTO>.Fail("DELETE_CLASS_FAILED");
+                return Result<GetClassDTO>.Fail("DELETE_CLASS_FAILED", "Xóa lớp thất bại.");
             }
         }
 
@@ -126,14 +129,14 @@ namespace StudentManagement.BLL.Services.ClassService
             {
                 var _class = await _classRepository.GetClassByIdAsync(classId);
                 if (_class is null)
-                    return Result<GetClassDTO>.Fail("CLASS_NOT_FOUND");
+                    return Result<GetClassDTO>.Fail("CLASS_NOT_FOUND", ErrorMessages.ClassNotFound);
                 _mapper.Map(updateClassDTO, _class);
                 await _classRepository.UpdateClassAsync(_class);
                 return Result<GetClassDTO>.Ok(_mapper.Map<GetClassDTO>(_class));
             }
             catch (Exception)
             {
-                return Result<GetClassDTO>.Fail("UPDATE_CLASS_FAILED");
+                return Result<GetClassDTO>.Fail("UPDATE_CLASS_FAILED", "Cập nhật lớp thất bại.");
             }
         }
     }

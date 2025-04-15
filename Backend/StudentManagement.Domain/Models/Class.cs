@@ -48,6 +48,9 @@ namespace StudentManagement.Domain.Models
         [Column("deadline")]
         public DateTime Deadline { get; set; }
 
+        [Column("is_deleted")]
+        public bool IsDeleted { get; set; } = false;
+
         public ICollection<ClassStudent> ClassStudents { get; set; } = null!;
 
         public ICollection<Student> Students { get; set; } = null!;

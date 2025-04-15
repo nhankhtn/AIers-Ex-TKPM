@@ -27,12 +27,12 @@ namespace StudentManagement.BLL.Validators
             _emailService = emailService;
         }
 
-        public (bool IsValid, string ErrorCode) StudentValidate (StudentDTO student, bool isUpdate = false)
+        public (bool IsValid, string ErrorCode, string ErrorMessage) StudentValidate (StudentDTO student, bool isUpdate = false)
         {
-            if ((!isUpdate || student.Course is not null) && !ValidateCourse(student.Course)) return (false, "INVALID_COURSE");
-            if ((!isUpdate || student.Email is not null) && !ValidateEmail(student.Email)) return (false, "INVALID_EMAIL");
-            if ((!isUpdate || student.Phone is not null) && !ValidatePhone(student.Phone)) return (false, "INVALID_PHONE");
-            return (true, string.Empty);
+            if ((!isUpdate || student.Course is not null) && !ValidateCourse(student.Course)) return (false, "INVALID_COURSE", "Khóa học không hợp lệ.");
+            if ((!isUpdate || student.Email is not null) && !ValidateEmail(student.Email)) return (false, "INVALID_EMAIL", "Email không đúng định dạng.");
+            if ((!isUpdate || student.Phone is not null) && !ValidatePhone(student.Phone)) return (false, "INVALID_PHONE", "Số điện thoại không đúng dịnh dạng.");
+            return (true, string.Empty, string.Empty);
         }
 
         private bool ValidateCourse (int? course)

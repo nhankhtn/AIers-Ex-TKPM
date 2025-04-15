@@ -12,7 +12,7 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250411173745_InitialState")]
+    [Migration("20250415113926_InitialState")]
     partial class InitialState
     {
         /// <inheritdoc />
@@ -24,6 +24,21 @@ namespace StudentManagement.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ClassStudent", b =>
+                {
+                    b.Property<string>("ClassesClassId")
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("StudentsId")
+                        .HasColumnType("varchar(8)");
+
+                    b.HasKey("ClassesClassId", "StudentsId");
+
+                    b.HasIndex("StudentsId");
+
+                    b.ToTable("ClassStudent");
+                });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.AuditEntry", b =>
                 {
@@ -86,6 +101,10 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("end_time");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_deleted");
+
                     b.Property<int>("MaxStudents")
                         .HasColumnType("int")
                         .HasColumnName("max_students");
@@ -117,21 +136,38 @@ namespace StudentManagement.DAL.Migrations
 
             modelBuilder.Entity("StudentManagement.Domain.Models.ClassStudent", b =>
                 {
-                    b.Property<string>("StudentId")
-                        .HasColumnType("varchar(8)")
-                        .HasColumnName("student_id");
-
                     b.Property<string>("ClassId")
                         .HasColumnType("varchar(10)")
                         .HasColumnName("class_id");
 
-                    b.Property<decimal>("Score")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<string>("StudentId")
+                        .HasColumnType("varchar(8)")
+                        .HasColumnName("student_id");
+
+                    b.Property<double>("FinalScore")
+                        .HasColumnType("float")
+                        .HasColumnName("final_score");
+
+                    b.Property<string>("Grade")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)")
+                        .HasColumnName("grade");
+
+                    b.Property<bool>("IsPassed")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_passed");
+
+                    b.Property<double>("MidTermScore")
+                        .HasColumnType("float")
                         .HasColumnName("score");
 
-                    b.HasKey("StudentId", "ClassId");
+                    b.Property<double>("TotalScore")
+                        .HasColumnType("float")
+                        .HasColumnName("GPA");
 
-                    b.HasIndex("ClassId");
+                    b.HasKey("ClassId", "StudentId");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("class_student");
                 });
@@ -332,23 +368,38 @@ namespace StudentManagement.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AcademicYear")
+                        .HasColumnType("int")
+                        .HasColumnName("academic_year");
+
                     b.Property<string>("ClassId")
                         .IsRequired()
-                        .HasColumnType("varchar(10)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("class_id");
+
+                    b.Property<string>("CourseName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("course_name");
+
+                    b.Property<int>("Semester")
+                        .HasColumnType("int")
+                        .HasColumnName("semester");
 
                     b.Property<string>("StudentId")
                         .IsRequired()
-                        .HasColumnType("varchar(8)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("student_id");
+
+                    b.Property<string>("StudentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("student_name");
 
                     b.Property<DateTime>("Time")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StudentId", "ClassId")
-                        .IsUnique();
 
                     b.ToTable("register_cancellation_history");
                 });
@@ -413,6 +464,9 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("varchar(10)")
                         .HasDefaultValue("Male")
                         .HasColumnName("gender");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MailingAddress")
                         .HasColumnType("nvarchar(max)")
@@ -517,12 +571,27 @@ namespace StudentManagement.DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ClassStudent", b =>
+                {
+                    b.HasOne("StudentManagement.Domain.Models.Class", null)
+                        .WithMany()
+                        .HasForeignKey("ClassesClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentManagement.Domain.Models.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("StudentManagement.Domain.Models.Class", b =>
                 {
                     b.HasOne("StudentManagement.Domain.Models.Course", "Course")
                         .WithMany("Classes")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Course");
@@ -575,17 +644,6 @@ namespace StudentManagement.DAL.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("StudentManagement.Domain.Models.RegisterCancellationHistory", b =>
-                {
-                    b.HasOne("StudentManagement.Domain.Models.ClassStudent", "ClassStudent")
-                        .WithOne("RegisterCancellationHistories")
-                        .HasForeignKey("StudentManagement.Domain.Models.RegisterCancellationHistory", "StudentId", "ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ClassStudent");
-                });
-
             modelBuilder.Entity("StudentManagement.Domain.Models.Student", b =>
                 {
                     b.HasOne("StudentManagement.Domain.Models.Faculty", "Faculty")
@@ -616,11 +674,6 @@ namespace StudentManagement.DAL.Migrations
             modelBuilder.Entity("StudentManagement.Domain.Models.Class", b =>
                 {
                     b.Navigation("ClassStudents");
-                });
-
-            modelBuilder.Entity("StudentManagement.Domain.Models.ClassStudent", b =>
-                {
-                    b.Navigation("RegisterCancellationHistories");
                 });
 
             modelBuilder.Entity("StudentManagement.Domain.Models.Course", b =>

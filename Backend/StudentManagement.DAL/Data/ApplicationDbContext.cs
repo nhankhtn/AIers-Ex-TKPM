@@ -36,15 +36,6 @@ namespace StudentManagement.DAL.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ClassStudent>(buider =>
-            {
-                buider.HasKey(cs => new { cs.ClassId, cs.StudentId });
-            });
-
-            modelBuilder.Entity<RegisterCancellationHistory>(buider =>             {
-                buider.HasKey(rch => rch.Id);
-            });
-
 
             modelBuilder.Entity<Student>()
                 .Property(s => s.Gender)
@@ -90,13 +81,28 @@ namespace StudentManagement.DAL.Data
 
             modelBuilder.Entity<Class>()
                 .HasMany(e => e.Students)
-                .WithMany(e => e.Classes)
-                .UsingEntity<ClassStudent>(
-                    r => r.HasOne<Student>(e => e.Student).WithMany(e => e.ClassStudents).HasForeignKey(e => e.StudentId).OnDelete(DeleteBehavior.Cascade),
-                    l => l.HasOne<Class>(e => e.Class).WithMany(e => e.ClassStudents).HasForeignKey(e => e.ClassId).OnDelete(DeleteBehavior.Cascade)
-                );
+                .WithMany(e => e.Classes);
 
-            
+
+            modelBuilder.Entity<Course>()
+                .HasMany(c => c.Classes)
+                .WithOne(c => c.Course)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<ClassStudent>(buider =>
+            {
+                buider.HasOne(cs => cs.Class)
+                    .WithMany(c => c.ClassStudents)
+                    .HasForeignKey(cs => cs.ClassId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                buider.HasOne(cs => cs.Student)
+                    .WithMany(c => c.ClassStudents)
+                    .HasForeignKey(cs => cs.StudentId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
 
             modelBuilder.Entity<Program>(b =>
             {

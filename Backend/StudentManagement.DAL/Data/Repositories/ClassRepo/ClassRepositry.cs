@@ -24,12 +24,10 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
 
         public async Task DeleteClassAsync(string id)
         {
-            var existingClass = _context.Classes.Find(id);
-            if(existingClass == null)
-            {
-                throw new Exception("Class not found");
-            }
-            _context.Classes.Remove(existingClass);
+            var existingClass = await _context.Classes.FindAsync(id);
+            if (existingClass == null) return;
+            existingClass.IsDeleted = true;
+            _context.Classes.Update(existingClass);
             await _context.SaveChangesAsync();
         }
 
@@ -50,7 +48,9 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             if (year != null)
             {
                 query = query.Where(c => c.AcademicYear == year);
-            }    
+            }
+
+            query = query.Where(c => !c.IsDeleted);
 
             if (page.HasValue && limit.HasValue)
             {
@@ -63,7 +63,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
         public async Task<Class?> GetClassByIdAsync(string id)
         {
             var classEntity = await _context.Classes
-                .Where(c => c.ClassId == id)
+                .Where(c => c.ClassId == id && !c.IsDeleted)
                 .Include(c => c.Course)
                 .FirstOrDefaultAsync();
 
