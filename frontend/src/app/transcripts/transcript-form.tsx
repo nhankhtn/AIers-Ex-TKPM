@@ -1,99 +1,50 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { useRef, useState } from "react";
 import {
   Box,
   Button,
   Card,
   CardContent,
   CardHeader,
+  CardActions,
   Typography,
   FormControl,
   InputLabel,
-  Select,
-  MenuItem,
   Paper,
-  Alert,
-  AlertTitle,
-  type SelectChangeEvent,
-  Stack,
   Autocomplete,
   TextField,
+  Stack,
 } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import WarningIcon from "@mui/icons-material/Warning";
-import type { Student } from "@/types/student";
-import useRegistrationsSearch from "./use-registrations-search";
-import { CustomTable } from "@/components/custom-table";
-import { getClassesTableConfig } from "./table-config";
-import CustomPagination from "@/components/custom-pagination";
-import RowStack from "@/components/row-stack";
-import SelectFilter from "../dashboard/_components/select-filter";
-import { useSelection } from "@/hooks/use-selection";
+import PrintIcon from "@mui/icons-material/Print";
+import { TranscriptPreview } from "@/app/transcripts/transcript-preview";
+import { Student } from "@/types/student";
+import useTranscriptsSearch from "./use-transcripts-search";
 import { useMainContext } from "@/context/main/main-context";
-import useFunction from "@/hooks/use-function";
-import { StudentApi } from "@/api/students";
+import RowStack from "@/components/row-stack";
+import { useReactToPrint } from "react-to-print";
 
-export function RegistrationForm() {
+export function TranscriptForm() {
   const { faculties } = useMainContext();
-  const {
-    students,
-    getStudentsApi,
-    pagination,
-    getRegisterableClassApi,
-    classes,
-    classFilterConfig,
-    filter,
-    setFilter,
-    setClasses,
-  } = useRegistrationsSearch();
-
+  const { students } = useTranscriptsSearch();
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
+  const componentRef = useRef<HTMLDivElement>(null);
 
-  const selection = useSelection(classes);
-
-  const registerClassApi = useFunction(StudentApi.registerClass, {
-    successMessage: "Đăng ký thành công",
-    onSuccess: ({ payload }) => {
-      setClasses((prev) =>
-        prev.filter((item) => !payload.classIds.includes(item.classId))
-      );
-      setSelectedStudent(null);
-      selection.handleDeselectAll();
-    },
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: `Bang_diem_${selectedStudent?.id}`,
   });
-  useEffect(() => {
-    if (selectedStudent?.id) getRegisterableClassApi.call(selectedStudent.id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedStudent?.id]);
-
-  const handleRegister = useCallback(() => {
-    registerClassApi.call({
-      studentId: selectedStudent?.id || "",
-      classIds: selection.selected.map((s) => s.classId),
-    });
-  }, [registerClassApi, selectedStudent, selection.selected]);
 
   return (
     <Stack sx={{ gap: 3 }}>
       <Card>
         <CardHeader
-          title='Đăng ký khóa học cho sinh viên'
-          subheader='Chọn sinh viên và các lớp học cần đăng ký.'
-          action={
-            <Button
-              variant='contained'
-              onClick={handleRegister}
-              disabled={!selectedStudent || selection.selected.length === 0}
-            >
-              Đăng ký
-            </Button>
-          }
+          title='In bảng điểm chính thức'
+          subheader='Chọn sinh viên để in bảng điểm chính thức.'
         />
         <CardContent sx={{ pt: 0 }}>
-          <Stack sx={{ gap: 3 }}>
+          <Stack sx={{ gap: 2 }}>
             <FormControl fullWidth required>
               <InputLabel id='student-select-label'>Sinh viên</InputLabel>
               <Autocomplete
@@ -184,50 +135,42 @@ export function RegistrationForm() {
                 </Box>
               </Paper>
             )}
-
-            <Box>
-              <RowStack pb={3}>
-                <Typography
-                  variant='subtitle1'
-                  fontWeight='medium'
-                  gutterBottom
-                  flex={1}
-                >
-                  Chọn lớp học cần đăng ký
-                </Typography>
-                <Box width={444}>
-                  <SelectFilter
-                    configs={classFilterConfig}
-                    filter={filter as any}
-                    onChange={(key: string, value: string) => {
-                      setFilter((prev) => ({
-                        ...prev,
-                        [key]: value,
-                      }));
-                    }}
-                  />
-                </Box>
-              </RowStack>
-              <CustomTable
-                select={selection}
-                configs={getClassesTableConfig()}
-                loading={getRegisterableClassApi.loading}
-                rows={classes}
-              />
-              {classes.length > 0 && (
-                <CustomPagination
-                  pagination={pagination}
-                  justifyContent='end'
-                  p={2}
-                  borderTop={1}
-                  borderColor={"divider"}
-                  rowsPerPageOptions={[10, 15, 20]}
-                />
-              )}
-            </Box>
           </Stack>
         </CardContent>
+        <CardActions sx={{ px: 3, pb: 3 }}>
+          <RowStack justifyContent={"flex-end"} width={"100%"}>
+            <Button
+              variant='contained'
+              onClick={() => setShowPreview(true)}
+              disabled={!selectedStudent}
+            >
+              Tạo bảng điểm
+            </Button>
+          </RowStack>
+        </CardActions>
       </Card>
+
+      {showPreview && selectedStudent && (
+        <Stack sx={{ gap: 2 }}>
+          <RowStack
+            sx={{
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button
+              variant='contained'
+              startIcon={<PrintIcon />}
+              onClick={() => handlePrint()}
+              className='print:hidden'
+            >
+              In bảng điểm
+            </Button>
+          </RowStack>
+          <Stack ref={componentRef}>
+            <TranscriptPreview student={selectedStudent} />
+          </Stack>
+        </Stack>
+      )}
     </Stack>
   );
 }

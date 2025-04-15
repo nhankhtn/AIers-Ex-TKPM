@@ -27,6 +27,15 @@ export interface Student {
   nationality: string;
 }
 
+export interface StudentTranscript {
+  id: string;
+  classId: string;
+  courseName: string;
+  credit: number;
+  totalScore: number;
+  grade: string;
+}
+
 export const COUNTRY_DEFAULT = "Vietnam";
 export const COUNTRY_CODE_DEFAULT = "VN";
 export enum Gender {

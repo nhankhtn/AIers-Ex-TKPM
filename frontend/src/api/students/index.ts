@@ -1,6 +1,6 @@
 import { ResponseWithData, ResponseWithTotal } from "@/types";
 import { Class } from "@/types/class";
-import { Student, StudentFilter } from "@/types/student";
+import { Student, StudentFilter, StudentTranscript } from "@/types/student";
 import {
   apiDelete,
   apiGet,
@@ -91,7 +91,12 @@ export class StudentApi {
     });
   }
 
-  static async getStudentTranscript(studentId: string) {
+  static async getStudentTranscript(studentId: string): Promise<{
+    transcript: StudentTranscript[];
+    totalCredit: number;
+    passedCredit: number;
+    gpa: number;
+  }> {
     return await apiGet(`/students/transcript?studentId=${studentId}`);
   }
 }
