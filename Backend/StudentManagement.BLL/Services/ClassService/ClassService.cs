@@ -58,9 +58,13 @@ namespace StudentManagement.BLL.Services.ClassService
             {
                 return Result<GetClassDTO>.Fail("COURSE_NOT_FOUND");
             }
-            catch(Exception)
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("truncated"))
             {
-                return Result<GetClassDTO>.Fail("ADD_CLASS_FAILED");
+                return Result<GetClassDTO>.Fail("COURSE_ID_TOO_LONG", "Mã lớp học dưới 10 ký tự.");
+            }
+            catch (Exception ex)
+            {
+                return Result<GetClassDTO>.Fail("ADD_CLASS_FAILED", ex.Message);
             }
         }
         //FK_classes_courses_course_id
