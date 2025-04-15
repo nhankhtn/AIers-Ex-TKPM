@@ -21,6 +21,7 @@ namespace StudentManagement.BLL.DTOs.Score
     public class TranscriptRow
     {
         public string ClassId { get; set; } = null!;
+        public string CourseId { get; set; } = null!;
         public string CourseName { get; set; } = null!;
         public int Credit { get; set; } = 0;
         public double TotalScore { get; set; } = 0;

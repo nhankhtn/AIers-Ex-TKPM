@@ -267,10 +267,12 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                     passedCredit += credit;
                     totalScore += c.TotalScore * credit;
                 }
+                var course = await _classRepository.GetCourseByClassAsync(c.ClassId);
                 data.Add(new TranscriptRow()
                 {
                     ClassId = c.ClassId,
-                    CourseName = await _classRepository.GetCourseNameAsync(c.ClassId),
+                    CourseId = course != null ? course.CourseId : "",
+                    CourseName = course != null ? course.CourseName : "",
                     Credit = credit,
                     TotalScore = Math.Round(c.TotalScore, 2),
                     Grade = c.Grade
