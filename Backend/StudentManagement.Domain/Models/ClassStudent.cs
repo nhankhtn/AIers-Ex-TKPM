@@ -36,8 +36,6 @@ namespace StudentManagement.Domain.Models
 
         [Column("is_passed")]
         public bool IsPassed { get; set; }
-
-        public RegisterCancellationHistory? RegisterCancellationHistories { get; set; } 
     }
 
     [Table("register_cancellation_history")]
@@ -47,10 +45,23 @@ namespace StudentManagement.Domain.Models
         [Key]
         public int Id { get; set; }
         [Column("class_id")]
-        public string? ClassId { get; set; }
+        public string ClassId { get; set; } = null!;
+
+        [Column("course_name")]
+        public string CourseName { get; set; } = null!;
 
         [Column("student_id")]
-        public string? StudentId { get; set; }
+        public string StudentId { get; set; } = null!;
+
+        [Column("student_name")]
+        public string StudentName { get; set; } = null!;
+
+        [Column("semester")]
+        public int Semester { get; set; }
+
+        [Column("academic_year")]
+        public int AcademicYear { get; set; }
+
         public DateTime Time { get; set; }
     }
 }

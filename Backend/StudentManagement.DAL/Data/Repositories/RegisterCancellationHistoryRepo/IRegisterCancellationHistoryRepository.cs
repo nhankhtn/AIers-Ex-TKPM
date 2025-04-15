@@ -9,7 +9,7 @@ namespace StudentManagement.DAL.Data.Repositories.RegisterCancellationHistoryRep
 {
     public interface IRegisterCancellationHistoryRepository
     {
-        Task<ICollection<RegisterCancellationHistory>> GetAllAsync();
+        Task<ICollection<RegisterCancellationHistory>> GetAllAsync(int? page = null, int? limit = null, string? key = null);
         Task<RegisterCancellationHistory?> GetByIdAsync(int id);
         Task AddAsync(RegisterCancellationHistory registerCancellationHistory);
         Task UpdateAsync(RegisterCancellationHistory registerCancellationHistory);

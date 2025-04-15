@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using StudentManagement.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -32,10 +33,20 @@ namespace StudentManagement.DAL.Data.Repositories.RegisterCancellationHistoryRep
             await _context.SaveChangesAsync();
         }
 
-        public async Task<ICollection<RegisterCancellationHistory>> GetAllAsync()
+        public async Task<ICollection<RegisterCancellationHistory>> GetAllAsync(int? page, int? limit, string? key)
         {
-            var registerCancellationHistories = await _context.RegisterCancellationHistories.ToListAsync();
-            return registerCancellationHistories;
+            var query = _context.RegisterCancellationHistories.AsQueryable();
+            if (key != null)
+            {
+                query = query.Where(x => x.StudentId.Contains(key) || x.ClassId.Contains(key));
+            }
+
+            if (page != null && limit != null)
+            {
+                query = query.Skip((page.Value - 1) * limit.Value).Take(limit.Value);
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<RegisterCancellationHistory?> GetByIdAsync(int id)
@@ -46,15 +57,7 @@ namespace StudentManagement.DAL.Data.Repositories.RegisterCancellationHistoryRep
 
         public Task UpdateAsync(RegisterCancellationHistory registerCancellationHistory)
         {
-            var existingRegisterCancellationHistory = _context.RegisterCancellationHistories.Find(registerCancellationHistory.Id);
-            if (existingRegisterCancellationHistory == null)
-            {
-                throw new ArgumentException("Register Cancellation History Not Found");
-            }
-            existingRegisterCancellationHistory.ClassId = registerCancellationHistory.ClassId;
-            existingRegisterCancellationHistory.StudentId = registerCancellationHistory.StudentId;
-            existingRegisterCancellationHistory.Time = registerCancellationHistory.Time;
-            _context.RegisterCancellationHistories.Update(existingRegisterCancellationHistory);
+            _context.RegisterCancellationHistories.Update(registerCancellationHistory);
             return _context.SaveChangesAsync();
         }
     }

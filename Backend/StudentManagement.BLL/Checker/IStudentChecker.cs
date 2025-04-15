@@ -9,6 +9,6 @@ namespace StudentManagement.BLL.Checker
 {
     public interface IStudentChecker
     {
-        Task<(bool IsValid, string ErrorCode)> StudentCheckAsync(StudentDTO studentDTO, bool isUpdate = false);
+        Task<(bool IsValid, string ErrorCode, string ErrorMessage)> StudentCheckAsync(StudentDTO studentDTO, bool isUpdate = false);
     }
 }

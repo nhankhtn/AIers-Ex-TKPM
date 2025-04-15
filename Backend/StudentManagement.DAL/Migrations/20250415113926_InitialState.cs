@@ -54,6 +54,25 @@ namespace StudentManagement.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "register_cancellation_history",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    class_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    course_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    student_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    student_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    semester = table.Column<int>(type: "int", nullable: false),
+                    academic_year = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_register_cancellation_history", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Settings",
                 columns: table => new
                 {
@@ -126,7 +145,8 @@ namespace StudentManagement.DAL.Migrations
                     program_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     status_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     faculty_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    nationality = table.Column<string>(type: "nvarchar(50)", nullable: false)
+                    nationality = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -165,7 +185,8 @@ namespace StudentManagement.DAL.Migrations
                     day_of_week = table.Column<int>(type: "int", nullable: false),
                     start_time = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     end_time = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    deadline = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    deadline = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -175,7 +196,7 @@ namespace StudentManagement.DAL.Migrations
                         column: x => x.course_id,
                         principalTable: "courses",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -210,11 +231,15 @@ namespace StudentManagement.DAL.Migrations
                 {
                     class_id = table.Column<string>(type: "varchar(10)", nullable: false),
                     student_id = table.Column<string>(type: "varchar(8)", nullable: false),
-                    score = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    score = table.Column<double>(type: "float", nullable: false),
+                    final_score = table.Column<double>(type: "float", nullable: false),
+                    GPA = table.Column<double>(type: "float", nullable: false),
+                    grade = table.Column<string>(type: "nvarchar(1)", nullable: false),
+                    is_passed = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_class_student", x => new { x.student_id, x.class_id });
+                    table.PrimaryKey("PK_class_student", x => new { x.class_id, x.student_id });
                     table.ForeignKey(
                         name: "FK_class_student_classes_class_id",
                         column: x => x.class_id,
@@ -230,23 +255,26 @@ namespace StudentManagement.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "register_cancellation_history",
+                name: "ClassStudent",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    class_id = table.Column<string>(type: "varchar(10)", nullable: false),
-                    student_id = table.Column<string>(type: "varchar(8)", nullable: false),
-                    Time = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ClassesClassId = table.Column<string>(type: "varchar(10)", nullable: false),
+                    StudentsId = table.Column<string>(type: "varchar(8)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_register_cancellation_history", x => x.id);
+                    table.PrimaryKey("PK_ClassStudent", x => new { x.ClassesClassId, x.StudentsId });
                     table.ForeignKey(
-                        name: "FK_register_cancellation_history_class_student_student_id_class_id",
-                        columns: x => new { x.student_id, x.class_id },
-                        principalTable: "class_student",
-                        principalColumns: new[] { "student_id", "class_id" },
+                        name: "FK_ClassStudent_classes_ClassesClassId",
+                        column: x => x.ClassesClassId,
+                        principalTable: "classes",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClassStudent_students_StudentsId",
+                        column: x => x.StudentsId,
+                        principalTable: "students",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -288,14 +316,19 @@ namespace StudentManagement.DAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_class_student_class_id",
+                name: "IX_class_student_student_id",
                 table: "class_student",
-                column: "class_id");
+                column: "student_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_classes_course_id",
                 table: "classes",
                 column: "course_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassStudent_StudentsId",
+                table: "ClassStudent",
+                column: "StudentsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_courses_faculty_id",
@@ -335,12 +368,6 @@ namespace StudentManagement.DAL.Migrations
                 name: "IX_programs_name",
                 table: "programs",
                 column: "name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_register_cancellation_history_student_id_class_id",
-                table: "register_cancellation_history",
-                columns: new[] { "student_id", "class_id" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -384,6 +411,12 @@ namespace StudentManagement.DAL.Migrations
                 name: "audit_entries");
 
             migrationBuilder.DropTable(
+                name: "class_student");
+
+            migrationBuilder.DropTable(
+                name: "ClassStudent");
+
+            migrationBuilder.DropTable(
                 name: "identity_documents");
 
             migrationBuilder.DropTable(
@@ -391,9 +424,6 @@ namespace StudentManagement.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Settings");
-
-            migrationBuilder.DropTable(
-                name: "class_student");
 
             migrationBuilder.DropTable(
                 name: "classes");
