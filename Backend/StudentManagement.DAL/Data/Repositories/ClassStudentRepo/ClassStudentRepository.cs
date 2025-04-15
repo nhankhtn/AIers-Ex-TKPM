@@ -43,13 +43,24 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
 
             if (!string.IsNullOrEmpty(classId))
             {
-                query = query.Where(cs => cs.ClassId == classId);
+                query = query.Where(cs => cs.ClassId == classId &&
+                    _context.Classes.Any(c => c.ClassId == cs.ClassId && !c.IsDeleted));
             }
 
             if (!string.IsNullOrEmpty(studentId))
             {
-                query = query.Where(cs => cs.StudentId == studentId);
+                query = query.Where(cs =>
+                    cs.StudentId == studentId &&
+                    _context.Students.Any(s => s.Id == cs.StudentId && !s.IsDeleted)
+                );
             }
+            else
+            {
+                query = query.Where(cs =>
+                    _context.Students.Any(s => s.Id == cs.StudentId && !s.IsDeleted)
+                );
+            }
+            
 
             if (page.HasValue && limit.HasValue)
             {
@@ -61,9 +72,7 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
 
         public async Task<ClassStudent?> GetClassStudentByIdAsync(string classId, string studentId)
         {
-            //var classStudent = await _context.ClassStudents.FindAsync(id);
             var classStudent = await _context.ClassStudents
-                .Include(cs => cs.RegisterCancellationHistories)
                 .FirstOrDefaultAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
             return classStudent;
         }
@@ -85,9 +94,11 @@ namespace StudentManagement.DAL.Data.Repositories.ClassStudentRepo
             return classStudents;
         }
 
-        public Task<int> GetNumberOfStudentsInClassAsync(string classId)
+        public async Task<int> GetNumberOfStudentsInClassAsync(string classId)
         {
-            var numberOfStudents = _context.ClassStudents.Where(cs => cs.ClassId == classId).CountAsync();
+            var numberOfStudents = await _context.ClassStudents
+                .Where(cs => cs.ClassId == classId &&
+                    _context.Students.Any(s => s.Id == cs.StudentId && !s.IsDeleted)).CountAsync();
             return numberOfStudents;
         }
     }

@@ -48,15 +48,26 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             {
                 var student = await _studentRepository.GetStudentByIdAsync(studentId);
                 if (student == null)
-                    return Result<IEnumerable<GetClassStudentDTO>>.Fail("STUDENT_NOT_FOUND");
+                    return Result<IEnumerable<GetClassStudentDTO>>.Fail("STUDENT_NOT_FOUND", ErrorMessages.StudentNotFound);
 
                 var registerSuccessfulClasses = new List<GetClassStudentDTO>();
+                var errors = new List<(string errorCode, string? errorMessage, int index)>();
+                int index = -1;
 
                 foreach (var classId in classIds)
                 {
+                    index++;
                     var _class = await _classRepository.GetClassByIdAsync(classId);
-                    if (_class == null || _class.Deadline < DateTime.Now) continue;
-                    if (await _classStudentRepository.GetClassStudentByIdAsync(classId, studentId) != null) continue;
+                    if (_class == null || _class.Deadline < DateTime.Now)
+                    {
+                        errors.Add(("CLASS_NOT_FOUND", $"Lớp {classId} không tồn tại hoặc đã hết hạn đăng ký.", index));
+                        continue;
+                    }
+                    if (await _classStudentRepository.GetClassStudentByIdAsync(classId, studentId) != null)
+                    {
+                        errors.Add(("STUDENT_ALREADY_JOINED_CLASS", $"Sinh viên đã tham gia lớp {classId}.", index));
+                        continue;
+                    };
                     var requiredPreCourse = _class.Course.RequiredCourseId;
                     if (requiredPreCourse != null)
                     {
@@ -76,7 +87,12 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                             StudentId = studentId,
                             ClassId = classId,
                             CourseName = await _classRepository.GetCourseNameAsync(classId),
+                            StudentName = await _studentRepository.GetStudentNameAsync(studentId)
                         });
+                        else
+                        {
+                            errors.Add(("STUDENT_NOT_PASSED_PRE_COURSE", $"Đăng ký lớp {_class.ClassId} thất bại. Sinh viên chưa qua môn tiên quyết.", index));
+                        }
                     }
                     else
                     {
@@ -85,6 +101,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                             StudentId = studentId,
                             ClassId = classId,
                             CourseName = await _classRepository.GetCourseNameAsync(classId),
+                            StudentName = await _studentRepository.GetStudentNameAsync(studentId)
                         });
                     }
                     var classStudent = await _classStudentRepository.AddClassStudentAsync(new ClassStudent()
@@ -98,15 +115,15 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                     });
                 }
 
-                return Result<IEnumerable<GetClassStudentDTO>>.Ok(registerSuccessfulClasses);
+                return Result<IEnumerable<GetClassStudentDTO>>.Multi(registerSuccessfulClasses, null, null, errors);
             }
             catch(DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("PK_class_student"))
             {
-                return Result<IEnumerable<GetClassStudentDTO>>.Fail("DUPLICATE_CLASS_STUDENT_ID");
+                return Result<IEnumerable<GetClassStudentDTO>>.Fail("DUPLICATE_CLASS_STUDENT_ID", ErrorMessages.DuplicateClassStudent);
             }
             catch(Exception)
             {
-                return Result<IEnumerable<GetClassStudentDTO>>.Fail("ADD_STUDENT_TO_CLASS_FAILED");
+                return Result<IEnumerable<GetClassStudentDTO>>.Fail("ADD_STUDENT_TO_CLASS_FAILED", ErrorMessages.RegisterFailed);
             }
         }
 
@@ -116,34 +133,57 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             {
                 var _class = await _classRepository.GetClassByIdAsync(registerCancelationDTO.ClassId);
                 if (_class is null)
-                    return Result<RegisterCancelationDTO>.Fail("CLASS_NOT_FOUND");
+                    return Result<RegisterCancelationDTO>.Fail("CLASS_NOT_FOUND", ErrorMessages.ClassNotFound);
+
+                var student = await _studentRepository.GetStudentByIdAsync(registerCancelationDTO.StudentId);
+                if (student is null)
+                    return Result<RegisterCancelationDTO>.Fail("STUDENT_NOT_FOUND", ErrorMessages.StudentNotFound);
+
+                var classStudent = await _classStudentRepository.GetClassStudentsAsync(registerCancelationDTO.ClassId, registerCancelationDTO.StudentId, 1, 1);
+                if (classStudent.Count() == 0)
+                    return Result<RegisterCancelationDTO>.Fail("STUDENT_NOT_JOINED_CLASS_YET", "Sinh viên chưa đăng ký lớp này.");
 
                 var registerCancellationHistory = _mapper.Map<RegisterCancellationHistory>(registerCancelationDTO);
                 registerCancellationHistory.Time = DateTime.Now;
+                registerCancellationHistory.Semester = _class.Semester;
+                registerCancellationHistory.StudentName = await _studentRepository.GetStudentNameAsync(registerCancelationDTO.StudentId);
+                registerCancellationHistory.AcademicYear = _class.AcademicYear;
+                registerCancellationHistory.CourseName = await _classRepository.GetCourseNameAsync(registerCancelationDTO.ClassId);
+
                 await _registerCancellationHistoryRepository.AddAsync(registerCancellationHistory);
                 await _classStudentRepository.DeleteClassStudentAsync(registerCancelationDTO.ClassId, registerCancelationDTO.StudentId);
                 return Result<RegisterCancelationDTO>.Ok(registerCancelationDTO);
             }
             catch (Exception)
             {
-                return Result<RegisterCancelationDTO>.Fail("REGISTER_CANCELATION_FAILED");
+                return Result<RegisterCancelationDTO>.Fail("REGISTER_CANCELATION_FAILED", ErrorMessages.RegisterCancellationFailed);
             }
         }
+
+        
 
         public async Task<Result<GetClassStudentsDTO>> GetClassStudentsAsync(string? classId = null, string? studentId = null, int? page = null, int? limit = null)
         {
             try
             {
                 var res = await _classStudentRepository.GetClassStudentsAsync(classId, studentId, page, limit);
+
+                var data = _mapper.Map<IEnumerable<GetClassStudentDTO>>(res);
+                foreach(var c in data)
+                {
+                    c.CourseName = await _classRepository.GetCourseNameAsync(c.ClassId);
+                    c.StudentName = await _studentRepository.GetStudentNameAsync(c.StudentId);
+                }
+
                 return Result<GetClassStudentsDTO>.Ok(new GetClassStudentsDTO()
                 {
-                    Data = _mapper.Map<IEnumerable<GetClassStudentDTO>>(res),
+                    Data = data,
                     Total = res.Count()
                 });
             }
             catch (Exception)
             {
-                return Result<GetClassStudentsDTO>.Fail("GET_ALL_CLASS_STUDENTS_FAILED");
+                return Result<GetClassStudentsDTO>.Fail("GET_ALL_CLASS_STUDENTS_FAILED", "Lấy danh sách tham gia lớp học thất bại.");
             }
         }
 
@@ -154,7 +194,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                 var result = new List<GetScoreDTO>();
                 var _class = await _classRepository.GetClassByIdAsync(classId);
                 if (_class is null)
-                    return Result<IEnumerable<GetScoreDTO>>.Fail("CLASS_NOT_FOUND");
+                    return Result<IEnumerable<GetScoreDTO>>.Fail("CLASS_NOT_FOUND", ErrorMessages.ClassNotFound);
 
                 foreach (var updateScoreDTO in updateScoresDTO)
                 {
@@ -182,7 +222,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             }
             catch (Exception)
             {
-                return Result<IEnumerable<GetScoreDTO>>.Fail("UPDATE_CLASS_STUDENTS_FAILED");
+                return Result<IEnumerable<GetScoreDTO>>.Fail("UPDATE_CLASS_STUDENTS_FAILED", "Cập nhật điểm số thất bại.");
             }
         }
 
@@ -190,6 +230,9 @@ namespace StudentManagement.BLL.Services.ClassStudentService
         {
             try
             {
+                var _class = await _classRepository.GetClassByIdAsync(classId);
+                if (_class is null)
+                    return Result<IEnumerable<GetScoreDTO>>.Fail("CLASS_NOT_FOUND", ErrorMessages.ClassNotFound);
                 var allStudentInClass = await _classStudentRepository.GetClassStudentsAsync(classId, null, null, null);
                 var data = _mapper.Map<IEnumerable<GetScoreDTO>>(allStudentInClass);
                 foreach(var c in data)
@@ -200,7 +243,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             }
             catch (Exception)
             {
-                return Result<IEnumerable<GetScoreDTO>>.Fail("GET_SCORES_FAILED");
+                return Result<IEnumerable<GetScoreDTO>>.Fail("GET_SCORES_FAILED", "Lấy bảng điểm thất bại.");
             }
         }
 
@@ -208,7 +251,7 @@ namespace StudentManagement.BLL.Services.ClassStudentService
         {
             var student = await _studentRepository.GetStudentByIdAsync(studentId);
             if (student == null) 
-                return Result<StudentTranscriptDTO>.Fail("STUDENT_NOT_FOUND");
+                return Result<StudentTranscriptDTO>.Fail("STUDENT_NOT_FOUND", ErrorMessages.StudentNotFound);
 
             var allJoinedClasses = await _classStudentRepository.GetClassStudentsAsync(null, studentId, null, null);
 
@@ -291,7 +334,25 @@ namespace StudentManagement.BLL.Services.ClassStudentService
             }
             catch(Exception)
             {
-                return Result<IEnumerable<GetClassDTO>>.Fail("GET_REGISTERABLE_CLASSES_FAILED");
+                return Result<IEnumerable<GetClassDTO>>.Fail("GET_REGISTERABLE_CLASSES_FAILED", "Lấy danh sách các môn có thể đăng ký thất bại.");
+            }
+        }
+
+        public async Task<Result<GetRegisterCancelationHistoryDTO>> GetRegisterCancelationHistoryAsync(int? page, int? limit, string? key)
+        {
+            try
+            {
+                var res = await _registerCancellationHistoryRepository.GetAllAsync(page, limit, key);
+                var data = _mapper.Map<IEnumerable<RegisterCancelationHistoryRow>>(res);
+                return Result<GetRegisterCancelationHistoryDTO>.Ok(new GetRegisterCancelationHistoryDTO()
+                {
+                    Data = data,
+                    Total = res.Count()
+                });
+            }
+            catch (Exception)
+            {
+                return Result<GetRegisterCancelationHistoryDTO>.Fail("GET_REGISTER_CANCELATION_HISTORY_FAILED", "Lấy lịch sử đăng ký hủy lớp thất bại.");
             }
         }
     }

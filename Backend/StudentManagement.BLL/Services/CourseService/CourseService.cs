@@ -33,7 +33,7 @@ namespace StudentManagement.BLL.Services.CourseService
                     var existingCourse = await _courseRepository.GetCourseByIdAsync(course.RequiredCourseId!);
                     if (existingCourse == null)
                     {
-                        return Result<AddCourseDTO>.Fail("404", "Required course not found");
+                        return Result<AddCourseDTO>.Fail("PRE_COURSE_NOT_FOUND", "Khóa học tiên quyết không tồn tại.");
                     }
                     
                 }
@@ -44,7 +44,7 @@ namespace StudentManagement.BLL.Services.CourseService
             }
             catch(Exception ex)
             {
-                return Result<AddCourseDTO>.Fail("500", ex.Message);
+                return Result<AddCourseDTO>.Fail("ADD_COURSE_FAILED", ex.Message);
             }
         }
 
@@ -53,12 +53,12 @@ namespace StudentManagement.BLL.Services.CourseService
             var course = await _courseRepository.GetCourseByIdAsync(courseId);
             if (course == null)
             {
-                return Result<string>.Fail("404", "Course not found");
+                return Result<string>.Fail("COURSE_NOT_FOUND", ErrorMessages.CourseNotFound);
             }
             // accept deleted within 30 minutes start created at
             if (course.CreatedAt.AddMinutes(30) < DateTime.Now)
             {
-                return Result<string>.Fail("400", "Course cannot be deleted after 30 minutes");
+                return Result<string>.Fail("DELETE_COURSE_FAILED", "Đã quá 30 phút kể từ khi lập khóa học.");
             }
             
             try
@@ -79,7 +79,7 @@ namespace StudentManagement.BLL.Services.CourseService
             }
             catch (Exception ex)
             {
-                return Result<string>.Fail("500", ex.Message);
+                return Result<string>.Fail("DELETE_COURSE_FAILED", ex.Message);
             }
 
         }
@@ -104,9 +104,8 @@ namespace StudentManagement.BLL.Services.CourseService
             }
             catch (Exception ex)
             {
-                return Result<GetAllCoursesDTO>.Fail("500", ex.Message);
+                return Result<GetAllCoursesDTO>.Fail("GET_COURSES_FAILED", ex.Message);
             }
-
         }
 
         public async Task<Result<GetCourseDTO>> GetAllCourseByIdAsync(string courseId)
@@ -114,11 +113,13 @@ namespace StudentManagement.BLL.Services.CourseService
             try
             {
                 var course = await _courseRepository.GetCourseByIdAsync(courseId);
+                if (course is null)
+                    return Result<GetCourseDTO>.Fail("COURSE_NOT_FOUND", ErrorMessages.CourseNotFound);
                 return Result<GetCourseDTO>.Ok(_mapper.Map<GetCourseDTO>(course));
             }
             catch(Exception ex)
             {
-                return Result<GetCourseDTO>.Fail("500", ex.Message);
+                return Result<GetCourseDTO>.Fail("GET_COURSE_FAILED", ex.Message);
             }
         
         }
@@ -128,12 +129,12 @@ namespace StudentManagement.BLL.Services.CourseService
             var course = await _courseRepository.GetCourseByIdAsync(courseId);
             if(course is null)
             {
-                return Result<UpdateCourseDTO>.Fail("404", "Course Not Found");
+                return Result<UpdateCourseDTO>.Fail("COURSE_NOT_FOUND", ErrorMessages.CourseNotFound);
             }
             var checkHasStudentInCouse = await _courseRepository.CheckHasAnyStudentInCourseAsync(courseId);
             if (!checkHasStudentInCouse && courseDTO.Credits != course.Credits)
             {
-                return Result<UpdateCourseDTO>.Fail("400", "The course already has enrolled students");
+                return Result<UpdateCourseDTO>.Fail("UPDATE_COURSE_FAILED", "The course already has enrolled students");
             }
             try
             {
@@ -149,7 +150,7 @@ namespace StudentManagement.BLL.Services.CourseService
             }
             catch(Exception ex)
             {
-                return Result<UpdateCourseDTO>.Fail("500", ex.Message);
+                return Result<UpdateCourseDTO>.Fail("UPDATE_COURSE_FAILED", ex.Message);
             }
 
 

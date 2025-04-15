@@ -1,4 +1,5 @@
-﻿using StudentManagement.BLL.DTOs.Class;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using StudentManagement.BLL.DTOs.Class;
 using StudentManagement.BLL.DTOs.ClassStudent;
 using StudentManagement.BLL.DTOs.Score;
 using StudentManagement.BLL.DTOs.Students;
@@ -16,6 +17,8 @@ namespace StudentManagement.BLL.Services.ClassStudentService
         Task<Result<IEnumerable<GetClassStudentDTO>>> AddStudentAsync(string studentId, IEnumerable<string> classIds);
 
         Task<Result<RegisterCancelationDTO>> RegisterCancelationAsync(RegisterCancelationDTO registerCancelationDTO);
+
+        Task<Result<GetRegisterCancelationHistoryDTO>> GetRegisterCancelationHistoryAsync(int? page, int? limit, string? key);
 
         Task<Result<GetClassStudentsDTO>> GetClassStudentsAsync(string? classId = null, string? studentId = null, int? page = null, int? limit = null);
 

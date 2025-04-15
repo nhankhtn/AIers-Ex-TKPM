@@ -45,22 +45,21 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
         public async Task DeleteStudentAsync(string studentId)
         {
-            try
-            {
-                var student = await _context.Students.FindAsync(studentId);
-                if (student is null) return;
-                _context.Students.Remove(student);
+            var student = await _context.Students.FindAsync(studentId);
+            if (student is null) return;
+            student.IsDeleted = true;
 
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception)
-            {
-
-            }
+            _context.Students.Update(student);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int? page = null, int? pageSize = null, string? faculty = null, string? program = null, string? status = null
-            , string? key = null)
+        public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(
+            int? page = null,
+            int? pageSize = null,
+            string? faculty = null,
+            string? program = null,
+            string? status = null,
+            string? key = null)
         {
             var query = _ = _context.Students
                 .Include(s => s.Faculty)
@@ -86,8 +85,10 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
             if (!string.IsNullOrEmpty(key))
             {
-                query = query.Where(s => s.Name.Contains(key) || s.Email.Contains(key) || s.Phone.Contains(key));
+                query = query.Where(s => s.Name.Contains(key));
             }
+
+            query = query.Where(s => !s.IsDeleted);
 
             var total = await query.CountAsync();
 
@@ -108,7 +109,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Program)
                     .Include(s => s.Status)
                     .Include(s => s.Identity)
-                    .FirstOrDefaultAsync(s => s.Id == studentId);
+                    .FirstOrDefaultAsync(s => s.Id == studentId && !s.IsDeleted);
             return student;
         }
 
@@ -120,7 +121,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Program)
                     .Include(s => s.Status)
                     .Include(s => s.Identity)
-                    .Where(s => s.Name.Contains(name)).ToListAsync();
+                    .Where(s => s.Name.Contains(name) && !s.IsDeleted).ToListAsync();
             return students;
         }
 
@@ -133,13 +134,13 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
         
         public async Task<Student?> GetStudentByEmailAsync(string email)
         {
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email && !s.IsDeleted);
             return student;
         }
 
         public async Task<Student?> GetStudentByPhoneAsync(string phone)
         {
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Phone == phone);
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Phone == phone && !s.IsDeleted);
             return student;
         }
 
@@ -165,8 +166,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
         public async Task<string> GetStudentNameAsync(string id)
         {
-            var student = await _context.Students.FindAsync(id);
-
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
             return student?.Name ?? string.Empty;
         }
 
