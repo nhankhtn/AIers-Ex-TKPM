@@ -35,11 +35,11 @@ namespace StudentManagement.BLL.Services.FacultyService
             }
             catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_faculties_name"))
             {
-                return Result<FacultyDTO?>.Fail("DUPLICATE_FACULTY_NAME");
+                return Result<FacultyDTO?>.Fail("DUPLICATE_FACULTY_NAME", "Khoa đã tồn tại.");
             }
             catch (Exception ex)
             {
-                return Result<FacultyDTO?>.Fail("500", ex.Message);
+                return Result<FacultyDTO?>.Fail("ADD_FACULTY_FAILED", "Thêm khoa thất bại.");
             }
         }
 
@@ -52,7 +52,7 @@ namespace StudentManagement.BLL.Services.FacultyService
                 var existingStudentStatus = await _facultyRepository.GetFacultyByIdAsync(id.ToGuid());
                 if (existingStudentStatus == null)
                 {
-                    return Result<FacultyDTO>.Fail("404", "Student Status not found");
+                    return Result<FacultyDTO>.Fail("ADD_FACULTY_FAILED", "Khoa không tồn tại.");
                 }
 
                 foreach (var prop in typeof(StudentStatus).GetProperties())
@@ -68,11 +68,11 @@ namespace StudentManagement.BLL.Services.FacultyService
             }
             catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_faculties_name"))
             {
-                return Result<FacultyDTO>.Fail("DUPLICATE_FACULTY_NAME");
+                return Result<FacultyDTO>.Fail("DUPLICATE_FACULTY_NAME", "Tên khoa đã tồn tại.");
             }
             catch (Exception ex)
             {
-                return Result<FacultyDTO>.Fail("500", ex.Message);
+                return Result<FacultyDTO>.Fail("ADD_FACULTY_FAILED", ex.Message);
             }
         }
 
@@ -85,7 +85,7 @@ namespace StudentManagement.BLL.Services.FacultyService
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<FacultyDTO>>.Fail("500", ex.Message);
+                return Result<IEnumerable<FacultyDTO>>.Fail("GET_FACULTIES_FAILED", ex.Message);
             }
         }
 
@@ -98,7 +98,7 @@ namespace StudentManagement.BLL.Services.FacultyService
             }
             catch (Exception ex)
             {
-                return Result<string>.Fail("500", ex.Message);
+                return Result<string>.Fail("DELETE_FACULTY_FAILED", ex.Message);
             }
         }
 

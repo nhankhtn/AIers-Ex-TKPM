@@ -82,9 +82,9 @@ namespace StudentManagement.BLL.Services.ClassService
 
                 return Result<GetClassDTO>.Ok(classDTO);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Result<GetClassDTO>.Fail("GET_CLASS_FAILED", "Lấy lớp thất bại.");
+                return Result<GetClassDTO>.Fail("GET_CLASS_FAILED", ex.Message);
             }
         }
 
@@ -105,9 +105,9 @@ namespace StudentManagement.BLL.Services.ClassService
                      Total = classes.Count()
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Result<GetClassesDTO>.Fail("GET_CLASSES_FAILED", "Lấy danh sách lớp thất bại.");
+                return Result<GetClassesDTO>.Fail("GET_CLASSES_FAILED", ex.Message);
             }
         }
 
@@ -121,9 +121,9 @@ namespace StudentManagement.BLL.Services.ClassService
                 await _classRepository.DeleteClassAsync(id);
                 return Result<GetClassDTO>.Ok(new GetClassDTO { ClassId = id });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Result<GetClassDTO>.Fail("DELETE_CLASS_FAILED", "Xóa lớp thất bại.");
+                return Result<GetClassDTO>.Fail("DELETE_CLASS_FAILED", ex.Message);
             }
         }
 
@@ -138,9 +138,9 @@ namespace StudentManagement.BLL.Services.ClassService
                 await _classRepository.UpdateClassAsync(_class);
                 return Result<GetClassDTO>.Ok(_mapper.Map<GetClassDTO>(_class));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Result<GetClassDTO>.Fail("UPDATE_CLASS_FAILED", "Cập nhật lớp thất bại.");
+                return Result<GetClassDTO>.Fail("UPDATE_CLASS_FAILED", ex.Message);
             }
         }
     }
