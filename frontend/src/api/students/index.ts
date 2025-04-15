@@ -67,19 +67,32 @@ export class StudentApi {
     studentId: string;
     classIds: string[];
   }) {
-    return await apiPost(`/ClassStudent/${studentId}`, classIds);
+    return await apiPost(`/students/register/${studentId}`, classIds);
   }
 
   static async getRegisterableClass(
     studentId: string
   ): Promise<ResponseWithData<Class[]>> {
     return await apiGet(
-      `/ClassStudent/registerable-classes?studentId=${studentId}`
+      `/students/registerable-classes?studentId=${studentId}`
     );
   }
 
+  static async deleteRegisterClass({
+    studentId,
+    classId,
+  }: {
+    studentId: string;
+    classId: string;
+  }): Promise<ResponseWithData<Class[]>> {
+    return await apiDelete(`/students/register`, {
+      studentId,
+      classId,
+    });
+  }
+
   static async getStudentTranscript(studentId: string) {
-    return await apiGet(`/score/transcript?studentId=${studentId}`);
+    return await apiGet(`/students/transcript?studentId=${studentId}`);
   }
 }
 // : Promise<

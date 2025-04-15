@@ -20,15 +20,30 @@ const useRegistrationsSearch = () => {
     count: getRegisterableClassApi.data?.data?.length || 0,
     initialRowsPerPage: 10,
   });
-  const classes = useMemo(
-    () =>
-      (getRegisterableClassApi.data?.data || []).slice(
-        (pagination.page - 1) * pagination.rowsPerPage,
-        pagination.page * pagination.rowsPerPage
-      ),
-    [getRegisterableClassApi.data, pagination.page, pagination.rowsPerPage]
-  );
+  const [classes, setClasses] = useState<Class[]>([]);
 
+  useEffect(() => {
+    setClasses(
+      (getRegisterableClassApi.data?.data || [])
+        .slice(
+          pagination.page * pagination.rowsPerPage,
+          (pagination.page + 1) * pagination.rowsPerPage
+        )
+        .filter(
+          (item: Class) =>
+            (item.semester === Number(filter.semester) ||
+              filter.semester === "") &&
+            (item.academicYear === Number(filter.academicYear) ||
+              filter.academicYear === "")
+        )
+    );
+  }, [
+    getRegisterableClassApi.data,
+    pagination.page,
+    pagination.rowsPerPage,
+    filter.semester,
+    filter.academicYear,
+  ]);
   const classFilterConfig = useMemo(
     () => [
       {
@@ -103,6 +118,7 @@ const useRegistrationsSearch = () => {
     filter,
     setFilter,
     classFilterConfig,
+    setClasses,
   };
 };
 

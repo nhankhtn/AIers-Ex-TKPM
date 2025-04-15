@@ -46,7 +46,7 @@ export class ClassApi {
   }
 
   static async getClassScores(classId: string) {
-    return await apiGet(`/score?classId=${classId}`);
+    return await apiGet(`/class/score?classId=${classId}`);
   }
 
   static async createScoresStudent(
@@ -57,6 +57,6 @@ export class ClassApi {
       finalScore: number;
     }[]
   ) {
-    return await apiPost(`/score?classId=${classId}`, scores);
+    return await apiPost(`/class/scores?classId=${classId}`, scores);
   }
 }

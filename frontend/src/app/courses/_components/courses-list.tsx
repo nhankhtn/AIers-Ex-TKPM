@@ -47,7 +47,7 @@ export function CourseList() {
         key: "faculty",
         options: [
           {
-            value: "",
+            value: "Tất cả",
             label: "Tất cả",
           },
           ...faculties.map((f) => ({
@@ -61,7 +61,7 @@ export function CourseList() {
         label: "Trạng thái",
         key: "status",
         options: [
-          { value: "", label: "Tất cả" },
+          { value: "Tất cả", label: "Tất cả" },
           { value: "active", label: "Đang hoạt động" },
           { value: "inactive", label: "Không hoạt động" },
         ],

@@ -18,6 +18,7 @@ import {
   Alert,
   AlertTitle,
   type SelectChangeEvent,
+  Stack,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import WarningIcon from "@mui/icons-material/Warning";
@@ -44,6 +45,7 @@ export function RegistrationForm() {
     classFilterConfig,
     filter,
     setFilter,
+    setClasses,
   } = useRegistrationsSearch();
 
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -52,8 +54,14 @@ export function RegistrationForm() {
 
   const registerClassApi = useFunction(StudentApi.registerClass, {
     successMessage: "Đăng ký thành công",
+    onSuccess: ({ payload }) => {
+      setClasses((prev) =>
+        prev.filter((item) => !payload.classIds.includes(item.classId))
+      );
+      setSelectedStudent(null);
+      selection.handleDeselectAll();
+    },
   });
-  console.log("selectedStudent", selectedStudent);
   useEffect(() => {
     if (selectedStudent?.id) getRegisterableClassApi.call(selectedStudent.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,7 +75,7 @@ export function RegistrationForm() {
   }, [registerClassApi, selectedStudent, selection.selected]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+    <Stack sx={{ gap: 3 }}>
       <Card>
         <CardHeader
           title='Đăng ký khóa học cho sinh viên'
@@ -83,7 +91,7 @@ export function RegistrationForm() {
           }
         />
         <CardContent sx={{ pt: 0 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <Stack sx={{ gap: 3 }}>
             <FormControl fullWidth required>
               <InputLabel id='student-select-label'>Sinh viên</InputLabel>
               <Select
@@ -219,9 +227,9 @@ export function RegistrationForm() {
                 />
               )}
             </Box>
-          </Box>
+          </Stack>
         </CardContent>
       </Card>
-    </Box>
+    </Stack>
   );
 }
