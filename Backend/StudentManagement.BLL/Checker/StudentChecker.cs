@@ -44,8 +44,21 @@ namespace StudentManagement.BLL.Validators
             if ((!isUpdate || studentDTO.Program is not null) && !await CheckProgramAsync(studentDTO.Program))
                 return (false, "INVALID_PROGRAM", "Mã chương trình không hợp lệ.");
 
-            if ((!isUpdate || studentDTO.Status is not null) && !await CheckStatusAsync(studentDTO.Status, studentDTO.Id))
-                return (false, "INVALID_STATUS", "Trạng thái sinh viên không hợp lệ");
+            if ((!isUpdate || studentDTO.Status is not null))
+            {
+                var res = await CheckStatusAsync(studentDTO.Status, studentDTO.Id);
+                if (res == 0)
+                    return (false, "INVALID_STATUS", "Mã trạng thái không hợp lệ.");
+                else if (res == 1)
+                {
+                    if (studentDTO.Status != null)
+                    {
+                        var status = await _studentStatusRepository.GetStudentStatusByIdAsync(studentDTO.Status);
+                        return (false, "INVALID_STATUS", $"Không thể quay lại trạng thái \"{status?.Name}\"");
+                    }
+                    return (false, "INVALID_STATUS", "Không thể quay lại trạng thái này.");
+                }
+            }    
 
             if ((!isUpdate || studentDTO.Identity?.DocumentNumber is not null) && !await CheckDocumentNumberAsync(studentDTO.Identity?.DocumentNumber, studentDTO.Id))
                 return (false, "DUPLICATE_DOCUMENT_NUMBER", "Số giấy tờ đã tồn tại.");
@@ -53,19 +66,19 @@ namespace StudentManagement.BLL.Validators
             return (true, string.Empty, string.Empty);
         }
 
-        private async Task<bool> CheckStatusAsync(string? status, string? id)
+        private async Task<int> CheckStatusAsync(string? status, string? id)
         {
-            if (status is null) return false;
+            if (status is null) return 0;
             var _status = await _studentStatusRepository.GetStudentStatusByIdAsync(status);
-            if (_status == null) return false;
+            if (_status == null) return 0;
 
             if (id is not null)
             {
                 var student = await _studentRepository.GetStudentByIdAsync(id);
-                if (student is null) return false;
-                return student.Status.Order <= _status.Order;
+                if (student is null) return 0;
+                return student.Status.Order <= _status.Order ? 2 : 1;
             }
-            return true;
+            return 2;
         }
 
         private async Task<bool> CheckEmailAsync(string? email, string? userId = null)

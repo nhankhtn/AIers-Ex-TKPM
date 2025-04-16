@@ -91,5 +91,12 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             if (course == null) return "";
             return course.CourseName;
         }
+
+        public async Task<Course?> GetCourseByClassAsync(string classId)
+        {
+            var classEntity = await _context.Classes.FindAsync(classId);
+            var course = await _context.Courses.FindAsync(classEntity?.CourseId);
+            return course;
+        }
     }
 }

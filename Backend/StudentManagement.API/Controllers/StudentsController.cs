@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using StudentManagement.API.Utils;
 using StudentManagement.BLL.DTOs;
 using StudentManagement.BLL.DTOs.Class;
@@ -197,7 +198,6 @@ namespace StudentManagement.API.Controllers
         }
 
 
-
         [HttpDelete("register")]
         public async Task<ActionResult<ApiResponse<RegisterCancelationDTO>>> RegisterCancelation(RegisterCancelationDTO registerCancelationDTO)
         {
@@ -216,6 +216,31 @@ namespace StudentManagement.API.Controllers
                     }
                 ));
         }
+
+        [HttpGet("register-cancelation")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<RegisterCancelationDTO>>>> GetRegisterCancelationHistory(int? page, int? limit, string? key)
+        {
+            var result = await _classStudentService.GetRegisterCancelationHistoryAsync(page, limit, key);
+            if (result.Success)
+            {
+                if (result.Data is null) return NotFound(ApiResponse<string>.NotFound(
+                    error: new ApiError()
+                    {
+                        Code = result.ErrorCode,
+                        Message = result.ErrorMessage
+                    }
+                ));
+                return Ok(result.Data);
+            }
+            return BadRequest(ApiResponse<string>.BadRequest(
+                error: new ApiError()
+                {
+                    Code = result.ErrorCode,
+                    Message = result.ErrorMessage
+                }
+            ));
+        }
+
 
         [HttpGet("transcript")]
         public async Task<ActionResult<ApiResponse<StudentTranscriptDTO>>> StudentTranscipt(string studentId)

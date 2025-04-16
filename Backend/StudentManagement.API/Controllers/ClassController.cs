@@ -97,7 +97,7 @@ namespace StudentManagement.API.Controllers
         }
 
 
-        [HttpPost("scores")]
+        [HttpPut("scores")]
         public async Task<IActionResult> UpdateScore(string classId, IEnumerable<UpdateScoreDTO> updateScoresDTO)
         {
             var result = await _classStudentService.UpdateScoresAsync(classId, updateScoresDTO);

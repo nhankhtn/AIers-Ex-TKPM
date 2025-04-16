@@ -108,7 +108,6 @@ namespace StudentManagement.BLL.Services.StudentService
                 }
                 if (!allValid)
                 {
-                    var errorMessages = errors.Select(e => $"Error at index {e.index}: {e.errorCode}").ToList();
                     return Result<IEnumerable<StudentDTO>>.Fail("ADD_STUDENTS_FAILED", "Thêm sinh viên thất bại", errors);
                 }
 
@@ -193,12 +192,12 @@ namespace StudentManagement.BLL.Services.StudentService
                 var validRes = _userValidator.StudentValidate(studentDTO, true);
                 if (!validRes.IsValid)
                 {
-                    return Result<StudentDTO>.Fail(validRes.ErrorCode);
+                    return Result<StudentDTO>.Fail(validRes.ErrorCode, validRes.ErrorMessage);
                 }
                 var checkRes = await _studentChecker.StudentCheckAsync(studentDTO, true);
                 if (!checkRes.IsValid)
                 {
-                    return Result<StudentDTO>.Fail(checkRes.ErrorCode);
+                    return Result<StudentDTO>.Fail(checkRes.ErrorCode, checkRes.ErrorMessage);
                 }
 
                 var resExistStudent = await _studentRepository.GetStudentByIdAsync(studentId);
