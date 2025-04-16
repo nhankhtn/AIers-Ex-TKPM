@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
@@ -32,9 +33,13 @@ namespace StudentManagement.BLL.Services.StudentStatusService
                 var std = await _studentStatusRepository.AddStudentStatusAsync(student);
                 return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(std));
             }
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_student_statuses_name"))
+            {
+                return Result<StudentStatusDTO>.Fail("DUPLICATE_STUDENT_STATUS_NAME", "Trạng thái sinh viên đã tồn tại.");
+            }
             catch (Exception ex)
             {
-                return Result<StudentStatusDTO>.Fail("500", ex.Message);
+                return Result<StudentStatusDTO>.Fail("ADD_STUDENT_STATUS_FAILED", ex.Message);
             }
         }
 
@@ -47,7 +52,7 @@ namespace StudentManagement.BLL.Services.StudentStatusService
                 var existingStudentStatus = await _studentStatusRepository.GetStudentStatusByIdAsync(id.ToGuid());
                 if (existingStudentStatus == null)
                 {
-                    return Result<StudentStatusDTO>.Fail("404", "Student Status not found");
+                    return Result<StudentStatusDTO>.Fail("STUDENT_STATUS_NOT_FOUND", "Trạng thái sinh viên không tồn tại.");
                 }
 
                 foreach (var prop in typeof(StudentStatus).GetProperties())
@@ -63,7 +68,7 @@ namespace StudentManagement.BLL.Services.StudentStatusService
             }
             catch (Exception ex)
             {
-                return Result<StudentStatusDTO>.Fail("500", ex.Message);
+                return Result<StudentStatusDTO>.Fail("UPDATE_STUDENT_STATUS_FAILED", ex.Message);
             }
         }
 
@@ -76,7 +81,7 @@ namespace StudentManagement.BLL.Services.StudentStatusService
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<StudentStatusDTO>>.Fail("500", ex.Message);
+                return Result<IEnumerable<StudentStatusDTO>>.Fail("GET_STUDENT_STATUSES_FAILED", ex.Message);
             }
         }
 
@@ -89,7 +94,7 @@ namespace StudentManagement.BLL.Services.StudentStatusService
             }
             catch (Exception ex)
             {
-                return Result<string>.Fail("500", ex.Message);
+                return Result<string>.Fail("DELETE_STUDENT_STATUS_FAILED", ex.Message);
             }
         }
     }

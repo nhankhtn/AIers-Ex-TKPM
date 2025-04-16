@@ -36,11 +36,11 @@ namespace StudentManagement.BLL.Services.ProgramService
             }
             catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
             {
-                return Result<ProgramDTO?>.Fail("DUPLICATE_PROGRAM_NAME");
+                return Result<ProgramDTO?>.Fail("DUPLICATE_PROGRAM_NAME", "Chương trình đã tồn tại.");
             }
             catch (Exception ex)
             {
-                return Result<ProgramDTO?>.Fail("500", ex.Message);
+                return Result<ProgramDTO?>.Fail("ADD_PROGRAM_FAILED", ex.Message);
             }
         }
 
@@ -53,7 +53,7 @@ namespace StudentManagement.BLL.Services.ProgramService
                 var existingStudentStatus = await _programRepository.GetProgramByIdAsync(id.ToGuid());
                 if (existingStudentStatus == null)
                 {
-                    return Result<ProgramDTO>.Fail("404", "Student Status not found");
+                    return Result<ProgramDTO>.Fail("UPDATE_PROGRAM_FAILED", "Chương trình không tồn tại.");
                 }
 
                 foreach (var prop in typeof(StudentStatus).GetProperties())
@@ -69,11 +69,11 @@ namespace StudentManagement.BLL.Services.ProgramService
             }
             catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
             {
-                return Result<ProgramDTO>.Fail("DUPLICATE_PROGRAM_NAME");
+                return Result<ProgramDTO>.Fail("DUPLICATE_PROGRAM_NAME", "Chương trình đã tồn tại.");
             }
             catch (Exception ex)
             {
-                return Result<ProgramDTO>.Fail("500", ex.Message);
+                return Result<ProgramDTO>.Fail("UPDATE_PROGRAM_FAILED", ex.Message);
             }
         }
 
@@ -86,7 +86,7 @@ namespace StudentManagement.BLL.Services.ProgramService
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<ProgramDTO>>.Fail("500", ex.Message);
+                return Result<IEnumerable<ProgramDTO>>.Fail("GET_PROGRAMS_FAILED", ex.Message);
             }
         }
 
@@ -99,7 +99,7 @@ namespace StudentManagement.BLL.Services.ProgramService
             }
             catch (Exception ex)
             {
-                return Result<string>.Fail("500", ex.Message);
+                return Result<string>.Fail("DELETE_PROGRAM_FAILED", ex.Message);
             }
         }
     }
