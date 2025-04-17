@@ -15,13 +15,13 @@ import { useFormik } from "formik";
 import RowStack from "@/components/row-stack";
 import AddressStudentForm from "./address-student-form";
 import AdditionalInformationForm from "./addtional-infomation-form";
-import { useMainContext } from "@/context";
 import BasicInfomationForm from "./basic-infomation-form";
 import {
   getOriginPhoneNumber,
   getPhoneNumberFormat,
 } from "@/utils/phone-helper";
 import useFunction from "@/hooks/use-function";
+import { useMainContext } from "@/context/main/main-context";
 
 const formatDate = (date: Date) => {
   return date && !isNaN(new Date(date).getTime())

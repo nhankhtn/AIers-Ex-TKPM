@@ -1,13 +1,5 @@
-import { Box, Typography } from "@mui/material"
-import { TranscriptForm } from "@/app/transcripts/_component/transcript-form"
+import TranscriptsContent from "./_sections/content";
 
-export default function TranscriptsPage(){
-  return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <Typography variant="h4" component="h1" fontWeight="bold">
-        In bảng điểm
-      </Typography>
-      <TranscriptForm />
-    </Box>
-  )
+export default function TranscriptsPage() {
+  return <TranscriptsContent />;
 }

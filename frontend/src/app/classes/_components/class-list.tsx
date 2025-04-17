@@ -59,7 +59,7 @@ export function ClassList(): JSX.Element {
         label: "Học kỳ",
         key: "semester",
         options: [
-          { value: "", label: "Tất cả" },
+          { value: "Tất cả", label: "Tất cả" },
           { value: "1", label: "Học kỳ 1" },
           { value: "2", label: "Học kỳ 2" },
           { value: "3", label: "Học kỳ hè" },
@@ -102,16 +102,15 @@ export function ClassList(): JSX.Element {
   const renderRowActions = useCallback(
     (classData: Class) => (
       <IconButton
-        aria-label="more"
+        aria-label='more'
         onClick={(e) => handleMenuOpen(e, classData)}
-        size="small"
+        size='small'
       >
-        <MoreVertIcon fontSize="small" />
+        <MoreVertIcon fontSize='small' />
       </IconButton>
     ),
     [handleMenuOpen]
   );
-
 
   return (
     <Box sx={{ maxWidth: "100%" }}>
@@ -121,16 +120,16 @@ export function ClassList(): JSX.Element {
           mb: 3,
         }}
       >
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant='h5' fontWeight='bold'>
           Danh sách lớp học
         </Typography>
       </RowStack>
 
-      <RowStack mb={3} gap={2} justifyContent="space-between">
+      <RowStack mb={3} gap={2} justifyContent='space-between'>
         <Stack flex={1}>
           <TextField
-            placeholder="Tìm kiếm lớp học..."
-            variant="outlined"
+            placeholder='Tìm kiếm lớp học...'
+            variant='outlined'
             fullWidth
             value={searchQuery}
             onChange={(e) => {
@@ -147,7 +146,7 @@ export function ClassList(): JSX.Element {
             InputProps={{
               startAdornment: (
                 <InputAdornment
-                  position="start"
+                  position='start'
                   sx={{ cursor: "pointer" }}
                   onClick={() => setFilter({ ...filter, classId: searchQuery })}
                 >
@@ -175,9 +174,9 @@ export function ClassList(): JSX.Element {
       <Stack>
         <CustomTable
           rows={classes.map((classData) => ({
-              ...classData,
-              id: classData.classId,
-            }))}
+            ...classData,
+            id: classData.classId,
+          }))}
           configs={getTableConfig()}
           renderRowActions={renderRowActions}
           loading={false}
@@ -190,7 +189,7 @@ export function ClassList(): JSX.Element {
         {classes.length > 0 && (
           <CustomPagination
             pagination={pagination}
-            justifyContent="end"
+            justifyContent='end'
             px={2}
             pt={2}
             borderTop={1}
@@ -208,14 +207,11 @@ export function ClassList(): JSX.Element {
       >
         <MenuItem
           component={Link}
-          href={paths.classes.edit.replace(
-            ":id",
-            menuClass?.classId ?? ""
-          )}
+          href={paths.classes.edit.replace(":id", menuClass?.classId ?? "")}
           onClick={handleMenuClose}
         >
           <ListItemIcon>
-            <EditIcon fontSize="small" />
+            <EditIcon fontSize='small' />
           </ListItemIcon>
           Chỉnh sửa
         </MenuItem>
@@ -224,7 +220,7 @@ export function ClassList(): JSX.Element {
           sx={{ color: "error.main" }}
         >
           <ListItemIcon>
-            <DeleteIcon fontSize="small" color="error" />
+            <DeleteIcon fontSize='small' color='error' />
           </ListItemIcon>
           Xóa
         </MenuItem>

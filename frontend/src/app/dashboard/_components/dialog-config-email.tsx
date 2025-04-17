@@ -13,7 +13,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import RowStack from "@/components/row-stack";
 import { useCallback, useState } from "react";
-import { useMainContext } from "@/context";
+import { useMainContext } from "@/context/main/main-context";
 
 interface DialogConfigEmailProps {
   open: boolean;

@@ -27,6 +27,15 @@ export interface Student {
   nationality: string;
 }
 
+export interface StudentTranscript {
+  id: string;
+  classId: string;
+  courseName: string;
+  credit: number;
+  totalScore: number;
+  grade: string;
+}
+
 export const COUNTRY_DEFAULT = "Vietnam";
 export const COUNTRY_CODE_DEFAULT = "VN";
 export enum Gender {
@@ -60,6 +69,25 @@ export interface StudentFilter extends Partial<Student> {
   key: string;
   status: string;
   faculty: string;
+}
+
+export interface StudentScore {
+  id: string;
+  studentId: string;
+  studentName: string;
+  midTermScore: number;
+  finalScore: number;
+  totalScore: number;
+  grade: string | null;
+  isPassed: boolean;
+}
+
+export interface StudentClass {
+  id: string;
+  classId: string;
+  courseName: string;
+  studentId: string;
+  studentName: string;
 }
 
 export const mappingFiledStudent: Record<string, string> = {

@@ -34,6 +34,7 @@ import { isJSONString } from "@/utils/string-helper";
 import { objectToAddress } from "./table-config";
 import useDashboardSearch from "./use-dashboard-search";
 import DialogSettingsStatus from "../_components/dialog-settings-status";
+import { useMainContext } from "@/context/main/main-context";
 
 function parseAddress(address: string) {
   const parts = address.split(",").map((part) => part.trim());
@@ -53,21 +54,23 @@ interface UtilityButtonsProps {
   createStudentsApi: any;
   updateStudentsApi: any;
 }
-function UtilityButtons({ students, dialog, createStudentsApi, updateStudentsApi }: UtilityButtonsProps) {
-
+function UtilityButtons({
+  students,
+  dialog,
+  createStudentsApi,
+  updateStudentsApi,
+}: UtilityButtonsProps) {
   const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
 
   const handleAddStudent = useCallback(
     async (student: Student) => {
       const res = await createStudentsApi.call([student]);
-      if ((res.data?.errors.length || 0) > 0) {
-        showSnackbarError(res.data?.errors.map((e: { code: any; }) => e.code).join(", "));
-      } else {
+      if (!res.error) {
         showSnackbarSuccess("Thêm sinh viên thành công");
         dialog.handleClose();
       }
     },
-    [createStudentsApi, dialog, showSnackbarError, showSnackbarSuccess]
+    [createStudentsApi, dialog, showSnackbarSuccess]
   );
 
   const handleUpdateStudent = useCallback(
@@ -82,13 +85,12 @@ function UtilityButtons({ students, dialog, createStudentsApi, updateStudentsApi
     },
     [updateStudentsApi, dialog]
   );
-
+  const { faculties } = useMainContext();
   const {
     dialog: dialogFaculty,
     deleteFacultyApi,
     addFacultyApi,
     updateFacultyApi,
-    faculties,
   } = useFaculty();
   const {
     dialog: dialogProgram,

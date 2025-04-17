@@ -17,13 +17,13 @@ import DialogConfirmDelete from "../_components/dialog-confirm-delete";
 import useDashboardSearch from "./use-dashboard-search";
 import { CustomTable } from "@/components/custom-table";
 import CustomPagination from "@/components/custom-pagination";
-import { useFaculty } from "./use-faculty";
 import { useProgram } from "./use-program";
 import { useStatus } from "./use-status";
 import SelectFilter from "../_components/select-filter";
 import { getTableConfig } from "./table-config";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UtilityButtons from "./utility-buttons";
+import { useMainContext } from "@/context/main/main-context";
 
 const Content = () => {
   const {
@@ -39,7 +39,7 @@ const Content = () => {
     filterConfig,
     filter,
   } = useDashboardSearch();
-  const { faculties } = useFaculty();
+  const { faculties } = useMainContext();
   const { programs } = useProgram();
   const { statuses } = useStatus();
   const handleDeleteStudent = useCallback(
@@ -60,7 +60,12 @@ const Content = () => {
         <Typography variant='h5' fontWeight='bold'>
           Danh sách sinh viên
         </Typography>
-        <UtilityButtons students={students} createStudentsApi={createStudentsApi} updateStudentsApi={updateStudentsApi} dialog={dialog} />
+        <UtilityButtons
+          students={students}
+          createStudentsApi={createStudentsApi}
+          updateStudentsApi={updateStudentsApi}
+          dialog={dialog}
+        />
       </RowStack>
       <RowStack mb={3} gap={2}>
         <Stack>
