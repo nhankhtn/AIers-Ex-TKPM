@@ -26,7 +26,7 @@ import { StudentScore } from "@/types/student";
 import useFunction from "@/hooks/use-function";
 import { ClassApi } from "@/api/class";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
-import ClassFilter from "../_components/class-filter";
+import ClassFilter from "@/app/_components/class-filter";
 
 export function GradeEntryForm() {
   const { showSnackbarError } = useAppSnackbar();

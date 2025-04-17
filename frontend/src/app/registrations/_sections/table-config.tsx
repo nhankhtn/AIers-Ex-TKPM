@@ -1,5 +1,6 @@
 import { CustomTableConfig } from "@/components/custom-table";
 import { Class } from "@/types/class";
+import { StudentClass } from "@/types/student";
 import { Typography } from "@mui/material";
 
 export const getClassesTableConfig = (): CustomTableConfig<string, Class>[] => [
@@ -42,5 +43,39 @@ export const getClassesTableConfig = (): CustomTableConfig<string, Class>[] => [
     key: "room",
     headerLabel: "Phòng học",
     renderCell: (data) => <Typography variant='body2'>{data.room}</Typography>,
+  },
+];
+
+export const getRegisteredClassesTableConfig = (): CustomTableConfig<
+  string,
+  StudentClass
+>[] => [
+  {
+    key: "studentId",
+    headerLabel: "Khóa học",
+    renderCell: (data) => (
+      <Typography variant='body2'>{data.studentId}</Typography>
+    ),
+  },
+  {
+    key: "studentName",
+    headerLabel: "Khóa học",
+    renderCell: (data) => (
+      <Typography variant='body2'>{data.studentName}</Typography>
+    ),
+  },
+  {
+    key: "code",
+    headerLabel: "Mã lớp",
+    renderCell: (data) => (
+      <Typography variant='body2'>{data.classId}</Typography>
+    ),
+  },
+  {
+    key: "name",
+    headerLabel: "Khóa học",
+    renderCell: (data) => (
+      <Typography variant='body2'>{data.courseName}</Typography>
+    ),
   },
 ];

@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import {
   Box,
   Button,
@@ -12,43 +10,60 @@ import {
   Typography,
   FormControl,
   InputLabel,
-  Select,
-  MenuItem,
   Paper,
-  Alert,
-  AlertTitle,
-  type SelectChangeEvent,
   Stack,
   Autocomplete,
   TextField,
 } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import WarningIcon from "@mui/icons-material/Warning";
 import type { Student } from "@/types/student";
-import useRegistrationsSearch from "./use-registrations-search";
 import { CustomTable } from "@/components/custom-table";
-import { getClassesTableConfig } from "./table-config";
 import CustomPagination from "@/components/custom-pagination";
 import RowStack from "@/components/row-stack";
-import SelectFilter from "../dashboard/_components/select-filter";
 import { useSelection } from "@/hooks/use-selection";
 import { useMainContext } from "@/context/main/main-context";
 import useFunction from "@/hooks/use-function";
 import { StudentApi } from "@/api/students";
+import { Class } from "@/types/class";
+import useRegistrationsSearch from "./use-registrations-search";
+import ClassFilter from "@/app/_components/class-filter";
+import { getClassesTableConfig } from "./table-config";
 
 export function RegistrationForm() {
   const { faculties } = useMainContext();
   const {
     students,
     getStudentsApi,
-    pagination,
+    paginationRegisterClass: pagination,
     getRegisterableClassApi,
     classes,
-    classFilterConfig,
     filter,
     setFilter,
     setClasses,
   } = useRegistrationsSearch();
+
+  useEffect(() => {
+    setClasses(
+      (getRegisterableClassApi.data?.data || [])
+        .slice(
+          pagination.page * pagination.rowsPerPage,
+          (pagination.page + 1) * pagination.rowsPerPage
+        )
+        .filter(
+          (item: Class) =>
+            (item.semester === Number(filter.semester) ||
+              filter.semester === "") &&
+            (item.academicYear === Number(filter.academicYear) ||
+              filter.academicYear === "")
+        )
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    getRegisterableClassApi.data,
+    pagination.page,
+    pagination.rowsPerPage,
+    filter.semester,
+    filter.academicYear,
+  ]);
 
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
@@ -196,9 +211,8 @@ export function RegistrationForm() {
                   Chọn lớp học cần đăng ký
                 </Typography>
                 <Box width={444}>
-                  <SelectFilter
-                    configs={classFilterConfig}
-                    filter={filter as any}
+                  <ClassFilter
+                    filter={filter}
                     onChange={(key: string, value: string) => {
                       setFilter((prev) => ({
                         ...prev,

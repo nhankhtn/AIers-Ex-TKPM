@@ -82,6 +82,14 @@ export interface StudentScore {
   isPassed: boolean;
 }
 
+export interface StudentClass {
+  id: string;
+  classId: string;
+  courseName: string;
+  studentId: string;
+  studentName: string;
+}
+
 export const mappingFiledStudent: Record<string, string> = {
   id: "Mã sinh viên",
   name: "Họ và tên",

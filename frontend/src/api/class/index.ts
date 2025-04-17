@@ -61,6 +61,6 @@ export class ClassApi {
       finalScore: number;
     }[];
   }): Promise<StudentScore[]> {
-    return await apiPost(`/class/scores?classId=${classId}`, scores);
+    return await apiPut(`/class/scores?classId=${classId}`, scores);
   }
 }

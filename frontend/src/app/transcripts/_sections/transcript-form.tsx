@@ -17,12 +17,12 @@ import {
   Stack,
 } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
-import { TranscriptPreview } from "@/app/transcripts/transcript-preview";
 import { Student } from "@/types/student";
-import useTranscriptsSearch from "./use-transcripts-search";
 import { useMainContext } from "@/context/main/main-context";
 import RowStack from "@/components/row-stack";
 import { useReactToPrint } from "react-to-print";
+import useTranscriptsSearch from "./use-transcripts-search";
+import { TranscriptPreview } from "./transcript-preview";
 
 export function TranscriptForm() {
   const { faculties } = useMainContext();

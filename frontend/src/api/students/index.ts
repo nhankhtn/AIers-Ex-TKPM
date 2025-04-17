@@ -1,6 +1,11 @@
 import { ResponseWithData, ResponseWithTotal } from "@/types";
 import { Class } from "@/types/class";
-import { Student, StudentFilter, StudentTranscript } from "@/types/student";
+import {
+  Student,
+  StudentClass,
+  StudentFilter,
+  StudentTranscript,
+} from "@/types/student";
 import {
   apiDelete,
   apiGet,
@@ -58,6 +63,22 @@ export class StudentApi {
 
   static async deleteStudent(id: Student["id"]): Promise<void> {
     return await apiDelete(`/students/${id}`, {});
+  }
+
+  static async getStudentClass({
+    studentId,
+    page,
+    limit,
+  }: {
+    studentId: string;
+    page: number | null;
+    limit: number | null;
+  }): Promise<ResponseWithTotal<StudentClass[]>> {
+    return await apiGet(`/students/class-students`, {
+      studentId,
+      page,
+      limit,
+    });
   }
 
   static async registerClass({
