@@ -1,15 +1,19 @@
-﻿using StudentManagement.BLL.DTOs.Students;
+﻿using Microsoft.IdentityModel.Tokens;
+using StudentManagement.BLL.Checker;
+using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.StudentRepo;
 using StudentManagement.DAL.Data.Repositories.StudentStatusRepo;
+using StudentManagement.Domain.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentManagement.BLL.Checker
+namespace StudentManagement.BLL.Validators
 {
     public class StudentChecker : IStudentChecker
     {
@@ -17,15 +21,6 @@ namespace StudentManagement.BLL.Checker
         private readonly IFacultyRepository _facultyRepository;
         private readonly IProgramRepository _programRepository;
         private readonly IStudentStatusRepository _studentStatusRepository;
-
-        public List<string> NeedCheckedProperties { get; } = new List<string>() {
-            nameof(StudentDTO.Email),
-            nameof(StudentDTO.Phone),
-            nameof(StudentDTO.Faculty),
-            nameof(StudentDTO.Program),
-            nameof(StudentDTO.Status),
-            nameof(StudentDTO.Identity)
-        };
 
         public StudentChecker(IStudentRepository studentRepository, IFacultyRepository facultyRepository, IProgramRepository programRepository, IStudentStatusRepository studentStatusRepository)
         {
@@ -35,94 +30,91 @@ namespace StudentManagement.BLL.Checker
             _studentStatusRepository = studentStatusRepository;
         }
 
-
-        public async Task<(bool Result, string ErrorCode)> StudentChecked(string propertyName, StudentDTO student, bool isUpdate = false)
+        public async Task<(bool IsValid, string ErrorCode, string ErrorMessage)> StudentCheckAsync(StudentDTO studentDTO, bool isUpdate = false)
         {
-            switch (propertyName)
+            if ((!isUpdate || studentDTO.Email is not null) && !await CheckEmailAsync(studentDTO.Email, studentDTO.Id))
+                return (false, "DUPLICATE_EMAIL", "Email đã tồn tại.");
+
+            if ((!isUpdate || studentDTO.Phone is not null) && !await CheckPhoneAsync(studentDTO.Phone, studentDTO.Id))
+                return (false, "DUPLICATE_PHONE", "Số điện thoại đã tồn tại");
+
+            if ((!isUpdate || studentDTO.Faculty is not null) && !await CheckFacultyAsync(studentDTO.Faculty))
+                return (false, "INVALID_FACULTY", "Mã khoa không hợp lệ.");
+
+            if ((!isUpdate || studentDTO.Program is not null) && !await CheckProgramAsync(studentDTO.Program))
+                return (false, "INVALID_PROGRAM", "Mã chương trình không hợp lệ.");
+
+            if ((!isUpdate || studentDTO.Status is not null))
             {
-                case nameof(StudentDTO.Email):
-                    return student.Email is null || await CheckEmailAsync(student.Email, student.Id)
-                        ? (true, string.Empty)
-                        : (false, "DUPLICATE_EMAIL");
+                var res = await CheckStatusAsync(studentDTO.Status, studentDTO.Id);
+                if (res == 0)
+                    return (false, "INVALID_STATUS", "Mã trạng thái không hợp lệ.");
+                else if (res == 1)
+                {
+                    if (studentDTO.Status != null)
+                    {
+                        var status = await _studentStatusRepository.GetStudentStatusByIdAsync(studentDTO.Status);
+                        return (false, "INVALID_STATUS", $"Không thể quay lại trạng thái \"{status?.Name}\"");
+                    }
+                    return (false, "INVALID_STATUS", "Không thể quay lại trạng thái này.");
+                }
+            }    
 
-                case nameof(StudentDTO.Phone):
-                    return student.Phone is null || await CheckPhoneAsync(student.Phone, student.Id)
-                        ? (true, string.Empty)
-                        : (false, "DUPLICATE_PHONE");
+            if ((!isUpdate || studentDTO.Identity?.DocumentNumber is not null) && !await CheckDocumentNumberAsync(studentDTO.Identity?.DocumentNumber, studentDTO.Id))
+                return (false, "DUPLICATE_DOCUMENT_NUMBER", "Số giấy tờ đã tồn tại.");
 
-                case nameof(StudentDTO.Faculty):
-                    return student.Faculty is null || await CheckFacultyAsync(student.Faculty)
-                        ? (true, string.Empty)
-                        : (false, "INVALID_FACULTY");
+            return (true, string.Empty, string.Empty);
+        }
 
-                case nameof(StudentDTO.Program):
-                    return student.Program is null || await CheckProgramAsync(student.Program)
-                        ? (true, string.Empty)
-                        : (false, "INVALID_PROGRAM");
+        private async Task<int> CheckStatusAsync(string? status, string? id)
+        {
+            if (status is null) return 0;
+            var _status = await _studentStatusRepository.GetStudentStatusByIdAsync(status);
+            if (_status == null) return 0;
 
-                case nameof(StudentDTO.Status):
-                    if (isUpdate)
-                        return student.Status is null || student.Id is null || await CheckUpdateStatusAsync(student.Id, student.Status)
-                            ? (true, string.Empty)
-                            : (false, "INVALID_STATUS_UPDATE");
-                    return student.Status is null || await CheckStatusAsync(student.Status)
-                        ? (true, string.Empty)
-                        : (false, "INVALID_STATUS");
-
-                case nameof(StudentDTO.Identity):
-                    return student.Identity?.DocumentNumber is null || await CheckDocumentNumberAsync(student.Identity.DocumentNumber, student.Id)
-                        ? (true, string.Empty)
-                        : (false, "DUPLICATE_DOCUMENT_NUMBER");
-
-                default:
-                    return (true, string.Empty);
+            if (id is not null)
+            {
+                var student = await _studentRepository.GetStudentByIdAsync(id);
+                if (student is null) return 0;
+                return student.Status.Order <= _status.Order ? 2 : 1;
             }
+            return 2;
         }
 
-
-        private async Task<bool> CheckUpdateStatusAsync(string id, string status)
+        private async Task<bool> CheckEmailAsync(string? email, string? userId = null)
         {
-            var student = await _studentRepository.GetStudentByIdAsync(id);
-            var newStatus = await _studentStatusRepository.GetStudentStatusByIdAsync(status);
-            if (student is null || newStatus is null)
-                return false;
-            return newStatus.Order >= student.Status.Order;
-        }
-
-        public async Task<bool> CheckEmailAsync(string email, string? userId = null)
-        {
+            if (string.IsNullOrEmpty(email)) return true;
             var std = await _studentRepository.GetStudentByEmailAsync(email);
             if (std is null) return true;
             return userId is not null && std.Id == userId;
         }
 
-        public async Task<bool> CheckPhoneAsync(string phone, string? userId = null)
+        private async Task<bool> CheckPhoneAsync(string? phone, string? userId = null)
         {
+            if (string.IsNullOrEmpty(phone)) return true;
             var std = await _studentRepository.GetStudentByPhoneAsync(phone);
             if (std is null) return true;
             return userId is not null && std.Id == userId;
         }
 
-        public async Task<bool> CheckDocumentNumberAsync(string documentNumber, string? userId = null)
+        private async Task<bool> CheckDocumentNumberAsync(string? documentNumber, string? userId = null)
         {
+            if (string.IsNullOrEmpty(documentNumber)) return true;
             var std = await _studentRepository.GetStudentByDocumentNumberAsync(documentNumber);
             if (std is null) return true;
             return userId is not null && std.Id == userId;
         }
 
-        public async Task<bool> CheckFacultyAsync(string faculty)
+        private async Task<bool> CheckFacultyAsync(string? faculty)
         {
+            if (faculty is null) return true;
             return await _facultyRepository.GetFacultyByIdAsync(faculty) is not null;
         }
 
-        public async Task<bool> CheckProgramAsync(string program)
+        private async Task<bool> CheckProgramAsync(string? program)
         {
+            if (program is null) return true;
             return await _programRepository.GetProgramByIdAsync(program) is not null;
-        }
-
-        public async Task<bool> CheckStatusAsync(string status)
-        {
-            return await _studentStatusRepository.GetStudentStatusByIdAsync(status) is not null;
         }
     }
 }

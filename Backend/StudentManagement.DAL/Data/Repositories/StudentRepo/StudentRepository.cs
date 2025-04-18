@@ -45,58 +45,60 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
 
         public async Task DeleteStudentAsync(string studentId)
         {
-            try
-            {
-                var student = await _context.Students.FindAsync(studentId);
-                if (student is null) return;
-                _context.Students.Remove(student);
+            var student = await _context.Students.FindAsync(studentId);
+            if (student is null) return;
+            student.IsDeleted = true;
 
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception)
-            {
-
-            }
+            _context.Students.Update(student);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(int page, int pageSize, string? faculty, string? program, string? status, string? key)
+        public async Task<(IEnumerable<Student> students, int total)> GetAllStudentsAsync(
+            int? page = null,
+            int? pageSize = null,
+            string? faculty = null,
+            string? program = null,
+            string? status = null,
+            string? key = null)
         {
-            var students = _context.Students
-                    .Include(s => s.Faculty)
-                    .Include(s => s.Program)
-                    .Include(s => s.Status)
-                    .Include(s => s.Identity)
-                    .AsQueryable();
+            var query = _ = _context.Students
+                .Include(s => s.Faculty)
+                .Include(s => s.Program)
+                .Include(s => s.Status)
+                .Include(s => s.Identity)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(faculty))
             {
-                students = students.Where(s => s.Faculty.Name == faculty);
+                query = query.Where(s => s.Faculty.Name.Contains(faculty));
             }
+
             if (!string.IsNullOrEmpty(program))
             {
-                students = students.Where(s => s.Program.Name == program);
+                query = query.Where(s => s.Program.Name.Contains(program));
             }
+
             if (!string.IsNullOrEmpty(status))
             {
-                students = students.Where(s => s.Status.Name == status);
+                query = query.Where(s => s.Status.Name.Contains(status));
             }
 
             if (!string.IsNullOrEmpty(key))
             {
-                var keywords = key.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                foreach (var keyword in keywords)
-                {
-                    students = students.Where(s => s.Name.Contains(keyword) || s.Id.Contains(keyword));
-                }
+                query = query.Where(s => s.Name.Contains(key));
             }
 
-            var total = await students.CountAsync();
+            query = query.Where(s => !s.IsDeleted);
 
-            var studentPage = await students.Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            var total = await query.CountAsync();
 
-            return (studentPage, total);
+            if (page.HasValue && pageSize.HasValue)
+            {
+                query = query.Skip((page.Value - 1) * pageSize.Value).Take(pageSize.Value);
+            }
+
+            var students = await query.ToListAsync();
+            return (students, total);
         }
 
         public async Task<Student?> GetStudentByIdAsync(string studentId)
@@ -107,7 +109,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Program)
                     .Include(s => s.Status)
                     .Include(s => s.Identity)
-                    .FirstOrDefaultAsync(s => s.Id == studentId);
+                    .FirstOrDefaultAsync(s => s.Id == studentId && !s.IsDeleted);
             return student;
         }
 
@@ -119,7 +121,7 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                     .Include(s => s.Program)
                     .Include(s => s.Status)
                     .Include(s => s.Identity)
-                    .Where(s => s.Name.Contains(name)).ToListAsync();
+                    .Where(s => s.Name.Contains(name) && !s.IsDeleted).ToListAsync();
             return students;
         }
 
@@ -132,13 +134,13 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
         
         public async Task<Student?> GetStudentByEmailAsync(string email)
         {
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email && !s.IsDeleted);
             return student;
         }
 
         public async Task<Student?> GetStudentByPhoneAsync(string phone)
         {
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Phone == phone);
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Phone == phone && !s.IsDeleted);
             return student;
         }
 
@@ -160,6 +162,12 @@ namespace StudentManagement.DAL.Data.Repositories.StudentRepo
                 .FirstOrDefaultAsync();
 
             return student is null ? 0 : int.Parse(student.Id[4..]);
+        }
+
+        public async Task<string> GetStudentNameAsync(string id)
+        {
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
+            return student?.Name ?? string.Empty;
         }
 
     }

@@ -13,10 +13,10 @@ import {
 import { Gender } from "../../../../types/student";
 import RowStack from "@/components/row-stack";
 import { countriesPhoneFormat } from "@/utils/phone-helper";
-import { useMainContext } from "@/context";
 import { useDialog } from "@/hooks/use-dialog";
 import DialogConfigEmail from "../dialog-config-email";
 import { Edit } from "@mui/icons-material";
+import { useMainContext } from "@/context/main/main-context";
 interface BasicInfomationFormProps {
   formik: any;
   countries: {

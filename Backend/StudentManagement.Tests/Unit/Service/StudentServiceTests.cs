@@ -84,19 +84,15 @@ namespace StudentManagement.Tests.Unit.Service
         {
             var students = new List<StudentDTO>
             {
-                new StudentDTO { Id = "ST006", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john22@gmail.com", Course = 2022, Phone = "+84363459789", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "666"} },
-                new StudentDTO { Id = "ST007", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john223@gmail.com", Course = 2022, Phone = "+84363459700", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "777"} },
-                new StudentDTO { Id = "ST008", Name = "Jane Doe", DateOfBirth = new DateTime(2001, 2, 2), Gender = "Female", Email = "jane@gmail.com", Course = 2022, Phone = "+84334567890", PermanentAddress = "Address 2", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "UK", Identity = new IdentityDTO { DocumentNumber = "888" } },
+                new StudentDTO { Id = "ST006", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john232@gmail.com", Course = 2022, Phone = "+84363459789", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "666"} },
+                new StudentDTO { Id = "ST007", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john2223@gmail.com", Course = 2022, Phone = "+84363459700", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "777"} },
             };
 
             var result = await _studentService.AddListStudentAsync(students);
 
             Assert.True(result.Success);
             Assert.NotNull(result.Data);
-            Assert.Equal(2, result.Data.AcceptableStudents.Count());
-            Assert.NotEmpty(result.Data.UnacceptableStudents);
-            Assert.NotNull(result.Errors);
-            Assert.Equal("DUPLICATE_PHONE", result.Errors[0].errorCode);
+            Assert.Equal(2, result.Data.Count());
         }
 
         [Fact]

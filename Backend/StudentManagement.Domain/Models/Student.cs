@@ -12,8 +12,6 @@ using System.Threading.Tasks;
 
 namespace StudentManagement.Domain.Models
 {
-    [Index(nameof(Email), IsUnique = true)]
-    [Index(nameof(Phone), IsUnique = true)]
     [Table("students")]
     public class Student
     {
@@ -93,5 +91,9 @@ namespace StudentManagement.Domain.Models
 
        
         public Identity Identity { get; set; } = null!;
+
+        public bool IsDeleted { get; set; } = false;
+        public ICollection<ClassStudent> ClassStudents { get; set; } = null!;
+        public ICollection<Class> Classes { get; set; } = null!;
     }
 }

@@ -25,10 +25,16 @@ namespace StudentManagement.DAL.Data
         public DbSet<AuditEntry> AuditEntries { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
+        // add new dbset
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Class> Classes { get; set; }
+        public DbSet<ClassStudent> ClassStudents { get; set; }
+        public DbSet<RegisterCancellationHistory> RegisterCancellationHistories { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
 
 
             modelBuilder.Entity<Student>()
@@ -40,7 +46,6 @@ namespace StudentManagement.DAL.Data
                 .Property(i => i.Type)
                 .HasConversion<string>()
                 .HasDefaultValue(IdentityType.CCCD);
-
 
             // Relationships
 
@@ -72,6 +77,32 @@ namespace StudentManagement.DAL.Data
                 .WithOne(s => s.Student)
                 .HasForeignKey<Identity>(a => a.StudentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.Entity<Class>()
+                .HasMany(e => e.Students)
+                .WithMany(e => e.Classes);
+
+
+            modelBuilder.Entity<Course>()
+                .HasMany(c => c.Classes)
+                .WithOne(c => c.Course)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<ClassStudent>(buider =>
+            {
+                buider.HasOne(cs => cs.Class)
+                    .WithMany(c => c.ClassStudents)
+                    .HasForeignKey(cs => cs.ClassId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                buider.HasOne(cs => cs.Student)
+                    .WithMany(c => c.ClassStudents)
+                    .HasForeignKey(cs => cs.StudentId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
 
             modelBuilder.Entity<Program>(b =>
             {
@@ -148,7 +179,6 @@ namespace StudentManagement.DAL.Data
             b.HasData(
                 new Setting { Id =1 }
             ));
-
         }
     }
 }

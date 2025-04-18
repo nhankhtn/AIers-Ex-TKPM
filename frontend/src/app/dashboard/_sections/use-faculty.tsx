@@ -1,24 +1,12 @@
-import { useEffect, useMemo } from "react";
 import { useDialog } from "@/hooks/use-dialog";
 import useFunction from "@/hooks/use-function";
 import { FacultyApi } from "@/api/faculty";
+import { useMainContext } from "@/context/main/main-context";
 
 export const useFaculty = () => {
   const dialog = useDialog();
 
-  const getFacultiesApi = useFunction(FacultyApi.getFaculty, {
-    disableResetOnCall: true,
-  });
-
-  const faculties = useMemo(
-    () => getFacultiesApi.data?.data || [],
-    [getFacultiesApi.data]
-  );
-
-  useEffect(() => {
-    getFacultiesApi.call({});
-    //  eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { getFacultiesApi } = useMainContext();
 
   const addFacultyApi = useFunction(FacultyApi.addFaculty, {
     successMessage: "Thêm khoa thành công",
@@ -57,6 +45,5 @@ export const useFaculty = () => {
     addFacultyApi,
     updateFacultyApi,
     deleteFacultyApi,
-    faculties,
   };
 };

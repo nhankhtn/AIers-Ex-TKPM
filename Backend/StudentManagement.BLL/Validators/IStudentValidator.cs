@@ -9,7 +9,6 @@ namespace StudentManagement.BLL.Validators
 {
     public interface IStudentValidator
     {
-        List<string> NeedValidateProperties { get; }
-        bool StudentValidate(string propertyName, StudentDTO value);
+        (bool IsValid, string ErrorCode, string ErrorMessage) StudentValidate(StudentDTO value, bool isUpdate = false);
     }
 }

@@ -16,6 +16,16 @@ export const getFormData = (data: { [name: string]: any }): FormData => {
   return formData;
 };
 
+export const removeEmptyKeys = (data: { [name: string]: any }) => {
+  const newData: { [name: string]: any } = {};
+  Object.keys(data).forEach((key) => {
+    if (data[key] !== "" && data[key] !== undefined) {
+      newData[key] = data[key];
+    }
+  });
+  return newData;
+};
+
 const getRequestHeaders = async (
   method: string,
   isFormData?: boolean
@@ -70,8 +80,8 @@ const apiFetch = async (
     ) {
       const message = `Lỗi: ${
         result.message ||
-        result.error.code ||
         result.error.message ||
+        result.error.code ||
         response.status
       }`;
       throw new Error(message);
