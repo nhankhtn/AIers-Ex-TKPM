@@ -1,5 +1,6 @@
 import { ResponseWithData, ResponseWithTotal } from "@/types";
 import { Class } from "@/types/class";
+import { UnregisterClass } from "@/types/registration";
 import {
   Student,
   StudentClass,
@@ -119,6 +120,26 @@ export class StudentApi {
     gpa: number;
   }> {
     return await apiGet(`/students/transcript?studentId=${studentId}`);
+  }
+
+  static async getUnregisterClass({
+    page,
+    limit,
+    key,
+  }: {
+    page: number;
+    limit: number;
+    key: string;
+
+  }): Promise<ResponseWithData<UnregisterClass[]>> {
+    console.log(page, limit, key);
+    const res=  await apiGet(`/students/register-cancelation`, {
+      page,
+      limit,
+      key,
+    });
+    console.log(res);
+    return res;
   }
 }
 // : Promise<

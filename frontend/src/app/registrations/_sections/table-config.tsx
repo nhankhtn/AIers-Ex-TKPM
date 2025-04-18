@@ -1,5 +1,6 @@
 import { CustomTableConfig } from "@/components/custom-table";
 import { Class } from "@/types/class";
+import { UnregisterClass } from "@/types/registration";
 import { StudentClass } from "@/types/student";
 import { Typography } from "@mui/material";
 
@@ -79,3 +80,36 @@ export const getRegisteredClassesTableConfig = (): CustomTableConfig<
     ),
   },
 ];
+
+
+export const getUnregisteredClassesTableConfig = (): CustomTableConfig<
+  number,
+  UnregisterClass
+>[] => [
+  {
+    key: "classId",
+    headerLabel: "Mã lớp",
+    renderCell: (data) => <Typography variant='body2'>{data.classId}</Typography>,
+  },
+  {
+    key: "courseName",
+    headerLabel: "Tên môn học",
+    renderCell: (data) => <Typography variant='body2'>{data.courseName}</Typography>,
+  },
+  {
+    key: "semester",
+    headerLabel: "Học kỳ",
+    renderCell: (data) => <Typography variant='body2'>{data.semester}</Typography>,
+  },
+  {
+    key: "academicYear",
+    headerLabel: "Năm học",
+    renderCell: (data) => <Typography variant='body2'>{data.academicYear}</Typography>,
+  },
+  {
+    key: "time",
+    headerLabel: "Thời gian yêu cầu",
+    renderCell: (data) => <Typography variant='body2'>{data.time.split("T")[0]}</Typography>,
+  },
+];
+  

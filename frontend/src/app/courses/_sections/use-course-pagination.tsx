@@ -41,6 +41,24 @@ export const useCoursePagination = () => {
         });
       }
     },
+    onError: (error, payload) => {
+      const err = error as Error;
+      console.log(err.message);
+      if (
+        err.message ==
+        "Lỗi: Course already has class. Status will be changed to Deactivated"
+      ) {
+        getCoursesApi.setData({
+          data:
+            getCoursesApi.data?.data.map((course) =>
+              course.courseId === payload
+                ? { ...course, deletedAt: new Date().toISOString() }
+                : course
+            ) || [],
+          total: getCoursesApi.data?.total || 0,
+        });
+      }
+    },
   });
 
   useEffect(() => {

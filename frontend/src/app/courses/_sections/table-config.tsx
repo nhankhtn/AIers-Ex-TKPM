@@ -56,7 +56,7 @@ export const getTableConfig = (): CustomTableConfig<string, Course>[] => [
     headerLabel: "Trạng thái",
     textAlign: "center" as const,
     renderCell: (course) =>
-      !course.isDeleted ? (
+      !course.deletedAt ? (
         <Typography color="success.main" fontWeight="medium">
           Đang hoạt động
         </Typography>
