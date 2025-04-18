@@ -25,6 +25,7 @@ import { useClassSearch } from "@/app/classes/_sections/use-class-search";
 import { CourseApi } from "@/api/course";
 interface ClassFormProps {
   classData?: Class | null;
+  forCourseId?: string | null;
 }
 
 const validationSchema = Yup.object().shape({
@@ -74,7 +75,7 @@ const validationSchema = Yup.object().shape({
     .oneOf([2, 3, 4, 5, 6, 7, 8], "Ngày trong tuần không hợp lệ"),
 });
 
-export function ClassForm({ classData = null }: ClassFormProps) {
+export function ClassForm({ classData = null, forCourseId = null }: ClassFormProps) {
   const router = useRouter();
   const { courses, searchCourses, getCourseApi } = useCourseSearch();
 
@@ -88,7 +89,10 @@ export function ClassForm({ classData = null }: ClassFormProps) {
     },
     [searchCourses]
   );
-
+  useEffect(() => {
+    searchCourses({ page: 1, limit: 20 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     const fetchCourse = async () => {
       if (classData) {
@@ -100,6 +104,17 @@ export function ClassForm({ classData = null }: ClassFormProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classData]);
 
+  useEffect(() => {
+    const fetchCourse = async () => {
+      if (forCourseId) {
+        const response = await getCourseApi.call(forCourseId);
+        setSelectedCourse(response.data || null);
+        formik.setFieldValue("courseId", response.data?.courseId || "");
+      }
+    };
+    fetchCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [forCourseId]);
   const formik = useFormik({
     initialValues: {
       classId: classData?.classId || "",
@@ -130,6 +145,7 @@ export function ClassForm({ classData = null }: ClassFormProps) {
           await addClassApi.call({
             ...values,
             id: values.classId,
+            courseName: selectedCourse?.courseName || "",
           });
         }
       } catch (error) {
@@ -142,6 +158,7 @@ export function ClassForm({ classData = null }: ClassFormProps) {
     setSelectedCourse(course);
     formik.setFieldValue("courseId", course?.courseId || "");
   }, [formik]);
+
 
   return (
     <Paper sx={{ p: 3 }}>

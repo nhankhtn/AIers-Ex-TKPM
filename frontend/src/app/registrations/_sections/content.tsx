@@ -6,6 +6,7 @@ import type React from "react";
 import { Registration } from "@/types/registration";
 import { RegistrationForm } from "./registration-form";
 import RegistrationList from "./registration-list";
+import UnregisterList from "./unregister-list";
 
 export default function RegistrationsContent() {
   const [value, setValue] = useState<number>(0);
@@ -31,6 +32,7 @@ export default function RegistrationsContent() {
               id='tab-1'
               aria-controls='tabpanel-1'
             />
+            <Tab label='Lịch sử hủy đăng ký' id='tab-2' aria-controls='tabpanel-2' />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
@@ -38,6 +40,9 @@ export default function RegistrationsContent() {
         </TabPanel>
         <TabPanel value={value} index={1}>
           <RegistrationList />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <UnregisterList />
         </TabPanel>
       </Box>
     </Box>

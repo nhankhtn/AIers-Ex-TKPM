@@ -8,13 +8,13 @@ import { useEffect } from "react";
 
 export default function EditClassPage() {
   const router = useRouter();
-  const { getClassApi } = useClassSearch();
+  const { getClassesApi } = useClassSearch();
   const { id } = useParams();
   useEffect(() => {
     const fetchClass = async () => {
       if (!id) return;
-      const response = await getClassApi.call(id as string);
-      if (!response.data || Object.keys(response.data).length === 0) {
+      const response = await getClassesApi.call({ page: 1, limit: 1, classId: id as string });
+      if (!response.data || response.data.data.length === 0) {
         router.replace("/noClassFound");
       }
     };
@@ -26,7 +26,7 @@ export default function EditClassPage() {
       <Typography variant="h4" component="h1" fontWeight="bold">
         Sửa lớp học
       </Typography>
-      {getClassApi.loading && (
+      {getClassesApi.loading && (
         <Box
           sx={{
             display: "flex",
@@ -38,7 +38,7 @@ export default function EditClassPage() {
           <Typography variant="h6">Loading...</Typography>
         </Box>
       )}
-      {getClassApi.data && <ClassForm classData={getClassApi.data} />}
+      {getClassesApi.data && <ClassForm classData={getClassesApi.data.data[0]} />}
     </Box>
   );
 }

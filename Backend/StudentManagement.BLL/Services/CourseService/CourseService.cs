@@ -64,16 +64,19 @@ namespace StudentManagement.BLL.Services.CourseService
             try
             {
                 var hasAnyClass = await _courseRepository.HasAnyClassesAsync(courseId); // check if course has any classes opens
+               
                 // if course has any classes opens, add deleted_at
                 if (hasAnyClass)
                 {
                     course.DeletedAt = DateTime.Now;
                     await _courseRepository.UpdateCourseAsync(course);
+                    return Result<string>.Fail("DELETE_COURSE_FAILED", "Course already has class. Status will be changed to Deactivated");
                 }
                 else
                 {
                     await _courseRepository.DeleteCourseAsync(courseId);
                 }
+
                 var res = Result<string>.Ok(courseId);
                 return res;
             }

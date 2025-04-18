@@ -121,7 +121,7 @@ const useDashboardSearch = () => {
   const filterConfig = getFilterConfig({
     status: [
       {
-        value: "",
+        value: "Tất cả",
         label: "Tất cả",
       },
       ...statuses.map((s) => ({
@@ -131,7 +131,7 @@ const useDashboardSearch = () => {
     ],
     faculty: [
       {
-        value: "",
+        value: "Tất cả",
         label: "Tất cả",
       },
       ...faculties.map((s) => ({

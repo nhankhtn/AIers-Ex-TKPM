@@ -10,7 +10,8 @@ export interface Course {
   description: string
   requiredCourseId?: string
   requiredCourseName?: string
-  isDeleted?: string
+  deletedAt?: string
+  createdAt?: string
 }
 
 export interface CourseGrade {

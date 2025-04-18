@@ -214,7 +214,7 @@ export function CourseList() {
         </MenuItem>
         <MenuItem
           component={Link}
-          href={paths.classes.create.replace(":id", menuCourse?.courseId ?? "")}
+          href={paths.classes.create.replace(":id", menuCourse?.courseId ?? "") + "?courseId=" + menuCourse?.courseId}
           onClick={handleMenuClose}
         >
           <ListItemIcon>

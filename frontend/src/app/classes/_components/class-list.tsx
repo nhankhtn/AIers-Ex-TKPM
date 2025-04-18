@@ -14,8 +14,7 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  Menu,
-  MenuItem,
+  Button,
   ListItemIcon,
   Chip,
   FormControl,
@@ -28,7 +27,6 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleIcon from "@mui/icons-material/People";
 import { mockClasses } from "@/lib/mock-data";
@@ -47,9 +45,6 @@ import DialogConfirmDeleteClass from "./dialog-confirm-delete-class";
 export function ClassList(): JSX.Element {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const deleteDialog = useDialog<Class>();
-  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
-  const [menuClass, setMenuClass] = useState<Class | null>(null);
-
   const { classes, deleteClassApi, pagination, filter, setFilter } =
     useClassPagination();
 
@@ -70,19 +65,6 @@ export function ClassList(): JSX.Element {
     []
   );
 
-  const handleMenuOpen = useCallback(
-    (event: MouseEvent<HTMLButtonElement>, classData: Class): void => {
-      setMenuAnchorEl(event.currentTarget);
-      setMenuClass(classData);
-    },
-    []
-  );
-
-  const handleMenuClose = useCallback((): void => {
-    setMenuAnchorEl(null);
-    setMenuClass(null);
-  }, []);
-
   const handleDeleteClick = useCallback(
     (classData: Class) => {
       deleteDialog.handleOpen(classData);
@@ -94,22 +76,31 @@ export function ClassList(): JSX.Element {
     if (deleteDialog.data) {
       deleteClassApi.call(deleteDialog.data.classId);
       deleteDialog.handleClose();
-      setMenuClass(null);
-      setMenuAnchorEl(null);
     }
   }, [deleteDialog, deleteClassApi]);
 
   const renderRowActions = useCallback(
     (classData: Class) => (
-      <IconButton
-        aria-label='more'
-        onClick={(e) => handleMenuOpen(e, classData)}
-        size='small'
-      >
-        <MoreVertIcon fontSize='small' />
-      </IconButton>
+      <RowStack gap={1}>
+        <Button
+          variant="outlined"
+          size="small"
+          sx={{ borderRadius: "20px", whiteSpace: "nowrap" }}
+          component={Link}
+          href={paths.classes.edit.replace(":id", classData.classId)}
+        >
+          Chỉnh sửa
+        </Button>
+        <IconButton
+          size="small"
+          color="error"
+          onClick={() => handleDeleteClick(classData)}
+        >
+          <DeleteIcon fontSize="small" />
+        </IconButton>
+      </RowStack>
     ),
-    [handleMenuOpen]
+    [handleDeleteClick]
   );
 
   return (
@@ -120,16 +111,16 @@ export function ClassList(): JSX.Element {
           mb: 3,
         }}
       >
-        <Typography variant='h5' fontWeight='bold'>
+        <Typography variant="h5" fontWeight="bold">
           Danh sách lớp học
         </Typography>
       </RowStack>
 
-      <RowStack mb={3} gap={2} justifyContent='space-between'>
+      <RowStack mb={3} gap={2} justifyContent="space-between">
         <Stack flex={1}>
           <TextField
-            placeholder='Tìm kiếm lớp học...'
-            variant='outlined'
+            placeholder="Tìm kiếm lớp học..."
+            variant="outlined"
             fullWidth
             value={searchQuery}
             onChange={(e) => {
@@ -146,7 +137,7 @@ export function ClassList(): JSX.Element {
             InputProps={{
               startAdornment: (
                 <InputAdornment
-                  position='start'
+                  position="start"
                   sx={{ cursor: "pointer" }}
                   onClick={() => setFilter({ ...filter, classId: searchQuery })}
                 >
@@ -189,7 +180,7 @@ export function ClassList(): JSX.Element {
         {classes.length > 0 && (
           <CustomPagination
             pagination={pagination}
-            justifyContent='end'
+            justifyContent="end"
             px={2}
             pt={2}
             borderTop={1}
@@ -198,33 +189,6 @@ export function ClassList(): JSX.Element {
           />
         )}
       </Stack>
-
-      {/* Menu for row actions */}
-      <Menu
-        anchorEl={menuAnchorEl}
-        open={Boolean(menuAnchorEl)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem
-          component={Link}
-          href={paths.classes.edit.replace(":id", menuClass?.classId ?? "")}
-          onClick={handleMenuClose}
-        >
-          <ListItemIcon>
-            <EditIcon fontSize='small' />
-          </ListItemIcon>
-          Chỉnh sửa
-        </MenuItem>
-        <MenuItem
-          onClick={() => menuClass && handleDeleteClick(menuClass)}
-          sx={{ color: "error.main" }}
-        >
-          <ListItemIcon>
-            <DeleteIcon fontSize='small' color='error' />
-          </ListItemIcon>
-          Xóa
-        </MenuItem>
-      </Menu>
 
       {deleteDialog.data && (
         <DialogConfirmDeleteClass
