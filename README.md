@@ -73,6 +73,61 @@
 ![alt text](Images/dialog_config_allowed_domain_email_tag3.0.jpg)
 ### Thêm trường thứ tự cho status để ràng buộc khi cập nhật status
 ![alt text](Images/dialog_settings_status_tag3.0.jpg)
+
+## Minh chứng các chức năng tag v5.0
+### 2.1.Quản Lý Khóa Học
+
+#### Xem các khóa học
+![Xem khóa học](Images/v5.0/courses.png)
+
+#### Thêm khóa học mới
+![Thêm khóa học](Images/v5.0/add_course.png)
+
+#### Chỉnh sửa khóa học
+![Chỉnh sửa khóa học](Images/v5.0/edit_course.png)
+
+#### Xóa khóa học
+![Xóa khóa học](Images/v5.0/delete_course.png)
+
+#### Xem danh sách lớp học đã mở
+![Xem lớp học](Images/v5.0/classes.png)
+
+#### Mở lớp cho một khóa học
+![Mở lớp học](Images/v5.0/add_class.png)
+
+#### Chỉnh sửa lớp của khóa học
+![Chỉnh sửa lớp](Images/v5.0/edit_class.png)
+
+#### Xóa lớp của khóa học
+![Xóa lớp học](Images/v5.0/delete_class.png)
+
+
+
+### 2.2.Đăng Ký Khóa Học Cho Sinh Viên (Thủ Công Bởi Giáo Vụ)
+
+#### Đăng ký các khóa học cho sinh viên
+![Đăng ký khóa học](Images/v5.0/register_courses.png)
+
+#### Xem, hủy các môn đã đăng ký
+![Quản lý đăng ký](Images/v5.0/register_classes.png)
+
+#### Xem lịch sử hủy đăng ký
+![Lịch sử hủy](Images/v5.0/unregister_classes.png)
+
+#### Nhập điểm số cho sinh viên
+![Nhập điểm](Images/v5.0/edit_scores.png)
+#### In bảng điểm cho sinh viên
+##### Ảnh 1
+![In bảng điểm (ảnh 1)](Images/v5.0/print_scores_1.png)
+##### Ảnh 2
+![In bảng điểm (ảnh 2)](Images/v5.0/print_scores_2.png)
+##### Ảnh 3
+![In bảng điểm (ảnh 3)](Images/v5.0/print_scores_3.png)
+
+
+
+
+#### In bảng điểm cho sinh viên
 ## Hướng dẫn cài đặt & chạy chương trình
 ### Backend:
 
