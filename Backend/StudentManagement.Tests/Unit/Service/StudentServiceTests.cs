@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Castle.Core.Smtp;
 using Moq;
-using StudentManagement.BLL;
 using StudentManagement.BLL.Checker;
 using StudentManagement.BLL.DTOs.Identity;
 using StudentManagement.BLL.DTOs.Students;
+using StudentManagement.BLL.Mapping;
 using StudentManagement.BLL.Services;
 using StudentManagement.BLL.Services.EmailService;
 using StudentManagement.BLL.Services.StudentService;

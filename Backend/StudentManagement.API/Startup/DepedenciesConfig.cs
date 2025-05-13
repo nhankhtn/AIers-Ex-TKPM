@@ -5,7 +5,6 @@ using StudentManagement.BLL.Services.FacultyService;
 using StudentManagement.BLL.Services.ProgramService;
 using StudentManagement.BLL.Services.StudentService;
 using StudentManagement.BLL.Services.StudentStatusService;
-using StudentManagement.BLL;
 using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.DAL.Data.Repositories.ProgramRepo;
 using StudentManagement.DAL.Data.Repositories.SettingRepository;
@@ -23,6 +22,7 @@ using StudentManagement.DAL.Data.Repositories.ClassStudentRepo;
 using StudentManagement.DAL.Data.Repositories.RegisterCancellationHistoryRepo;
 using StudentManagement.BLL.Services.ClassService;
 using StudentManagement.BLL.Services.ClassStudentService;
+using StudentManagement.BLL.Mapping;
 
 namespace StudentManagement.API.Startup
 {
@@ -52,7 +52,7 @@ namespace StudentManagement.API.Startup
 
 
 
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
             //add http client
             builder.Services.AddHttpClient<IAddressService, AddressService>();
