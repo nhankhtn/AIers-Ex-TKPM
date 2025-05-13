@@ -110,17 +110,20 @@ namespace StudentManagement.DAL.Data
                     new Program
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                        Name = "Đại trà"
+                        Name = "Đại trà",
+                        NameEng = "Standard"
                     },
                     new Program
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111112"),
-                        Name = "Chất lượng cao"
+                        Name = "Chất lượng cao",
+                        NameEng = "High Quality"
                     },
                     new Program
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111113"),
-                        Name = "Tiên tiến"
+                        Name = "Tiên tiến",
+                        NameEng = "Advanced"
                     });
             });
             modelBuilder.Entity<StudentStatus>(b =>
@@ -131,24 +134,28 @@ namespace StudentManagement.DAL.Data
                         Id = new Guid("11111111-1111-1111-1111-111111111111"),
                         Name = "Đang học",
                         Order = 1,
+                        NameEng = "Studying"
                     },
                     new StudentStatus
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111112"),
                         Name = "Đã tốt nghiệp",
                         Order = 2,
+                        NameEng = "Graduated"
                     },
                     new StudentStatus
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111113"),
                         Name = "Đã bảo lưu",
                         Order = 1,
+                        NameEng = "On Leave"
                     },
                     new StudentStatus
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111114"),
                         Name = "Đã nghỉ học",
                         Order = 3,
+                        NameEng = "Dropped Out"
                     });
             });
             modelBuilder.Entity<Faculty>(b =>
@@ -157,22 +164,26 @@ namespace StudentManagement.DAL.Data
                     new Faculty
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                        Name = "Khoa Toán"
+                        Name = "Khoa Toán",
+                        NameEng = "Faculty of Mathematics"
                     },
                     new Faculty
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111112"),
-                        Name = "Khoa Công nghệ thông tin"
+                        Name = "Khoa Công nghệ thông tin",
+                        NameEng = "Faculty of Information Technology"
                     },
                     new Faculty
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111113"),
-                        Name = "Khoa Hoá"
+                        Name = "Khoa Hoá",
+                        NameEng = "Faculty of Chemistry"
                     },
                     new Faculty
                     {
                         Id = new Guid("11111111-1111-1111-1111-111111111114"),
-                        Name = "Khoa Lí"
+                        Name = "Khoa Lí",
+                        NameEng = "Faculty of Physics"
                     });
             });
             modelBuilder.Entity<Setting>(b =>

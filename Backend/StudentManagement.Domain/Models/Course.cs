@@ -20,6 +20,9 @@ namespace StudentManagement.Domain.Models
         [Column("name", TypeName ="nvarchar(50)")]
         public string CourseName { get; set; } = null!;
 
+        [Column("name_eng", TypeName = "nvarchar(50)")]
+        public string CourseNameEng { get; set; } = null!;
+
         [Column("credits")]
         [Range(2, int.MaxValue)]
         public int Credits { get; set; }
@@ -30,6 +33,9 @@ namespace StudentManagement.Domain.Models
 
         [Column("description", TypeName = "nvarchar(max)")]
         public string Description { get; set; } = string.Empty;
+
+        [Column("description_eng", TypeName = "nvarchar(max)")]
+        public string DescriptionEng { get; set; } = string.Empty;
         public Course? RequiredCourse { get; set; }
 
         [Column("required_course_id")]

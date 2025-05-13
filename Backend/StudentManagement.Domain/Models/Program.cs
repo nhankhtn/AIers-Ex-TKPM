@@ -24,6 +24,9 @@ namespace StudentManagement.Domain.Models
         [Required]
         public string Name { get; set; } = string.Empty;
 
+        [Column("name_eng", TypeName = "nvarchar(50)")]
+        public string NameEng { get; set; } = string.Empty;
+
         public ICollection<Student> Students { get; set; } = new List<Student>();
     }
 }

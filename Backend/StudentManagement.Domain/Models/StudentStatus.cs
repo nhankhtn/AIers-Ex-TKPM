@@ -24,6 +24,10 @@ namespace StudentManagement.Domain.Models
         [Column("name", TypeName = "nvarchar(50)")]
         public string Name { get; set; } = string.Empty;
 
+        [Required]
+        [Column("name_eng", TypeName = "nvarchar(50)")]
+        public string NameEng { get; set; } = string.Empty;
+
 
         [Required]
         [Column("order", TypeName = "int")]
