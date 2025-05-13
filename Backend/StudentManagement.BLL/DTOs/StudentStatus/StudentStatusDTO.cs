@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.BLL.DTOs.Localize;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace StudentManagement.BLL.DTOs.StudentStatus
     { 
         public string? Id { get; set; }
 
-        public string? Name { get; set; }
+        public LocalizedName Name { get; set; } = new();
 
         public int? Order { get; set; }
     }

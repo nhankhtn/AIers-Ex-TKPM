@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.BLL.DTOs.Localize;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,15 +13,8 @@ namespace StudentManagement.BLL.DTOs.Program
     /// </summary>
     public class ProgramDTO
     {
-        /// <summary>
-        /// Program's id
-        /// </summary>
         public string? Id { get; set; }
-
-        /// <summary>
-        /// Program's name
-        /// </summary>
         [Required(ErrorMessage = "NAME_REQUIRED")]
-        public string? Name { get; set; }
+        public LocalizedName Name { get; set; } = new();
     }
 }

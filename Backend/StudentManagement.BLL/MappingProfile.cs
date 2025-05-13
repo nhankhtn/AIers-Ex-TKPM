@@ -8,6 +8,7 @@ using StudentManagement.BLL.DTOs.ClassStudent;
 using StudentManagement.BLL.DTOs.Course;
 using StudentManagement.BLL.DTOs.Faculty;
 using StudentManagement.BLL.DTOs.Identity;
+using StudentManagement.BLL.DTOs.Localize;
 using StudentManagement.BLL.DTOs.Program;
 using StudentManagement.BLL.DTOs.Score;
 using StudentManagement.BLL.DTOs.Students;
@@ -76,16 +77,31 @@ namespace StudentManagement.BLL
 
             // StudentStatus
             CreateMap<StudentStatus, StudentStatusDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    Vi = src.Name,
+                    En = src.NameEng
+                }));
             CreateMap<StudentStatusDTO, StudentStatus>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Vi))
+                .ForMember(dest => dest.NameEng, opt => opt.MapFrom(src => src.Name.En))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToGuid()));
 
 
             // Program
             CreateMap<Program, ProgramDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    Vi = src.Name,
+                    En = src.NameEng
+                }));
             CreateMap<ProgramDTO, Program>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Vi))
+                .ForMember(dest => dest.NameEng, opt => opt.MapFrom(src => src.Name.En))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToGuid()));
+
 
 
             // Identity

@@ -49,22 +49,22 @@ namespace StudentManagement.BLL.Services.ProgramService
             try
             {
                 programDTO.Id = id;
-                var studentStatus = _mapper.Map<StudentStatus>(programDTO);
-                var existingStudentStatus = await _programRepository.GetProgramByIdAsync(id.ToGuid());
-                if (existingStudentStatus == null)
+                var program = _mapper.Map<Program>(programDTO);
+                var existingProgram = await _programRepository.GetProgramByIdAsync(id.ToGuid());
+                if (existingProgram == null)
                 {
                     return Result<ProgramDTO>.Fail("UPDATE_PROGRAM_FAILED", "Chương trình không tồn tại.");
                 }
 
-                foreach (var prop in typeof(StudentStatus).GetProperties())
+                foreach (var prop in typeof(Program).GetProperties())
                 {
-                    var value = prop.GetValue(studentStatus);
+                    var value = prop.GetValue(program);
                     if (value is null) continue;
-                    if (prop.GetValue(existingStudentStatus) == value) continue;
-                    prop.SetValue(existingStudentStatus, value);
+                    if (prop.GetValue(existingProgram) == value) continue;
+                    prop.SetValue(existingProgram, value);
                 }
 
-                var res = await _programRepository.UpdateProgramAsync(existingStudentStatus);
+                var res = await _programRepository.UpdateProgramAsync(existingProgram);
                 return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res));
             }
             catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
