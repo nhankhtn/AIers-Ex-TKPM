@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL.DTOs.Course;
+using StudentManagement.BLL.DTOs.StudentStatus;
 using StudentManagement.DAL.Data.Repositories.CourseRepo;
+using StudentManagement.DAL.Data.Repositories.FacultyRepo;
 using StudentManagement.Domain.Models;
 using StudentManagement.Domain.Utils;
 using System;
@@ -14,11 +17,15 @@ namespace StudentManagement.BLL.Services.CourseService
     public class CourseService: ICourseService
     {
         private readonly ICourseRepository _courseRepository;
+        private readonly IFacultyRepository _facultyRepository;
         private readonly IMapper _mapper;
 
-        public CourseService(ICourseRepository courseRepository, IMapper mapper)
+        public CourseService(ICourseRepository courseRepository, 
+            IFacultyRepository facultyRepository,
+            IMapper mapper)
         {
             _courseRepository = courseRepository;
+            _facultyRepository = facultyRepository;
             _mapper = mapper;
         }
 
@@ -35,14 +42,29 @@ namespace StudentManagement.BLL.Services.CourseService
                     {
                         return Result<AddCourseDTO>.Fail("PRE_COURSE_NOT_FOUND", "Khóa học tiên quyết không tồn tại.");
                     }
-                    
                 }
-
 
                 var c = await _courseRepository.AddCourseAsync(course);
                 return Result<AddCourseDTO>.Ok(_mapper.Map<AddCourseDTO>(c));
             }
-            catch(Exception ex)
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("PK_courses"))
+            {
+                return Result<AddCourseDTO>.Fail("ADD_COURSE_FAILED", "Mã khóa học đã tồn tại.");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_courses_name_eng"))
+            {
+                return Result<AddCourseDTO>.Fail("DUPLICATE_COURSE_NAME", "Tên khóa học 'EN' đã tồn tại.");
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_courses_name"))
+            {
+                return Result<AddCourseDTO>.Fail("DUPLICATE_COURSE_NAME", "Tên khóa học 'VI' đã tồn tại.");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("FK_courses_faculties_faculty_id"))
+            {
+                return Result<AddCourseDTO>.Fail("FACULTY_NOT_EXIST", "Khoa không tồn tại");
+            }
+            catch (Exception ex)
             {
                 return Result<AddCourseDTO>.Fail("ADD_COURSE_FAILED", ex.Message);
             }
@@ -129,34 +151,43 @@ namespace StudentManagement.BLL.Services.CourseService
 
         public async Task<Result<UpdateCourseDTO>> UpdateCourseByIdAsync(string courseId, UpdateCourseDTO courseDTO)
         {
-            var course = await _courseRepository.GetCourseByIdAsync(courseId);
-            if(course is null)
-            {
-                return Result<UpdateCourseDTO>.Fail("COURSE_NOT_FOUND", ErrorMessages.CourseNotFound);
-            }
-            var checkHasStudentInCouse = await _courseRepository.CheckHasAnyStudentInCourseAsync(courseId);
-            if (!checkHasStudentInCouse && courseDTO.Credits != course.Credits)
-            {
-                return Result<UpdateCourseDTO>.Fail("UPDATE_COURSE_FAILED", "The course already has enrolled students");
-            }
+            
             try
             {
-               
-                course.Credits = courseDTO.Credits;
-                course.CourseName = courseDTO.CourseName;
-                course.Description = courseDTO.Description;
-                course.FacultyId = courseDTO.FacultyId;
+                var course = await _courseRepository.GetCourseByIdAsync(courseId);
+                if (course is null)
+                {
+                    return Result<UpdateCourseDTO>.Fail("COURSE_NOT_FOUND", ErrorMessages.CourseNotFound);
+                }
+                var checkHasStudentInCouse = await _courseRepository.CheckHasAnyStudentInCourseAsync(courseId);
+                if (!checkHasStudentInCouse && courseDTO.Credits != course.Credits)
+                {
+                    return Result<UpdateCourseDTO>.Fail("UPDATE_COURSE_FAILED", "The course already has enrolled students");
+                }
+
+                _mapper.Map(courseDTO, course);
                 var result = await _courseRepository.UpdateCourseAsync(course);
 
-                return Result<UpdateCourseDTO>.Ok(courseDTO);
+                return Result<UpdateCourseDTO>.Ok(_mapper.Map<UpdateCourseDTO>(course));
                 
             }
-            catch(Exception ex)
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_courses_name_eng"))
+            {
+                return Result<UpdateCourseDTO>.Fail("DUPLICATE_COURSE_NAME", "Tên khóa học 'EN' đã tồn tại.");
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_courses_name"))
+            {
+                return Result<UpdateCourseDTO>.Fail("DUPLICATE_COURSE_NAME", "Tên khóa học 'VI' đã tồn tại.");
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("FK_courses_faculties_faculty_id"))
+            {
+                return Result<UpdateCourseDTO>.Fail("FACULTY_NOT_EXIST", "Khoa không tồn tại");
+            }
+            catch (Exception ex)
             {
                 return Result<UpdateCourseDTO>.Fail("UPDATE_COURSE_FAILED", ex.Message);
             }
-
-
         }
     }
     

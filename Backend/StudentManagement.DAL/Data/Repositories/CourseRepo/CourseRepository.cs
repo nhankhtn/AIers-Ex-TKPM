@@ -21,11 +21,6 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
         }
         public async Task<Course> AddCourseAsync(Course course)
         {
-            var courseNames = await _context.Courses.Select(c => c.CourseName).ToListAsync();   
-            if(courseNames != null && courseNames.Contains(course.CourseName))
-            {
-                throw new ArgumentException("Duplicate name");
-            }
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
             return course;
@@ -47,7 +42,7 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
             var course = _context.Courses.Find(courseId);
             if (course == null)
             {
-                throw new Exception("Course not found");
+                throw new Exception("Không tìm thấy khóa học.");
             }
             _context.Courses.Remove(course!);
             await _context.SaveChangesAsync();
@@ -103,28 +98,8 @@ namespace StudentManagement.DAL.Data.Repositories.CourseRepo
 
         public async Task<Course> UpdateCourseAsync(Course course)
         {
-            
-            var updatedCourse = _context.Courses.Find(course.CourseId);
-            
-            if(updatedCourse == null)
-            {
-                throw new Exception("Course not found");
-            }
-            var courseNames = await _context.Courses.Where(c => c.CourseId != course.CourseId).Select(c => c.CourseName).ToListAsync();
-            if (courseNames != null && courseNames.Contains(course.CourseName))
-            {
-                throw new ArgumentException("Duplicate name");
-            }
-            updatedCourse.CourseName = course.CourseName;
-            updatedCourse.Credits = course.Credits;
-            updatedCourse.Description = course.Description;
-            updatedCourse.RequiredCourseId = course.RequiredCourseId;
-            updatedCourse.DeletedAt = course.DeletedAt;
-            updatedCourse.CreatedAt = course.CreatedAt;
-            updatedCourse.FacultyId = course.FacultyId;
-            _context.Courses.Update(updatedCourse);
+            _context.Courses.Update(course);
             await _context.SaveChangesAsync();
-
             return course;
         }
     }

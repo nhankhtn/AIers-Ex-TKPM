@@ -12,8 +12,8 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250415115832_RemoveUniqueEmailPhone")]
-    partial class RemoveUniqueEmailPhone
+    [Migration("20250513162217_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,6 +183,11 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
+                    b.Property<string>("CourseNameEng")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("name_eng");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
@@ -199,6 +204,11 @@ namespace StudentManagement.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
+
+                    b.Property<string>("DescriptionEng")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description_eng");
 
                     b.Property<Guid>("FacultyId")
                         .HasColumnType("uniqueidentifier")
@@ -232,6 +242,11 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
+                    b.Property<string>("NameEng")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("name_eng");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
@@ -243,22 +258,26 @@ namespace StudentManagement.DAL.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Name = "Khoa Toán"
+                            Name = "Khoa Toán",
+                            NameEng = "Faculty of Mathematics"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111112"),
-                            Name = "Khoa Công nghệ thông tin"
+                            Name = "Khoa Công nghệ thông tin",
+                            NameEng = "Faculty of Information Technology"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111113"),
-                            Name = "Khoa Hoá"
+                            Name = "Khoa Hoá",
+                            NameEng = "Faculty of Chemistry"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111114"),
-                            Name = "Khoa Lí"
+                            Name = "Khoa Lí",
+                            NameEng = "Faculty of Physics"
                         });
                 });
 
@@ -334,6 +353,11 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
+                    b.Property<string>("NameEng")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("name_eng");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
@@ -345,17 +369,20 @@ namespace StudentManagement.DAL.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Name = "Đại trà"
+                            Name = "Đại trà",
+                            NameEng = "Standard"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111112"),
-                            Name = "Chất lượng cao"
+                            Name = "Chất lượng cao",
+                            NameEng = "High Quality"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111113"),
-                            Name = "Tiên tiến"
+                            Name = "Tiên tiến",
+                            NameEng = "Advanced"
                         });
                 });
 
@@ -527,6 +554,11 @@ namespace StudentManagement.DAL.Migrations
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("name");
 
+                    b.Property<string>("NameEng")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("name_eng");
+
                     b.Property<int>("Order")
                         .HasColumnType("int")
                         .HasColumnName("order");
@@ -543,24 +575,28 @@ namespace StudentManagement.DAL.Migrations
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             Name = "Đang học",
+                            NameEng = "Studying",
                             Order = 1
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111112"),
                             Name = "Đã tốt nghiệp",
+                            NameEng = "Graduated",
                             Order = 2
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111113"),
                             Name = "Đã bảo lưu",
+                            NameEng = "On Leave",
                             Order = 1
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111114"),
                             Name = "Đã nghỉ học",
+                            NameEng = "Dropped Out",
                             Order = 3
                         });
                 });

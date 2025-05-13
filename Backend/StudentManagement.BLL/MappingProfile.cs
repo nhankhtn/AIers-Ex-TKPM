@@ -70,9 +70,19 @@ namespace StudentManagement.BLL
 
             // Faculty
             CreateMap<Faculty, FacultyDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    En = src.NameEng,
+                    Vi = src.Name
+                }));
+
             CreateMap<FacultyDTO, Faculty>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToGuid()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToGuid()))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Vi))
+                .ForMember(dest => dest.NameEng, opt => opt.MapFrom(src => src.Name.En))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
 
 
             // StudentStatus
@@ -86,7 +96,8 @@ namespace StudentManagement.BLL
             CreateMap<StudentStatusDTO, StudentStatus>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Vi))
                 .ForMember(dest => dest.NameEng, opt => opt.MapFrom(src => src.Name.En))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToGuid()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToGuid()))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
 
             // Program
@@ -97,10 +108,12 @@ namespace StudentManagement.BLL
                     Vi = src.Name,
                     En = src.NameEng
                 }));
+
             CreateMap<ProgramDTO, Program>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Vi))
                 .ForMember(dest => dest.NameEng, opt => opt.MapFrom(src => src.Name.En))
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToGuid()));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToGuid()))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
 
 
@@ -129,16 +142,73 @@ namespace StudentManagement.BLL
 
 
             //Course
-            CreateMap<AddCourseDTO, Course>();
-            CreateMap<Course, AddCourseDTO>();
+            CreateMap<AddCourseDTO, Course>()
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.CourseName.Vi))
+                .ForMember(dest => dest.CourseNameEng, opt => opt.MapFrom(src => src.CourseName.En))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description.Vi))
+                .ForMember(dest => dest.DescriptionEng, opt => opt.MapFrom(src => src.Description.En))
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                    srcMember != null &&
+                    (!(srcMember is DateTime) || !((DateTime)srcMember).Equals(default(DateTime))) &&
+                    (!(srcMember is int) || !((int)srcMember).Equals(default(int))) &&
+                    (!(srcMember is bool) || !((bool)srcMember).Equals(default(bool))) &&
+                    (!(srcMember is Guid) || !((Guid)srcMember).Equals(default(Guid))) &&
+                    (!(srcMember is string) || !string.IsNullOrEmpty((string)srcMember)) &&
+                    (!(srcMember is decimal) || !((decimal)srcMember).Equals(default(decimal)))
+                ));
 
-            CreateMap<UpdateCourseDTO, Course>();
-            CreateMap<Course, UpdateCourseDTO>();
+            CreateMap<Course, AddCourseDTO>()
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    En = src.CourseNameEng,
+                    Vi = src.CourseName
+                }))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    Vi = src.Description,
+                    En = src.DescriptionEng
+                }));
+
+            CreateMap<UpdateCourseDTO, Course>()
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => src.CourseName.Vi))
+                .ForMember(dest => dest.CourseNameEng, opt => opt.MapFrom(src => src.CourseName.En))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description.Vi))
+                .ForMember(dest => dest.DescriptionEng, opt => opt.MapFrom(src => src.Description.En))
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                    srcMember != null &&
+                    (!(srcMember is DateTime) || !((DateTime)srcMember).Equals(default(DateTime))) &&
+                    (!(srcMember is int) || !((int)srcMember).Equals(default(int))) &&
+                    (!(srcMember is bool) || !((bool)srcMember).Equals(default(bool))) &&
+                    (!(srcMember is Guid) || !((Guid)srcMember).Equals(default(Guid))) &&
+                    (!(srcMember is string) || !string.IsNullOrEmpty((string)srcMember)) &&
+                    (!(srcMember is decimal) || !((decimal)srcMember).Equals(default(decimal)))
+                ));
+
+            CreateMap<Course, UpdateCourseDTO>()
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    En = src.CourseNameEng,
+                    Vi = src.CourseName
+                }))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    Vi = src.Description,
+                    En = src.DescriptionEng
+                }));
 
             CreateMap<Course, GetCourseDTO>()
                 .ForMember(dest => dest.FacultyName, act => act.MapFrom(src => src.Faculty.Name))
                 .ForMember(dest => dest.RequiredCourseName, act => act.MapFrom(src => src.RequiredCourse!.CourseName))
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    En = src.CourseNameEng,
+                    Vi = src.CourseName
+                }))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    En = src.DescriptionEng,
+                    Vi = src.Description
+                }));
 
             // Class
             CreateMap<AddClassDTO, Class>();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.BLL.DTOs.Localize;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,6 +23,6 @@ namespace StudentManagement.BLL.DTOs.Faculty
         /// Faculty's name
         /// </summary>
         [Required(ErrorMessage = "NAME_REQUIRED")]
-        public string Name { get; set; } = string.Empty;
+        public LocalizedName Name { get; set; } = new();
     }
 }

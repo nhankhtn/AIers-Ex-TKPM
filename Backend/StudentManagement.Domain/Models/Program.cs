@@ -11,6 +11,8 @@ namespace StudentManagement.Domain.Models
 {
    
     [Index(nameof(Name), IsUnique = true)]
+    [Index(nameof(NameEng), IsUnique = true)]
+
     [Table("programs")]
     public class Program
     {

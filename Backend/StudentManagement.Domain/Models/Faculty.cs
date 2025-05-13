@@ -13,6 +13,8 @@ namespace StudentManagement.Domain.Models
     
     [Table("faculties")]
     [Index(nameof(Name), IsUnique = true)]
+    [Index(nameof(NameEng), IsUnique = true)]
+
     public class Faculty
     {
         

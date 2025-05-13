@@ -34,9 +34,14 @@ namespace StudentManagement.BLL.Services.ProgramService
                 var p = await _programRepository.AddProgramAsync(program);
                 return Result<ProgramDTO?>.Ok(_mapper.Map<ProgramDTO>(p));
             }
-            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name_eng"))
             {
-                return Result<ProgramDTO?>.Fail("DUPLICATE_PROGRAM_NAME", "Chương trình đã tồn tại.");
+                return Result<ProgramDTO?>.Fail("DUPLICATE_PROGRAM_NAME", "Tên chương trình 'EN' đã tồn tại.");
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
+            {
+                return Result<ProgramDTO?>.Fail("DUPLICATE_PROGRAM_NAME", "Tên chương trình 'VI' đã tồn tại.");
             }
             catch (Exception ex)
             {
@@ -49,27 +54,25 @@ namespace StudentManagement.BLL.Services.ProgramService
             try
             {
                 programDTO.Id = id;
-                var program = _mapper.Map<Program>(programDTO);
                 var existingProgram = await _programRepository.GetProgramByIdAsync(id.ToGuid());
                 if (existingProgram == null)
                 {
                     return Result<ProgramDTO>.Fail("UPDATE_PROGRAM_FAILED", "Chương trình không tồn tại.");
                 }
 
-                foreach (var prop in typeof(Program).GetProperties())
-                {
-                    var value = prop.GetValue(program);
-                    if (value is null) continue;
-                    if (prop.GetValue(existingProgram) == value) continue;
-                    prop.SetValue(existingProgram, value);
-                }
+                _mapper.Map(programDTO, existingProgram);
 
                 var res = await _programRepository.UpdateProgramAsync(existingProgram);
                 return Result<ProgramDTO>.Ok(_mapper.Map<ProgramDTO>(res));
             }
-            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name_eng"))
             {
-                return Result<ProgramDTO>.Fail("DUPLICATE_PROGRAM_NAME", "Chương trình đã tồn tại.");
+                return Result<ProgramDTO>.Fail("DUPLICATE_PROGRAM_NAME", "Tên chương trình 'EN' đã tồn tại.");
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_programs_name"))
+            {
+                return Result<ProgramDTO>.Fail("DUPLICATE_PROGRAM_NAME", "Tên chương trình 'VI' đã tồn tại.");
             }
             catch (Exception ex)
             {

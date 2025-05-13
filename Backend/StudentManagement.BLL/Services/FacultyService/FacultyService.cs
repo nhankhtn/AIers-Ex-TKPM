@@ -33,9 +33,14 @@ namespace StudentManagement.BLL.Services.FacultyService
                 var f = await _facultyRepository.AddFacultyAsync(faculty);
                 return Result<FacultyDTO?>.Ok(_mapper.Map<FacultyDTO>(f));
             }
-            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_faculties_name"))
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_faculties_name_eng"))
             {
-                return Result<FacultyDTO?>.Fail("DUPLICATE_FACULTY_NAME", "Khoa đã tồn tại.");
+                return Result<FacultyDTO?>.Fail("DUPLICATE_FACULTY_NAME", "Tên khoa 'EN' đã tồn tại.");
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_faculties_name"))
+            {
+                return Result<FacultyDTO?>.Fail("DUPLICATE_FACULTY_NAME", "Tên khoa 'VI' đã tồn tại.");
             }
             catch (Exception ex)
             {
@@ -48,27 +53,24 @@ namespace StudentManagement.BLL.Services.FacultyService
             try
             {
                 FacultyDTO.Id = id;
-                var studentStatus = _mapper.Map<StudentStatus>(FacultyDTO);
-                var existingStudentStatus = await _facultyRepository.GetFacultyByIdAsync(id.ToGuid());
-                if (existingStudentStatus == null)
+                var existingFaculty = await _facultyRepository.GetFacultyByIdAsync(id.ToGuid());
+                if (existingFaculty == null)
                 {
                     return Result<FacultyDTO>.Fail("ADD_FACULTY_FAILED", "Khoa không tồn tại.");
                 }
+                _mapper.Map(FacultyDTO, existingFaculty);
 
-                foreach (var prop in typeof(StudentStatus).GetProperties())
-                {
-                    var value = prop.GetValue(studentStatus);
-                    if (value is null) continue;
-                    if (prop.GetValue(existingStudentStatus) == value) continue;
-                    prop.SetValue(existingStudentStatus, value);
-                }
-
-                var res = await _facultyRepository.UpdateFacultyAsync(existingStudentStatus);
+                var res = await _facultyRepository.UpdateFacultyAsync(existingFaculty);
                 return Result<FacultyDTO>.Ok(_mapper.Map<FacultyDTO>(res));
             }
-            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_faculties_name"))
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_faculties_name_eng"))
             {
-                return Result<FacultyDTO>.Fail("DUPLICATE_FACULTY_NAME", "Tên khoa đã tồn tại.");
+                return Result<FacultyDTO>.Fail("DUPLICATE_FACULTY_NAME", "Tên khoa 'EN' đã tồn tại.");
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_faculties_name"))
+            {
+                return Result<FacultyDTO>.Fail("DUPLICATE_FACULTY_NAME", "Tên khoa 'VI' đã tồn tại.");
             }
             catch (Exception ex)
             {
@@ -101,7 +103,5 @@ namespace StudentManagement.BLL.Services.FacultyService
                 return Result<string>.Fail("DELETE_FACULTY_FAILED", ex.Message);
             }
         }
-
-
     }
 }

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StudentManagement.BLL.DTOs.Localize;
 
 namespace StudentManagement.BLL.DTOs.Course
 {
@@ -13,11 +14,11 @@ namespace StudentManagement.BLL.DTOs.Course
     {
         
         public string CourseId { get; set; } = null!;
-        public string CourseName { get; set; } = null!;
+        public LocalizedName CourseName { get; set; } = new();
         public int Credits { get; set; }
         public Guid FacultyId { get; set; }
         public string FacultyName { get; set; } = null!;
-        public string Description { get; set; } = string.Empty;
+        public LocalizedName Description { get; set; } = new();
         public string? RequiredCourseName { get; set; }
         public string? RequiredCourseId { get; set; }   
         public DateTime? DeletedAt { get; set; }     

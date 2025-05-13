@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.BLL.DTOs.Localize;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,9 @@ namespace StudentManagement.BLL.DTOs.Course
 {
     public class UpdateCourseDTO
     {
-        public string CourseName { get; set; } = null!;
+        public LocalizedName CourseName { get; set; } = new();
         public int Credits { get; set; }
         public Guid FacultyId { get; set; }
-        public string Description { get; set; } = string.Empty;
+        public LocalizedName Description { get; set; } = new();
     }
 }

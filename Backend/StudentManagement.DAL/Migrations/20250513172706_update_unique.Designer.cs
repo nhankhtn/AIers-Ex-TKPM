@@ -12,8 +12,8 @@ using StudentManagement.DAL.Data;
 namespace StudentManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250513135805_add-fields-english")]
-    partial class addfieldsenglish
+    [Migration("20250513172706_update_unique")]
+    partial class update_unique
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,6 +223,9 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("CourseName")
                         .IsUnique();
 
+                    b.HasIndex("CourseNameEng")
+                        .IsUnique();
+
                     b.HasIndex("FacultyId");
 
                     b.HasIndex("RequiredCourseId");
@@ -252,6 +255,9 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("NameEng")
+                        .IsUnique();
+
                     b.ToTable("faculties");
 
                     b.HasData(
@@ -259,25 +265,25 @@ namespace StudentManagement.DAL.Migrations
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             Name = "Khoa Toán",
-                            NameEng = ""
+                            NameEng = "Faculty of Mathematics"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111112"),
                             Name = "Khoa Công nghệ thông tin",
-                            NameEng = ""
+                            NameEng = "Faculty of Information Technology"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111113"),
                             Name = "Khoa Hoá",
-                            NameEng = ""
+                            NameEng = "Faculty of Chemistry"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111114"),
                             Name = "Khoa Lí",
-                            NameEng = ""
+                            NameEng = "Faculty of Physics"
                         });
                 });
 
@@ -363,6 +369,9 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("NameEng")
+                        .IsUnique();
+
                     b.ToTable("programs");
 
                     b.HasData(
@@ -370,19 +379,19 @@ namespace StudentManagement.DAL.Migrations
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             Name = "Đại trà",
-                            NameEng = ""
+                            NameEng = "Standard"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111112"),
                             Name = "Chất lượng cao",
-                            NameEng = ""
+                            NameEng = "High Quality"
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111113"),
                             Name = "Tiên tiến",
-                            NameEng = ""
+                            NameEng = "Advanced"
                         });
                 });
 
@@ -568,6 +577,9 @@ namespace StudentManagement.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("NameEng")
+                        .IsUnique();
+
                     b.ToTable("student_statuses");
 
                     b.HasData(
@@ -575,28 +587,28 @@ namespace StudentManagement.DAL.Migrations
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             Name = "Đang học",
-                            NameEng = "",
+                            NameEng = "Studying",
                             Order = 1
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111112"),
                             Name = "Đã tốt nghiệp",
-                            NameEng = "",
+                            NameEng = "Graduated",
                             Order = 2
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111113"),
                             Name = "Đã bảo lưu",
-                            NameEng = "",
+                            NameEng = "On Leave",
                             Order = 1
                         },
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111114"),
                             Name = "Đã nghỉ học",
-                            NameEng = "",
+                            NameEng = "Dropped Out",
                             Order = 3
                         });
                 });

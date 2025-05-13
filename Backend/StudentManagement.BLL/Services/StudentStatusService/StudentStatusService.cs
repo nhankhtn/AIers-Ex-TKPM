@@ -33,9 +33,14 @@ namespace StudentManagement.BLL.Services.StudentStatusService
                 var std = await _studentStatusRepository.AddStudentStatusAsync(student);
                 return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(std));
             }
-            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_student_statuses_name"))
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_student_statuses_name_eng"))
             {
-                return Result<StudentStatusDTO>.Fail("DUPLICATE_STUDENT_STATUS_NAME", "Trạng thái sinh viên đã tồn tại.");
+                return Result<StudentStatusDTO>.Fail("DUPLICATE_STUDENT_STATUS_NAME", "Tên khoa 'EN' đã tồn tại.");
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_student_statuses_name"))
+            {
+                return Result<StudentStatusDTO>.Fail("DUPLICATE_STUDENT_STATUS_NAME", "Tên khoa 'VI' đã tồn tại.");
             }
             catch (Exception ex)
             {
@@ -48,23 +53,26 @@ namespace StudentManagement.BLL.Services.StudentStatusService
             try
             {
                 studentStatusDTO.Id = id;
-                var studentStatus = _mapper.Map<StudentStatus>(studentStatusDTO);
+                //var studentStatus = _mapper.Map<StudentStatus>(studentStatusDTO);
                 var existingStudentStatus = await _studentStatusRepository.GetStudentStatusByIdAsync(id.ToGuid());
                 if (existingStudentStatus == null)
                 {
                     return Result<StudentStatusDTO>.Fail("STUDENT_STATUS_NOT_FOUND", "Trạng thái sinh viên không tồn tại.");
                 }
 
-                foreach (var prop in typeof(StudentStatus).GetProperties())
-                {
-                    var value = prop.GetValue(studentStatus);
-                    if (value is null) continue;
-                    if (prop.GetValue(existingStudentStatus) == value) continue;
-                    prop.SetValue(existingStudentStatus, value);
-                }
+                _mapper.Map(studentStatusDTO, existingStudentStatus);
 
                 var res = await _studentStatusRepository.UpdateStudentStatusAsync(existingStudentStatus);
                 return Result<StudentStatusDTO>.Ok(_mapper.Map<StudentStatusDTO>(res));
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_student_statuses_name_eng"))
+            {
+                return Result<StudentStatusDTO>.Fail("DUPLICATE_STUDENT_STATUS_NAME", "Tên khoa 'EN' đã tồn tại.");
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is not null && ex.InnerException.Message.Contains("IX_student_statuses_name"))
+            {
+                return Result<StudentStatusDTO>.Fail("DUPLICATE_STUDENT_STATUS_NAME", "Tên khoa 'VI' đã tồn tại.");
             }
             catch (Exception ex)
             {

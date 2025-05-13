@@ -11,6 +11,8 @@ namespace StudentManagement.Domain.Models
 {
     [Table("courses")]
     [Index(nameof(CourseName), IsUnique = true)]
+    [Index(nameof(CourseNameEng), IsUnique = true)]
+
     public class Course
     {
         [Column("id", TypeName ="varchar(10)")]
