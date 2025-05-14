@@ -124,7 +124,7 @@ export const getTableConfig = ({
     type: "string",
     renderCell: (data) => (
       <Typography variant='body2'>
-        {faculties.find((f) => f.id === data.faculty)?.name}
+        {faculties.find((f) => f.id === data.faculty)?.name.vi}
       </Typography>
     ),
   },
@@ -142,7 +142,7 @@ export const getTableConfig = ({
     type: "string",
     renderCell: (data) => (
       <Typography variant='body2'>
-        {programs.find((p) => p.id === data.program)?.name}
+        {programs.find((p) => p.id === data.program)?.name.vi}
       </Typography>
     ),
   },
@@ -152,7 +152,7 @@ export const getTableConfig = ({
     type: "string",
     renderCell: (data) => (
       <Typography variant='body2'>
-        {statuses.find((s) => s.id === data.status)?.name}
+        {statuses.find((s) => s.id === data.status)?.name.vi}
       </Typography>
     ),
   },

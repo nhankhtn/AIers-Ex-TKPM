@@ -1,9 +1,9 @@
-import { Course } from "@/types/course"
+import { Course } from "@/types/course";
 
 // Mock data for courses
 export const mockCourses: Course[] = [
   {
-    id: "1", 
+    id: "1",
     courseId: "CS101",
     courseName: "Nhập môn lập trình",
     facultyId: "CNTT",
@@ -15,7 +15,7 @@ export const mockCourses: Course[] = [
   },
   {
     id: "2",
-    courseId: "CS202", 
+    courseId: "CS202",
     courseName: "Cấu trúc dữ liệu và giải thuật",
     facultyId: "CNTT",
     facultyName: "Khoa Công nghệ thông tin",
@@ -71,26 +71,48 @@ export const mockCourses: Course[] = [
   {
     id: "7",
     courseId: "PHYS101",
-    courseName: "Vật lý đại cương",
+    courseName: {
+      vi: "Vật lý đại cương",
+      en: "General Physics"
+    },
     facultyId: "PHYS",
-    facultyName: "Khoa Vật lý",
+    facultyName: {
+      vi: "Khoa Vật lý",
+      en: "Faculty of Physics"
+    },
     credits: 4,
+    description: {
+      vi: "Vật lý đại cương",
+      en: "General Physics"
+    },
     requiredCourseId: undefined,
     requiredCourseName: undefined,
-    description: "Vật lý đại cương",
+    deletedAt: undefined,
+    createdAt: undefined
   },
   {
     id: "8",
     courseId: "ECON101",
-    courseName: "Kinh tế học đại cương",
+    courseName: {
+      vi: "Kinh tế học đại cương",
+      en: "Introduction to Economics"
+    },
     facultyId: "ECON",
-    facultyName: "Khoa Kinh tế",
+    facultyName: {
+      vi: "Khoa Kinh tế",
+      en: "Faculty of Economics"
+    },
     credits: 3,
+    description: {
+      vi: "Kinh tế học đại cương",
+      en: "Introduction to Economics"
+    },
     requiredCourseId: undefined,
     requiredCourseName: undefined,
-    description: "Kinh tế học đại cương",
+    deletedAt: undefined,
+    createdAt: undefined
   },
-]
+];
 
 // Mock data for classes
 export const mockClasses = [
@@ -178,7 +200,7 @@ export const mockClasses = [
     maxStudents: 35,
     enrolledStudents: 0,
   },
-]
+];
 
 // Mock data for students
 export const mockStudents = [
@@ -217,7 +239,7 @@ export const mockStudents = [
     department: "Vật lý",
     batch: "K63",
   },
-]
+];
 
 // Mock data for registrations
 export const mockRegistrations = [
@@ -277,7 +299,7 @@ export const mockRegistrations = [
     registrationDate: "2023-08-19T10:30:00",
     status: "active",
   },
-]
+];
 
 // Mock data for transcripts
 export const mockTranscriptData = {
@@ -400,7 +422,4 @@ export const mockTranscriptData = {
     totalCredits: 7,
     completedCredits: 7,
   },
-}
-
-
-
+};
