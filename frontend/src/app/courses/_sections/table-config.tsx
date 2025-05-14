@@ -2,53 +2,65 @@ import { Box, Typography } from "@mui/material";
 import type { Course } from "@/types/course";
 import type { CustomTableConfig } from "@/components/custom-table/custom-table.types";
 
-export const getTableConfig = (): CustomTableConfig<string, Course>[] => [
+export const getTableConfig = (): CustomTableConfig<Course["id"], Course>[] => [
   {
     key: "courseId",
     headerLabel: "Mã khóa học",
-    textAlign: "left" as const,
-    renderCell: (course) => course.courseId,
+    type: "string",
+    renderCell: (data) => (
+      <Typography variant='body2'>{data.courseId}</Typography>
+    ),
   },
   {
     key: "courseName",
     headerLabel: "Tên khóa học",
-    textAlign: "left" as const,
-    renderCell: (course) => course.courseName,
-  },
-  {
-    key: "faculty",
-    headerLabel: "Khoa",
-    textAlign: "left" as const,
-    renderCell: (course) => course.facultyName,
+    type: "string",
+    renderCell: (data) => (
+      <Typography variant='body2'>
+        {data.courseName.vi} ({data.courseName.en})
+      </Typography>
+    ),
   },
   {
     key: "credits",
-    headerLabel: "Tín chỉ",
-    textAlign: "center" as const,
-    renderCell: (course) => course.credits,
+    headerLabel: "Số tín chỉ",
+    type: "number",
+    renderCell: (data) => (
+      <Typography variant='body2'>{data.credits}</Typography>
+    ),
   },
   {
-    key: "requiredCourseId",
+    key: "faculty",
+    headerLabel: "Khoa phụ trách",
+    type: "string",
+    renderCell: (data) => (
+      <Typography variant='body2'>
+        {data.facultyName
+          ? `${data.facultyName.vi} (${data.facultyName.en})`
+          : ""}
+      </Typography>
+    ),
+  },
+  {
+    key: "description",
+    headerLabel: "Mô tả",
+    type: "string",
+    renderCell: (data) => (
+      <Typography variant='body2'>
+        {data.description.vi} ({data.description.en})
+      </Typography>
+    ),
+  },
+  {
+    key: "requiredCourse",
     headerLabel: "Môn tiên quyết",
-    textAlign: "left" as const,
-    renderCell: (course) => (
-      <Box>
-        {course.requiredCourseId ? (
-          <>
-            <Typography component="span">
-              {course.requiredCourseId}
-            </Typography>
-            <Typography
-              component="span"
-              sx={{ color: "text.secondary", ml: 1, fontSize: "14px" }}
-            >
-              - {course.requiredCourseName}
-            </Typography>
-          </>
-        ) : (
-          <Typography color="text.secondary">Không có</Typography>
-        )}
-      </Box>
+    type: "string",
+    renderCell: (data) => (
+      <Typography variant='body2'>
+        {data.requiredCourseName
+          ? `${data.requiredCourseName.vi} (${data.requiredCourseName.en})`
+          : ""}
+      </Typography>
     ),
   },
   {
@@ -57,11 +69,11 @@ export const getTableConfig = (): CustomTableConfig<string, Course>[] => [
     textAlign: "center" as const,
     renderCell: (course) =>
       !course.deletedAt ? (
-        <Typography color="success.main" fontWeight="medium">
+        <Typography color='success.main' fontWeight='medium'>
           Đang hoạt động
         </Typography>
       ) : (
-        <Typography color="error.main" fontWeight="medium">
+        <Typography color='error.main' fontWeight='medium'>
           Không hoạt động
         </Typography>
       ),

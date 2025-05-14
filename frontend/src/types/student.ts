@@ -95,7 +95,10 @@ export interface StudentScore {
 export interface StudentClass {
   id: string;
   classId: string;
-  courseName: string;
+  courseName: {
+    vi: string;
+    en: string;
+  };
   studentId: string;
   studentName: string;
 }

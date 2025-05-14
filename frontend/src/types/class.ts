@@ -2,7 +2,10 @@ export interface Class {
   id: string;
   classId: string;
   courseId: string;
-  courseName: string;
+  courseName: {
+    vi: string;
+    en: string;
+  };
   teacherName: string;
   academicYear: number;
   semester: number;

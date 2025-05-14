@@ -75,7 +75,10 @@ const validationSchema = Yup.object().shape({
     .oneOf([2, 3, 4, 5, 6, 7, 8], "Ngày trong tuần không hợp lệ"),
 });
 
-export function ClassForm({ classData = null, forCourseId = null }: ClassFormProps) {
+export function ClassForm({
+  classData = null,
+  forCourseId = null,
+}: ClassFormProps) {
   const router = useRouter();
   const { courses, searchCourses, getCourseApi } = useCourseSearch();
 
@@ -145,7 +148,7 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
           await addClassApi.call({
             ...values,
             id: values.classId,
-            courseName: selectedCourse?.courseName || "",
+            courseName: selectedCourse?.courseName || { vi: "", en: "" },
           });
         }
       } catch (error) {
@@ -154,19 +157,21 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
     },
   });
 
-  const handleCourseSelect = useCallback((course: Course | null) => {
-    setSelectedCourse(course);
-    formik.setFieldValue("courseId", course?.courseId || "");
-  }, [formik]);
-
+  const handleCourseSelect = useCallback(
+    (course: Course | null) => {
+      setSelectedCourse(course);
+      formik.setFieldValue("courseId", course?.courseId || "");
+    },
+    [formik]
+  );
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Box component="form" onSubmit={formik.handleSubmit} noValidate>
-        <Typography variant="h6" gutterBottom>
+      <Box component='form' onSubmit={formik.handleSubmit} noValidate>
+        <Typography variant='h6' gutterBottom>
           {classData ? "Chỉnh sửa lớp học" : "Mở lớp học mới"}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant='body2' color='text.secondary'>
           Nhập thông tin chi tiết về lớp học. Các trường có dấu * là bắt buộc.
         </Typography>
 
@@ -176,27 +181,27 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id="id"
-              name="classId"
-              label="Mã lớp học"
+              id='id'
+              name='classId'
+              label='Mã lớp học'
               fullWidth
-              variant="outlined"
+              variant='outlined'
               value={formik.values.classId}
               onChange={formik.handleChange}
               error={formik.touched.classId && Boolean(formik.errors.classId)}
               helperText={formik.touched.classId && formik.errors.classId}
-              placeholder="VD: CS101-01"
+              placeholder='VD: CS101-01'
               disabled={!!classData}
             />
           </Grid2>
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <Autocomplete
-              id="courseId"
+              id='courseId'
               options={courses}
               disabled={getCourseApi.loading}
               getOptionLabel={(option) =>
-                `${option.courseId} - ${option.courseName}`
+                `${option.courseId} - ${option.courseName.vi} (${option.courseName.en})`
               }
               value={selectedCourse}
               onChange={(_, newValue) => handleCourseSelect(newValue)}
@@ -210,8 +215,8 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
                 <TextField
                   {...params}
                   required
-                  label="Khóa học"
-                  placeholder="Tìm kiếm khóa học..."
+                  label='Khóa học'
+                  placeholder='Tìm kiếm khóa học...'
                   error={
                     formik.touched.courseId && Boolean(formik.errors.courseId)
                   }
@@ -224,11 +229,11 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id="teacherName"
-              name="teacherName"
-              label="Giảng viên"
+              id='teacherName'
+              name='teacherName'
+              label='Giảng viên'
               fullWidth
-              variant="outlined"
+              variant='outlined'
               value={formik.values.teacherName}
               onChange={formik.handleChange}
               error={
@@ -237,19 +242,19 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
               helperText={
                 formik.touched.teacherName && formik.errors.teacherName
               }
-              placeholder="TS. Nguyễn Văn A"
+              placeholder='TS. Nguyễn Văn A'
             />
           </Grid2>
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id="academicYear"
-              name="academicYear"
-              label="Năm học"
-              type="number"
+              id='academicYear'
+              name='academicYear'
+              label='Năm học'
+              type='number'
               fullWidth
-              variant="outlined"
+              variant='outlined'
               value={formik.values.academicYear}
               onChange={formik.handleChange}
               error={
@@ -265,13 +270,13 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth required>
-              <InputLabel id="semester-label">Học kỳ</InputLabel>
+              <InputLabel id='semester-label'>Học kỳ</InputLabel>
               <Select
-                labelId="semester-label"
-                id="semester"
-                name="semester"
+                labelId='semester-label'
+                id='semester'
+                name='semester'
                 value={formik.values.semester}
-                label="Học kỳ"
+                label='Học kỳ'
                 onChange={formik.handleChange}
               >
                 <MenuItem value={1}>Học kỳ 1</MenuItem>
@@ -284,28 +289,28 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id="room"
-              name="room"
-              label="Phòng học"
+              id='room'
+              name='room'
+              label='Phòng học'
               fullWidth
-              variant="outlined"
+              variant='outlined'
               value={formik.values.room}
               onChange={formik.handleChange}
               error={formik.touched.room && Boolean(formik.errors.room)}
               helperText={formik.touched.room && formik.errors.room}
-              placeholder="A1.203"
+              placeholder='A1.203'
             />
           </Grid2>
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id="startTime"
-              name="startTime"
-              label="Thời gian bắt đầu (giờ)"
-              type="number"
+              id='startTime'
+              name='startTime'
+              label='Thời gian bắt đầu (giờ)'
+              type='number'
               fullWidth
-              variant="outlined"
+              variant='outlined'
               value={formik.values.startTime}
               onChange={formik.handleChange}
               error={
@@ -319,12 +324,12 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id="endTime"
-              name="endTime"
-              label="Thời gian kết thúc (giờ)"
-              type="number"
+              id='endTime'
+              name='endTime'
+              label='Thời gian kết thúc (giờ)'
+              type='number'
               fullWidth
-              variant="outlined"
+              variant='outlined'
               value={formik.values.endTime}
               onChange={formik.handleChange}
               error={formik.touched.endTime && Boolean(formik.errors.endTime)}
@@ -335,11 +340,11 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth required>
-              <InputLabel id="dayOfWeek-label">Ngày học</InputLabel>
+              <InputLabel id='dayOfWeek-label'>Ngày học</InputLabel>
               <Select
-                labelId="dayOfWeek-label"
-                id="dayOfWeek"
-                name="dayOfWeek"
+                labelId='dayOfWeek-label'
+                id='dayOfWeek'
+                name='dayOfWeek'
                 value={formik.values.dayOfWeek}
                 onChange={formik.handleChange}
               >
@@ -356,12 +361,12 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id="maxStudents"
-              name="maxStudents"
-              label="Số lượng sinh viên tối đa"
-              type="number"
+              id='maxStudents'
+              name='maxStudents'
+              label='Số lượng sinh viên tối đa'
+              type='number'
               fullWidth
-              variant="outlined"
+              variant='outlined'
               value={formik.values.maxStudents}
               onChange={formik.handleChange}
               error={
@@ -377,12 +382,12 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id="deadline"
-              name="deadline"
-              label="Hạn đăng ký"
-              type="date"
+              id='deadline'
+              name='deadline'
+              label='Hạn đăng ký'
+              type='date'
               fullWidth
-              variant="outlined"
+              variant='outlined'
               value={formik.values.deadline}
               onChange={formik.handleChange}
               error={formik.touched.deadline && Boolean(formik.errors.deadline)}
@@ -395,12 +400,12 @@ export function ClassForm({ classData = null, forCourseId = null }: ClassFormPro
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}
         >
-          <Button variant="outlined" onClick={() => router.push("/classes")}>
+          <Button variant='outlined' onClick={() => router.push("/classes")}>
             Hủy
           </Button>
           <Button
-            type="submit"
-            variant="contained"
+            type='submit'
+            variant='contained'
             disabled={formik.isSubmitting}
           >
             {classData ? "Cập nhật lớp học" : "Tạo lớp học"}
