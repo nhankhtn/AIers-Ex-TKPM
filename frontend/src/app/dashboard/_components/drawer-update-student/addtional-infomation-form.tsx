@@ -30,7 +30,6 @@ const AdditionalInformationForm = ({
   statuses: Status[];
   countries: Country[];
 }) => {
-
   return (
     <>
       {/* Academic Information */}
@@ -55,7 +54,7 @@ const AdditionalInformationForm = ({
             >
               {faculties.map((faculty) => (
                 <MenuItem key={faculty.id} value={faculty.id}>
-                  {faculty.name}
+                  {faculty.name.vi} ({faculty.name.en})
                 </MenuItem>
               ))}
             </Select>
@@ -83,7 +82,7 @@ const AdditionalInformationForm = ({
             >
               {programs.map((program) => (
                 <MenuItem key={program.id} value={program.id}>
-                  {program.name}
+                  {program.name.vi} ({program.name.en})
                 </MenuItem>
               ))}
             </Select>
@@ -131,7 +130,7 @@ const AdditionalInformationForm = ({
             >
               {statuses.map((status) => (
                 <MenuItem key={status.id} value={status.id}>
-                  {status.name}
+                  {status.name.vi} ({status.name.en})
                 </MenuItem>
               ))}
             </Select>
@@ -236,7 +235,8 @@ const AdditionalInformationForm = ({
             InputLabelProps={{ shrink: true }}
             value={formik.values.identityIssueDate}
             onChange={(event) =>
-              formik.setFieldValue("identityIssueDate", event.target.value)}
+              formik.setFieldValue("identityIssueDate", event.target.value)
+            }
             error={
               formik.touched.identityIssueDate &&
               Boolean(formik.errors.identityIssueDate)
@@ -262,7 +262,8 @@ const AdditionalInformationForm = ({
             InputLabelProps={{ shrink: true }}
             value={formik.values.identityExpiryDate}
             onChange={(event) =>
-              formik.setFieldValue("identityExpiryDate", event.target.value)}
+              formik.setFieldValue("identityExpiryDate", event.target.value)
+            }
             error={
               formik.touched.identityExpiryDate &&
               Boolean(formik.errors.identityExpiryDate)

@@ -51,7 +51,8 @@ export default function DialogManagement({
   handleEditItem,
   handleDeleteItem,
 }: DialogManagementProps) {
-  const [newItemName, setNewItemName] = useState<string|null>(null);
+  const [newItemNameVi, setNewItemNameVi] = useState<string | null>(null);
+  const [newItemNameEn, setNewItemNameEn] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
@@ -107,12 +108,12 @@ export default function DialogManagement({
     }
   };
   const resetAll = () => {
-    setNewItemName(null);
+    setNewItemNameVi(null);
+    setNewItemNameEn(null);
     setEditingItem(null);
     setConfirmDialogOpen(false);
     setItemToDelete(null);
     setItemToEdit(null);
-
   };
   useEffect(() => {
     if (!open) {
@@ -120,192 +121,153 @@ export default function DialogManagement({
     }
   }, [open]);
   const handleAddClick = () => {
-    if (newItemName==null || newItemName.trim() === "") return;
+    if (newItemNameVi == null || newItemNameVi.trim() === "") return;
 
     const newItem = {
       id: "",
-      name: newItemName,
+      name: {
+        vi: newItemNameVi,
+        en: newItemNameEn || "",
+      },
     };
     handleAddItem(newItem);
-    setNewItemName(null);
+    setNewItemNameVi(null);
+    setNewItemNameEn(null);
   };
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
+      <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
         <DialogTitle>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <RowStack justifyContent='space-between' alignItems='center'>
             {getTitle()}
-            <IconButton onClick={onClose} size='small'>
+            <IconButton onClick={onClose}>
               <CloseIcon />
             </IconButton>
-          </Box>
+          </RowStack>
         </DialogTitle>
-        <DialogContent dividers>
-          <List sx={{ width: "100%" }}>
-            {items.map((item) => (
-              <ListItem
-                key={item.id}
-                sx={{
-                  py: 1,
-                  borderRadius: 1,
-                }}
-              >
-                <Box
-                  width={"8px"}
-                  height={"8px"}
-                  borderRadius={"50%"}
-                  bgcolor={"text.secondary"}
-                  mr={1}
-                />
-                <RowStack gap={1} flex={1}>
-                  {editingItem?.id === item.id ? (
-                    <RowStack gap={1} flex={1}>
-                      <TextField
-                        margin='dense'
-                        fullWidth
-                        variant='outlined'
-                        size='small'
-                        value={editingItem.name}
-                        onChange={(e) =>
-                          setEditingItem({
-                            ...editingItem,
-                            name: e.target.value,
-                          })
-                        }
-                        autoFocus
-                      />
-                      <IconButton
-                        size='small'
-                        color='success'
-                        onClick={handleSaveEdit}
-                      >
-                        <CheckIcon />
-                      </IconButton>
-
-                      <IconButton
-                        size='small'
-                        color='error'
-                        onClick={() => {
-                          setEditingItem(null);
-                          setItemToEdit(null);
-                        }}
-                      >
-                        <Close />
-                      </IconButton>
-                    </RowStack>
-                  ) : (
-                    <Box sx={{ flexGrow: 1 }}>
-                      <ListItemText primary={item.name} />
-                    </Box>
-                  )}
-                  {editingItem?.id !== item.id && (
-                    <>
-                      <IconButton
-                        size='small'
-                        sx={{ color: "primary.main" }}
-                        onClick={() => handleEditClick(item)}
-                      >
-                        <EditIcon fontSize='small' />
-                      </IconButton>
-                      <IconButton
-                        size='small'
-                        sx={{ color: "error.main" }}
-                        onClick={() => handleDeleteClick(item.id)}
-                      >
-                        <DeleteIcon fontSize='small' />
-                      </IconButton>
-                    </>
-                  )}
-                </RowStack>
-              </ListItem>
-            ))}
-          </List>
-          {newItemName ===null && (
-            <RowStack gap={1} sx={{ mt: 3, justifyContent: "flex-end" }}>
-              <Button
-                variant='outlined'
-                startIcon={<AddIcon />}
-                onClick={() => setNewItemName("Nhóm mới")}
-              >
-                Thêm mới
-              </Button>
-              <Button variant='contained' color='secondary' onClick={onClose}>
-                Đóng
-              </Button>
-            </RowStack>
-          )}
-          {newItemName !==null && (
-            <Box
-              sx={{ mt: 2, p: 2, border: "1px solid #e0e0e0", borderRadius: 1 }}
-            >
+        <DialogContent>
+          <Box sx={{ mt: 2 }}>
+            <RowStack spacing={2}>
               <TextField
                 fullWidth
-                size='small'
-                margin='dense'
-                variant='outlined'
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
-                autoFocus
-                sx={{ mb: 2 }}
+                label='Tên tiếng Việt'
+                value={editingItem ? editingItem.name.vi : newItemNameVi || ""}
+                onChange={(e) =>
+                  editingItem
+                    ? setEditingItem({
+                        ...editingItem,
+                        name: { ...editingItem.name, vi: e.target.value },
+                      })
+                    : setNewItemNameVi(e.target.value)
+                }
               />
-              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-                <Button variant='outlined' onClick={() => setNewItemName(null)}>
-                  Hủy
-                </Button>
+              <TextField
+                fullWidth
+                label='Tên tiếng Anh'
+                value={editingItem ? editingItem.name.en : newItemNameEn || ""}
+                onChange={(e) =>
+                  editingItem
+                    ? setEditingItem({
+                        ...editingItem,
+                        name: { ...editingItem.name, en: e.target.value },
+                      })
+                    : setNewItemNameEn(e.target.value)
+                }
+              />
+              {!editingItem && (
                 <Button
                   variant='contained'
-                  onClick={handleAddClick}
-                  disabled={!newItemName.trim()}
+                  onClick={() => {
+                    if (newItemNameVi && newItemNameEn) {
+                      const newItem = {
+                        id: "",
+                        name: {
+                          vi: newItemNameVi,
+                          en: newItemNameEn,
+                        },
+                        ...(type === "status" ? { order: items.length } : {}),
+                      };
+                      handleAddItem(newItem);
+                      setNewItemNameVi(null);
+                      setNewItemNameEn(null);
+                    }
+                  }}
+                  disabled={!newItemNameVi || !newItemNameEn}
                 >
-                  Thêm
+                  <AddIcon />
                 </Button>
-              </Box>
-            </Box>
-          )}
+              )}
+              {editingItem && (
+                <RowStack spacing={1}>
+                  <IconButton
+                    color='primary'
+                    onClick={handleSaveEdit}
+                    disabled={!editingItem.name.vi || !editingItem.name.en}
+                  >
+                    <CheckIcon />
+                  </IconButton>
+                  <IconButton
+                    color='error'
+                    onClick={() => {
+                      setEditingItem(null);
+                      setItemToEdit(null);
+                    }}
+                  >
+                    <Close />
+                  </IconButton>
+                </RowStack>
+              )}
+            </RowStack>
+            <List>
+              {items.map((item) => (
+                <ListItem
+                  key={item.id}
+                  secondaryAction={
+                    <RowStack spacing={1}>
+                      <IconButton
+                        edge='end'
+                        onClick={() => handleEditClick(item)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        edge='end'
+                        onClick={() => handleDeleteClick(item.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </RowStack>
+                  }
+                >
+                  <ListItemText
+                    primary={item.name.vi}
+                    secondary={item.name.en}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         </DialogContent>
       </Dialog>
 
-      {/* Confirmation Dialog */}
-      <Dialog
-        open={confirmDialogOpen}
-        onClose={handleCancelAction}
-        maxWidth='xs'
-        fullWidth
-      >
-        <DialogTitle>
-          {itemToDelete ? "Xác nhận xóa" : "Xác nhận chỉnh sửa"}
-        </DialogTitle>
+      <Dialog open={confirmDialogOpen} onClose={handleCancelAction}>
+        <DialogTitle>Xác nhận</DialogTitle>
         <DialogContent>
-          {itemToDelete ? (
-            <Alert severity='warning' sx={{ mb: 2 }}>
-              Bạn có chắc chắn muốn xóa mục này không? Hành động này không thể
-              hoàn tác.
-            </Alert>
-          ) : (
-            <Typography>
-              Bạn có chắc chắn muốn chỉnh sửa mục `&quot;`{itemToEdit?.name}
-              `&quot;` không?
-            </Typography>
+          {itemToDelete && (
+            <Typography>Bạn có chắc chắn muốn xóa mục này không?</Typography>
+          )}
+          {itemToEdit && (
+            <Typography>Bạn có chắc chắn muốn lưu thay đổi không?</Typography>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelAction} color='inherit'>
-            Hủy
-          </Button>
+          <Button onClick={handleCancelAction}>Hủy</Button>
           <Button
             onClick={itemToDelete ? handleConfirmDelete : handleConfirmEdit}
-            color={itemToDelete ? "error" : "primary"}
-            variant='contained'
             autoFocus
           >
-            {itemToDelete ? "Xóa" : "Chỉnh sửa"}
+            Xác nhận
           </Button>
         </DialogActions>
       </Dialog>

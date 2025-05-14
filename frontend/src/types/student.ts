@@ -52,16 +52,26 @@ export const mappingGender: Record<Gender, string> = {
 
 export interface Faculty {
   id: string;
-  name: string;
+  name: {
+    vi: string;
+    en: string;
+  };
 }
+
 export interface Program {
   id: string;
-  name: string;
+  name: {
+    vi: string;
+    en: string;
+  };
 }
 
 export interface Status {
   id: string;
-  name: string;
+  name: {
+    vi: string;
+    en: string;
+  };
   order: number;
 }
 

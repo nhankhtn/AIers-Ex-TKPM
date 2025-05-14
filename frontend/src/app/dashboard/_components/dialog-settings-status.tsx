@@ -166,14 +166,28 @@ export default function DialogSettingsStatus({
                         fullWidth
                         variant='outlined'
                         size='small'
-                        value={editingItem.name}
+                        label='Tên tiếng Việt'
+                        value={editingItem.name.vi}
                         onChange={(e) =>
                           setEditingItem({
                             ...editingItem,
-                            name: e.target.value,
+                            name: { ...editingItem.name, vi: e.target.value },
                           })
                         }
                         autoFocus
+                      />
+                      <TextField
+                        fullWidth
+                        variant='outlined'
+                        size='small'
+                        label='Tên tiếng Anh'
+                        value={editingItem.name.en}
+                        onChange={(e) =>
+                          setEditingItem({
+                            ...editingItem,
+                            name: { ...editingItem.name, en: e.target.value },
+                          })
+                        }
                       />
                       <TextField
                         sx={{ width: 220 }}
@@ -217,7 +231,10 @@ export default function DialogSettingsStatus({
                     </RowStack>
                   ) : (
                     <RowStack flex={1} gap={1}>
-                      <ListItemText primary={item.name} />
+                      <ListItemText
+                        primary={item.name.vi}
+                        secondary={item.name.en}
+                      />
                       <RowStack width={100}>
                         <Typography variant='body2'>{item.order}</Typography>
                       </RowStack>
@@ -254,14 +271,28 @@ export default function DialogSettingsStatus({
                     fullWidth
                     variant='outlined'
                     size='small'
-                    value={newItem.name}
+                    label='Tên tiếng Việt'
+                    value={newItem.name.vi}
                     onChange={(e) =>
                       setNewItem({
                         ...newItem,
-                        name: e.target.value || "",
+                        name: { ...newItem.name, vi: e.target.value },
                       })
                     }
                     autoFocus
+                  />
+                  <TextField
+                    fullWidth
+                    variant='outlined'
+                    size='small'
+                    label='Tên tiếng Anh'
+                    value={newItem.name.en}
+                    onChange={(e) =>
+                      setNewItem({
+                        ...newItem,
+                        name: { ...newItem.name, en: e.target.value },
+                      })
+                    }
                   />
                   <TextField
                     sx={{ width: 220 }}
@@ -286,7 +317,9 @@ export default function DialogSettingsStatus({
                     size='small'
                     color='success'
                     onClick={handleAddClick}
-                    disabled={!newItem.name.trim()}
+                    disabled={
+                      !newItem.name.vi.trim() || !newItem.name.en.trim()
+                    }
                   >
                     <CheckIcon />
                   </IconButton>
@@ -309,7 +342,10 @@ export default function DialogSettingsStatus({
               onClick={() =>
                 setNewItem({
                   id: "",
-                  name: "",
+                  name: {
+                    vi: "",
+                    en: "",
+                  },
                   order: 1,
                 })
               }
@@ -341,8 +377,8 @@ export default function DialogSettingsStatus({
             </Alert>
           ) : (
             <Typography>
-              Bạn có chắc chắn muốn chỉnh sửa mục `&quot;`{itemToEdit?.name}
-              `&quot;` không?
+              Bạn có chắc chắn muốn chỉnh sửa mục &quot;{itemToEdit?.name.vi}
+              &quot; không?
             </Typography>
           )}
         </DialogContent>
