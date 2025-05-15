@@ -70,7 +70,6 @@ namespace StudentManagement.BLL.Mapping.Profiles
 
             CreateMap<Course, GetCourseDTO>()
                 .ForMember(dest => dest.FacultyName, act => act.MapFrom(src => src.Faculty.Name))
-                .ForMember(dest => dest.RequiredCourseName, act => act.MapFrom(src => src.RequiredCourse!.CourseName))
                 .ForMember(dest => dest.CourseName, opt => opt.MapFrom(src => new LocalizedName
                 {
                     En = src.CourseNameEng,
@@ -80,6 +79,16 @@ namespace StudentManagement.BLL.Mapping.Profiles
                 {
                     En = src.DescriptionEng,
                     Vi = src.Description
+                }))
+                .ForMember(dest => dest.RequiredCourseName, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    En = src.RequiredCourse != null ? src.RequiredCourse.CourseNameEng : "",
+                    Vi = src.RequiredCourse != null ? src.RequiredCourse.CourseName : ""
+                }))
+                .ForMember(dest => dest.FacultyName, opt => opt.MapFrom(src => new LocalizedName
+                {
+                    En = src.Faculty.NameEng,
+                    Vi = src.Faculty.Name
                 }));
         }
     }
