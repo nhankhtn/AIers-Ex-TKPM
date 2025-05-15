@@ -1,5 +1,8 @@
+"use client";
+
 import { useMemo } from "react";
 import SelectFilter from "../dashboard/_components/select-filter";
+import { useTranslations } from "next-intl";
 
 interface ClassFilterProps {
   filter: Record<string, string>;
@@ -7,33 +10,35 @@ interface ClassFilterProps {
 }
 
 const ClassFilter = ({ filter, onChange }: ClassFilterProps) => {
+  const t = useTranslations();
+
   const classFilterConfig = useMemo(
     () => [
       {
-        label: "Học kì",
+        label: t("classes.filters.semester"),
         key: "semester",
         options: [
           {
-            value: "Tất cả",
-            label: "Tất cả",
+            value: t("common.filters.all"),
+            label: t("common.filters.all"),
           },
           {
             value: "1",
-            label: "Học kì 1",
+            label: t("classes.filters.semester1"),
           },
           {
             value: "2",
-            label: "Học kì 2",
+            label: t("classes.filters.semester2"),
           },
           {
             value: "3",
-            label: "Học kì 3",
+            label: t("classes.filters.semester3"),
           },
         ],
         xs: 6,
       },
       {
-        label: "Năm học",
+        label: t("classes.filters.academicYear"),
         key: "academicYear",
         options: [
           {
@@ -56,7 +61,7 @@ const ClassFilter = ({ filter, onChange }: ClassFilterProps) => {
         xs: 6,
       },
     ],
-    []
+    [t]
   );
   return (
     <SelectFilter

@@ -3,10 +3,10 @@ import type { Class } from "@/types/class";
 import type { CustomTableConfig } from "@/components/custom-table/custom-table.types";
 import { format } from "date-fns";
 
-export const getTableConfig = (): CustomTableConfig<string, Class>[] => [
+export const getTableConfig = (t: any): CustomTableConfig<string, Class>[] => [
   {
     key: "classId",
-    headerLabel: "Mã lớp",
+    headerLabel: t("classes.list.code"),
     textAlign: "left" as const,
     renderCell: (classData) => {
       return (
@@ -20,7 +20,7 @@ export const getTableConfig = (): CustomTableConfig<string, Class>[] => [
   },
   {
     key: "course",
-    headerLabel: "Khóa học",
+    headerLabel: t("classes.list.course"),
     textAlign: "left" as const,
     renderCell: (classData) => (
       <Box>
@@ -32,45 +32,58 @@ export const getTableConfig = (): CustomTableConfig<string, Class>[] => [
   },
   {
     key: "teacher",
-    headerLabel: "Giảng viên",
+    headerLabel: t("classes.list.teacher"),
     textAlign: "left" as const,
     renderCell: (classData) => classData.teacherName,
   },
   {
     key: "year",
-    headerLabel: "Năm học",
+    headerLabel: t("classes.list.year"),
     textAlign: "left" as const,
     renderCell: (classData) => classData.academicYear,
   },
   {
     key: "semester",
-    headerLabel: "Học kỳ",
+    headerLabel: t("classes.list.semester"),
     textAlign: "left" as const,
     renderCell: (classData) =>
       classData.semester === 1
-        ? "Học kỳ 1"
+        ? t("classes.filters.semester1")
         : classData.semester === 2
-        ? "Học kỳ 2"
-        : "Học kỳ hè",
+        ? t("classes.filters.semester2")
+        : t("classes.filters.semester3"),
   },
   {
     key: "room",
-    headerLabel: "Phòng học",
+    headerLabel: t("classes.list.room"),
     textAlign: "left" as const,
     renderCell: (classData) => classData.room,
   },
   {
     key: "dayOfWeek",
-    headerLabel: "Ngày học",
+    headerLabel: t("classes.list.dayOfWeek"),
     textAlign: "left" as const,
-    renderCell: (classData) => 
+    renderCell: (classData) => (
       <Typography>
-        {classData.dayOfWeek !== 8 ? "Thứ " + classData.dayOfWeek : "Chủ nhật"}
+        {classData.dayOfWeek === 2
+          ? t("classes.form.monday")
+          : classData.dayOfWeek === 3
+          ? t("classes.form.tuesday")
+          : classData.dayOfWeek === 4
+          ? t("classes.form.wednesday")
+          : classData.dayOfWeek === 5
+          ? t("classes.form.thursday")
+          : classData.dayOfWeek === 6
+          ? t("classes.form.friday")
+          : classData.dayOfWeek === 7
+          ? t("classes.form.saturday")
+          : t("classes.form.sunday")}
       </Typography>
+    ),
   },
   {
     key: "time",
-    headerLabel: "Thời gian",
+    headerLabel: t("classes.list.time"),
     textAlign: "left" as const,
     renderCell: (classData) => (
       <Typography>
@@ -80,13 +93,13 @@ export const getTableConfig = (): CustomTableConfig<string, Class>[] => [
   },
   {
     key: "maxStudents",
-    headerLabel: "Sĩ số tối đa",
+    headerLabel: t("classes.list.maxStudents"),
     textAlign: "center" as const,
     renderCell: (classData) => <Typography>{classData.maxStudents}</Typography>,
   },
   {
     key: "deadline",
-    headerLabel: "Hạn đăng ký",
+    headerLabel: t("classes.list.deadline"),
     textAlign: "left" as const,
     renderCell: (classData) => {
       const deadline = new Date(classData.deadline);

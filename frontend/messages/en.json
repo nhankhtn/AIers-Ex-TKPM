@@ -32,7 +32,11 @@
       "rowsPerPage": "Rows per page",
       "of": "of",
       "page": "Page"
-    }
+    },
+    "filters": {
+      "all": "All"
+    },
+    "loading":"Loading..."
   },
   "sidebar": {
     "title": "Training Management",
@@ -170,7 +174,8 @@
       "faculty": "Faculty",
       "program": "Program",
       "course": "Course",
-      "status": "Status"
+      "status": "Status",
+      "semester": "Semester"
     },
     "actions": {
       "addFaculty": "Add Faculty",
@@ -218,17 +223,69 @@
       "credits": "Credits",
       "faculty": "Faculty",
       "description": "Description",
-      "prerequisites": "Prerequisites"
+      "prerequisites": "Prerequisites",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "noResults": "No courses found"
     },
     "form": {
       "addTitle": "Add New Course",
       "editTitle": "Edit Course",
-      "code": "Course Code",
-      "name": "Course Name",
+      "courseId": "Course Code",
+      "courseNameVi": "Course Name (Vietnamese)",
+      "courseNameEn": "Course Name (English)",
       "credits": "Credits",
       "faculty": "Faculty",
-      "description": "Description",
-      "prerequisites": "Prerequisites"
+      "descriptionVi": "Description (Vietnamese)",
+      "descriptionEn": "Description (English)",
+      "requiredCourse": "Prerequisite Course",
+      "description": "Fill in the course details below. Fields marked with * are required.",
+      "placeholders": {
+        "courseId": "Ex: CS101",
+        "courseNameVi": "Ex: Lập trình hướng đối tượng",
+        "courseNameEn": "Ex: Object-Oriented Programming",
+        "descriptionVi": "Enter detailed course description in Vietnamese...",
+        "descriptionEn": "Enter detailed course description in English...",
+        "requiredCourse": "Ex: CS101"
+      },
+      "validation": {
+        "courseIdRequired": "Please enter the course code",
+        "courseIdFormat": "Course code can only contain letters and numbers",
+        "courseNameViRequired": "Please enter the course name in Vietnamese",
+        "courseNameEnRequired": "Please enter the course name in English",
+        "courseNameMinLength": "Course name must be at least 3 characters",
+        "creditsRequired": "Please enter the number of credits",
+        "creditsMin": "Credits must be greater than or equal to 2",
+        "creditsInteger": "Credits must be an integer",
+        "facultyRequired": "Please select a faculty",
+        "descriptionViRequired": "Please enter the course description in Vietnamese",
+        "descriptionEnRequired": "Please enter the course description in English",
+        "requiredCourseNotSelf": "Cannot select this course as its own prerequisite"
+      }
+    },
+    "search": {
+      "placeholder": "Search for courses..."
+    },
+    "filters": {
+      "faculty": "Faculty",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "openClass": "Open Class"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Delete Course",
+        "confirmMessage": "Are you sure you want to delete the course"
+      }
+    },
+    "messages":{
+      "deleteCourseSuccess": "Course deleted successfully",
+      "addCourseSuccess": "Course added successfully",
+      "updateCourseSuccess": "Course updated successfully"
     }
   },
   "classes": {
@@ -241,18 +298,104 @@
       "schedule": "Schedule",
       "room": "Room",
       "capacity": "Capacity",
-      "enrolled": "Enrolled"
+      "enrolled": "Enrolled",
+      "year": "Academic Year",
+      "semester": "Semester",
+      "dayOfWeek": "Day of Week",
+      "time": "Time",
+      "maxStudents": "Maximum Capacity",
+      "deadline": "Registration Deadline",
+      "noResults": "No classes found",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "form": {
-      "addTitle": "Add New Class",
+      "addTitle": "Open New Class",
       "editTitle": "Edit Class",
-      "code": "Class Code",
+      "description": "Enter class details below. Fields marked with * are required.",
+      "classId": "Class Code",
       "course": "Course",
       "teacher": "Teacher",
-      "schedule": "Schedule",
-      "room": "Room",
-      "capacity": "Maximum Capacity"
-    }
+      "academicYear": "Academic Year",
+      "semester": "Semester",
+      "semester1": "Semester 1",
+      "semester2": "Semester 2",
+      "semester3": "Summer Semester",
+      "room": "Classroom",
+      "startTime": "Start Time (hour)",
+      "endTime": "End Time (hour)",
+      "dayOfWeek": "Class Day",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "maxStudents": "Maximum Number of Students",
+      "deadline": "Registration Deadline",
+      "cancel": "Cancel",
+      "update": "Update Class",
+      "create": "Create Class",
+      "searchCourse": "Search for courses...",
+      "placeholders": {
+        "classId": "Ex: CS101-01",
+        "teacher": "Ex: Dr. John Smith",
+        "room": "Ex: A1.203"
+      }
+    },
+    "filters": {
+      "semester": "Semester",
+      "semester1": "Semester 1",
+      "semester2": "Semester 2",
+      "semester3": "Summer Semester",
+      "academicYear": "Academic Year"
+    },
+    "search": {
+      "placeholder": "Search for classes..."
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Delete Class",
+        "confirmMessage": "Are you sure you want to delete the class",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
+    "messages": {
+      "deleteSuccess": "Class deleted successfully",
+      "addSuccess": "Class added successfully",
+      "updateSuccess": "Class updated successfully"
+    },
+    "validation": {
+      "classIdRequired": "Class code is required",
+      "classIdFormat": "Class code can only contain letters, numbers, and hyphens",
+      "courseRequired": "Please select a course",
+      "teacherRequired": "Teacher name is required",
+      "teacherMinLength": "Teacher name must be at least 3 characters",
+      "academicYearRequired": "Academic year is required",
+      "academicYearMin": "Academic year must be greater than 2000",
+      "academicYearMax": "Academic year must be less than 2100",
+      "academicYearInteger": "Academic year must be an integer",
+      "semesterRequired": "Semester is required",
+      "semesterInvalid": "Invalid semester",
+      "roomRequired": "Classroom is required",
+      "startTimeRequired": "Start time is required",
+      "startTimeMin": "Time must be greater than or equal to 0",
+      "startTimeMax": "Time must be less than 24",
+      "endTimeRequired": "End time is required",
+      "endTimeMin": "Time must be greater than or equal to 0",
+      "endTimeMax": "Time must be less than 24",
+      "endTimeGreater": "End time must be greater than start time",
+      "maxStudentsRequired": "Maximum number of students is required",
+      "maxStudentsMin": "Maximum number of students must be greater than 0",
+      "maxStudentsInteger": "Number of students must be an integer",
+      "deadlineRequired": "Registration deadline is required",
+      "deadlineFuture": "Registration deadline must be in the future",
+      "dayOfWeekRequired": "Class day is required",
+      "dayOfWeekInvalid": "Invalid class day"
+    },
+    "loading": "Loading..."
   },
   "registrations": {
     "title": "Course Registration",
