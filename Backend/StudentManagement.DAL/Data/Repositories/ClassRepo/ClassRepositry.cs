@@ -84,12 +84,12 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
             return course.Credits;
         }
 
-        public async Task<string> GetCourseNameAsync(string classId)
+        public async Task<(string vi, string en)> GetCourseNameAsync(string classId)
         {
             var classEntity = await _context.Classes.FindAsync(classId);
             var course = await _context.Courses.FindAsync(classEntity?.CourseId);
-            if (course == null) return "";
-            return course.CourseName;
+            if (course == null) return (string.Empty, string.Empty);
+            return (course.CourseName, course.CourseNameEng);
         }
 
         public async Task<Course?> GetCourseByClassAsync(string classId)
