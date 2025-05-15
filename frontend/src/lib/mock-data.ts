@@ -73,44 +73,44 @@ export const mockCourses: Course[] = [
     courseId: "PHYS101",
     courseName: {
       vi: "Vật lý đại cương",
-      en: "General Physics"
+      en: "General Physics",
     },
     facultyId: "PHYS",
     facultyName: {
       vi: "Khoa Vật lý",
-      en: "Faculty of Physics"
+      en: "Faculty of Physics",
     },
     credits: 4,
     description: {
       vi: "Vật lý đại cương",
-      en: "General Physics"
+      en: "General Physics",
     },
     requiredCourseId: undefined,
     requiredCourseName: undefined,
     deletedAt: undefined,
-    createdAt: undefined
+    createdAt: undefined,
   },
   {
     id: "8",
     courseId: "ECON101",
     courseName: {
       vi: "Kinh tế học đại cương",
-      en: "Introduction to Economics"
+      en: "Introduction to Economics",
     },
     facultyId: "ECON",
     facultyName: {
       vi: "Khoa Kinh tế",
-      en: "Faculty of Economics"
+      en: "Faculty of Economics",
     },
     credits: 3,
     description: {
       vi: "Kinh tế học đại cương",
-      en: "Introduction to Economics"
+      en: "Introduction to Economics",
     },
     requiredCourseId: undefined,
     requiredCourseName: undefined,
     deletedAt: undefined,
-    createdAt: undefined
+    createdAt: undefined,
   },
 ];
 

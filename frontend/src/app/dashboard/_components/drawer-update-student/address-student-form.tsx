@@ -140,7 +140,7 @@ const AddressStudentForm = ({
 
   return (
     <>
-      <Typography variant="h6">{t("permanentAddress")}</Typography>
+      <Typography variant='h6'>{t("permanentAddress")}</Typography>
       <PermanentAddress
         formik={formik}
         countries={countries}
@@ -162,15 +162,12 @@ const AddressStudentForm = ({
                   );
                   formik.validateForm();
                 }}
-                name="useTemporaryAddress"
+                name='useTemporaryAddress'
               />
             }
             label={t("temporaryAddress")}
           />
-          <Tooltip
-            title="Địa chỉ tạm trú là địa chỉ bạn đang ở hiện tại, nếu khác với địa chỉ thường trú"
-            placement="top"
-          >
+          <Tooltip title={t("temporaryAddressTooltip")} placement='top'>
             <InfoOutlined
               sx={{
                 color: "action.active",
@@ -204,15 +201,12 @@ const AddressStudentForm = ({
                   );
                   formik.validateForm();
                 }}
-                name="useMailingAddress"
+                name='useMailingAddress'
               />
             }
             label={t("mailingAddress")}
           />
-          <Tooltip
-            title="Địa chỉ nhận thư là địa chỉ bạn nhận thư từ trường, nếu khác với địa chỉ thường trú"
-            placement="top"
-          >
+          <Tooltip title={t("mailingAddressTooltip")} placement='top'>
             <InfoOutlined
               sx={{
                 color: "action.active",

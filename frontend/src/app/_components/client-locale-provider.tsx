@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { NextIntlClientProvider } from "next-intl";
-
+import { getLocalStorage, LOCAL_STORAGE_KEY } from "@/utils/localstorage";
 type Locale = "vi" | "en";
 type Messages = Record<Locale, any>;
 
@@ -20,7 +20,9 @@ export function ClientLocaleProvider({
   const [locale, setLocale] = useState<Locale>(serverLocale as Locale);
 
   useEffect(() => {
-    const savedLocale = localStorage.getItem("language") as Locale | null;
+    const savedLocale = getLocalStorage(
+      LOCAL_STORAGE_KEY.LANGUAGE
+    ) as Locale | null;
     if (savedLocale === "en" || savedLocale === "vi") {
       setLocale(savedLocale);
     }

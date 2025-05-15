@@ -23,6 +23,7 @@ import RowStack from "@/components/row-stack";
 import { useReactToPrint } from "react-to-print";
 import useTranscriptsSearch from "./use-transcripts-search";
 import { TranscriptPreview } from "./transcript-preview";
+import { useLocale, useTranslations } from "next-intl";
 
 export function TranscriptForm() {
   const { faculties } = useMainContext();
@@ -30,6 +31,9 @@ export function TranscriptForm() {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const componentRef = useRef<HTMLDivElement>(null);
+  const locale = useLocale();
+  const t = useTranslations("transcripts");
+  const commonT = useTranslations("common");
 
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
@@ -40,13 +44,15 @@ export function TranscriptForm() {
     <Stack sx={{ gap: 3 }}>
       <Card>
         <CardHeader
-          title='In bảng điểm chính thức'
-          subheader='Chọn sinh viên để in bảng điểm chính thức.'
+          title={t("printTranscript")}
+          subheader={t("selectStudent")}
         />
         <CardContent sx={{ pt: 0 }}>
           <Stack sx={{ gap: 2 }}>
             <FormControl fullWidth required>
-              <InputLabel id='student-select-label'>Sinh viên</InputLabel>
+              <InputLabel id='student-select-label'>
+                {t("form.studentLabel")}
+              </InputLabel>
               <Autocomplete
                 id='student-autocomplete'
                 options={students}
@@ -56,8 +62,13 @@ export function TranscriptForm() {
                   setSelectedStudent(newValue);
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} label='Sinh viên' variant='outlined' />
+                  <TextField
+                    {...params}
+                    label={t("form.studentLabel")}
+                    variant='outlined'
+                  />
                 )}
+                noOptionsText={commonT("table.noData")}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
               />
             </FormControl>
@@ -72,7 +83,7 @@ export function TranscriptForm() {
                   fontWeight='medium'
                   gutterBottom
                 >
-                  Thông tin sinh viên
+                  {t("studentInfo.title")}
                 </Typography>
                 <Box
                   sx={{
@@ -87,7 +98,7 @@ export function TranscriptForm() {
                       color='text.secondary'
                       component='span'
                     >
-                      Mã sinh viên:
+                      {t("studentInfo.studentId")}:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
                       {selectedStudent.id}
@@ -99,7 +110,7 @@ export function TranscriptForm() {
                       color='text.secondary'
                       component='span'
                     >
-                      Họ tên:
+                      {t("studentInfo.fullName")}:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
                       {selectedStudent.name}
@@ -111,12 +122,12 @@ export function TranscriptForm() {
                       color='text.secondary'
                       component='span'
                     >
-                      Khoa:
+                      {t("studentInfo.faculty")}:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
                       {
                         faculties.find((f) => selectedStudent.faculty === f.id)
-                          ?.name
+                          ?.name[locale as "vi" | "en"]
                       }
                     </Typography>
                   </Box>
@@ -126,7 +137,7 @@ export function TranscriptForm() {
                       color='text.secondary'
                       component='span'
                     >
-                      Khóa:
+                      {t("studentInfo.course")}:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
                       {selectedStudent.course}
@@ -144,7 +155,7 @@ export function TranscriptForm() {
               onClick={() => setShowPreview(true)}
               disabled={!selectedStudent}
             >
-              Tạo bảng điểm
+              {t("actions.generateTranscript")}
             </Button>
           </RowStack>
         </CardActions>
@@ -163,7 +174,7 @@ export function TranscriptForm() {
               onClick={() => handlePrint()}
               className='print:hidden'
             >
-              In bảng điểm
+              {t("actions.printTranscript")}
             </Button>
           </RowStack>
           <Stack ref={componentRef}>
