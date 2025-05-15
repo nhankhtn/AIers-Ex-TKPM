@@ -7,14 +7,16 @@ import { Registration } from "@/types/registration";
 import { RegistrationForm } from "./registration-form";
 import RegistrationList from "./registration-list";
 import UnregisterList from "./unregister-list";
+import { useTranslations } from "next-intl";
 
 export default function RegistrationsContent() {
   const [value, setValue] = useState<number>(0);
+  const t = useTranslations("registrations");
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <Typography variant='h4' component='h1' fontWeight='bold'>
-        Đăng ký khóa học
+      <Typography variant="h4" component="h1" fontWeight="bold">
+        {t("title")}
       </Typography>
 
       <Box sx={{ width: "100%" }}>
@@ -24,15 +26,23 @@ export default function RegistrationsContent() {
             onChange={(_event: SyntheticEvent, newValue: number): void => {
               setValue(newValue);
             }}
-            aria-label='registration tabs'
+            aria-label="registration tabs"
           >
-            <Tab label='Đăng ký mới' id='tab-0' aria-controls='tabpanel-0' />
             <Tab
-              label='Lịch sử đăng ký'
-              id='tab-1'
-              aria-controls='tabpanel-1'
+              label={t("tabs.newRegistration")}
+              id="tab-0"
+              aria-controls="tabpanel-0"
             />
-            <Tab label='Lịch sử hủy đăng ký' id='tab-2' aria-controls='tabpanel-2' />
+            <Tab
+              label={t("tabs.registrationHistory")}
+              id="tab-1"
+              aria-controls="tabpanel-1"
+            />
+            <Tab
+              label={t("tabs.unregistrationHistory")}
+              id="tab-2"
+              aria-controls="tabpanel-2"
+            />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
@@ -61,7 +71,7 @@ function TabPanel(props: TabPanelProps) {
 
   return (
     <div
-      role='tabpanel'
+      role="tabpanel"
       hidden={value !== index}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}

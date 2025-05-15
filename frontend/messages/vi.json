@@ -175,7 +175,8 @@
       "program": "Chương trình",
       "course": "Khóa",
       "status": "Trạng thái",
-      "semester": "Học kỳ"
+      "semester": "Học kỳ",
+      "academicYear":"Năm học"
     },
     "actions": {
       "addFaculty": "Thêm khoa",
@@ -399,20 +400,54 @@
   },
   "registrations": {
     "title": "Đăng ký khóa học",
-    "list": {
-      "title": "Danh sách đăng ký",
-      "studentId": "Mã sinh viên",
-      "studentName": "Tên sinh viên",
-      "course": "Khóa học",
-      "class": "Lớp học",
-      "status": "Trạng thái",
-      "registrationDate": "Ngày đăng ký"
+    "tabs": {
+      "newRegistration": "Đăng ký mới",
+      "registrationHistory": "Lịch sử đăng ký",
+      "unregistrationHistory": "Lịch sử hủy đăng ký"
     },
     "form": {
-      "title": "Đăng ký khóa học",
+      "title": "Đăng ký khóa học cho sinh viên",
+      "subtitle": "Chọn sinh viên và các lớp học cần đăng ký.",
+      "registerButton": "Đăng ký",
       "student": "Sinh viên",
-      "course": "Khóa học",
-      "class": "Lớp học"
+      "studentInfo": "Thông tin sinh viên",
+      "studentId": "Mã sinh viên",
+      "name": "Họ tên",
+      "faculty": "Khoa",
+      "course": "Khóa",
+      "selectClasses": "Chọn lớp học cần đăng ký"
+    },
+    "list": {
+      "title": "Các lớp học đã đăng ký",
+      "studentInfo": "Thông tin sinh viên",
+      "unregisterButton": "Huỷ đăng ký"
+    },
+    "unregister": {
+      "title": "Các lớp học đã hủy đăng ký",
+      "studentInfo": "Thông tin sinh viên"
+    },
+    "table": {
+      "classCode": "Mã lớp",
+      "courseName": "Tên khóa học",
+      "teacher": "Giảng viên",
+      "schedule": "Lịch học",
+      "capacity": "Sĩ số",
+      "room": "Phòng học",
+      "semester": "Học kỳ",
+      "academicYear": "Năm học",
+      "requestTime": "Thời gian yêu cầu"
+    },
+    "studentInfo": {
+      "studentId": "Mã sinh viên",
+      "name": "Họ tên",
+      "faculty": "Khoa",
+      "course": "Khóa",
+      "classCode": "Mã lớp",
+      "courseName": "Tên khóa học"
+    },
+    "messages": {
+      "registerSuccess": "Đăng ký thành công",
+      "unregisterSuccess": "Huỷ đăng ký thành công"
     }
   },
   "grades": {

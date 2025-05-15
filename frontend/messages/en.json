@@ -175,7 +175,8 @@
       "program": "Program",
       "course": "Course",
       "status": "Status",
-      "semester": "Semester"
+      "semester": "Semester",
+      "academicYear":"Academic Year"
     },
     "actions": {
       "addFaculty": "Add Faculty",
@@ -399,20 +400,54 @@
   },
   "registrations": {
     "title": "Course Registration",
-    "list": {
-      "title": "Registration List",
-      "studentId": "Student ID",
-      "studentName": "Student Name",
-      "course": "Course",
-      "class": "Class",
-      "status": "Status",
-      "registrationDate": "Registration Date"
+    "tabs": {
+      "newRegistration": "New Registration",
+      "registrationHistory": "Registration History",
+      "unregistrationHistory": "Unregistration History"
     },
     "form": {
-      "title": "Register for Course",
+      "title": "Register Course for Student",
+      "subtitle": "Select student and classes to register.",
+      "registerButton": "Register",
       "student": "Student",
+      "studentInfo": "Student Information",
+      "studentId": "Student ID",
+      "name": "Name",
+      "faculty": "Faculty",
       "course": "Course",
-      "class": "Class"
+      "selectClasses": "Select classes to register"
+    },
+    "list": {
+      "title": "Registered Classes",
+      "studentInfo": "Student Information",
+      "unregisterButton": "Unregister"
+    },
+    "unregister": {
+      "title": "Unregistered Classes",
+      "studentInfo": "Student Information"
+    },
+    "table": {
+      "classCode": "Class Code",
+      "courseName": "Course Name",
+      "teacher": "Teacher",
+      "schedule": "Schedule",
+      "capacity": "Capacity",
+      "room": "Room",
+      "semester": "Semester",
+      "academicYear": "Academic Year",
+      "requestTime": "Request Time"
+    },
+    "studentInfo": {
+      "studentId": "Student ID",
+      "name": "Name",
+      "faculty": "Faculty",
+      "course": "Course",
+      "classCode": "Class Code",
+      "courseName": "Course Name"
+    },
+    "messages": {
+      "registerSuccess": "Registration successful",
+      "unregisterSuccess": "Unregistration successful"
     }
   },
   "grades": {
