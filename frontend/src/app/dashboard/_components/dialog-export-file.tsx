@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DownloadIcon from "@mui/icons-material/Download";
+import { useTranslations } from "next-intl";
 
 interface DialogExportFileProps {
   open: boolean;
@@ -32,6 +33,8 @@ const DialogExportFile = ({
   onExport,
   totalRows = 100,
 }: DialogExportFileProps) => {
+  const t = useTranslations("dashboard.dialogs.export");
+  const commonT = useTranslations("common");
   const [fileFormat, setFileFormat] = useState("excel");
   const [rowCount, setRowCount] = useState(totalRows);
 
@@ -48,15 +51,15 @@ const DialogExportFile = ({
   );
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='xs' fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>
         <Stack
-          direction='row'
-          alignItems='center'
-          justifyContent='space-between'
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
         >
-          <Typography variant='h6'>Xuất dữ liệu</Typography>
-          <IconButton aria-label='close' onClick={onClose} size='small'>
+          <Typography variant="h6">{t("title")}</Typography>
+          <IconButton aria-label="close" onClick={onClose} size="small">
             <CloseIcon />
           </IconButton>
         </Stack>
@@ -64,57 +67,57 @@ const DialogExportFile = ({
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
           <FormControl fullWidth>
-            <InputLabel id='file-format-label'>Định dạng file</InputLabel>
+            <InputLabel id="file-format-label">{t("fileFormat")}</InputLabel>
             <Select
-              labelId='file-format-label'
-              id='file-format'
+              labelId="file-format-label"
+              id="file-format"
               value={fileFormat}
               onChange={(event: SelectChangeEvent) => {
                 setFileFormat(event.target.value);
               }}
-              label='Định dạng file'
+              label={t("fileFormat")}
             >
-              <MenuItem value='excel'>Excel (.xlsx)</MenuItem>
-              <MenuItem value='csv'>CSV (.csv)</MenuItem>
-              {/* <MenuItem value='pdf'>PDF (.pdf)</MenuItem> */}
+              <MenuItem value="excel">{t("formats.excel")}</MenuItem>
+              <MenuItem value="csv">{t("formats.csv")}</MenuItem>
+              {/* <MenuItem value='pdf'>{t("formats.pdf")}</MenuItem> */}
             </Select>
           </FormControl>
 
           <FormControl fullWidth>
             <TextField
-              label='Số dòng xuất'
-              type='number'
+              label={t("rowCount")}
+              type="number"
               value={rowCount}
               onChange={handleRowCountChange}
               inputProps={{
                 min: 1,
                 max: totalRows,
               }}
-              helperText={`Tối đa ${totalRows} dòng`}
+              helperText={t("maxRows", { count: totalRows })}
             />
           </FormControl>
 
           <Box sx={{ px: 1.5, bgcolor: "primary.lighter", borderRadius: 1 }}>
-            <Typography variant='body2' color='primary.main'>
-              Dữ liệu sẽ được xuất theo bộ lọc hiện tại và sắp xếp hiện tại.
+            <Typography variant="body2" color="primary.main">
+              {t("filterNote")}
             </Typography>
           </Box>
         </Stack>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 3 }}>
-        <Button onClick={onClose} color='inherit' variant='outlined'>
-          Hủy
+        <Button onClick={onClose} color="inherit" variant="outlined">
+          {commonT("actions.cancel")}
         </Button>
         <Button
           onClick={() => {
             onExport({ format: fileFormat, rows: rowCount });
             onClose();
           }}
-          variant='contained'
+          variant="contained"
           startIcon={<DownloadIcon />}
           disabled={rowCount <= 0}
         >
-          Xuất dữ liệu
+          {t("exportButton")}
         </Button>
       </DialogActions>
     </Dialog>

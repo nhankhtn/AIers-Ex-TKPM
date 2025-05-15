@@ -2,8 +2,10 @@
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import React, { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 
 function SearchBar({ onSearch }: { onSearch: (value: string) => void }) {
+  const t = useTranslations("dashboard.search");
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearchChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,16 +21,16 @@ function SearchBar({ onSearch }: { onSearch: (value: string) => void }) {
   return (
     <TextField
       fullWidth
-      id='outlined-basic'
-      label='Tìm học sinh'
-      placeholder='Nhập MSSV hoặc họ tên'
-      variant='outlined'
-      size='small'
+      id="outlined-basic"
+      label={t("label")}
+      placeholder={t("placeholder")}
+      variant="outlined"
+      size="small"
       onChange={handleSearchChange}
       slotProps={{
         input: {
           endAdornment: (
-            <InputAdornment position='start'>
+            <InputAdornment position="start">
               <IconButton onClick={handleSearchClick}>
                 <SearchIcon />
               </IconButton>

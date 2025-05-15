@@ -20,10 +20,11 @@ import CustomPagination from "@/components/custom-pagination";
 import { useProgram } from "./use-program";
 import { useStatus } from "./use-status";
 import SelectFilter from "../_components/select-filter";
-import { getTableConfig } from "./table-config";
+import { GetTableConfig } from "./table-config";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UtilityButtons from "./utility-buttons";
 import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
 
 const Content = () => {
   const {
@@ -42,6 +43,8 @@ const Content = () => {
   const { faculties } = useMainContext();
   const { programs } = useProgram();
   const { statuses } = useStatus();
+  const t = useTranslations("dashboard");
+  const commonT = useTranslations("common");
   const handleDeleteStudent = useCallback(
     (studentId: string) => {
       deleteStudentsApi.call(studentId);
@@ -57,8 +60,8 @@ const Content = () => {
           mb: 3,
         }}
       >
-        <Typography variant='h5' fontWeight='bold'>
-          Danh sách sinh viên
+        <Typography variant="h5" fontWeight="bold">
+          {t("list.title")}
         </Typography>
         <UtilityButtons
           students={students}
@@ -91,10 +94,10 @@ const Content = () => {
               <PeopleIcon sx={{ color: "#1976d2", fontSize: 30 }} />
             </RowStack>
             <Box>
-              <Typography variant='body2' color='text.secondary'>
-                Tổng số sinh viên
+              <Typography variant="body2" color="text.secondary">
+                {t("overview.totalStudents")}
               </Typography>
-              <Typography variant='h5' fontWeight='bold'>
+              <Typography variant="h5" fontWeight="bold">
                 {getStudentsApi.data?.total || 0}
               </Typography>
             </Box>
@@ -126,31 +129,31 @@ const Content = () => {
       </RowStack>
       <Stack height={300}>
         <CustomTable
-          configs={getTableConfig({
+          configs={GetTableConfig({
             statuses,
             faculties,
             programs,
           })}
           rows={students}
           loading={getStudentsApi.loading}
-          emptyState={<Typography>Không có dữ liệu</Typography>}
+          emptyState={<Typography>{commonT("table.noData")}</Typography>}
           renderRowActions={(row: Student) => {
             return (
               <RowStack gap={1}>
                 <Button
-                  variant='outlined'
-                  size='small'
+                  variant="outlined"
+                  size="small"
                   sx={{ borderRadius: "20px", whiteSpace: "nowrap" }}
                   onClick={() => dialog.handleOpen(row)}
                 >
-                  Chỉnh sửa
+                  {commonT("actions.edit")}
                 </Button>
                 <IconButton
-                  size='small'
-                  color='error'
+                  size="small"
+                  color="error"
                   onClick={() => dialogConfirmDelete.handleOpen(row)}
                 >
-                  <DeleteIcon fontSize='small' />
+                  <DeleteIcon fontSize="small" />
                 </IconButton>
               </RowStack>
             );
@@ -159,7 +162,7 @@ const Content = () => {
         {students.length > 0 && (
           <CustomPagination
             pagination={pagination}
-            justifyContent='end'
+            justifyContent="end"
             px={2}
             pt={2}
             borderTop={1}

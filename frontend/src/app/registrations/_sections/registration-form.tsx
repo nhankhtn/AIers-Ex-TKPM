@@ -26,10 +26,13 @@ import { StudentApi } from "@/api/students";
 import { Class } from "@/types/class";
 import useRegistrationsSearch from "./use-registrations-search";
 import ClassFilter from "@/app/_components/class-filter";
-import { getClassesTableConfig } from "./table-config";
+import { GetClassesTableConfig } from "./table-config";
+import { useLocale, useTranslations } from "next-intl";
 
 export function RegistrationForm() {
   const { faculties } = useMainContext();
+  const t = useTranslations("registrations");
+  const locale = useLocale() as "en" | "vi";
   const {
     students,
     getStudentsApi,
@@ -70,7 +73,7 @@ export function RegistrationForm() {
   const selection = useSelection(classes);
 
   const registerClassApi = useFunction(StudentApi.registerClass, {
-    successMessage: "Đăng ký thành công",
+    successMessage: t("messages.registerSuccess"),
     onSuccess: ({ payload }) => {
       setClasses((prev) =>
         prev.filter((item) => !payload.classIds.includes(item.classId))
@@ -95,24 +98,26 @@ export function RegistrationForm() {
     <Stack sx={{ gap: 3 }}>
       <Card>
         <CardHeader
-          title='Đăng ký khóa học cho sinh viên'
-          subheader='Chọn sinh viên và các lớp học cần đăng ký.'
+          title={t("form.title")}
+          subheader={t("form.subtitle")}
           action={
             <Button
-              variant='contained'
+              variant="contained"
               onClick={handleRegister}
               disabled={!selectedStudent || selection.selected.length === 0}
             >
-              Đăng ký
+              {t("form.registerButton")}
             </Button>
           }
         />
         <CardContent sx={{ pt: 0 }}>
           <Stack sx={{ gap: 3 }}>
             <FormControl fullWidth required>
-              <InputLabel id='student-select-label'>Sinh viên</InputLabel>
+              <InputLabel id="student-select-label">
+                {t("form.student")}
+              </InputLabel>
               <Autocomplete
-                id='student-autocomplete'
+                id="student-autocomplete"
                 options={students}
                 getOptionLabel={(option) => option.name}
                 value={selectedStudent}
@@ -120,7 +125,11 @@ export function RegistrationForm() {
                   setSelectedStudent(newValue);
                 }}
                 renderInput={(params) => (
-                  <TextField {...params} label='Sinh viên' variant='outlined' />
+                  <TextField
+                    {...params}
+                    label={t("form.student")}
+                    variant="outlined"
+                  />
                 )}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
               />
@@ -128,15 +137,15 @@ export function RegistrationForm() {
 
             {selectedStudent && (
               <Paper
-                variant='outlined'
+                variant="outlined"
                 sx={{ p: 2, bgcolor: "background.default" }}
               >
                 <Typography
-                  variant='subtitle1'
-                  fontWeight='medium'
+                  variant="subtitle1"
+                  fontWeight="medium"
                   gutterBottom
                 >
-                  Thông tin sinh viên
+                  {t("form.studentInfo")}
                 </Typography>
                 <Box
                   sx={{
@@ -147,52 +156,52 @@ export function RegistrationForm() {
                 >
                   <Box>
                     <Typography
-                      variant='body2'
-                      color='text.secondary'
-                      component='span'
+                      variant="body2"
+                      color="text.secondary"
+                      component="span"
                     >
-                      Mã sinh viên:
+                      {t("form.studentId")}:
                     </Typography>{" "}
-                    <Typography variant='body2' component='span'>
+                    <Typography variant="body2" component="span">
                       {selectedStudent.id}
                     </Typography>
                   </Box>
                   <Box>
                     <Typography
-                      variant='body2'
-                      color='text.secondary'
-                      component='span'
+                      variant="body2"
+                      color="text.secondary"
+                      component="span"
                     >
-                      Họ tên:
+                      {t("form.name")}:
                     </Typography>{" "}
-                    <Typography variant='body2' component='span'>
+                    <Typography variant="body2" component="span">
                       {selectedStudent.name}
                     </Typography>
                   </Box>
                   <Box>
                     <Typography
-                      variant='body2'
-                      color='text.secondary'
-                      component='span'
+                      variant="body2"
+                      color="text.secondary"
+                      component="span"
                     >
-                      Khoa:
+                      {t("form.faculty")}:
                     </Typography>{" "}
-                    <Typography variant='body2' component='span'>
+                    <Typography variant="body2" component="span">
                       {
                         faculties.find((f) => selectedStudent.faculty === f.id)
-                          ?.name
+                          ?.name[locale]
                       }
                     </Typography>
                   </Box>
                   <Box>
                     <Typography
-                      variant='body2'
-                      color='text.secondary'
-                      component='span'
+                      variant="body2"
+                      color="text.secondary"
+                      component="span"
                     >
-                      Khóa:
+                      {t("form.course")}:
                     </Typography>{" "}
-                    <Typography variant='body2' component='span'>
+                    <Typography variant="body2" component="span">
                       {selectedStudent.course}
                     </Typography>
                   </Box>
@@ -203,12 +212,12 @@ export function RegistrationForm() {
             <Box>
               <RowStack pb={3}>
                 <Typography
-                  variant='subtitle1'
-                  fontWeight='medium'
+                  variant="subtitle1"
+                  fontWeight="medium"
                   gutterBottom
                   flex={1}
                 >
-                  Chọn lớp học cần đăng ký
+                  {t("form.selectClasses")}
                 </Typography>
                 <Box width={444}>
                   <ClassFilter
@@ -224,14 +233,14 @@ export function RegistrationForm() {
               </RowStack>
               <CustomTable
                 select={selection}
-                configs={getClassesTableConfig()}
+                configs={GetClassesTableConfig()}
                 loading={getRegisterableClassApi.loading}
                 rows={classes}
               />
               {classes.length > 0 && (
                 <CustomPagination
                   pagination={pagination}
-                  justifyContent='end'
+                  justifyContent="end"
                   p={2}
                   borderTop={1}
                   borderColor={"divider"}

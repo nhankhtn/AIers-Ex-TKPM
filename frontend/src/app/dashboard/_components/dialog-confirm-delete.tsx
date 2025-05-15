@@ -11,6 +11,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import RowStack from "@/components/row-stack";
 import { Student } from "@/types/student";
+import { useTranslations } from "next-intl";
 
 interface DialogConfirmDeleteProps {
   open: boolean;
@@ -25,6 +26,9 @@ const DialogConfirmDelete = ({
   onConfirm,
   data,
 }: DialogConfirmDeleteProps) => {
+  const t = useTranslations("dashboard.dialogs.delete");
+  const commonT = useTranslations("common");
+
   return (
     <Dialog
       open={open}
@@ -39,7 +43,7 @@ const DialogConfirmDelete = ({
     >
       <DialogTitle sx={{ pb: 1 }}>
         <RowStack justifyContent={"space-between"}>
-          <Typography variant={"h6"}>Xoá sinh viên</Typography>
+          <Typography variant={"h6"}>{t("title")}</Typography>
           <IconButton
             onClick={onClose}
             disableRipple
@@ -55,31 +59,31 @@ const DialogConfirmDelete = ({
       <DialogContent sx={{ px: 3, py: 0.5 }}>
         <Stack gap={"10px"}>
           <Typography variant={"body1"}>
-            Bạn có chắc chắn muốn xoá sinh viên{" "}
+            {t("confirmMessage")} {" "}
             <Typography
               variant={"subtitle1"}
               fontWeight={600}
               component={"span"}
             >
-              “{data.name}”?{" "}
+              {data.name}
             </Typography>
           </Typography>
         </Stack>
       </DialogContent>
       <DialogActions>
         <RowStack justifyContent={"flex-end"} gap={1}>
-          <Button onClick={onClose} variant='contained' color='secondary'>
-            Huỷ
+          <Button onClick={onClose} variant="contained" color="secondary">
+            {commonT("actions.cancel")}
           </Button>
           <Button
             onClick={() => {
               onConfirm();
               onClose();
             }}
-            variant='contained'
-            color='error'
+            variant="contained"
+            color="error"
           >
-            Xoá
+            {commonT("actions.delete")}
           </Button>
         </RowStack>
       </DialogActions>

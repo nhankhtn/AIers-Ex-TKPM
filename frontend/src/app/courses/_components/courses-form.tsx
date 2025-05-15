@@ -22,47 +22,53 @@ import type { Course } from "@/types/course";
 import { useCourseSearch } from "../_sections/use-course-search";
 import { useCallback, useEffect, useState } from "react";
 import { useMainContext } from "@/context/main/main-context";
+import { useLocale, useTranslations } from "next-intl";
 
 interface CourseFormProps {
   course?: Course | null;
 }
 
-const validationSchema = Yup.object().shape({
-  courseId: Yup.string()
-    .required("Vui lòng nhập mã khóa học")
-    .matches(/^[a-zA-Z0-9]+$/, "Mã khóa học chỉ được chứa chữ và số"),
-  courseNameVi: Yup.string()
-    .required("Vui lòng nhập tên khóa học tiếng Việt")
-    .min(3, "Tên khóa học phải có ít nhất 3 ký tự"),
-  courseNameEn: Yup.string()
-    .required("Vui lòng nhập tên khóa học tiếng Anh")
-    .min(3, "Tên khóa học phải có ít nhất 3 ký tự"),
-  credits: Yup.number()
-    .required("Vui lòng nhập số tín chỉ")
-    .min(2, "Số tín chỉ phải lớn hơn hoặc bằng 2")
-    .integer("Số tín chỉ phải là số nguyên"),
-  facultyId: Yup.string().required("Vui lòng chọn khoa phụ trách"),
-  descriptionVi: Yup.string().required(
-    "Vui lòng nhập mô tả khóa học tiếng Việt"
-  ),
-  descriptionEn: Yup.string().required(
-    "Vui lòng nhập mô tả khóa học tiếng Anh"
-  ),
-  requiredCourseId: Yup.string()
-    .nullable()
-    .test(
-      "not-self",
-      "Không thể chọn chính khóa học này làm môn tiên quyết",
-      function (value) {
-        if (!value || !this.parent.courseId) return true;
-        return value !== this.parent.courseId;
-      }
+const validationSchema = (t: any) =>
+  Yup.object().shape({
+    courseId: Yup.string()
+      .required(t("courses.form.validation.courseIdRequired"))
+      .matches(/^[a-zA-Z0-9]+$/, t("courses.form.validation.courseIdFormat")),
+    courseNameVi: Yup.string()
+      .required(t("courses.form.validation.courseNameViRequired"))
+      .min(3, t("courses.form.validation.courseNameMinLength")),
+    courseNameEn: Yup.string()
+      .required(t("courses.form.validation.courseNameEnRequired"))
+      .min(3, t("courses.form.validation.courseNameMinLength")),
+    credits: Yup.number()
+      .required(t("courses.form.validation.creditsRequired"))
+      .min(2, t("courses.form.validation.creditsMin"))
+      .integer(t("courses.form.validation.creditsInteger")),
+    facultyId: Yup.string().required(
+      t("courses.form.validation.facultyRequired")
     ),
-});
+    descriptionVi: Yup.string().required(
+      t("courses.form.validation.descriptionViRequired")
+    ),
+    descriptionEn: Yup.string().required(
+      t("courses.form.validation.descriptionEnRequired")
+    ),
+    requiredCourseId: Yup.string()
+      .nullable()
+      .test(
+        "not-self",
+        t("courses.form.validation.requiredCourseNotSelf"),
+        function (value) {
+          if (!value || !this.parent.courseId) return true;
+          return value !== this.parent.courseId;
+        }
+      ),
+  });
 
 export function CourseForm({ course = null }: CourseFormProps) {
   const router = useRouter();
   const { faculties } = useMainContext();
+  const t = useTranslations();
+  const locale = useLocale() as "en" | "vi";  
   const {
     courses,
     searchCourses,
@@ -109,7 +115,7 @@ export function CourseForm({ course = null }: CourseFormProps) {
     },
     enableReinitialize: true,
     validateOnChange: false,
-    validationSchema,
+    validationSchema: validationSchema(t),
     onSubmit: async (values) => {
       try {
         const {
@@ -159,12 +165,12 @@ export function CourseForm({ course = null }: CourseFormProps) {
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Box component='form' onSubmit={formik.handleSubmit} noValidate>
-        <Typography variant='h6' gutterBottom>
-          {course ? "Chỉnh sửa khóa học" : "Thêm khóa học mới"}
+      <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+        <Typography variant="h6" gutterBottom>
+          {course ? t("courses.form.editTitle") : t("courses.form.addTitle")}
         </Typography>
-        <Typography variant='body2' color='text.secondary' paragraph>
-          Nhập thông tin chi tiết về khóa học. Các trường có dấu * là bắt buộc.
+        <Typography variant="body2" color="text.secondary" paragraph>
+          {t("courses.form.description")}
         </Typography>
 
         <Divider sx={{ my: 2 }} />
@@ -173,27 +179,27 @@ export function CourseForm({ course = null }: CourseFormProps) {
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='courseId'
-              name='courseId'
-              label='Mã khóa học'
+              id="courseId"
+              name="courseId"
+              label={t("courses.form.courseId")}
               disabled={!!course}
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.courseId}
               onChange={formik.handleChange}
               error={formik.touched.courseId && Boolean(formik.errors.courseId)}
               helperText={formik.touched.courseId && formik.errors.courseId}
-              placeholder='VD: CS101'
+              placeholder={t("courses.form.placeholders.courseId")}
             />
           </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='courseNameVi'
-              name='courseNameVi'
-              label='Tên khóa học (Tiếng Việt)'
+              id="courseNameVi"
+              name="courseNameVi"
+              label={t("courses.form.courseNameVi")}
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.courseNameVi}
               onChange={formik.handleChange}
               error={
@@ -203,17 +209,17 @@ export function CourseForm({ course = null }: CourseFormProps) {
               helperText={
                 formik.touched.courseNameVi && formik.errors.courseNameVi
               }
-              placeholder='VD: Lập trình hướng đối tượng'
+              placeholder={t("courses.form.placeholders.courseNameVi")}
             />
           </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='courseNameEn'
-              name='courseNameEn'
-              label='Tên khóa học (Tiếng Anh)'
+              id="courseNameEn"
+              name="courseNameEn"
+              label={t("courses.form.courseNameEn")}
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.courseNameEn}
               onChange={formik.handleChange}
               error={
@@ -223,7 +229,7 @@ export function CourseForm({ course = null }: CourseFormProps) {
               helperText={
                 formik.touched.courseNameEn && formik.errors.courseNameEn
               }
-              placeholder='Ex: Object-Oriented Programming'
+              placeholder={t("courses.form.placeholders.courseNameEn")}
             />
           </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
@@ -234,18 +240,20 @@ export function CourseForm({ course = null }: CourseFormProps) {
                 formik.touched.facultyId && Boolean(formik.errors.facultyId)
               }
             >
-              <InputLabel id='faculty-label'>Khoa phụ trách</InputLabel>
+              <InputLabel id="faculty-label">
+                {t("courses.form.faculty")}
+              </InputLabel>
               <Select
-                labelId='faculty-label'
-                id='facultyId'
-                name='facultyId'
+                labelId="faculty-label"
+                id="facultyId"
+                name="facultyId"
                 value={formik.values.facultyId}
-                label='Khoa phụ trách'
+                label={t("courses.form.faculty")}
                 onChange={formik.handleChange}
               >
                 {faculties.map((faculty) => (
                   <MenuItem key={faculty.id} value={faculty.id}>
-                    {faculty.name}
+                    {faculty.name[locale]}
                   </MenuItem>
                 ))}
               </Select>
@@ -257,12 +265,12 @@ export function CourseForm({ course = null }: CourseFormProps) {
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='credits'
-              name='credits'
-              label='Số tín chỉ'
-              type='number'
+              id="credits"
+              name="credits"
+              label={t("courses.form.credits")}
+              type="number"
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.credits}
               onChange={formik.handleChange}
               error={formik.touched.credits && Boolean(formik.errors.credits)}
@@ -273,7 +281,7 @@ export function CourseForm({ course = null }: CourseFormProps) {
           <Grid2 size={{ xs: 12 }}>
             <Autocomplete
               disabled={!!course}
-              id='requiredCourseId'
+              id="requiredCourseId"
               options={
                 course
                   ? courses.filter(
@@ -282,7 +290,7 @@ export function CourseForm({ course = null }: CourseFormProps) {
                   : courses
               }
               getOptionLabel={(option) =>
-                `${option.courseId} - ${option.courseName}`
+                `${option.courseId} - ${option.courseName.vi} (${option.courseName.en})`
               }
               value={selectedCourse}
               onChange={(_, newValue) => handleCourseSelect(newValue)}
@@ -295,8 +303,8 @@ export function CourseForm({ course = null }: CourseFormProps) {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label='Môn tiên quyết'
-                  placeholder='VD: CS101'
+                  label={t("courses.form.requiredCourse")}
+                  placeholder={t("courses.form.placeholders.requiredCourse")}
                   error={
                     formik.touched.requiredCourseId &&
                     Boolean(formik.errors.requiredCourseId)
@@ -312,13 +320,13 @@ export function CourseForm({ course = null }: CourseFormProps) {
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='descriptionVi'
-              name='descriptionVi'
-              label='Mô tả khóa học (Tiếng Việt)'
+              id="descriptionVi"
+              name="descriptionVi"
+              label={t("courses.form.descriptionVi")}
               fullWidth
               multiline
               rows={4}
-              variant='outlined'
+              variant="outlined"
               value={formik.values.descriptionVi}
               onChange={formik.handleChange}
               error={
@@ -328,19 +336,19 @@ export function CourseForm({ course = null }: CourseFormProps) {
               helperText={
                 formik.touched.descriptionVi && formik.errors.descriptionVi
               }
-              placeholder='Nhập mô tả chi tiết về khóa học bằng tiếng Việt...'
+              placeholder={t("courses.form.placeholders.descriptionVi")}
             />
           </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='descriptionEn'
-              name='descriptionEn'
-              label='Mô tả khóa học (Tiếng Anh)'
+              id="descriptionEn"
+              name="descriptionEn"
+              label={t("courses.form.descriptionEn")}
               fullWidth
               multiline
               rows={4}
-              variant='outlined'
+              variant="outlined"
               value={formik.values.descriptionEn}
               onChange={formik.handleChange}
               error={
@@ -350,7 +358,7 @@ export function CourseForm({ course = null }: CourseFormProps) {
               helperText={
                 formik.touched.descriptionEn && formik.errors.descriptionEn
               }
-              placeholder='Enter detailed course description in English...'
+              placeholder={t("courses.form.placeholders.descriptionEn")}
             />
           </Grid2>
         </Grid2>
@@ -358,15 +366,15 @@ export function CourseForm({ course = null }: CourseFormProps) {
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}
         >
-          <Button variant='outlined' onClick={() => router.push("/courses")}>
-            Hủy
+          <Button variant="outlined" onClick={() => router.push("/courses")}>
+            {t("common.actions.cancel")}
           </Button>
           <Button
-            type='submit'
-            variant='contained'
+            type="submit"
+            variant="contained"
             disabled={formik.isSubmitting}
           >
-            {course ? "Cập nhật khóa học" : "Tạo khóa học"}
+            {course ? t("common.actions.save") : t("common.actions.add")}
           </Button>
         </Box>
       </Box>

@@ -19,14 +19,17 @@ import { useMainContext } from "@/context/main/main-context";
 import useRegistrationsSearch from "./use-registrations-search";
 import CustomPagination from "@/components/custom-pagination";
 import { CustomTable } from "@/components/custom-table";
-import { getRegisteredClassesTableConfig } from "./table-config";
+import { GetRegisteredClassesTableConfig } from "./table-config";
 import RowStack from "@/components/row-stack";
 import useFunction from "@/hooks/use-function";
 import { StudentApi } from "@/api/students";
 import ClassFilter from "@/app/_components/class-filter";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function RegistrationList() {
   const { faculties } = useMainContext();
+  const t = useTranslations("registrations");
+  const locale = useLocale() as "en" | "vi";
   const {
     students,
     filter,
@@ -53,7 +56,7 @@ export default function RegistrationList() {
   }, [selectedStudent?.id, pagination.page, pagination.rowsPerPage]);
 
   const deleteRegisterClassApi = useFunction(StudentApi.deleteRegisterClass, {
-    successMessage: "Huỷ đăng ký thành công",
+    successMessage: t("messages.unregisterSuccess"),
     onSuccess: ({ payload }) => {
       getStudentClassApi.setData({
         data: classes.filter(
@@ -70,8 +73,8 @@ export default function RegistrationList() {
       return (
         <RowStack>
           <Button
-            variant='outlined'
-            color='error'
+            variant="outlined"
+            color="error"
             onClick={() =>
               deleteRegisterClassApi.call({
                 studentId: data.studentId,
@@ -79,12 +82,12 @@ export default function RegistrationList() {
               })
             }
           >
-            Huỷ đăng kí
+            {t("list.unregisterButton")}
           </Button>
         </RowStack>
       );
     },
-    [deleteRegisterClassApi]
+    [deleteRegisterClassApi,t]
   );
 
   return (
@@ -92,9 +95,11 @@ export default function RegistrationList() {
       <CardContent>
         <Box sx={{ mb: 2 }}>
           <FormControl fullWidth required>
-            <InputLabel id='student-select-label'>Sinh viên</InputLabel>
+            <InputLabel id="student-select-label">
+              {t("form.student")}
+            </InputLabel>
             <Autocomplete
-              id='student-autocomplete'
+              id="student-autocomplete"
               options={students}
               getOptionLabel={(option) => option.name}
               value={selectedStudent}
@@ -102,7 +107,11 @@ export default function RegistrationList() {
                 setSelectedStudent(newValue);
               }}
               renderInput={(params) => (
-                <TextField {...params} label='Sinh viên' variant='outlined' />
+                <TextField
+                  {...params}
+                  label={t("form.student")}
+                  variant="outlined"
+                />
               )}
               isOptionEqualToValue={(option, value) => option.id === value.id}
             />
@@ -111,11 +120,11 @@ export default function RegistrationList() {
         <Stack gap={2}>
           {selectedStudent && (
             <Paper
-              variant='outlined'
+              variant="outlined"
               sx={{ p: 2, bgcolor: "background.default" }}
             >
-              <Typography variant='subtitle1' fontWeight='medium' gutterBottom>
-                Thông tin sinh viên
+              <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
+                {t("form.studentInfo")}
               </Typography>
               <Box
                 sx={{
@@ -126,52 +135,52 @@ export default function RegistrationList() {
               >
                 <Box>
                   <Typography
-                    variant='body2'
-                    color='text.secondary'
-                    component='span'
+                    variant="body2"
+                    color="text.secondary"
+                    component="span"
                   >
-                    Mã sinh viên:
+                    {t("form.studentId")}:
                   </Typography>{" "}
-                  <Typography variant='body2' component='span'>
+                  <Typography variant="body2" component="span">
                     {selectedStudent.id}
                   </Typography>
                 </Box>
                 <Box>
                   <Typography
-                    variant='body2'
-                    color='text.secondary'
-                    component='span'
+                    variant="body2"
+                    color="text.secondary"
+                    component="span"
                   >
-                    Họ tên:
+                    {t("form.name")}:
                   </Typography>{" "}
-                  <Typography variant='body2' component='span'>
+                  <Typography variant="body2" component="span">
                     {selectedStudent.name}
                   </Typography>
                 </Box>
                 <Box>
                   <Typography
-                    variant='body2'
-                    color='text.secondary'
-                    component='span'
+                    variant="body2"
+                    color="text.secondary"
+                    component="span"
                   >
-                    Khoa:
+                    {t("form.faculty")}:
                   </Typography>{" "}
-                  <Typography variant='body2' component='span'>
+                  <Typography variant="body2" component="span">
                     {
                       faculties.find((f) => selectedStudent.faculty === f.id)
-                        ?.name
+                        ?.name[locale]
                     }
                   </Typography>
                 </Box>
                 <Box>
                   <Typography
-                    variant='body2'
-                    color='text.secondary'
-                    component='span'
+                    variant="body2"
+                    color="text.secondary"
+                    component="span"
                   >
-                    Khóa:
+                    {t("form.course")}:
                   </Typography>{" "}
-                  <Typography variant='body2' component='span'>
+                  <Typography variant="body2" component="span">
                     {selectedStudent.course}
                   </Typography>
                 </Box>
@@ -182,12 +191,12 @@ export default function RegistrationList() {
           <Box>
             <RowStack pb={3}>
               <Typography
-                variant='subtitle1'
-                fontWeight='medium'
+                variant="subtitle1"
+                fontWeight="medium"
                 gutterBottom
                 flex={1}
               >
-                Các lớp học đã đăng ký
+                {t("list.title")}
               </Typography>
               <Box width={444}>
                 <ClassFilter
@@ -202,7 +211,7 @@ export default function RegistrationList() {
               </Box>
             </RowStack>
             <CustomTable
-              configs={getRegisteredClassesTableConfig()}
+              configs={GetRegisteredClassesTableConfig()}
               loading={getStudentClassApi.loading}
               rows={classes}
               renderRowActions={renderRowActions}
@@ -210,7 +219,7 @@ export default function RegistrationList() {
             {classes.length > 0 && (
               <CustomPagination
                 pagination={pagination}
-                justifyContent='end'
+                justifyContent="end"
                 p={2}
                 borderTop={1}
                 borderColor={"divider"}

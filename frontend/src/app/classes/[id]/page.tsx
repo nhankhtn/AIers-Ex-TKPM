@@ -5,15 +5,22 @@ import { ClassApi } from "@/api/class";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useClassSearch } from "../_sections/use-class-search";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export default function EditClassPage() {
   const router = useRouter();
   const { getClassesApi } = useClassSearch();
   const { id } = useParams();
+  const t = useTranslations();
+
   useEffect(() => {
     const fetchClass = async () => {
       if (!id) return;
-      const response = await getClassesApi.call({ page: 1, limit: 1, classId: id as string });
+      const response = await getClassesApi.call({
+        page: 1,
+        limit: 1,
+        classId: id as string,
+      });
       if (!response.data || response.data.data.length === 0) {
         router.replace("/noClassFound");
       }
@@ -24,7 +31,7 @@ export default function EditClassPage() {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <Typography variant="h4" component="h1" fontWeight="bold">
-        Sửa lớp học
+        {t("classes.form.editTitle")}
       </Typography>
       {getClassesApi.loading && (
         <Box
@@ -35,10 +42,12 @@ export default function EditClassPage() {
             height: "100%",
           }}
         >
-          <Typography variant="h6">Loading...</Typography>
+          <Typography variant="h6">{t("classes.loading")}</Typography>
         </Box>
       )}
-      {getClassesApi.data && <ClassForm classData={getClassesApi.data.data[0]} />}
+      {getClassesApi.data && (
+        <ClassForm classData={getClassesApi.data.data[0]} />
+      )}
     </Box>
   );
 }

@@ -8,6 +8,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 
 interface SelectFilterProps {
   configs: {
@@ -26,13 +27,14 @@ interface SelectFilterProps {
 }
 
 const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
+  const t = useTranslations("dashboard.filters");
   const handleChange = useCallback(
     (key: string, event: SelectChangeEvent<string>) => {
-      if (event.target.value === "Tất cả") {
+      if (event.target.value === t("all")) {
         onChange(key, "");
       } else onChange(key, event.target.value);
     },
-    [onChange]
+    [onChange, t]
   );
 
   return (
@@ -40,14 +42,14 @@ const SelectFilter = ({ configs, filter, onChange }: SelectFilterProps) => {
       {configs.map(({ label, xs, key }, index) => (
         <Grid2 size={{ xs: xs }} key={key} sx={{ width: "100%" }}>
           <FormControl fullWidth>
-            <InputLabel>{label}</InputLabel>
+            <InputLabel>{t(key)}</InputLabel>
             <Select
-              margin='dense'
+              margin="dense"
               id={key}
-              label={label}
+              label={t(key)}
               fullWidth
-              variant='outlined'
-              value={filter[key] === "" ? "Tất cả" : filter[key]}
+              variant="outlined"
+              value={filter[key] === "" ? t("all") : filter[key]}
               onChange={(e) => handleChange(key, e)}
             >
               {configs[index].options.map(({ value, label }) => (

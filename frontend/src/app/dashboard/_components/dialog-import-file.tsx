@@ -20,6 +20,7 @@ import TableChartIcon from "@mui/icons-material/TableChart";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RowStack from "@/components/row-stack";
 import { downloadUrl } from "@/utils/url-handler";
+import { useTranslations } from "next-intl";
 
 interface DialogImportFileProps {
   open: boolean;
@@ -36,8 +37,10 @@ const DialogImportFile = ({
   onUpload,
   allowedFileTypes = [".csv", ".xlsx", ".xls"],
   maxFileSize = 10, // 10MB default
-  title = "Tải lên tệp",
+  title,
 }: DialogImportFileProps) => {
+  const t = useTranslations("dashboard.dialogs.import");
+  const commonT = useTranslations("common");
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,23 +66,23 @@ const DialogImportFile = ({
         "." + selectedFile.name.split(".").pop()?.toLowerCase();
       if (!allowedFileTypes.includes(fileExtension)) {
         setError(
-          `Loại tệp không được hỗ trợ. Vui lòng chọn tệp ${allowedFileTypes.join(
-            ", "
-          )}`
+          t("errors.unsupportedType", {
+            types: allowedFileTypes.join(", "),
+          })
         );
         return;
       }
 
       // Check file size
       if (selectedFile.size > maxFileSize * 1024 * 1024) {
-        setError(`Kích thước tệp vượt quá ${maxFileSize}MB`);
+        setError(t("errors.maxSize", { size: maxFileSize }));
         return;
       }
 
       setFile(selectedFile);
       setError(null);
     },
-    [allowedFileTypes, maxFileSize]
+    [allowedFileTypes, maxFileSize, t]
   );
 
   const handleDragOver = useCallback(
@@ -147,11 +150,11 @@ const DialogImportFile = ({
   }, []);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <RowStack justifyContent='space-between'>
-          <Typography variant='h6'>{title}</Typography>
-          <IconButton aria-label='close' onClick={onClose} size='small'>
+        <RowStack justifyContent="space-between">
+          <Typography variant="h6">{title || t("title")}</Typography>
+          <IconButton aria-label="close" onClick={onClose} size="small">
             <CloseIcon />
           </IconButton>
         </RowStack>
@@ -159,7 +162,7 @@ const DialogImportFile = ({
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
           <Paper
-            variant='outlined'
+            variant="outlined"
             sx={{
               p: 3,
               borderStyle: isDragging ? "dashed" : "solid",
@@ -176,7 +179,7 @@ const DialogImportFile = ({
             onClick={() => fileInputRef.current?.click()}
           >
             <input
-              type='file'
+              type="file"
               ref={fileInputRef}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 validateAndSetFile(event.target.files?.[0] || null);
@@ -186,48 +189,50 @@ const DialogImportFile = ({
             />
 
             <Stack
-              alignItems='center'
-              justifyContent='center'
+              alignItems="center"
+              justifyContent="center"
               spacing={2}
               sx={{ minHeight: 150 }}
             >
               {file ? (
-                <Stack alignItems='center' spacing={2} width='100%'>
+                <Stack alignItems="center" spacing={2} width="100%">
                   {getFileIcon()}
-                  <Typography variant='subtitle1' noWrap textAlign='center'>
+                  <Typography variant="subtitle1" noWrap textAlign="center">
                     {file.name}
                   </Typography>
                   <RowStack spacing={1}>
                     <Chip
                       label={formatFileSize(file.size)}
-                      size='small'
-                      variant='outlined'
+                      size="small"
+                      variant="outlined"
                     />
                     <IconButton
-                      size='small'
-                      color='error'
+                      size="small"
+                      color="error"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRemoveFile();
                       }}
                     >
-                      <DeleteIcon fontSize='small' />
+                      <DeleteIcon fontSize="small" />
                     </IconButton>
                   </RowStack>
                 </Stack>
               ) : (
                 <>
                   {getFileIcon()}
-                  <Typography variant='subtitle1' textAlign='center'>
-                    Kéo thả tệp vào đây hoặc nhấp để chọn
+                  <Typography variant="subtitle1" textAlign="center">
+                    {t("dropzone.title")}
                   </Typography>
                   <Typography
-                    variant='body2'
-                    color='text.secondary'
-                    textAlign='center'
+                    variant="body2"
+                    color="text.secondary"
+                    textAlign="center"
                   >
-                    Hỗ trợ tệp {allowedFileTypes.join(", ")} (tối đa{" "}
-                    {maxFileSize}MB)
+                    {t("dropzone.subtitle", {
+                      types: allowedFileTypes.join(", "),
+                      size: maxFileSize,
+                    })}
                   </Typography>
                 </>
               )}
@@ -235,49 +240,48 @@ const DialogImportFile = ({
           </Paper>
 
           {error && (
-            <Typography color='error' variant='body2'>
+            <Typography color="error" variant="body2">
               {error}
             </Typography>
           )}
 
           <Stack gap={1}>
             <Box sx={{ bgcolor: "primary.lighter", borderRadius: 1 }}>
-              <Typography variant='body2' color='primary.main'>
-                Tệp sẽ được xử lý sau khi tải lên. Vui lòng đảm bảo tệp đúng
-                định dạng.
+              <Typography variant="body2" color="primary.main">
+                {t("processingNote")}
               </Typography>
             </Box>
-            <Typography variant='body2'>
-              Download file mẫu tại{" "}
+            <Typography variant="body2">
+              {t("downloadTemplate.prefix")}{" "}
               <Typography
                 component={"span"}
-                variant='body2'
-                color='primary'
+                variant="body2"
+                color="primary"
                 sx={{ cursor: "pointer", textDecoration: "underline" }}
                 onClick={() =>
                   downloadUrl(
                     "/docs/student-template.xlsx",
-                    "[Mẫu] Tệp sinh viên.xlsx"
+                    t("downloadTemplate.filename")
                   )
                 }
               >
-                đây
+                {t("downloadTemplate.link")}
               </Typography>
             </Typography>
           </Stack>
         </Stack>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 3 }}>
-        <Button onClick={onClose} color='inherit' variant='outlined'>
-          Hủy
+        <Button onClick={onClose} color="inherit" variant="outlined">
+          {commonT("actions.cancel")}
         </Button>
         <Button
           onClick={handleUpload}
-          variant='contained'
+          variant="contained"
           startIcon={<CloudUploadIcon />}
           disabled={!file || !!error}
         >
-          Tải lên
+          {t("uploadButton")}
         </Button>
       </DialogActions>
     </Dialog>

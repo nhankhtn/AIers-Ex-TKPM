@@ -4,8 +4,11 @@ import { CourseApi, CourseResponse, GetCourseRequest } from "@/api/course";
 import type { Course } from "@/types/course";
 import { useRouter } from "next/navigation";
 import { paths } from "@/paths";
+import { useTranslations } from "next-intl";
+
 export const useCourseSearch = () => {
   const router = useRouter();
+  const t = useTranslations();
   const getCoursesApi = useFunction(CourseApi.getCourses, {
     disableResetOnCall: true,
   });
@@ -20,14 +23,13 @@ export const useCourseSearch = () => {
     return getCoursesApi.call(params);
   };
   const addCourseApi = useFunction(CourseApi.createCourse, {
-    successMessage: "Thêm khóa học thành công",
+    successMessage: t("courses.messages.addCourseSuccess"),
     onSuccess: () => {
-        router.push(paths.courses.index);
-      },
-    }
-  );
+      router.push(paths.courses.index);
+    },
+  });
   const updateCourseApi = useFunction(CourseApi.updateCourse, {
-    successMessage: "Cập nhật khóa học thành công",
+    successMessage: t("courses.messages.updateCourseSuccess"),
     onSuccess: ({ result }) => {
       router.push(paths.courses.index);
     },

@@ -18,6 +18,6 @@ export class StatusApi {
   }
 
   static async deleteStatus(id: string): Promise<void> {
-    await apiDelete(`/studentstatus/id/${id}`, {});
+    await apiDelete(`/studentstatus/${id}`, {});
   }
 }

@@ -11,8 +11,11 @@ import { useStatus } from "./use-status";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useStudentContext } from "@/context/student-student-context";
 import { useMainContext } from "@/context/main/main-context";
+import { useLocale, useTranslations } from "next-intl";
 
 const useDashboardSearch = () => {
+  const t = useTranslations("dashboard.filters");
+  const locale = useLocale() as "en" | "vi";
   const router = useRouter();
   const searchParams = useSearchParams();
   const { faculties } = useMainContext();
@@ -121,22 +124,22 @@ const useDashboardSearch = () => {
   const filterConfig = getFilterConfig({
     status: [
       {
-        value: "Tất cả",
-        label: "Tất cả",
+        value: t("all"),
+        label: t("all"),
       },
       ...statuses.map((s) => ({
-        value: s.name,
-        label: s.name,
+        value: s.name.vi,
+        label: s.name[locale],
       })),
     ],
     faculty: [
       {
-        value: "Tất cả",
-        label: "Tất cả",
+        value: t("all"),
+        label: t("all"),
       },
       ...faculties.map((s) => ({
-        value: s.name,
-        label: s.name,
+        value: s.name.vi,
+        label: s.name[locale],
       })),
     ],
   });

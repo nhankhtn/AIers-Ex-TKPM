@@ -4,10 +4,13 @@ import usePagination from "@/hooks/use-pagination";
 import { ClassApi, ClassResponse, GetClassRequest } from "@/api/class";
 import type { Class } from "@/types/class";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export const useClassPagination = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations();
+
   const [filter, setFilter] = useState({
     classId: "",
     semester: "",
@@ -27,22 +30,20 @@ export const useClassPagination = () => {
     initialRowsPerPage: 10,
   });
 
-  const deleteClassApi = useFunction(ClassApi.deleteClass,
-    {
-      successMessage: "Xóa lớp học thành công",
-      onSuccess: ({ result }) => {
-        if (result) {
-          getClassesApi.setData({
-            data:
-              getClassesApi.data?.data.filter(
-                (classData) => classData.classId !== result.classId
-              ) || [],
-            total: (getClassesApi.data?.total || 0) - 1,
-          });
-        }
-      },
-    }
-  );
+  const deleteClassApi = useFunction(ClassApi.deleteClass, {
+    successMessage: t("classes.messages.deleteSuccess"),
+    onSuccess: ({ result }) => {
+      if (result) {
+        getClassesApi.setData({
+          data:
+            getClassesApi.data?.data.filter(
+              (classData) => classData.classId !== result.classId
+            ) || [],
+          total: (getClassesApi.data?.total || 0) - 1,
+        });
+      }
+    },
+  });
 
   const handleFilterChange = useCallback((newFilter: typeof filter) => {
     setFilter(newFilter);
@@ -67,14 +68,19 @@ export const useClassPagination = () => {
       classId: classId || "",
       semester: semester || "",
     });
-    const semesterNumber = semester === "Học kỳ 1" ? 1 : semester === "Học kỳ 2" ? 2 : semester === "Học kỳ hè" ? 3 : 2;
+    const semesterNumber =
+      semester === t("classes.filters.semester1")
+        ? 1
+        : semester === t("classes.filters.semester2")
+        ? 2
+        : semester === t("classes.filters.semester3")
+        ? 3
+        : 0;
     getClassesApi.call({
       page: pagination.page + 1,
       limit: pagination.rowsPerPage,
       ...(classId ? { classId } : {}),
-      ...(semester
-        ? { semester: semesterNumber }
-        : {}),
+      ...(semester && semesterNumber > 0 ? { semester: semesterNumber } : {}),
     });
   }, [
     searchParams,
@@ -82,6 +88,7 @@ export const useClassPagination = () => {
     getClassesApi,
     pagination.page,
     pagination.rowsPerPage,
+    t,
   ]);
 
   useEffect(() => {

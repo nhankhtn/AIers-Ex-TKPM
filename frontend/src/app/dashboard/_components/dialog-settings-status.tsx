@@ -30,6 +30,7 @@ import {
 import { Status } from "@/types/student";
 import RowStack from "@/components/row-stack";
 import { useDialog } from "@/hooks/use-dialog";
+import { useTranslations } from "next-intl";
 
 interface DialogSettingsStatusProps {
   open: boolean;
@@ -49,6 +50,7 @@ export default function DialogSettingsStatus({
   handleEditItem,
   handleDeleteItem,
 }: DialogSettingsStatusProps) {
+  const t = useTranslations("dashboard.dialogs.management");
   const [newItem, setNewItem] = useState<Status | null>(null);
   const [editingItem, setEditingItem] = useState<Status | null>(null);
   const dialogConfirm = useDialog();
@@ -109,15 +111,15 @@ export default function DialogSettingsStatus({
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
         <DialogTitle>
           <RowStack
             sx={{
               justifyContent: "space-between",
             }}
           >
-            <Typography variant='h6'> Cài đặt trạng thái</Typography>
-            <IconButton onClick={onClose} size='small'>
+            <Typography variant="h6">{t("status")}</Typography>
+            <IconButton onClick={onClose} size="small">
               <CloseIcon />
             </IconButton>
           </RowStack>
@@ -126,14 +128,11 @@ export default function DialogSettingsStatus({
           <RowStack>
             <RowStack width={30}></RowStack>
             <RowStack flex={1}>
-              <Typography variant='subtitle2'>Tên</Typography>
+              <Typography variant="subtitle2">{t("nameVi")}</Typography>
             </RowStack>
             <RowStack gap={1} width={100}>
-              <Typography variant='subtitle2'>Thứ tự</Typography>
-              <Tooltip
-                title='Khi cập nhật trạng thái sinh viên chỉ có thể chuyển đến trạng thái có thứ tự lớn hơn hoặc bằng trạng thái hiện tại'
-                placement='top'
-              >
+              <Typography variant="subtitle2">{t("order")}</Typography>
+              <Tooltip title={t("orderTooltip")} placement="top">
                 <InfoOutlined
                   sx={{
                     color: "action.active",
@@ -164,9 +163,9 @@ export default function DialogSettingsStatus({
                     <RowStack gap={1} flex={1}>
                       <TextField
                         fullWidth
-                        variant='outlined'
-                        size='small'
-                        label='Tên tiếng Việt'
+                        variant="outlined"
+                        size="small"
+                        label={t("nameVi")}
                         value={editingItem.name.vi}
                         onChange={(e) =>
                           setEditingItem({
@@ -178,9 +177,9 @@ export default function DialogSettingsStatus({
                       />
                       <TextField
                         fullWidth
-                        variant='outlined'
-                        size='small'
-                        label='Tên tiếng Anh'
+                        variant="outlined"
+                        size="small"
+                        label={t("nameEn")}
                         value={editingItem.name.en}
                         onChange={(e) =>
                           setEditingItem({
@@ -191,8 +190,8 @@ export default function DialogSettingsStatus({
                       />
                       <TextField
                         sx={{ width: 220 }}
-                        variant='outlined'
-                        size='small'
+                        variant="outlined"
+                        size="small"
                         value={editingItem.order}
                         onChange={(e) =>
                           setEditingItem({
@@ -211,16 +210,16 @@ export default function DialogSettingsStatus({
                         )}
                       </TextField>
                       <IconButton
-                        size='small'
-                        color='success'
+                        size="small"
+                        color="success"
                         onClick={dialogConfirm.handleOpen}
                       >
                         <CheckIcon />
                       </IconButton>
 
                       <IconButton
-                        size='small'
-                        color='error'
+                        size="small"
+                        color="error"
                         onClick={() => {
                           setEditingItem(null);
                           setItemToEdit(null);
@@ -236,21 +235,21 @@ export default function DialogSettingsStatus({
                         secondary={item.name.en}
                       />
                       <RowStack width={100}>
-                        <Typography variant='body2'>{item.order}</Typography>
+                        <Typography variant="body2">{item.order}</Typography>
                       </RowStack>
                       <IconButton
-                        size='small'
+                        size="small"
                         sx={{ color: "primary.main" }}
                         onClick={() => handleEditClick(item)}
                       >
-                        <EditIcon fontSize='small' />
+                        <EditIcon fontSize="small" />
                       </IconButton>
                       <IconButton
-                        size='small'
+                        size="small"
                         sx={{ color: "error.main" }}
                         onClick={() => handleDeleteClick(item.id)}
                       >
-                        <DeleteIcon fontSize='small' />
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
                     </RowStack>
                   )}
@@ -269,9 +268,9 @@ export default function DialogSettingsStatus({
                 <RowStack gap={1} flex={1}>
                   <TextField
                     fullWidth
-                    variant='outlined'
-                    size='small'
-                    label='Tên tiếng Việt'
+                    variant="outlined"
+                    size="small"
+                    label="Tên tiếng Việt"
                     value={newItem.name.vi}
                     onChange={(e) =>
                       setNewItem({
@@ -283,9 +282,9 @@ export default function DialogSettingsStatus({
                   />
                   <TextField
                     fullWidth
-                    variant='outlined'
-                    size='small'
-                    label='Tên tiếng Anh'
+                    variant="outlined"
+                    size="small"
+                    label="Tên tiếng Anh"
                     value={newItem.name.en}
                     onChange={(e) =>
                       setNewItem({
@@ -296,8 +295,8 @@ export default function DialogSettingsStatus({
                   />
                   <TextField
                     sx={{ width: 220 }}
-                    variant='outlined'
-                    size='small'
+                    variant="outlined"
+                    size="small"
                     value={newItem.order}
                     onChange={(e) =>
                       setNewItem({
@@ -314,8 +313,8 @@ export default function DialogSettingsStatus({
                     ))}
                   </TextField>
                   <IconButton
-                    size='small'
-                    color='success'
+                    size="small"
+                    color="success"
                     onClick={handleAddClick}
                     disabled={
                       !newItem.name.vi.trim() || !newItem.name.en.trim()
@@ -325,8 +324,8 @@ export default function DialogSettingsStatus({
                   </IconButton>
 
                   <IconButton
-                    size='small'
-                    color='error'
+                    size="small"
+                    color="error"
                     onClick={() => setNewItem(null)}
                   >
                     <Close />
@@ -337,7 +336,7 @@ export default function DialogSettingsStatus({
           </List>
           <RowStack gap={1} sx={{ mt: 3, justifyContent: "flex-end" }}>
             <Button
-              variant='outlined'
+              variant="outlined"
               startIcon={<AddIcon />}
               onClick={() =>
                 setNewItem({
@@ -350,10 +349,10 @@ export default function DialogSettingsStatus({
                 })
               }
             >
-              Thêm mới
+              {t("addNew")}
             </Button>
-            <Button variant='contained' color='secondary' onClick={onClose}>
-              Đóng
+            <Button variant="contained" color="secondary" onClick={onClose}>
+              {t("close")}
             </Button>
           </RowStack>
         </DialogContent>
@@ -363,36 +362,34 @@ export default function DialogSettingsStatus({
       <Dialog
         open={dialogConfirm.open}
         onClose={handleCancelAction}
-        maxWidth='xs'
+        maxWidth="xs"
         fullWidth
       >
         <DialogTitle>
-          {itemToDelete ? "Xác nhận xóa" : "Xác nhận chỉnh sửa"}
+          {itemToDelete ? t("confirmDelete") : t("confirmEdit")}
         </DialogTitle>
         <DialogContent>
           {itemToDelete ? (
-            <Alert severity='warning' sx={{ mb: 2 }}>
-              Bạn có chắc chắn muốn xóa mục này không? Hành động này không thể
-              hoàn tác.
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              {t("deleteWarning")}
             </Alert>
           ) : (
             <Typography>
-              Bạn có chắc chắn muốn chỉnh sửa mục &quot;{itemToEdit?.name.vi}
-              &quot; không?
+              {t("editConfirm", { name: itemToEdit?.name.vi || "" })}
             </Typography>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelAction} color='inherit'>
-            Hủy
+          <Button onClick={handleCancelAction} color="inherit">
+            {t("cancel")}
           </Button>
           <Button
             onClick={itemToDelete ? handleConfirmDelete : handleConfirmEdit}
             color={itemToDelete ? "error" : "primary"}
-            variant='contained'
+            variant="contained"
             autoFocus
           >
-            {itemToDelete ? "Xóa" : "Chỉnh sửa"}
+            {itemToDelete ? t("confirmDelete") : t("confirmEdit")}
           </Button>
         </DialogActions>
       </Dialog>

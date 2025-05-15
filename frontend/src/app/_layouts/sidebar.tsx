@@ -19,35 +19,40 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PlaylistAddCheckIcon from "@mui/icons-material/PlaylistAddCheck";
 import PeopleIcon from "@mui/icons-material/People";
 import SchoolIcon from "@mui/icons-material/School";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { paths } from "@/paths";
-const navItems = [
+import { useTranslations } from "next-intl";
+import SettingsModal from "../_components/settings-modal";
+import { useDialog } from "@/hooks/use-dialog";
+
+const getNavItems = (t: (key: string) => string) => [
   {
-    title: "Quản lý sinh viên",
+    title: t("studentManagement"),
     href: paths.dashboard.index,
     icon: HomeIcon,
   },
   {
-    title: "Quản lý khóa học",
+    title: t("courseManagement"),
     href: paths.courses.index,
     icon: MenuBookIcon,
   },
   {
-    title: "Quản lý lớp học",
+    title: t("classManagement"),
     href: paths.classes.index,
     icon: CalendarMonthIcon,
   },
   {
-    title: "Đăng ký khóa học",
+    title: t("courseRegistration"),
     href: paths.registrations.index,
     icon: PlaylistAddCheckIcon,
   },
   {
-    title: "Quản lý điểm số",
+    title: t("gradeManagement"),
     href: paths.grades.index,
     icon: PeopleIcon,
   },
   {
-    title: "Bảng điểm",
+    title: t("transcripts"),
     href: paths.transcripts.index,
     icon: SchoolIcon,
   },
@@ -55,12 +60,15 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const t = useTranslations("sidebar");
+  const navItems = getNavItems(t);
+  const settingDialog= useDialog();
   return (
     <div>
       <Toolbar sx={{ display: "flex", alignItems: "center", px: [1] }}>
         <DashboardIcon sx={{ mr: 1 }} />
-        <Typography variant='h6' noWrap component='div'>
-          Quản lý đào tạo
+        <Typography variant="h6" noWrap component="div">
+          {t("title")}
         </Typography>
       </Toolbar>
       <Divider />
@@ -79,7 +87,19 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
         ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => settingDialog.handleOpen()}>
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary={t("settings")} />
+          </ListItemButton>
+        </ListItem>
       </List>
+      <SettingsModal
+        open={settingDialog.open}
+        onClose={() => settingDialog.handleClose()}
+      />
     </div>
   );
 }

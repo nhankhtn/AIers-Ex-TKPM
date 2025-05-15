@@ -18,12 +18,17 @@ import { useMainContext } from "@/context/main/main-context";
 import useUnregistrationsSearch from "./use-unregistrations-search";
 import CustomPagination from "@/components/custom-pagination";
 import { CustomTable } from "@/components/custom-table";
-import { getUnregisteredClassesTableConfig } from "./table-config";
+import { GetUnregisteredClassesTableConfig } from "./table-config";
 import RowStack from "@/components/row-stack";
 import ClassFilter from "@/app/_components/class-filter";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function UnregisterList() {
   const { faculties } = useMainContext();
+  const t = useTranslations("registrations");
+  const locale = useLocale() as "en" | "vi";
+  const tableConfig = GetUnregisteredClassesTableConfig();
+ 
   const {
     students,
     filter,
@@ -47,18 +52,16 @@ export default function UnregisterList() {
         limit: pagination.rowsPerPage,
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    selectedStudent?.id,
-    pagination.page,
-    pagination.rowsPerPage,
-  ]);
+  }, [selectedStudent?.id, pagination.page, pagination.rowsPerPage]);
 
   return (
     <Card>
       <CardContent>
         <Box sx={{ mb: 2 }}>
           <FormControl fullWidth required>
-            <InputLabel id="student-select-label">Sinh viên</InputLabel>
+            <InputLabel id="student-select-label">
+              {t("form.student")}
+            </InputLabel>
             <Autocomplete
               id="student-autocomplete"
               options={students}
@@ -68,7 +71,11 @@ export default function UnregisterList() {
                 setSelectedStudent(newValue);
               }}
               renderInput={(params) => (
-                <TextField {...params} label="Sinh viên" variant="outlined" />
+                <TextField
+                  {...params}
+                  label={t("form.student")}
+                  variant="outlined"
+                />
               )}
               isOptionEqualToValue={(option, value) => option.id === value.id}
             />
@@ -81,7 +88,7 @@ export default function UnregisterList() {
               sx={{ p: 2, bgcolor: "background.default" }}
             >
               <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
-                Thông tin sinh viên
+                {t("form.studentInfo")}
               </Typography>
               <Box
                 sx={{
@@ -96,7 +103,7 @@ export default function UnregisterList() {
                     color="text.secondary"
                     component="span"
                   >
-                    Mã sinh viên:
+                    {t("form.studentId")}:
                   </Typography>{" "}
                   <Typography variant="body2" component="span">
                     {selectedStudent.id}
@@ -108,7 +115,7 @@ export default function UnregisterList() {
                     color="text.secondary"
                     component="span"
                   >
-                    Họ tên:
+                    {t("form.name")}:
                   </Typography>{" "}
                   <Typography variant="body2" component="span">
                     {selectedStudent.name}
@@ -120,12 +127,12 @@ export default function UnregisterList() {
                     color="text.secondary"
                     component="span"
                   >
-                    Khoa:
+                    {t("form.faculty")}:
                   </Typography>{" "}
                   <Typography variant="body2" component="span">
                     {
                       faculties.find((f) => selectedStudent.faculty === f.id)
-                        ?.name
+                        ?.name[locale]
                     }
                   </Typography>
                 </Box>
@@ -135,7 +142,7 @@ export default function UnregisterList() {
                     color="text.secondary"
                     component="span"
                   >
-                    Khóa:
+                    {t("form.course")}:
                   </Typography>{" "}
                   <Typography variant="body2" component="span">
                     {selectedStudent.course}
@@ -153,7 +160,7 @@ export default function UnregisterList() {
                 gutterBottom
                 flex={1}
               >
-                Các lớp học đã hủy đăng ký
+                {t("unregister.title")}
               </Typography>
               <Box width={444}>
                 <ClassFilter
@@ -167,14 +174,13 @@ export default function UnregisterList() {
                 />
               </Box>
             </RowStack>
-            { selectedStudent && 
-            <CustomTable
-              configs={getUnregisteredClassesTableConfig()}
-              loading={getUnregisterClassApi.loading}
-              rows={unregisteredClasses}
-              // No renderRowActions since this is read-only
-            />
-            }
+            {selectedStudent && (
+              <CustomTable
+                configs={tableConfig}
+                loading={getUnregisterClassApi.loading}
+                rows={unregisteredClasses}
+              />
+            )}
             {unregisteredClasses.length > 0 && selectedStudent && (
               <CustomPagination
                 pagination={pagination}
@@ -185,8 +191,6 @@ export default function UnregisterList() {
                 rowsPerPageOptions={[10, 15, 20]}
               />
             )}
-            
-          
           </Box>
         </Stack>
       </CardContent>
