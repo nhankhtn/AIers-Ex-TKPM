@@ -20,7 +20,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import type { Course } from "@/types/course";
 import { CustomTable } from "@/components/custom-table";
-import { getTableConfig } from "../_sections/table-config";
+import { GetTableConfig } from "../_sections/table-config";
 import { useCoursePagination } from "../_sections/use-course-pagination";
 import CustomPagination from "@/components/custom-pagination";
 import RowStack from "@/components/row-stack";
@@ -29,13 +29,15 @@ import { paths } from "@/paths";
 import { useDialog } from "@/hooks/use-dialog";
 import DialogConfirmDeleteCourse from "./dialog-confirm-delete-course";
 import { useMainContext } from "@/context/main/main-context";
+import { useLocale, useTranslations } from "next-intl";
 
 export function CourseList() {
   const [searchQuery, setSearchQuery] = useState("");
   const deleteDialog = useDialog<Course>();
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [menuCourse, setMenuCourse] = useState<Course | null>(null);
-
+  const t = useTranslations();
+  const locale = useLocale() as "en" | "vi";
   const { courses, deleteCourseApi, pagination, filter, setFilter } =
     useCoursePagination();
   const { faculties } = useMainContext();
@@ -43,32 +45,34 @@ export function CourseList() {
   const filterConfig = useMemo(
     () => [
       {
-        label: "Khoa",
+        label: t("courses.filters.faculty"),
         key: "faculty",
         options: [
           {
-            value: "Tất cả",
-            label: "Tất cả",
+            value: t("common.filters.all"),
+            label: t("common.filters.all"),
           },
           ...faculties.map((f) => ({
-            value: f.name,
-            label: f.name,
+            value: f.name.vi,
+            label: f.name[locale],
           })),
         ],
         xs: 6,
       },
       {
-        label: "Trạng thái",
+        label: t("courses.filters.status"),
         key: "status",
         options: [
-          { value: "Tất cả", label: "Tất cả" },
-          { value: "active", label: "Đang hoạt động" },
-          { value: "inactive", label: "Không hoạt động" },
+          { value: t("common.filters.all"), label: t("common.filters.all") },
+          { value: "active", label: t("courses.filters.active") },
+          { value: "inactive", label: t("courses.filters.inactive") },
         ],
         xs: 6,
       },
     ],
-    [faculties]
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [faculties, t]
   );
 
   const handleMenuOpen = (
@@ -99,11 +103,10 @@ export function CourseList() {
 
   const renderRowActions = (course: Course) => (
     <IconButton
-      aria-label='more'
       onClick={(e) => handleMenuOpen(e, course)}
-      size='small'
+      size="small"
     >
-      <MoreVertIcon fontSize='small' />
+      <MoreVertIcon fontSize="small" />
     </IconButton>
   );
 
@@ -115,16 +118,16 @@ export function CourseList() {
           mb: 3,
         }}
       >
-        <Typography variant='h5' fontWeight='bold'>
-          Danh sách khóa học
+        <Typography variant="h5" fontWeight="bold">
+          {t("courses.list.title")}
         </Typography>
       </RowStack>
 
-      <RowStack mb={3} gap={2} justifyContent='space-between'>
+      <RowStack mb={3} gap={2} justifyContent="space-between">
         <Stack flex={1}>
           <TextField
-            placeholder='Tìm kiếm khóa học...'
-            variant='outlined'
+            placeholder={t("courses.search.placeholder")}
+            variant="outlined"
             fullWidth
             value={searchQuery}
             onChange={(e) => {
@@ -141,7 +144,7 @@ export function CourseList() {
             InputProps={{
               startAdornment: (
                 <InputAdornment
-                  position='start'
+                  position="start"
                   sx={{ cursor: "pointer" }}
                   onClick={() =>
                     setFilter((prev) => ({ ...prev, key: searchQuery }))
@@ -157,7 +160,7 @@ export function CourseList() {
         <Stack width={500}>
           <SelectFilter
             configs={filterConfig}
-            filter={filter as any}
+            filter={filter}
             onChange={(key: string, value: string) => {
               setFilter((prev) => ({
                 ...prev,
@@ -174,23 +177,23 @@ export function CourseList() {
             ...course,
             id: course.courseId,
           }))}
-          configs={getTableConfig()}
+          configs={GetTableConfig()}
           renderRowActions={renderRowActions}
           loading={false}
           emptyState={
             <Box sx={{ py: 3, textAlign: "center" }}>
-              Không tìm thấy khóa học nào.
+              {t("courses.list.noResults")}
             </Box>
           }
         />
         {courses.length > 0 && (
           <CustomPagination
             pagination={pagination}
-            justifyContent='end'
+            justifyContent="end"
             px={2}
             pt={2}
             borderTop={1}
-            borderColor={"divider"}
+            borderColor="divider"
             rowsPerPageOptions={[10, 15, 20]}
           />
         )}
@@ -208,28 +211,32 @@ export function CourseList() {
           onClick={handleMenuClose}
         >
           <ListItemIcon>
-            <EditIcon fontSize='small' />
+            <EditIcon fontSize="small" />
           </ListItemIcon>
-          Chỉnh sửa
+          {t("common.actions.edit")}
         </MenuItem>
         <MenuItem
           component={Link}
-          href={paths.classes.create.replace(":id", menuCourse?.courseId ?? "") + "?courseId=" + menuCourse?.courseId}
+          href={
+            paths.classes.create.replace(":id", menuCourse?.courseId ?? "") +
+            "?courseId=" +
+            menuCourse?.courseId
+          }
           onClick={handleMenuClose}
         >
           <ListItemIcon>
-            <AddCircleIcon fontSize='small' />
+            <AddCircleIcon fontSize="small" />
           </ListItemIcon>
-          Mở lớp học
+          {t("courses.actions.openClass")}
         </MenuItem>
         <MenuItem
           onClick={() => menuCourse && handleDeleteClick(menuCourse)}
           sx={{ color: "error.main" }}
         >
           <ListItemIcon>
-            <DeleteIcon fontSize='small' color='error' />
+            <DeleteIcon fontSize="small" color="error" />
           </ListItemIcon>
-          Xóa
+          {t("common.actions.delete")}
         </MenuItem>
       </Menu>
 
@@ -238,7 +245,7 @@ export function CourseList() {
           open={deleteDialog.open}
           onClose={deleteDialog.handleClose}
           onConfirm={handleConfirmDelete}
-          data={deleteDialog.data}
+          courseName={`${deleteDialog.data.courseName.vi} (${deleteDialog.data.courseName.en})`}
         />
       )}
     </Box>

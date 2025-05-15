@@ -4,11 +4,13 @@ import usePagination from "@/hooks/use-pagination";
 import { CourseApi } from "@/api/course";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
 
 export const useCoursePagination = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { faculties } = useMainContext();
+  const t = useTranslations();
   const [filter, setFilter] = useState({
     key: "",
     faculty: "",
@@ -29,7 +31,7 @@ export const useCoursePagination = () => {
   });
 
   const deleteCourseApi = useFunction(CourseApi.deleteCourse, {
-    successMessage: "Xóa khóa học thành công",
+    successMessage: t("courses.messages.deleteCourseSuccess"),
     onSuccess: ({ payload }) => {
       if (payload) {
         getCoursesApi.setData({
@@ -77,7 +79,7 @@ export const useCoursePagination = () => {
       limit: pagination.rowsPerPage,
       ...(key ? { courseId: key } : {}),
       ...(faculty
-        ? { facultyId: faculties.find((f) => f.name === faculty)?.id }
+        ? { facultyId: faculties.find((f) => f.name.vi === faculty)?.id }
         : {}),
       ...(status
         ? { isDeleted: status === "Đang hoạt động" ? false : true }

@@ -14,6 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import RowStack from "@/components/row-stack";
 import { useCallback, useState } from "react";
 import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
 
 interface DialogConfigEmailProps {
   open: boolean;
@@ -26,6 +27,7 @@ const DialogConfigEmail = ({
   onClose,
   allowedEmail,
 }: DialogConfigEmailProps) => {
+  const t = useTranslations("dashboard.dialogs.email");
   const [emails, setEmails] = useState(
     allowedEmail.map((e) => e.split("@")[1]).join(", ")
   );
@@ -39,7 +41,7 @@ const DialogConfigEmail = ({
       .map((e) => e.trim())
       .filter((e) => !domainRegex.test(e));
     if (invalidDomains.length) {
-      setError(`Danh sách domain không hợp lệ: ${invalidDomains.join(", ")}`);
+      setError(t("invalidDomains", { domains: invalidDomains.join(", ") }));
       return;
     }
     updateSettingsApi.call(
@@ -49,7 +51,7 @@ const DialogConfigEmail = ({
         .join(",")
     );
     onClose();
-  }, [onClose, emails, updateSettingsApi]);
+  }, [onClose, emails, updateSettingsApi, t]);
 
   return (
     <Dialog
@@ -65,7 +67,7 @@ const DialogConfigEmail = ({
     >
       <DialogTitle sx={{ pb: 1 }}>
         <RowStack justifyContent={"space-between"}>
-          <Typography variant='h6'>Cấu hình Domain Email</Typography>
+          <Typography variant="h6">{t("title")}</Typography>
           <IconButton
             onClick={onClose}
             disableRipple
@@ -77,16 +79,14 @@ const DialogConfigEmail = ({
       </DialogTitle>
       <DialogContent sx={{ px: 3, py: 0.5 }}>
         <Stack gap={"10px"}>
-          <Typography variant='body1'>
-            Nhập danh sách domain email được phép (phân tách bằng dấu phẩy):
-          </Typography>
+          <Typography variant="body1">{t("description")}</Typography>
           <TextField
             fullWidth
-            variant='outlined'
-            size='small'
+            variant="outlined"
+            size="small"
             value={emails}
             onChange={(e) => setEmails(e.target.value)}
-            placeholder='example.com, mydomain.com'
+            placeholder={t("placeholder")}
           />
           {error && (
             <FormHelperText
@@ -101,11 +101,11 @@ const DialogConfigEmail = ({
       </DialogContent>
       <DialogActions>
         <RowStack justifyContent={"flex-end"} gap={1}>
-          <Button onClick={onClose} variant='contained' color='secondary'>
-            Huỷ
+          <Button onClick={onClose} variant="contained" color="secondary">
+            {t("cancel")}
           </Button>
-          <Button onClick={handleSave} variant='contained' color='primary'>
-            Lưu
+          <Button onClick={handleSave} variant="contained" color="primary">
+            {t("save")}
           </Button>
         </RowStack>
       </DialogActions>

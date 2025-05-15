@@ -23,57 +23,57 @@ import { useCourseSearch } from "@/app/courses/_sections/use-course-search";
 import { useCallback, useEffect, useState } from "react";
 import { useClassSearch } from "@/app/classes/_sections/use-class-search";
 import { CourseApi } from "@/api/course";
+import { useTranslations } from "next-intl";
+
 interface ClassFormProps {
   classData?: Class | null;
   forCourseId?: string | null;
 }
 
-const validationSchema = Yup.object().shape({
-  classId: Yup.string()
-    .required("Mã lớp học không được để trống")
-    .matches(
-      /^[a-zA-Z0-9-]+$/,
-      "Mã lớp học chỉ được chứa chữ và số, dấu gạch ngang"
-    ),
-  courseId: Yup.string().required("Vui lòng chọn khóa học"),
-  teacherName: Yup.string()
-    .required("Tên giảng viên không được để trống")
-    .min(3, "Tên giảng viên phải có ít nhất 3 ký tự"),
-  academicYear: Yup.number()
-    .required("Vui lòng nhập năm học")
-    .min(2000, "Năm học phải lớn hơn 2000")
-    .max(2100, "Năm học phải nhỏ hơn 2100")
-    .integer("Năm học phải là số nguyên"),
-  semester: Yup.number()
-    .required("Vui lòng chọn học kỳ")
-    .oneOf([1, 2, 3], "Học kỳ không hợp lệ"),
-  room: Yup.string().required("Phòng học không được để trống"),
-  startTime: Yup.number()
-    .required("Vui lòng nhập thời gian bắt đầu")
-    .min(0, "Thời gian phải lớn hơn hoặc bằng 0")
-    .max(23, "Thời gian phải nhỏ hơn 24"),
-  endTime: Yup.number()
-    .required("Vui lòng nhập thời gian kết thúc")
-    .min(0, "Thời gian phải lớn hơn hoặc bằng 0")
-    .max(23, "Thời gian phải nhỏ hơn 24")
-    .test(
-      "is-greater",
-      "Thời gian kết thúc phải lớn hơn thời gian bắt đầu",
-      function (value) {
-        return value > this.parent.startTime;
-      }
-    ),
-  maxStudents: Yup.number()
-    .required("Vui lòng nhập số lượng sinh viên tối đa")
-    .min(1, "Số lượng sinh viên tối đa phải lớn hơn 0")
-    .integer("Số lượng sinh viên phải là số nguyên"),
-  deadline: Yup.date()
-    .required("Vui lòng chọn hạn đăng ký")
-    .min(new Date(), "Hạn đăng ký phải lớn hơn ngày hiện tại"),
-  dayOfWeek: Yup.number()
-    .required("Vui lòng chọn ngày trong tuần")
-    .oneOf([2, 3, 4, 5, 6, 7, 8], "Ngày trong tuần không hợp lệ"),
-});
+const validationSchema = (t: any) =>
+  Yup.object().shape({
+    classId: Yup.string()
+      .required(t("classes.validation.classIdRequired"))
+      .matches(/^[a-zA-Z0-9-]+$/, t("classes.validation.classIdFormat")),
+    courseId: Yup.string().required(t("classes.validation.courseRequired")),
+    teacherName: Yup.string()
+      .required(t("classes.validation.teacherRequired"))
+      .min(3, t("classes.validation.teacherMinLength")),
+    academicYear: Yup.number()
+      .required(t("classes.validation.academicYearRequired"))
+      .min(2000, t("classes.validation.academicYearMin"))
+      .max(2100, t("classes.validation.academicYearMax"))
+      .integer(t("classes.validation.academicYearInteger")),
+    semester: Yup.number()
+      .required(t("classes.validation.semesterRequired"))
+      .oneOf([1, 2, 3], t("classes.validation.semesterInvalid")),
+    room: Yup.string().required(t("classes.validation.roomRequired")),
+    startTime: Yup.number()
+      .required(t("classes.validation.startTimeRequired"))
+      .min(0, t("classes.validation.startTimeMin"))
+      .max(23, t("classes.validation.startTimeMax")),
+    endTime: Yup.number()
+      .required(t("classes.validation.endTimeRequired"))
+      .min(0, t("classes.validation.endTimeMin"))
+      .max(23, t("classes.validation.endTimeMax"))
+      .test(
+        "is-greater",
+        t("classes.validation.endTimeGreater"),
+        function (value) {
+          return value > this.parent.startTime;
+        }
+      ),
+    maxStudents: Yup.number()
+      .required(t("classes.validation.maxStudentsRequired"))
+      .min(1, t("classes.validation.maxStudentsMin"))
+      .integer(t("classes.validation.maxStudentsInteger")),
+    deadline: Yup.date()
+      .required(t("classes.validation.deadlineRequired"))
+      .min(new Date(), t("classes.validation.deadlineFuture")),
+    dayOfWeek: Yup.number()
+      .required(t("classes.validation.dayOfWeekRequired"))
+      .oneOf([2, 3, 4, 5, 6, 7, 8], t("classes.validation.dayOfWeekInvalid")),
+  });
 
 export function ClassForm({
   classData = null,
@@ -81,6 +81,7 @@ export function ClassForm({
 }: ClassFormProps) {
   const router = useRouter();
   const { courses, searchCourses, getCourseApi } = useCourseSearch();
+  const t = useTranslations();
 
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const { addClassApi, updateClassApi } = useClassSearch();
@@ -136,7 +137,7 @@ export function ClassForm({
           .toISOString()
           .split("T")[0],
     },
-    validationSchema,
+    validationSchema: validationSchema(t),
     onSubmit: async (values) => {
       try {
         if (classData) {
@@ -167,12 +168,12 @@ export function ClassForm({
 
   return (
     <Paper sx={{ p: 3 }}>
-      <Box component='form' onSubmit={formik.handleSubmit} noValidate>
-        <Typography variant='h6' gutterBottom>
-          {classData ? "Chỉnh sửa lớp học" : "Mở lớp học mới"}
+      <Box component="form" onSubmit={formik.handleSubmit} noValidate>
+        <Typography variant="h6" gutterBottom>
+          {classData ? t("classes.form.editTitle") : t("classes.form.addTitle")}
         </Typography>
-        <Typography variant='body2' color='text.secondary'>
-          Nhập thông tin chi tiết về lớp học. Các trường có dấu * là bắt buộc.
+        <Typography variant="body2" color="text.secondary">
+          {t("classes.form.description")}
         </Typography>
 
         <Divider sx={{ my: 2 }} />
@@ -181,23 +182,23 @@ export function ClassForm({
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='id'
-              name='classId'
-              label='Mã lớp học'
+              id="id"
+              name="classId"
+              label={t("classes.form.classId")}
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.classId}
               onChange={formik.handleChange}
               error={formik.touched.classId && Boolean(formik.errors.classId)}
               helperText={formik.touched.classId && formik.errors.classId}
-              placeholder='VD: CS101-01'
+              placeholder={t("classes.form.placeholders.classId")}
               disabled={!!classData}
             />
           </Grid2>
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <Autocomplete
-              id='courseId'
+              id="courseId"
               options={courses}
               disabled={getCourseApi.loading}
               getOptionLabel={(option) =>
@@ -215,8 +216,8 @@ export function ClassForm({
                 <TextField
                   {...params}
                   required
-                  label='Khóa học'
-                  placeholder='Tìm kiếm khóa học...'
+                  label={t("classes.form.course")}
+                  placeholder={t("classes.form.searchCourse")}
                   error={
                     formik.touched.courseId && Boolean(formik.errors.courseId)
                   }
@@ -229,11 +230,11 @@ export function ClassForm({
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='teacherName'
-              name='teacherName'
-              label='Giảng viên'
+              id="teacherName"
+              name="teacherName"
+              label={t("classes.form.teacher")}
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.teacherName}
               onChange={formik.handleChange}
               error={
@@ -242,19 +243,19 @@ export function ClassForm({
               helperText={
                 formik.touched.teacherName && formik.errors.teacherName
               }
-              placeholder='TS. Nguyễn Văn A'
+              placeholder={t("classes.form.placeholders.teacher")}
             />
           </Grid2>
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='academicYear'
-              name='academicYear'
-              label='Năm học'
-              type='number'
+              id="academicYear"
+              name="academicYear"
+              label={t("classes.form.academicYear")}
+              type="number"
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.academicYear}
               onChange={formik.handleChange}
               error={
@@ -270,18 +271,20 @@ export function ClassForm({
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth required>
-              <InputLabel id='semester-label'>Học kỳ</InputLabel>
+              <InputLabel id="semester-label">
+                {t("classes.form.semester")}
+              </InputLabel>
               <Select
-                labelId='semester-label'
-                id='semester'
-                name='semester'
+                labelId="semester-label"
+                id="semester"
+                name="semester"
                 value={formik.values.semester}
-                label='Học kỳ'
+                label={t("classes.form.semester")}
                 onChange={formik.handleChange}
               >
-                <MenuItem value={1}>Học kỳ 1</MenuItem>
-                <MenuItem value={2}>Học kỳ 2</MenuItem>
-                <MenuItem value={3}>Học kỳ hè</MenuItem>
+                <MenuItem value={1}>{t("classes.form.semester1")}</MenuItem>
+                <MenuItem value={2}>{t("classes.form.semester2")}</MenuItem>
+                <MenuItem value={3}>{t("classes.form.semester3")}</MenuItem>
               </Select>
             </FormControl>
           </Grid2>
@@ -289,28 +292,28 @@ export function ClassForm({
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='room'
-              name='room'
-              label='Phòng học'
+              id="room"
+              name="room"
+              label={t("classes.form.room")}
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.room}
               onChange={formik.handleChange}
               error={formik.touched.room && Boolean(formik.errors.room)}
               helperText={formik.touched.room && formik.errors.room}
-              placeholder='A1.203'
+              placeholder={t("classes.form.placeholders.room")}
             />
           </Grid2>
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='startTime'
-              name='startTime'
-              label='Thời gian bắt đầu (giờ)'
-              type='number'
+              id="startTime"
+              name="startTime"
+              label={t("classes.form.startTime")}
+              type="number"
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.startTime}
               onChange={formik.handleChange}
               error={
@@ -324,12 +327,12 @@ export function ClassForm({
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='endTime'
-              name='endTime'
-              label='Thời gian kết thúc (giờ)'
-              type='number'
+              id="endTime"
+              name="endTime"
+              label={t("classes.form.endTime")}
+              type="number"
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.endTime}
               onChange={formik.handleChange}
               error={formik.touched.endTime && Boolean(formik.errors.endTime)}
@@ -340,33 +343,35 @@ export function ClassForm({
 
           <Grid2 size={{ xs: 12, md: 6 }}>
             <FormControl fullWidth required>
-              <InputLabel id='dayOfWeek-label'>Ngày học</InputLabel>
+              <InputLabel id="dayOfWeek-label">
+                {t("classes.form.dayOfWeek")}
+              </InputLabel>
               <Select
-                labelId='dayOfWeek-label'
-                id='dayOfWeek'
-                name='dayOfWeek'
+                labelId="dayOfWeek-label"
+                id="dayOfWeek"
+                name="dayOfWeek"
                 value={formik.values.dayOfWeek}
                 onChange={formik.handleChange}
               >
-                <MenuItem value={2}>Thứ 2</MenuItem>
-                <MenuItem value={3}>Thứ 3</MenuItem>
-                <MenuItem value={4}>Thứ 4</MenuItem>
-                <MenuItem value={5}>Thứ 5</MenuItem>
-                <MenuItem value={6}>Thứ 6</MenuItem>
-                <MenuItem value={7}>Thứ 7</MenuItem>
-                <MenuItem value={8}>Chủ nhật</MenuItem>
+                <MenuItem value={2}>{t("classes.form.monday")}</MenuItem>
+                <MenuItem value={3}>{t("classes.form.tuesday")}</MenuItem>
+                <MenuItem value={4}>{t("classes.form.wednesday")}</MenuItem>
+                <MenuItem value={5}>{t("classes.form.thursday")}</MenuItem>
+                <MenuItem value={6}>{t("classes.form.friday")}</MenuItem>
+                <MenuItem value={7}>{t("classes.form.saturday")}</MenuItem>
+                <MenuItem value={8}>{t("classes.form.sunday")}</MenuItem>
               </Select>
             </FormControl>
           </Grid2>
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='maxStudents'
-              name='maxStudents'
-              label='Số lượng sinh viên tối đa'
-              type='number'
+              id="maxStudents"
+              name="maxStudents"
+              label={t("classes.form.maxStudents")}
+              type="number"
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.maxStudents}
               onChange={formik.handleChange}
               error={
@@ -382,12 +387,12 @@ export function ClassForm({
           <Grid2 size={{ xs: 12, md: 6 }}>
             <TextField
               required
-              id='deadline'
-              name='deadline'
-              label='Hạn đăng ký'
-              type='date'
+              id="deadline"
+              name="deadline"
+              label={t("classes.form.deadline")}
+              type="date"
               fullWidth
-              variant='outlined'
+              variant="outlined"
               value={formik.values.deadline}
               onChange={formik.handleChange}
               error={formik.touched.deadline && Boolean(formik.errors.deadline)}
@@ -400,15 +405,15 @@ export function ClassForm({
         <Box
           sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}
         >
-          <Button variant='outlined' onClick={() => router.push("/classes")}>
-            Hủy
+          <Button variant="outlined" onClick={() => router.push("/classes")}>
+            {t("classes.form.cancel")}
           </Button>
           <Button
-            type='submit'
-            variant='contained'
+            type="submit"
+            variant="contained"
             disabled={formik.isSubmitting}
           >
-            {classData ? "Cập nhật lớp học" : "Tạo lớp học"}
+            {classData ? t("classes.form.update") : t("classes.form.create")}
           </Button>
         </Box>
       </Box>

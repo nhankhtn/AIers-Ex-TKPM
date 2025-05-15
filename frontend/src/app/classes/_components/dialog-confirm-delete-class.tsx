@@ -11,6 +11,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import RowStack from "@/components/row-stack";
 import { Class } from "@/types/class";
+import { useTranslations } from "next-intl";
 
 interface DialogConfirmDeleteClassProps {
   open: boolean;
@@ -25,6 +26,8 @@ const DialogConfirmDeleteClass = ({
   onConfirm,
   data,
 }: DialogConfirmDeleteClassProps) => {
+  const t = useTranslations();
+
   return (
     <Dialog
       open={open}
@@ -39,7 +42,9 @@ const DialogConfirmDeleteClass = ({
     >
       <DialogTitle sx={{ pb: 1 }}>
         <RowStack justifyContent={"space-between"}>
-          <Typography variant={"h6"}>Xoá lớp học</Typography>
+          <Typography variant={"h6"}>
+            {t("classes.dialogs.delete.title")}
+          </Typography>
           <IconButton
             onClick={onClose}
             disableRipple
@@ -55,7 +60,7 @@ const DialogConfirmDeleteClass = ({
       <DialogContent sx={{ px: 3, py: 0.5 }}>
         <Stack gap={"10px"}>
           <Typography variant={"body1"}>
-            Bạn có chắc chắn muốn xoá lớp học{" "}
+            {t("classes.dialogs.delete.confirmMessage")}{" "}
             <Typography
               variant={"subtitle1"}
               fontWeight={600}
@@ -69,7 +74,7 @@ const DialogConfirmDeleteClass = ({
       <DialogActions>
         <RowStack justifyContent={"flex-end"} gap={1}>
           <Button onClick={onClose} variant="contained" color="secondary">
-            Huỷ
+            {t("classes.dialogs.delete.cancel")}
           </Button>
           <Button
             onClick={() => {
@@ -79,7 +84,7 @@ const DialogConfirmDeleteClass = ({
             variant="contained"
             color="error"
           >
-            Xoá
+            {t("classes.dialogs.delete.delete")}
           </Button>
         </RowStack>
       </DialogActions>

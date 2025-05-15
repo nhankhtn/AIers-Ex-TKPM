@@ -16,6 +16,7 @@ import {
 import { Faculty, Program, Status } from "@/types/student";
 import { Country } from "@/types/address";
 import { IDENTITY_TYPES } from "./drawer-update-student";
+import { useLocale, useTranslations } from "next-intl";
 
 const AdditionalInformationForm = ({
   formik,
@@ -30,10 +31,13 @@ const AdditionalInformationForm = ({
   statuses: Status[];
   countries: Country[];
 }) => {
+  const t = useTranslations("dashboard.list");
+  const t2 = useTranslations("dashboard.drawer.identityTypes");
+  const locale = useLocale() as "en" | "vi";
   return (
     <>
       {/* Academic Information */}
-      <Typography variant='h6'>Thông tin học tập</Typography>
+      <Typography variant="h6">{t("academicInfo")}</Typography>
       <Grid2 container spacing={2}>
         <Grid2
           size={{
@@ -42,10 +46,10 @@ const AdditionalInformationForm = ({
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Khoa</InputLabel>
+            <InputLabel>{t("faculty")}</InputLabel>
             <Select
-              id='faculty'
-              label='Khoa'
+              id="faculty"
+              label={t("faculty")}
               value={formik.values.faculty}
               onChange={(event) =>
                 formik.setFieldValue("faculty", event.target.value)
@@ -54,7 +58,7 @@ const AdditionalInformationForm = ({
             >
               {faculties.map((faculty) => (
                 <MenuItem key={faculty.id} value={faculty.id}>
-                  {faculty.name.vi} ({faculty.name.en})
+                  {faculty.name[locale]}
                 </MenuItem>
               ))}
             </Select>
@@ -70,10 +74,10 @@ const AdditionalInformationForm = ({
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Chương trình</InputLabel>
+            <InputLabel>{t("program")}</InputLabel>
             <Select
-              id='program'
-              label='Chương trình'
+              id="program"
+              label={t("program")}
               value={formik.values.program}
               onChange={(event) =>
                 formik.setFieldValue("program", event.target.value)
@@ -82,7 +86,7 @@ const AdditionalInformationForm = ({
             >
               {programs.map((program) => (
                 <MenuItem key={program.id} value={program.id}>
-                  {program.name.vi} ({program.name.en})
+                  {program.name[locale]}
                 </MenuItem>
               ))}
             </Select>
@@ -98,11 +102,11 @@ const AdditionalInformationForm = ({
           }}
         >
           <TextField
-            id='course'
-            label='Khóa'
-            type='number'
+            id="course"
+            label={t("course")}
+            type="number"
             fullWidth
-            variant='outlined'
+            variant="outlined"
             value={formik.values.course}
             onChange={(event) =>
               formik.setFieldValue("course", event.target.value)
@@ -118,10 +122,10 @@ const AdditionalInformationForm = ({
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Tình trạng sinh viên</InputLabel>
+            <InputLabel>{t("status")}</InputLabel>
             <Select
-              id='status'
-              label='Tình trạng sinh viên'
+              id="status"
+              label={t("status")}
               value={formik.values.status}
               onChange={(event) =>
                 formik.setFieldValue("status", event.target.value)
@@ -130,7 +134,7 @@ const AdditionalInformationForm = ({
             >
               {statuses.map((status) => (
                 <MenuItem key={status.id} value={status.id}>
-                  {status.name.vi} ({status.name.en})
+                  {status.name[locale]}
                 </MenuItem>
               ))}
             </Select>
@@ -144,7 +148,7 @@ const AdditionalInformationForm = ({
       <Divider />
 
       {/* Identity Information */}
-      <Typography variant='h6'>Thông tin giấy tờ tùy thân</Typography>
+      <Typography variant="h6">{t("identityInfo")}</Typography>
       <Grid2 container spacing={2}>
         <Grid2
           size={{
@@ -153,18 +157,18 @@ const AdditionalInformationForm = ({
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Loại giấy tờ</InputLabel>
+            <InputLabel>{t("identityType")}</InputLabel>
             <Select
-              id='identityType'
-              label='Loại giấy tờ'
+              id="identityType"
+              label={t("identityType")}
               value={formik.values.identityType}
               onChange={(event) =>
                 formik.setFieldValue("identityType", event.target.value)
               }
             >
-              {IDENTITY_TYPES.map(({ key, name }) => (
+              {IDENTITY_TYPES.map(({ key, translationKey }) => (
                 <MenuItem key={key} value={key}>
-                  {name}
+                  {t2(translationKey)}
                 </MenuItem>
               ))}
             </Select>
@@ -177,10 +181,10 @@ const AdditionalInformationForm = ({
           }}
         >
           <TextField
-            id='documentNumber'
-            label='Số giấy tờ'
+            id="documentNumber"
+            label={t("documentNumber")}
             fullWidth
-            variant='outlined'
+            variant="outlined"
             value={formik.values.identityDocumentNumber}
             onChange={(event) =>
               formik.setFieldValue("identityDocumentNumber", event.target.value)
@@ -202,11 +206,11 @@ const AdditionalInformationForm = ({
           }}
         >
           <TextField
-            id='issuePlace'
-            label='Nơi cấp'
+            id="issuePlace"
+            label={t("issuePlace")}
             fullWidth
-            variant='outlined'
-            value={formik.values.indentityIssuePlace}
+            variant="outlined"
+            value={formik.values.identityIssuePlace}
             onChange={(event) =>
               formik.setFieldValue("identityIssuePlace", event.target.value)
             }
@@ -227,11 +231,11 @@ const AdditionalInformationForm = ({
           }}
         >
           <TextField
-            id='issueDate'
-            label='Ngày cấp'
-            type='date'
+            id="issueDate"
+            label={t("issueDate")}
+            type="date"
             fullWidth
-            variant='outlined'
+            variant="outlined"
             InputLabelProps={{ shrink: true }}
             value={formik.values.identityIssueDate}
             onChange={(event) =>
@@ -254,11 +258,11 @@ const AdditionalInformationForm = ({
           }}
         >
           <TextField
-            id='expiryDate'
-            label='Ngày hết hạn'
-            type='date'
+            id="expiryDate"
+            label={t("expiryDate")}
+            type="date"
             fullWidth
-            variant='outlined'
+            variant="outlined"
             InputLabelProps={{ shrink: true }}
             value={formik.values.identityExpiryDate}
             onChange={(event) =>
@@ -282,10 +286,10 @@ const AdditionalInformationForm = ({
         >
           {formik.getFieldProps("identityType").value === "Passport" && (
             <FormControl fullWidth>
-              <InputLabel>Quốc gia cấp</InputLabel>
+              <InputLabel>{t("issueCountry")}</InputLabel>
               <Select
-                id='identityCountry'
-                label='Quốc gia cấp'
+                id="identityCountry"
+                label={t("issueCountry")}
                 {...formik.getFieldProps("identityCountry")}
               >
                 {countries.map((country) => (
@@ -312,20 +316,20 @@ const AdditionalInformationForm = ({
                     onChange={(e) =>
                       formik.setFieldValue("identityIsChip", e.target.checked)
                     }
-                    name='isChip'
+                    name="isChip"
                   />
                 }
-                label='Thẻ chip'
+                label={t("isChip")}
               />
             </Grid2>
             <Grid2 size={12}>
               <TextField
-                id='identityNotes'
-                label='Ghi chú'
+                id="identityNotes"
+                label={t("notes")}
                 fullWidth
                 multiline
                 rows={2}
-                variant='outlined'
+                variant="outlined"
                 {...formik.getFieldProps("identityNotes")}
               />
             </Grid2>

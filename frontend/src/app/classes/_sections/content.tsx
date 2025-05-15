@@ -5,8 +5,11 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { ClassList } from "../_components/class-list";
 import Link from "next/link";
 import { paths } from "@/paths";
+import { useTranslations } from "next-intl";
 
 export default function Content() {
+  const t = useTranslations();
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <Box
@@ -17,7 +20,7 @@ export default function Content() {
         }}
       >
         <Typography variant="h5" component="h5" fontWeight="bold">
-          Quản lý lớp học
+          {t("classes.title")}
         </Typography>
         <Button
           variant="contained"
@@ -25,7 +28,7 @@ export default function Content() {
           component={Link}
           href={paths.classes.create}
         >
-          Mở lớp học mới
+          {t("classes.form.addTitle")}
         </Button>
       </Box>
 

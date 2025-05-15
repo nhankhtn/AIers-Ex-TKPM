@@ -10,21 +10,23 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import RowStack from "@/components/row-stack";
-import { Course } from "@/types/course";
+import { useTranslations } from "next-intl";
 
 interface DialogConfirmDeleteCourseProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  data: Course;
+  courseName: string;
 }
 
-const DialogConfirmDeleteCourse = ({
+export default function DialogConfirmDeleteCourse({
   open,
   onClose,
   onConfirm,
-  data,
-}: DialogConfirmDeleteCourseProps) => {
+  courseName,
+}: DialogConfirmDeleteCourseProps) {
+  const t = useTranslations();
+
   return (
     <Dialog
       open={open}
@@ -38,8 +40,10 @@ const DialogConfirmDeleteCourse = ({
       }}
     >
       <DialogTitle sx={{ pb: 1 }}>
-        <RowStack justifyContent={"space-between"}>
-          <Typography variant={"h6"}>Xoá khóa học</Typography>
+        <RowStack justifyContent="space-between">
+          <Typography variant="h6">
+            {t("courses.dialogs.delete.title")}
+          </Typography>
           <IconButton
             onClick={onClose}
             disableRipple
@@ -53,23 +57,19 @@ const DialogConfirmDeleteCourse = ({
         </RowStack>
       </DialogTitle>
       <DialogContent sx={{ px: 3, py: 0.5 }}>
-        <Stack gap={"10px"}>
-          <Typography variant={"body1"}>
-            Bạn có chắc chắn muốn xoá khóa học{" "}
-            <Typography
-              variant={"subtitle1"}
-              fontWeight={600}
-              component={"span"}
-            >
-              &quot;{data.courseName}&quot;?{" "}
+        <Stack gap="10px">
+          <Typography variant="body1">
+            {t("courses.dialogs.delete.confirmMessage")}{" "}
+            <Typography variant="subtitle1" fontWeight={600} component="span">
+              &quot;{courseName}&quot;?{" "}
             </Typography>
           </Typography>
         </Stack>
       </DialogContent>
       <DialogActions>
-        <RowStack justifyContent={"flex-end"} gap={1}>
+        <RowStack justifyContent="flex-end" gap={1}>
           <Button onClick={onClose} variant="contained" color="secondary">
-            Huỷ
+            {t("common.actions.cancel")}
           </Button>
           <Button
             onClick={() => {
@@ -79,12 +79,10 @@ const DialogConfirmDeleteCourse = ({
             variant="contained"
             color="error"
           >
-            Xoá
+            {t("common.actions.delete")}
           </Button>
         </RowStack>
       </DialogActions>
     </Dialog>
   );
-};
-
-export default DialogConfirmDeleteCourse;
+}

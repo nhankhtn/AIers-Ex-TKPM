@@ -1,0 +1,510 @@
+{
+  "common": {
+    "actions": {
+      "add": "Thêm",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "confirm": "Xác nhận",
+      "back": "Quay lại",
+      "next": "Tiếp theo",
+      "submit": "Gửi",
+      "search": "Tìm kiếm",
+      "filter": "Lọc",
+      "refresh": "Làm mới",
+      "export": "Xuất",
+      "import": "Nhập",
+      "view": "Xem",
+      "print": "In"
+    },
+    "status": {
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động",
+      "pending": "Đang chờ",
+      "completed": "Hoàn thành",
+      "cancelled": "Đã hủy",
+      "error": "Lỗi"
+    },
+    "table": {
+      "noData": "Không có dữ liệu",
+      "loading": "Đang tải...",
+      "rowsPerPage": "Số dòng mỗi trang",
+      "of": "của",
+      "page": "Trang"
+    },
+    "filters": {
+      "all": "Tất cả"
+    },
+    "loading":"Đang tải..."
+  },
+  "sidebar": {
+    "title": "Quản lý đào tạo",
+    "studentManagement": "Quản lý sinh viên",
+    "courseManagement": "Quản lý khóa học",
+    "classManagement": "Quản lý lớp học",
+    "courseRegistration": "Đăng ký khóa học",
+    "gradeManagement": "Quản lý điểm số",
+    "transcripts": "Bảng điểm",
+    "settings": "Cài đặt"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "save": "Lưu",
+    "cancel": "Hủy"
+  },
+  "dashboard": {
+    "title": "Tổng quan",
+    "overview": {
+      "totalStudents": "Tổng số sinh viên",
+      "totalCourses": "Tổng số khóa học",
+      "totalClasses": "Tổng số lớp học",
+      "activeRegistrations": "Đăng ký đang hoạt động"
+    },
+    "recentActivity": {
+      "title": "Hoạt động gần đây",
+      "noActivity": "Không có hoạt động gần đây"
+    },
+    "list": {
+      "title": "Danh sách sinh viên",
+      "studentId": "Mã số sinh viên",
+      "studentName": "Họ và tên",
+      "dateOfBirth": "Ngày sinh",
+      "gender": "Giới tính",
+      "email": "Email",
+      "phone": "Số điện thoại",
+      "permanentAddress": "Địa chỉ thường trú",
+      "temporaryAddress": "Địa chỉ tạm trú",
+      "mailingAddress": "Địa chỉ nhận thư",
+      "faculty": "Khoa",
+      "course": "Khóa",
+      "program": "Chương trình",
+      "status": "Trạng thái",
+      "empty": "Trống",
+      "basicInfo": "Thông tin cơ bản",
+      "academicInfo": "Thông tin học tập",
+      "identityInfo": "Thông tin giấy tờ tùy thân",
+      "male": "Nam",
+      "female": "Nữ",
+      "other": "Khác",
+      "country": "Quốc gia",
+      "nationality": "Quốc tịch",
+      "identityType": "Loại giấy tờ",
+      "documentNumber": "Số giấy tờ",
+      "issuePlace": "Nơi cấp",
+      "issueDate": "Ngày cấp",
+      "expiryDate": "Ngày hết hạn",
+      "issueCountry": "Quốc gia cấp",
+      "isChip": "Thẻ chip",
+      "notes": "Ghi chú",
+      "province": "Tỉnh/Thành phố",
+      "district": "Quận/Huyện",
+      "ward": "Phường/Xã",
+      "addressDetail": "Địa chỉ chi tiết (số nhà, đường, thôn, xóm...)",
+      "addressDetailPlaceholder": "Ví dụ: Số 123, Đường ABC, Khu vực XYZ"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Xóa sinh viên",
+        "confirmMessage": "Bạn có chắc chắn muốn xóa sinh viên"
+      },
+      "export": {
+        "title": "Xuất dữ liệu",
+        "fileFormat": "Định dạng file",
+        "formats": {
+          "excel": "Excel (.xlsx)",
+          "csv": "CSV (.csv)",
+          "pdf": "PDF (.pdf)"
+        },
+        "rowCount": "Số dòng xuất",
+        "maxRows": "Tối đa {count} dòng",
+        "filterNote": "Dữ liệu sẽ được xuất theo bộ lọc hiện tại và sắp xếp hiện tại",
+        "exportButton": "Xuất dữ liệu"
+      },
+      "import": {
+        "title": "Tải lên tệp",
+        "dropzone": {
+          "title": "Kéo thả tệp vào đây hoặc nhấp để chọn",
+          "subtitle": "Hỗ trợ tệp {types} (tối đa {size}MB)"
+        },
+        "errors": {
+          "unsupportedType": "Loại tệp không được hỗ trợ. Vui lòng chọn tệp {types}",
+          "maxSize": "Kích thước tệp vượt quá {size}MB"
+        },
+        "processingNote": "Tệp sẽ được xử lý sau khi tải lên. Vui lòng đảm bảo tệp đúng định dạng",
+        "downloadTemplate": {
+          "prefix": "Download file mẫu tại",
+          "link": "đây",
+          "filename": "[Mẫu] Tệp sinh viên.xlsx"
+        },
+        "uploadButton": "Tải lên"
+      },
+      "management": {
+        "faculty": "Cài đặt khoa",
+        "program": "Cài đặt chương trình",
+        "status": "Cài đặt trạng thái",
+        "nameVi": "Tên tiếng Việt",
+        "nameEn": "Tên tiếng Anh",
+        "order": "Thứ tự",
+        "orderTooltip": "Khi cập nhật trạng thái sinh viên chỉ có thể chuyển đến trạng thái có thứ tự lớn hơn hoặc bằng trạng thái hiện tại",
+        "addNew": "Thêm mới",
+        "close": "Đóng",
+        "confirmDelete": "Xác nhận xóa",
+        "confirmEdit": "Xác nhận chỉnh sửa",
+        "deleteWarning": "Bạn có chắc chắn muốn xóa mục này không? Hành động này không thể hoàn tác.",
+        "editConfirm": "Bạn có chắc chắn muốn lưu thay đổi không?",
+        "cancel": "Hủy"
+      },
+      "email": {
+        "title": "Cấu hình Domain Email",
+        "description": "Nhập danh sách domain email được phép (phân tách bằng dấu phẩy):",
+        "placeholder": "example.com, mydomain.com",
+        "invalidDomains": "Danh sách domain không hợp lệ: {domains}",
+        "save": "Lưu",
+        "cancel": "Hủy"
+      }
+    },
+    "search": {
+      "label": "Tìm học sinh",
+      "placeholder": "Nhập MSSV hoặc họ tên"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "faculty": "Khoa",
+      "program": "Chương trình",
+      "course": "Khóa",
+      "status": "Trạng thái",
+      "semester": "Học kỳ",
+      "academicYear":"Năm học"
+    },
+    "actions": {
+      "addFaculty": "Thêm khoa",
+      "addProgram": "Thêm chương trình",
+      "addStatus": "Thêm trạng thái",
+      "addStudent": "Thêm sinh viên",
+      "importList": "Import danh sách",
+      "exportList": "Export danh sách",
+      "addStudentSuccess": "Thêm sinh viên thành công",
+      "fileNoData": "File không có dữ liệu",
+      "exportSuccess": "Xuất file thành công"
+    },
+    "drawer": {
+      "addTitle": "Thêm sinh viên mới",
+      "editTitle": "Cập nhật sinh viên",
+      "cancel": "Hủy",
+      "add": "Thêm",
+      "update": "Cập nhật",
+      "identityTypes": {
+        "CCCD": "Căn cước công dân",
+        "CMND": "Chứng minh nhân dân",
+        "Passport": "Hộ chiếu"
+      }
+    },
+    "messages": {
+      "addFacultySuccess": "Thêm khoa thành công",
+      "updateFacultySuccess": "Cập nhật khoa thành công",
+      "deleteFacultySuccess": "Xóa khoa thành công",
+      "addProgramSuccess": "Thêm chương trình thành công",
+      "updateProgramSuccess": "Cập nhật chương trình thành công",
+      "deleteProgramSuccess": "Xóa chương trình thành công",
+      "addStatusSuccess": "Thêm trạng thái thành công",
+      "updateStatusSuccess": "Cập nhật trạng thái thành công",
+      "deleteStatusSuccess": "Xóa trạng thái thành công",
+      "fileNoData": "File không có dữ liệu",
+      "exportSuccess": "Xuất file thành công"
+    }
+  },
+  "courses": {
+    "title": "Quản lý khóa học",
+    "list": {
+      "title": "Danh sách khóa học",
+      "code": "Mã khóa học",
+      "name": "Tên khóa học",
+      "credits": "Số tín chỉ",
+      "faculty": "Khoa",
+      "description": "Mô tả",
+      "prerequisites": "Điều kiện tiên quyết",
+      "status": "Trạng thái",
+      "active": "Đang hoạt động",
+      "inactive": "Không hoạt động",
+      "noResults": "Không tìm thấy khóa học nào"
+    },
+    "form": {
+      "addTitle": "Thêm khóa học mới",
+      "editTitle": "Sửa khóa học",
+      "courseId": "Mã khóa học",
+      "courseNameVi": "Tên khóa học (Tiếng Việt)",
+      "courseNameEn": "Tên khóa học (Tiếng Anh)",
+      "credits": "Số tín chỉ",
+      "faculty": "Khoa",
+      "descriptionVi": "Mô tả (Tiếng Việt)",
+      "descriptionEn": "Mô tả (Tiếng Anh)",
+      "requiredCourse": "Môn học tiên quyết",
+      "description": "Điền thông tin khóa học dưới đây. Các trường đánh dấu * là bắt buộc.",
+      "placeholders": {
+        "courseId": "VD: CS101",
+        "courseNameVi": "VD: Lập trình hướng đối tượng",
+        "courseNameEn": "VD: Object-Oriented Programming",
+        "descriptionVi": "Nhập mô tả chi tiết về khóa học bằng tiếng Việt...",
+        "descriptionEn": "Nhập mô tả chi tiết về khóa học bằng tiếng Anh...",
+        "requiredCourse": "VD: CS101"
+      },
+      "validation": {
+        "courseIdRequired": "Vui lòng nhập mã khóa học",
+        "courseIdFormat": "Mã khóa học chỉ được chứa chữ và số",
+        "courseNameViRequired": "Vui lòng nhập tên khóa học tiếng Việt",
+        "courseNameEnRequired": "Vui lòng nhập tên khóa học tiếng Anh",
+        "courseNameMinLength": "Tên khóa học phải có ít nhất 3 ký tự",
+        "creditsRequired": "Vui lòng nhập số tín chỉ",
+        "creditsMin": "Số tín chỉ phải lớn hơn hoặc bằng 2",
+        "creditsInteger": "Số tín chỉ phải là số nguyên",
+        "facultyRequired": "Vui lòng chọn khoa phụ trách",
+        "descriptionViRequired": "Vui lòng nhập mô tả khóa học tiếng Việt",
+        "descriptionEnRequired": "Vui lòng nhập mô tả khóa học tiếng Anh",
+        "requiredCourseNotSelf": "Không thể chọn chính khóa học này làm môn tiên quyết"
+      }
+    },
+    "search": {
+      "placeholder": "Tìm kiếm khóa học..."
+    },
+    "filters": {
+      "faculty": "Khoa",
+      "status": "Trạng thái",
+      "active": "Đang hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "actions": {
+      "openClass": "Mở lớp học"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Xóa khóa học",
+        "confirmMessage": "Bạn có chắc chắn muốn xóa khóa học"
+      }
+    },
+    "messages":{
+      "deleteCourseSuccess": "Xóa khóa học thành công",
+      "addCourseSuccess": "Thêm khóa học thành công",
+      "updateCourseSuccess": "Chỉnh sửa khóa học thành công"
+    }
+  },
+  "classes": {
+    "title": "Quản lý lớp học",
+    "list": {
+      "title": "Danh sách lớp học",
+      "code": "Mã lớp",
+      "course": "Khóa học",
+      "teacher": "Giảng viên",
+      "schedule": "Lịch học",
+      "room": "Phòng học",
+      "capacity": "Sức chứa",
+      "enrolled": "Đã đăng ký",
+      "year": "Năm học",
+      "semester": "Học kỳ",
+      "dayOfWeek": "Ngày học",
+      "time": "Thời gian",
+      "maxStudents": "Sĩ số tối đa",
+      "deadline": "Hạn đăng ký",
+      "noResults": "Không tìm thấy lớp học nào",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa"
+    },
+    "form": {
+      "addTitle": "Mở lớp học mới",
+      "editTitle": "Chỉnh sửa lớp học",
+      "description": "Nhập thông tin chi tiết về lớp học. Các trường có dấu * là bắt buộc.",
+      "classId": "Mã lớp học",
+      "course": "Khóa học",
+      "teacher": "Giảng viên",
+      "academicYear": "Năm học",
+      "semester": "Học kỳ",
+      "semester1": "Học kỳ 1",
+      "semester2": "Học kỳ 2",
+      "semester3": "Học kỳ hè",
+      "room": "Phòng học",
+      "startTime": "Thời gian bắt đầu (giờ)",
+      "endTime": "Thời gian kết thúc (giờ)",
+      "dayOfWeek": "Ngày học",
+      "monday": "Thứ 2",
+      "tuesday": "Thứ 3",
+      "wednesday": "Thứ 4",
+      "thursday": "Thứ 5",
+      "friday": "Thứ 6",
+      "saturday": "Thứ 7",
+      "sunday": "Chủ nhật",
+      "maxStudents": "Số lượng sinh viên tối đa",
+      "deadline": "Hạn đăng ký",
+      "cancel": "Hủy",
+      "update": "Cập nhật lớp học",
+      "create": "Tạo lớp học",
+      "searchCourse": "Tìm kiếm khóa học...",
+      "placeholders": {
+        "classId": "VD: CS101-01",
+        "teacher": "VD: TS. Nguyễn Văn A",
+        "room": "VD: A1.203"
+      }
+    },
+    "filters": {
+      "semester": "Học kỳ",
+      "semester1": "Học kỳ 1",
+      "semester2": "Học kỳ 2",
+      "semester3": "Học kỳ hè",
+      "academicYear": "Năm học"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm lớp học..."
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Xóa lớp học",
+        "confirmMessage": "Bạn có chắc chắn muốn xóa lớp học",
+        "cancel": "Hủy",
+        "delete": "Xóa"
+      }
+    },
+    "messages": {
+      "deleteSuccess": "Xóa lớp học thành công",
+      "addSuccess": "Thêm lớp học thành công",
+      "updateSuccess": "Cập nhật lớp học thành công"
+    },
+    "validation": {
+      "classIdRequired": "Mã lớp học không được để trống",
+      "classIdFormat": "Mã lớp học chỉ được chứa chữ, số, và dấu gạch ngang",
+      "courseRequired": "Vui lòng chọn khóa học",
+      "teacherRequired": "Tên giảng viên không được để trống",
+      "teacherMinLength": "Tên giảng viên phải có ít nhất 3 ký tự",
+      "academicYearRequired": "Vui lòng nhập năm học",
+      "academicYearMin": "Năm học phải lớn hơn 2000",
+      "academicYearMax": "Năm học phải nhỏ hơn 2100",
+      "academicYearInteger": "Năm học phải là số nguyên",
+      "semesterRequired": "Vui lòng chọn học kỳ",
+      "semesterInvalid": "Học kỳ không hợp lệ",
+      "roomRequired": "Phòng học không được để trống",
+      "startTimeRequired": "Vui lòng nhập thời gian bắt đầu",
+      "startTimeMin": "Thời gian phải lớn hơn hoặc bằng 0",
+      "startTimeMax": "Thời gian phải nhỏ hơn 24",
+      "endTimeRequired": "Vui lòng nhập thời gian kết thúc",
+      "endTimeMin": "Thời gian phải lớn hơn hoặc bằng 0",
+      "endTimeMax": "Thời gian phải nhỏ hơn 24",
+      "endTimeGreater": "Thời gian kết thúc phải lớn hơn thời gian bắt đầu",
+      "maxStudentsRequired": "Vui lòng nhập số lượng sinh viên tối đa",
+      "maxStudentsMin": "Số lượng sinh viên tối đa phải lớn hơn 0",
+      "maxStudentsInteger": "Số lượng sinh viên phải là số nguyên",
+      "deadlineRequired": "Vui lòng chọn hạn đăng ký",
+      "deadlineFuture": "Hạn đăng ký phải lớn hơn ngày hiện tại",
+      "dayOfWeekRequired": "Vui lòng chọn ngày trong tuần",
+      "dayOfWeekInvalid": "Ngày trong tuần không hợp lệ"
+    },
+    "loading": "Đang tải..."
+  },
+  "registrations": {
+    "title": "Đăng ký khóa học",
+    "tabs": {
+      "newRegistration": "Đăng ký mới",
+      "registrationHistory": "Lịch sử đăng ký",
+      "unregistrationHistory": "Lịch sử hủy đăng ký"
+    },
+    "form": {
+      "title": "Đăng ký khóa học cho sinh viên",
+      "subtitle": "Chọn sinh viên và các lớp học cần đăng ký.",
+      "registerButton": "Đăng ký",
+      "student": "Sinh viên",
+      "studentInfo": "Thông tin sinh viên",
+      "studentId": "Mã sinh viên",
+      "name": "Họ tên",
+      "faculty": "Khoa",
+      "course": "Khóa",
+      "selectClasses": "Chọn lớp học cần đăng ký"
+    },
+    "list": {
+      "title": "Các lớp học đã đăng ký",
+      "studentInfo": "Thông tin sinh viên",
+      "unregisterButton": "Huỷ đăng ký"
+    },
+    "unregister": {
+      "title": "Các lớp học đã hủy đăng ký",
+      "studentInfo": "Thông tin sinh viên"
+    },
+    "table": {
+      "classCode": "Mã lớp",
+      "courseName": "Tên khóa học",
+      "teacher": "Giảng viên",
+      "schedule": "Lịch học",
+      "capacity": "Sĩ số",
+      "room": "Phòng học",
+      "semester": "Học kỳ",
+      "academicYear": "Năm học",
+      "requestTime": "Thời gian yêu cầu"
+    },
+    "studentInfo": {
+      "studentId": "Mã sinh viên",
+      "name": "Họ tên",
+      "faculty": "Khoa",
+      "course": "Khóa",
+      "classCode": "Mã lớp",
+      "courseName": "Tên khóa học"
+    },
+    "messages": {
+      "registerSuccess": "Đăng ký thành công",
+      "unregisterSuccess": "Huỷ đăng ký thành công"
+    }
+  },
+  "grades": {
+    "title": "Quản lý điểm số",
+    "list": {
+      "title": "Danh sách điểm",
+      "studentId": "Mã sinh viên",
+      "studentName": "Tên sinh viên",
+      "course": "Khóa học",
+      "midterm": "Giữa kỳ",
+      "final": "Cuối kỳ",
+      "total": "Tổng",
+      "grade": "Điểm chữ",
+      "status": "Trạng thái"
+    },
+    "form": {
+      "title": "Nhập điểm",
+      "midterm": "Điểm giữa kỳ",
+      "final": "Điểm cuối kỳ"
+    }
+  },
+  "transcripts": {
+    "title": "Bảng điểm",
+    "studentInfo": {
+      "id": "Mã sinh viên",
+      "name": "Tên sinh viên",
+      "program": "Chương trình",
+      "faculty": "Khoa"
+    },
+    "academic": {
+      "semester": "Học kỳ",
+      "year": "Năm học",
+      "gpa": "Điểm trung bình",
+      "credits": "Tổng số tín chỉ"
+    },
+    "table": {
+      "courseCode": "Mã môn học",
+      "courseName": "Tên môn học",
+      "credits": "Số tín chỉ",
+      "grade": "Điểm",
+      "status": "Trạng thái"
+    }
+  },
+  "components": {
+    "customTable": {
+      "noResults": "Không tìm thấy kết quả",
+      "loading": "Đang tải dữ liệu...",
+      "error": "Lỗi tải dữ liệu"
+    },
+    "cardTable": {
+      "noData": "Không có dữ liệu",
+      "loadMore": "Tải thêm"
+    },
+    "pagination": {
+      "rowsPerPage": "Số dòng mỗi trang:",
+      "of": "của",
+      "page": "Trang"
+    }
+  }
+} 

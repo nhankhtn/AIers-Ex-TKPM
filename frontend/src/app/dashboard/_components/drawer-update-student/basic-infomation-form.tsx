@@ -17,6 +17,8 @@ import { useDialog } from "@/hooks/use-dialog";
 import DialogConfigEmail from "../dialog-config-email";
 import { Edit } from "@mui/icons-material";
 import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
+
 interface BasicInfomationFormProps {
   formik: any;
   countries: {
@@ -26,11 +28,12 @@ interface BasicInfomationFormProps {
 function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
   const { settings } = useMainContext();
   const dialogConfigEmail = useDialog();
+  const t = useTranslations("dashboard.list");
 
   return (
     <>
       {/* Basic Information */}
-      <Typography variant='h6'>Thông tin cơ bản</Typography>
+      <Typography variant="h6">{t("basicInfo")}</Typography>
       <Grid2 container spacing={2}>
         <Grid2
           size={{
@@ -40,10 +43,10 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
         >
           <TextField
             autoFocus
-            id='name'
-            label='Họ và tên'
+            id="name"
+            label={t("studentName")}
             fullWidth
-            variant='outlined'
+            variant="outlined"
             value={formik.values.name}
             onChange={formik.handleChange}
             error={formik.touched.name && Boolean(formik.errors.name)}
@@ -58,11 +61,11 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
         >
           <RowStack gap={1}>
             <TextField
-              id='email'
-              label='Email'
-              type='email'
+              id="email"
+              label={t("email")}
+              type="email"
               fullWidth
-              variant='outlined'
+              variant="outlined"
               placeholder={settings.allowedEmailDomains.join(", ")}
               value={formik.values.email}
               onChange={formik.handleChange}
@@ -83,11 +86,11 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
           }}
         >
           <TextField
-            id='dateOfBirth'
-            label='Ngày tháng năm sinh'
-            type='date'
+            id="dateOfBirth"
+            label={t("dateOfBirth")}
+            type="date"
             fullWidth
-            variant='outlined'
+            variant="outlined"
             InputLabelProps={{ shrink: true }}
             value={formik.values.dateOfBirth}
             onChange={formik.handleChange}
@@ -107,18 +110,18 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Giới tính</InputLabel>
+            <InputLabel>{t("gender")}</InputLabel>
             <Select
-              id='gender'
-              label='Giới tính'
+              id="gender"
+              label={t("gender")}
               value={formik.values.gender}
               onChange={(event) =>
                 formik.setFieldValue("gender", event.target.value)
               }
             >
-              <MenuItem value={Gender.Male}>Nam</MenuItem>
-              <MenuItem value={Gender.Female}>Nữ</MenuItem>
-              <MenuItem value={Gender.Other}>Khác</MenuItem>
+              <MenuItem value={Gender.Male}>{t("male")}</MenuItem>
+              <MenuItem value={Gender.Female}>{t("female")}</MenuItem>
+              <MenuItem value={Gender.Other}>{t("other")}</MenuItem>
             </Select>
           </FormControl>
         </Grid2>
@@ -130,10 +133,10 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
         >
           <RowStack gap={1}>
             <FormControl sx={{ minWidth: "65px" }}>
-              <InputLabel>Quốc gia</InputLabel>
+              <InputLabel>{t("country")}</InputLabel>
               <Select
-                id='phoneCode'
-                label='Quốc tịch'
+                id="phoneCode"
+                label={t("country")}
                 value={formik.values.phoneCode}
                 onChange={(event) =>
                   formik.setFieldValue("phoneCode", event.target.value)
@@ -147,10 +150,10 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
               </Select>
             </FormControl>
             <TextField
-              id='phone'
-              label='Số điện thoại'
+              id="phone"
+              label={t("phone")}
               sx={{ flex: "1" }}
-              variant='outlined'
+              variant="outlined"
               value={formik.values.phone}
               onChange={formik.handleChange}
               error={formik.touched.phone && Boolean(formik.errors.phone)}
@@ -167,10 +170,10 @@ function BasicInfomationForm({ formik, countries }: BasicInfomationFormProps) {
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Quốc tịch</InputLabel>
+            <InputLabel>{t("nationality")}</InputLabel>
             <Select
-              id='nationality'
-              label='Quốc tịch'
+              id="nationality"
+              label={t("nationality")}
               value={formik.values.nationality}
               onChange={(event) =>
                 formik.setFieldValue("nationality", event.target.value)

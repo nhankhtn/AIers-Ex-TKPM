@@ -41,28 +41,30 @@ import SelectFilter from "@/app/dashboard/_components/select-filter";
 import { paths } from "@/paths";
 import { useDialog } from "@/hooks/use-dialog";
 import DialogConfirmDeleteClass from "./dialog-confirm-delete-class";
+import { useTranslations } from "next-intl";
 
 export function ClassList(): JSX.Element {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const deleteDialog = useDialog<Class>();
   const { classes, deleteClassApi, pagination, filter, setFilter } =
     useClassPagination();
+  const t = useTranslations();
 
   const filterConfig = useMemo(
     () => [
       {
-        label: "Học kỳ",
+        label: t("classes.filters.semester"),
         key: "semester",
         options: [
-          { value: "Tất cả", label: "Tất cả" },
-          { value: "1", label: "Học kỳ 1" },
-          { value: "2", label: "Học kỳ 2" },
-          { value: "3", label: "Học kỳ hè" },
+          { value: t("common.filters.all"), label: t("common.filters.all") },
+          { value: "1", label: t("classes.filters.semester1") },
+          { value: "2", label: t("classes.filters.semester2") },
+          { value: "3", label: t("classes.filters.semester3") },
         ],
         xs: 6,
       },
     ],
-    []
+    [t]
   );
 
   const handleDeleteClick = useCallback(
@@ -89,7 +91,7 @@ export function ClassList(): JSX.Element {
           component={Link}
           href={paths.classes.edit.replace(":id", classData.classId)}
         >
-          Chỉnh sửa
+          {t("classes.list.edit")}
         </Button>
         <IconButton
           size="small"
@@ -100,7 +102,7 @@ export function ClassList(): JSX.Element {
         </IconButton>
       </RowStack>
     ),
-    [handleDeleteClick]
+    [handleDeleteClick, t]
   );
 
   return (
@@ -112,14 +114,14 @@ export function ClassList(): JSX.Element {
         }}
       >
         <Typography variant="h5" fontWeight="bold">
-          Danh sách lớp học
+          {t("classes.list.title")}
         </Typography>
       </RowStack>
 
       <RowStack mb={3} gap={2} justifyContent="space-between">
         <Stack flex={1}>
           <TextField
-            placeholder="Tìm kiếm lớp học..."
+            placeholder={t("classes.search.placeholder")}
             variant="outlined"
             fullWidth
             value={searchQuery}
@@ -168,12 +170,12 @@ export function ClassList(): JSX.Element {
             ...classData,
             id: classData.classId,
           }))}
-          configs={getTableConfig()}
+          configs={getTableConfig(t)}
           renderRowActions={renderRowActions}
           loading={false}
           emptyState={
             <Box sx={{ py: 3, textAlign: "center" }}>
-              Không tìm thấy lớp học nào.
+              {t("classes.list.noResults")}
             </Box>
           }
         />

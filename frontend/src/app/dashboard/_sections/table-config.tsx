@@ -9,6 +9,7 @@ import {
 import { Typography } from "@mui/material";
 import { parseStringToAddress } from "../_components/drawer-update-student/drawer-update-student";
 import { formatDate } from "@/utils/format-date";
+import { useLocale, useTranslations } from "next-intl";
 
 export function objectToAddress(address: any) {
   return Object.entries(address)
@@ -18,7 +19,7 @@ export function objectToAddress(address: any) {
     .join(", ");
 }
 
-export const getTableConfig = ({
+export const GetTableConfig = ({
   programs,
   statuses,
   faculties,
@@ -26,134 +27,145 @@ export const getTableConfig = ({
   programs: Program[];
   statuses: Status[];
   faculties: Faculty[];
-}): CustomTableConfig<Student["id"], Student>[] => [
-  {
-    key: "mssv",
-    headerLabel: "Mã số sinh viên",
-    type: "string",
-    headerCellProps: {
-      sx: {
-        position: "sticky",
-        backgroundColor: "white",
+}): CustomTableConfig<Student["id"], Student>[] => {
+  const t = useTranslations("dashboard.list");
+  const commonT = useTranslations("common");
+  const locale = useLocale() as "en" | "vi";
+  return [
+    {
+      key: "mssv",
+      headerLabel: t("studentId"),
+      type: "string",
+      headerCellProps: {
+        sx: {
+          position: "sticky",
+          backgroundColor: "white",
+        },
+      },
+      renderCell: (data) => <Typography variant="body2">{data.id}</Typography>,
+    },
+    {
+      key: "name",
+      headerLabel: t("studentName"),
+      type: "string",
+      headerCellProps: {
+        sx: {
+          position: "sticky",
+          backgroundColor: "white",
+        },
+      },
+      renderCell: (data) => (
+        <Typography variant="body2">{data.name}</Typography>
+      ),
+    },
+    {
+      key: "dob",
+      headerLabel: t("dateOfBirth"),
+      type: "string",
+      renderCell: (data) => (
+        <Typography variant="body2">{formatDate(data.dateOfBirth)}</Typography>
+      ),
+    },
+    {
+      key: "gender",
+      headerLabel: t("gender"),
+      type: "string",
+      renderCell: (data) => (
+        <Typography variant="body2">{mappingGender[data.gender]}</Typography>
+      ),
+    },
+    {
+      key: "email",
+      headerLabel: t("email"),
+      type: "string",
+      renderCell: (data) => (
+        <Typography variant="body2">{data.email}</Typography>
+      ),
+    },
+    {
+      key: "phone",
+      headerLabel: t("phone"),
+      type: "string",
+      renderCell: (data) => (
+        <Typography variant="body2">{data.phone}</Typography>
+      ),
+    },
+    {
+      key: "permanent_address",
+      headerLabel: t("permanentAddress"),
+      type: "string",
+      renderCell: (data) => {
+        const address = parseStringToAddress(data.permanentAddress);
+        return (
+          <Typography variant="body2" width={300} whiteSpace={"normal"}>
+            {objectToAddress(address)}
+          </Typography>
+        );
       },
     },
-    renderCell: (data) => <Typography variant='body2'>{data.id}</Typography>,
-  },
-  {
-    key: "name",
-    headerLabel: "Họ và tên",
-    type: "string",
-    headerCellProps: {
-      sx: {
-        position: "sticky",
-        backgroundColor: "white",
+    {
+      key: "temporary_address",
+      headerLabel: t("temporaryAddress"),
+      type: "string",
+      renderCell: (data) => {
+        const address = parseStringToAddress(data.temporaryAddress);
+        return (
+          <Typography variant="body2" width={300} whiteSpace={"normal"}>
+            {data.temporaryAddress ? objectToAddress(address) : t("empty")}
+          </Typography>
+        );
       },
     },
-    renderCell: (data) => <Typography variant='body2'>{data.name}</Typography>,
-  },
-  {
-    key: "dob",
-    headerLabel: "Ngày sinh",
-    type: "string",
-    renderCell: (data) => (
-      <Typography variant='body2'>{formatDate(data.dateOfBirth)}</Typography>
-    ),
-  },
-  {
-    key: "gender",
-    headerLabel: "Giới tính",
-    type: "string",
-    renderCell: (data) => (
-      <Typography variant='body2'>{mappingGender[data.gender]}</Typography>
-    ),
-  },
-  {
-    key: "email",
-    headerLabel: "Email",
-    type: "string",
-    renderCell: (data) => <Typography variant='body2'>{data.email}</Typography>,
-  },
-  {
-    key: "phone",
-    headerLabel: "Số điện thoại",
-    type: "string",
-    renderCell: (data) => <Typography variant='body2'>{data.phone}</Typography>,
-  },
-  {
-    key: "permanent_address",
-    headerLabel: "Địa chỉ thường trú",
-    type: "string",
-    renderCell: (data) => {
-      const address = parseStringToAddress(data.permanentAddress);
-      return (
-        <Typography variant='body2' width={300} whiteSpace={"normal"}>
-          {objectToAddress(address)}
-        </Typography>
-      );
+    {
+      key: "mailing_address",
+      headerLabel: t("mailingAddress"),
+      type: "string",
+      renderCell: (data) => {
+        const address = parseStringToAddress(data.mailingAddress);
+        return (
+          <Typography variant="body2">
+            {data.mailingAddress ? objectToAddress(address) : t("empty")}
+          </Typography>
+        );
+      },
     },
-  },
-  {
-    key: "temporary_address",
-    headerLabel: "Địa chị tạm trú",
-    type: "string",
-    renderCell: (data) => {
-      const address = parseStringToAddress(data.temporaryAddress);
-      return (
-        <Typography variant='body2' width={300} whiteSpace={"normal"}>
-          {data.temporaryAddress ? objectToAddress(address) : "Trống"}
+    {
+      key: "faculty",
+      headerLabel: t("faculty"),
+      type: "string",
+      renderCell: (data) => (
+        <Typography variant="body2">
+          {faculties.find((f) => f.id === data.faculty)?.name[locale]}
         </Typography>
-      );
+      ),
     },
-  },
-  {
-    key: "mailing_address",
-    headerLabel: "Địa chỉ nhận thư",
-    type: "string",
-    renderCell: (data) => {
-      const address = parseStringToAddress(data.mailingAddress);
-      return (
-        <Typography variant='body2'>
-          {data.mailingAddress ? objectToAddress(address) : "Trống"}
+    {
+      key: "course",
+      headerLabel: t("course"),
+      type: "string",
+      renderCell: (data) => (
+        <Typography variant="body2">{data.course}</Typography>
+      ),
+    },
+    {
+      key: "program",
+      headerLabel: t("program"),
+      type: "string",
+      renderCell: (data) => (
+        <Typography variant="body2">
+          {programs.find((p) => p.id === data.program)?.name[locale]}
         </Typography>
-      );
+      ),
     },
-  },
-  {
-    key: "faculty",
-    headerLabel: "Khoa",
-    type: "string",
-    renderCell: (data) => (
-      <Typography variant='body2'>
-        {faculties.find((f) => f.id === data.faculty)?.name.vi}
-      </Typography>
-    ),
-  },
-  {
-    key: "course",
-    headerLabel: "Khoá",
-    type: "string",
-    renderCell: (data) => (
-      <Typography variant='body2'>{data.course}</Typography>
-    ),
-  },
-  {
-    key: "program",
-    headerLabel: "Chương trình",
-    type: "string",
-    renderCell: (data) => (
-      <Typography variant='body2'>
-        {programs.find((p) => p.id === data.program)?.name.vi}
-      </Typography>
-    ),
-  },
-  {
-    key: "status",
-    headerLabel: "Trạng thái",
-    type: "string",
-    renderCell: (data) => (
-      <Typography variant='body2'>
-        {statuses.find((s) => s.id === data.status)?.name.vi}
-      </Typography>
-    ),
-  },
-];
+    {
+      key: "status",
+      headerLabel: t("status"),
+      type: "string",
+      renderCell: (data) => (
+        <Typography variant="body2">
+          {statuses.find((s) => s.id === data.status)?.name[locale]}
+        </Typography>
+      ),
+    },
+  ];
+};

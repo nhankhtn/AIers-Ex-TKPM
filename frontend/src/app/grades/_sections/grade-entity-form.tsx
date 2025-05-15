@@ -27,8 +27,10 @@ import useFunction from "@/hooks/use-function";
 import { ClassApi } from "@/api/class";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
 import ClassFilter from "@/app/_components/class-filter";
+import { useLocale } from "next-intl";
 
 export function GradeEntryForm() {
+  const locale = useLocale() as "en" | "vi";  
   const { showSnackbarError } = useAppSnackbar();
   const {
     getClassesApi,
@@ -203,7 +205,7 @@ export function GradeEntryForm() {
                       Khóa học:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
-                      {selectedClass.courseId}: {selectedClass.courseName}
+                      {selectedClass.courseId}: {selectedClass.courseName[locale]}
                     </Typography>
                   </Box>
                   <Box>

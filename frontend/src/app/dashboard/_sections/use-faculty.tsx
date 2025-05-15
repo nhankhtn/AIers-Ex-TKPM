@@ -2,14 +2,15 @@ import { useDialog } from "@/hooks/use-dialog";
 import useFunction from "@/hooks/use-function";
 import { FacultyApi } from "@/api/faculty";
 import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
 
 export const useFaculty = () => {
   const dialog = useDialog();
-
+  const t = useTranslations("dashboard.messages");
   const { getFacultiesApi } = useMainContext();
 
   const addFacultyApi = useFunction(FacultyApi.addFaculty, {
-    successMessage: "Thêm khoa thành công",
+    successMessage: t("addFacultySuccess"),
     onSuccess: ({ result }) => {
       getFacultiesApi.setData({
         data: [...(getFacultiesApi.data?.data || []), result.data],
@@ -18,7 +19,7 @@ export const useFaculty = () => {
   });
 
   const updateFacultyApi = useFunction(FacultyApi.updateFaculty, {
-    successMessage: "Cập nhật khoa thành công",
+    successMessage: t("updateFacultySuccess"),
     onSuccess: ({ result }) => {
       getFacultiesApi.setData({
         data: (getFacultiesApi.data?.data || []).map((f) =>
@@ -29,7 +30,7 @@ export const useFaculty = () => {
   });
 
   const deleteFacultyApi = useFunction(FacultyApi.deleteFaculty, {
-    successMessage: "Xóa khoa thành công",
+    successMessage: t("deleteFacultySuccess"),
     onSuccess: ({ payload }) => {
       getFacultiesApi.setData({
         data: (getFacultiesApi.data?.data || []).filter(

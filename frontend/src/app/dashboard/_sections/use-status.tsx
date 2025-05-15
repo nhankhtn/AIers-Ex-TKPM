@@ -2,9 +2,12 @@ import { useEffect, useMemo } from "react";
 import { useDialog } from "@/hooks/use-dialog";
 import useFunction from "@/hooks/use-function";
 import { StatusApi } from "@/api/status";
+import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
 
 export const useStatus = () => {
   const dialog = useDialog();
+  const t = useTranslations("dashboard.messages");
 
   const getStatusApi = useFunction(StatusApi.getStatus, {
     disableResetOnCall: true,
@@ -21,7 +24,7 @@ export const useStatus = () => {
   }, []);
 
   const addStatusApi = useFunction(StatusApi.addStatus, {
-    successMessage: "Thêm trạng thái thành công",
+    successMessage: t("addStatusSuccess"),
     onSuccess: ({ result }) => {
       getStatusApi.setData({
         data: [...(getStatusApi.data?.data || []), result.data],
@@ -30,7 +33,7 @@ export const useStatus = () => {
   });
 
   const updateStatusApi = useFunction(StatusApi.updateStatus, {
-    successMessage: "Cập nhật trạng thái thành công",
+    successMessage: t("updateStatusSuccess"),
     onSuccess: ({ result }) => {
       getStatusApi.setData({
         data: (getStatusApi.data?.data || []).map((f) =>
@@ -41,7 +44,7 @@ export const useStatus = () => {
   });
 
   const deleteStatusApi = useFunction(StatusApi.deleteStatus, {
-    successMessage: "Xóa trạng thái thành công",
+    successMessage: t("deleteStatusSuccess"),
     onSuccess: ({ payload }) => {
       getStatusApi.setData({
         data: (getStatusApi.data?.data || []).filter((f) => f.id !== payload),

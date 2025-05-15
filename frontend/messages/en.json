@@ -1,0 +1,510 @@
+{
+  "common": {
+    "actions": {
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit",
+      "search": "Search",
+      "filter": "Filter",
+      "refresh": "Refresh",
+      "export": "Export",
+      "import": "Import",
+      "view": "View",
+      "print": "Print"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "error": "Error"
+    },
+    "table": {
+      "noData": "No data available",
+      "loading": "Loading...",
+      "rowsPerPage": "Rows per page",
+      "of": "of",
+      "page": "Page"
+    },
+    "filters": {
+      "all": "All"
+    },
+    "loading":"Loading..."
+  },
+  "sidebar": {
+    "title": "Training Management",
+    "studentManagement": "Student Management",
+    "courseManagement": "Course Management",
+    "classManagement": "Class Management",
+    "courseRegistration": "Course Registration",
+    "gradeManagement": "Grade Management",
+    "transcripts": "Transcripts",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "overview": {
+      "totalStudents": "Total Students",
+      "totalCourses": "Total Courses",
+      "totalClasses": "Total Classes",
+      "activeRegistrations": "Active Registrations"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "noActivity": "No recent activity"
+    },
+    "list": {
+      "title": "Student List",
+      "studentId": "Student ID",
+      "studentName": "Full Name",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "email": "Email",
+      "phone": "Phone Number",
+      "permanentAddress": "Permanent Address",
+      "temporaryAddress": "Temporary Address",
+      "mailingAddress": "Mailing Address",
+      "faculty": "Faculty",
+      "course": "Course",
+      "program": "Program",
+      "status": "Status",
+      "empty": "Empty",
+      "basicInfo": "Basic Information",
+      "academicInfo": "Academic Information",
+      "identityInfo": "Identity Information",
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "country": "Country",
+      "nationality": "Nationality",
+      "identityType": "Identity Type",
+      "documentNumber": "Document Number",
+      "issuePlace": "Issue Place",
+      "issueDate": "Issue Date",
+      "expiryDate": "Expiry Date",
+      "issueCountry": "Issue Country",
+      "isChip": "Chip Card",
+      "notes": "Notes",
+      "province": "Province/City",
+      "district": "District",
+      "ward": "Ward",
+      "addressDetail": "Address Detail (house number, street, village...)",
+      "addressDetailPlaceholder": "Example: 123 Street Name, Area"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Delete Student",
+        "confirmMessage": "Are you sure you want to delete student"
+      },
+      "export": {
+        "title": "Export Data",
+        "fileFormat": "File Format",
+        "formats": {
+          "excel": "Excel (.xlsx)",
+          "csv": "CSV (.csv)",
+          "pdf": "PDF (.pdf)"
+        },
+        "rowCount": "Number of Rows",
+        "maxRows": "Maximum {count} rows",
+        "filterNote": "Data will be exported according to current filters and sorting",
+        "exportButton": "Export Data"
+      },
+      "import": {
+        "title": "Upload File",
+        "dropzone": {
+          "title": "Drag and drop a file here or click to select",
+          "subtitle": "Supports {types} files (max {size}MB)"
+        },
+        "errors": {
+          "unsupportedType": "Unsupported file type. Please select {types}",
+          "maxSize": "File size exceeds {size}MB"
+        },
+        "processingNote": "File will be processed after upload. Please ensure correct format",
+        "downloadTemplate": {
+          "prefix": "Download template file",
+          "link": "here",
+          "filename": "[Template] Student File.xlsx"
+        },
+        "uploadButton": "Upload"
+      },
+      "management": {
+        "faculty": "Faculty Settings",
+        "program": "Program Settings",
+        "status": "Status Settings",
+        "nameVi": "Vietnamese Name",
+        "nameEn": "English Name",
+        "order": "Order",
+        "orderTooltip": "When updating student status, can only move to status with order greater than or equal to current status",
+        "addNew": "Add New",
+        "close": "Close",
+        "confirmDelete": "Confirm Delete",
+        "confirmEdit": "Confirm Edit",
+        "deleteWarning": "Are you sure you want to delete this item? This action cannot be undone.",
+        "editConfirm": "Are you sure you want to save this edit?",
+        "cancel": "Cancel"
+      },
+      "email": {
+        "title": "Email Domain Configuration",
+        "description": "Enter allowed email domains (separated by commas):",
+        "placeholder": "example.com, mydomain.com",
+        "invalidDomains": "Invalid domain list: {domains}",
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "search": {
+      "label": "Search Student",
+      "placeholder": "Enter Student ID or Name"
+    },
+    "filters": {
+      "all": "All",
+      "faculty": "Faculty",
+      "program": "Program",
+      "course": "Course",
+      "status": "Status",
+      "semester": "Semester",
+      "academicYear":"Academic Year"
+    },
+    "actions": {
+      "addFaculty": "Add Faculty",
+      "addProgram": "Add Program",
+      "addStatus": "Add Status",
+      "addStudent": "Add Student",
+      "importList": "Import List",
+      "exportList": "Export List",
+      "addStudentSuccess": "Student added successfully",
+      "fileNoData": "File has no data",
+      "exportSuccess": "File exported successfully"
+    },
+    "drawer": {
+      "addTitle": "Add New Student",
+      "editTitle": "Edit Student",
+      "cancel": "Cancel",
+      "add": "Add",
+      "update": "Update",
+      "identityTypes": {
+        "CCCD": " Identity Card",
+        "CMND": "National ID Card",
+        "Passport": "Passport"
+      }
+    },
+    "messages": {
+      "addFacultySuccess": "Faculty added successfully",
+      "updateFacultySuccess": "Faculty updated successfully",
+      "deleteFacultySuccess": "Faculty deleted successfully",
+      "addProgramSuccess": "Program added successfully",
+      "updateProgramSuccess": "Program updated successfully",
+      "deleteProgramSuccess": "Program deleted successfully",
+      "addStatusSuccess": "Status added successfully",
+      "updateStatusSuccess": "Status updated successfully",
+      "deleteStatusSuccess": "Status deleted successfully",
+      "fileNoData": "File has no data",
+      "exportSuccess": "File exported successfully"
+    }
+  },
+  "courses": {
+    "title": "Course Management",
+    "list": {
+      "title": "Course List",
+      "code": "Course Code",
+      "name": "Course Name",
+      "credits": "Credits",
+      "faculty": "Faculty",
+      "description": "Description",
+      "prerequisites": "Prerequisites",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "noResults": "No courses found"
+    },
+    "form": {
+      "addTitle": "Add New Course",
+      "editTitle": "Edit Course",
+      "courseId": "Course Code",
+      "courseNameVi": "Course Name (Vietnamese)",
+      "courseNameEn": "Course Name (English)",
+      "credits": "Credits",
+      "faculty": "Faculty",
+      "descriptionVi": "Description (Vietnamese)",
+      "descriptionEn": "Description (English)",
+      "requiredCourse": "Prerequisite Course",
+      "description": "Fill in the course details below. Fields marked with * are required.",
+      "placeholders": {
+        "courseId": "Ex: CS101",
+        "courseNameVi": "Ex: Lập trình hướng đối tượng",
+        "courseNameEn": "Ex: Object-Oriented Programming",
+        "descriptionVi": "Enter detailed course description in Vietnamese...",
+        "descriptionEn": "Enter detailed course description in English...",
+        "requiredCourse": "Ex: CS101"
+      },
+      "validation": {
+        "courseIdRequired": "Please enter the course code",
+        "courseIdFormat": "Course code can only contain letters and numbers",
+        "courseNameViRequired": "Please enter the course name in Vietnamese",
+        "courseNameEnRequired": "Please enter the course name in English",
+        "courseNameMinLength": "Course name must be at least 3 characters",
+        "creditsRequired": "Please enter the number of credits",
+        "creditsMin": "Credits must be greater than or equal to 2",
+        "creditsInteger": "Credits must be an integer",
+        "facultyRequired": "Please select a faculty",
+        "descriptionViRequired": "Please enter the course description in Vietnamese",
+        "descriptionEnRequired": "Please enter the course description in English",
+        "requiredCourseNotSelf": "Cannot select this course as its own prerequisite"
+      }
+    },
+    "search": {
+      "placeholder": "Search for courses..."
+    },
+    "filters": {
+      "faculty": "Faculty",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "openClass": "Open Class"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Delete Course",
+        "confirmMessage": "Are you sure you want to delete the course"
+      }
+    },
+    "messages":{
+      "deleteCourseSuccess": "Course deleted successfully",
+      "addCourseSuccess": "Course added successfully",
+      "updateCourseSuccess": "Course updated successfully"
+    }
+  },
+  "classes": {
+    "title": "Class Management",
+    "list": {
+      "title": "Class List",
+      "code": "Class Code",
+      "course": "Course",
+      "teacher": "Teacher",
+      "schedule": "Schedule",
+      "room": "Room",
+      "capacity": "Capacity",
+      "enrolled": "Enrolled",
+      "year": "Academic Year",
+      "semester": "Semester",
+      "dayOfWeek": "Day of Week",
+      "time": "Time",
+      "maxStudents": "Maximum Capacity",
+      "deadline": "Registration Deadline",
+      "noResults": "No classes found",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "form": {
+      "addTitle": "Open New Class",
+      "editTitle": "Edit Class",
+      "description": "Enter class details below. Fields marked with * are required.",
+      "classId": "Class Code",
+      "course": "Course",
+      "teacher": "Teacher",
+      "academicYear": "Academic Year",
+      "semester": "Semester",
+      "semester1": "Semester 1",
+      "semester2": "Semester 2",
+      "semester3": "Summer Semester",
+      "room": "Classroom",
+      "startTime": "Start Time (hour)",
+      "endTime": "End Time (hour)",
+      "dayOfWeek": "Class Day",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "maxStudents": "Maximum Number of Students",
+      "deadline": "Registration Deadline",
+      "cancel": "Cancel",
+      "update": "Update Class",
+      "create": "Create Class",
+      "searchCourse": "Search for courses...",
+      "placeholders": {
+        "classId": "Ex: CS101-01",
+        "teacher": "Ex: Dr. John Smith",
+        "room": "Ex: A1.203"
+      }
+    },
+    "filters": {
+      "semester": "Semester",
+      "semester1": "Semester 1",
+      "semester2": "Semester 2",
+      "semester3": "Summer Semester",
+      "academicYear": "Academic Year"
+    },
+    "search": {
+      "placeholder": "Search for classes..."
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Delete Class",
+        "confirmMessage": "Are you sure you want to delete the class",
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
+    "messages": {
+      "deleteSuccess": "Class deleted successfully",
+      "addSuccess": "Class added successfully",
+      "updateSuccess": "Class updated successfully"
+    },
+    "validation": {
+      "classIdRequired": "Class code is required",
+      "classIdFormat": "Class code can only contain letters, numbers, and hyphens",
+      "courseRequired": "Please select a course",
+      "teacherRequired": "Teacher name is required",
+      "teacherMinLength": "Teacher name must be at least 3 characters",
+      "academicYearRequired": "Academic year is required",
+      "academicYearMin": "Academic year must be greater than 2000",
+      "academicYearMax": "Academic year must be less than 2100",
+      "academicYearInteger": "Academic year must be an integer",
+      "semesterRequired": "Semester is required",
+      "semesterInvalid": "Invalid semester",
+      "roomRequired": "Classroom is required",
+      "startTimeRequired": "Start time is required",
+      "startTimeMin": "Time must be greater than or equal to 0",
+      "startTimeMax": "Time must be less than 24",
+      "endTimeRequired": "End time is required",
+      "endTimeMin": "Time must be greater than or equal to 0",
+      "endTimeMax": "Time must be less than 24",
+      "endTimeGreater": "End time must be greater than start time",
+      "maxStudentsRequired": "Maximum number of students is required",
+      "maxStudentsMin": "Maximum number of students must be greater than 0",
+      "maxStudentsInteger": "Number of students must be an integer",
+      "deadlineRequired": "Registration deadline is required",
+      "deadlineFuture": "Registration deadline must be in the future",
+      "dayOfWeekRequired": "Class day is required",
+      "dayOfWeekInvalid": "Invalid class day"
+    },
+    "loading": "Loading..."
+  },
+  "registrations": {
+    "title": "Course Registration",
+    "tabs": {
+      "newRegistration": "New Registration",
+      "registrationHistory": "Registration History",
+      "unregistrationHistory": "Unregistration History"
+    },
+    "form": {
+      "title": "Register Course for Student",
+      "subtitle": "Select student and classes to register.",
+      "registerButton": "Register",
+      "student": "Student",
+      "studentInfo": "Student Information",
+      "studentId": "Student ID",
+      "name": "Name",
+      "faculty": "Faculty",
+      "course": "Course",
+      "selectClasses": "Select classes to register"
+    },
+    "list": {
+      "title": "Registered Classes",
+      "studentInfo": "Student Information",
+      "unregisterButton": "Unregister"
+    },
+    "unregister": {
+      "title": "Unregistered Classes",
+      "studentInfo": "Student Information"
+    },
+    "table": {
+      "classCode": "Class Code",
+      "courseName": "Course Name",
+      "teacher": "Teacher",
+      "schedule": "Schedule",
+      "capacity": "Capacity",
+      "room": "Room",
+      "semester": "Semester",
+      "academicYear": "Academic Year",
+      "requestTime": "Request Time"
+    },
+    "studentInfo": {
+      "studentId": "Student ID",
+      "name": "Name",
+      "faculty": "Faculty",
+      "course": "Course",
+      "classCode": "Class Code",
+      "courseName": "Course Name"
+    },
+    "messages": {
+      "registerSuccess": "Registration successful",
+      "unregisterSuccess": "Unregistration successful"
+    }
+  },
+  "grades": {
+    "title": "Grade Management",
+    "list": {
+      "title": "Grade List",
+      "studentId": "Student ID",
+      "studentName": "Student Name",
+      "course": "Course",
+      "midterm": "Midterm",
+      "final": "Final",
+      "total": "Total",
+      "grade": "Grade",
+      "status": "Status"
+    },
+    "form": {
+      "title": "Enter Grades",
+      "midterm": "Midterm Score",
+      "final": "Final Score"
+    }
+  },
+  "transcripts": {
+    "title": "Transcripts",
+    "studentInfo": {
+      "id": "Student ID",
+      "name": "Student Name",
+      "program": "Program",
+      "faculty": "Faculty"
+    },
+    "academic": {
+      "semester": "Semester",
+      "year": "Academic Year",
+      "gpa": "GPA",
+      "credits": "Total Credits"
+    },
+    "table": {
+      "courseCode": "Course Code",
+      "courseName": "Course Name",
+      "credits": "Credits",
+      "grade": "Grade",
+      "status": "Status"
+    }
+  },
+  "components": {
+    "customTable": {
+      "noResults": "No results found",
+      "loading": "Loading data...",
+      "error": "Error loading data"
+    },
+    "cardTable": {
+      "noData": "No data available",
+      "loadMore": "Load More"
+    },
+    "pagination": {
+      "rowsPerPage": "Rows per page:",
+      "of": "of",
+      "page": "Page"
+    }
+  }
+} 
