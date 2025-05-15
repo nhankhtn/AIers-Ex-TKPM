@@ -20,6 +20,6 @@ export class FacultyApi {
   }
 
   static async deleteFaculty(id: string): Promise<void> {
-    await apiDelete(`/faculty/id/${id}`, {});
+    await apiDelete(`/faculty/${id}`, {});
   }
 }

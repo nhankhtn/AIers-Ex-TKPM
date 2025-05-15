@@ -10,6 +10,7 @@ import {
   Autocomplete,
   Typography,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 interface TemporaryAddressProps {
   formik: any;
@@ -25,11 +26,12 @@ function TemporaryAddress({
   districtsTA,
   wardsTA,
 }: TemporaryAddressProps) {
+  const t = useTranslations("dashboard.list");
   return (
     <>
       <Grid2 container spacing={2} sx={{ mt: 1 }}>
         <Grid2 size={12}>
-          <Typography variant="subtitle1">Địa chỉ tạm trú</Typography>
+          <Typography variant="subtitle1">{t("temporaryAddress")}</Typography>
         </Grid2>
         <Grid2
           size={{
@@ -38,10 +40,10 @@ function TemporaryAddress({
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Quốc gia</InputLabel>
+            <InputLabel>{t("country")}</InputLabel>
             <Select
               id="temporaryCountry"
-              label="Quốc gia"
+              label={t("country")}
               {...formik.getFieldProps("temporaryCountry")}
             >
               {countries.map((country) => (
@@ -85,7 +87,7 @@ function TemporaryAddress({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Tỉnh/Thành phố"
+                label={t("province")}
                 error={
                   formik.touched.temporaryProvince &&
                   Boolean(formik.errors.temporaryProvince)
@@ -134,7 +136,7 @@ function TemporaryAddress({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Quận/Huyện"
+                label={t("district")}
                 error={
                   formik.touched.temporaryDistrict &&
                   Boolean(formik.errors.temporaryDistrict)
@@ -176,7 +178,7 @@ function TemporaryAddress({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Phường/Xã"
+                label={t("ward")}
                 error={
                   formik.touched.temporaryWard &&
                   Boolean(formik.errors.temporaryWard)
@@ -192,10 +194,10 @@ function TemporaryAddress({
         <Grid2 size={12}>
           <TextField
             id="temporaryDetail"
-            label="Địa chỉ chi tiết (số nhà, đường, thôn, xóm...)"
+            label={t("addressDetail")}
             fullWidth
             variant="outlined"
-            placeholder="Ví dụ: Tổ 2, thôn Vĩnh Xuân"
+            placeholder={t("addressDetailPlaceholder")}
             value={formik.values.temporaryDetail}
             onChange={formik.handleChange}
             error={

@@ -28,6 +28,7 @@ import {
 import useFunction from "@/hooks/use-function";
 import { Faculty, Program, Status } from "@/types/student";
 import RowStack from "@/components/row-stack";
+import { useTranslations } from "next-intl";
 
 type Item = Status | Program | Faculty;
 
@@ -51,6 +52,7 @@ export default function DialogManagement({
   handleEditItem,
   handleDeleteItem,
 }: DialogManagementProps) {
+  const t = useTranslations("dashboard.dialogs.management");
   const [newItemNameVi, setNewItemNameVi] = useState<string | null>(null);
   const [newItemNameEn, setNewItemNameEn] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -61,13 +63,13 @@ export default function DialogManagement({
   const getTitle = () => {
     switch (type) {
       case "faculty":
-        return "Cài đặt khoa";
+        return t("faculty");
       case "program":
-        return "Cài đặt chương trình";
+        return t("program");
       case "status":
-        return "Cài đặt trạng thái";
+        return t("status");
       default:
-        return "Cài đặt";
+        return "";
     }
   };
 
@@ -137,9 +139,9 @@ export default function DialogManagement({
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth='sm' fullWidth>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>
-          <RowStack justifyContent='space-between' alignItems='center'>
+          <RowStack justifyContent="space-between" alignItems="center">
             {getTitle()}
             <IconButton onClick={onClose}>
               <CloseIcon />
@@ -151,7 +153,7 @@ export default function DialogManagement({
             <RowStack spacing={2}>
               <TextField
                 fullWidth
-                label='Tên tiếng Việt'
+                label={t("nameVi")}
                 value={editingItem ? editingItem.name.vi : newItemNameVi || ""}
                 onChange={(e) =>
                   editingItem
@@ -164,7 +166,7 @@ export default function DialogManagement({
               />
               <TextField
                 fullWidth
-                label='Tên tiếng Anh'
+                label={t("nameEn")}
                 value={editingItem ? editingItem.name.en : newItemNameEn || ""}
                 onChange={(e) =>
                   editingItem
@@ -177,7 +179,7 @@ export default function DialogManagement({
               />
               {!editingItem && (
                 <Button
-                  variant='contained'
+                  variant="contained"
                   onClick={() => {
                     if (newItemNameVi && newItemNameEn) {
                       const newItem = {
@@ -201,14 +203,14 @@ export default function DialogManagement({
               {editingItem && (
                 <RowStack spacing={1}>
                   <IconButton
-                    color='primary'
+                    color="primary"
                     onClick={handleSaveEdit}
                     disabled={!editingItem.name.vi || !editingItem.name.en}
                   >
                     <CheckIcon />
                   </IconButton>
                   <IconButton
-                    color='error'
+                    color="error"
                     onClick={() => {
                       setEditingItem(null);
                       setItemToEdit(null);
@@ -226,13 +228,13 @@ export default function DialogManagement({
                   secondaryAction={
                     <RowStack spacing={1}>
                       <IconButton
-                        edge='end'
+                        edge="end"
                         onClick={() => handleEditClick(item)}
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton
-                        edge='end'
+                        edge="end"
                         onClick={() => handleDeleteClick(item.id)}
                       >
                         <DeleteIcon />
@@ -252,22 +254,24 @@ export default function DialogManagement({
       </Dialog>
 
       <Dialog open={confirmDialogOpen} onClose={handleCancelAction}>
-        <DialogTitle>Xác nhận</DialogTitle>
+        <DialogTitle>
+          {itemToDelete ? t("confirmDelete") : t("confirmEdit")}
+        </DialogTitle>
         <DialogContent>
           {itemToDelete && (
-            <Typography>Bạn có chắc chắn muốn xóa mục này không?</Typography>
+            t("deleteWarning")
           )}
           {itemToEdit && (
-            <Typography>Bạn có chắc chắn muốn lưu thay đổi không?</Typography>
+            t("editConfirm")
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelAction}>Hủy</Button>
+          <Button onClick={handleCancelAction}>{t("cancel")}</Button>
           <Button
             onClick={itemToDelete ? handleConfirmDelete : handleConfirmEdit}
             autoFocus
           >
-            Xác nhận
+            {itemToDelete ? t("confirmDelete") : t("confirmEdit")}
           </Button>
         </DialogActions>
       </Dialog>

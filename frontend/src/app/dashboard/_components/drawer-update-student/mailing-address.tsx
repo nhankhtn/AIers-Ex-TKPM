@@ -10,6 +10,8 @@ import {
   Autocomplete,
   Typography,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
+
 interface MailingAddressProps {
   formik: any;
   countries: any[];
@@ -17,12 +19,20 @@ interface MailingAddressProps {
   districtsMA: any[];
   wardsMA: any[];
 }
-function MailingAddress({ formik, countries, provinces, districtsMA, wardsMA }: MailingAddressProps) {
+
+function MailingAddress({
+  formik,
+  countries,
+  provinces,
+  districtsMA,
+  wardsMA,
+}: MailingAddressProps) {
+  const t = useTranslations("dashboard.list");
   return (
     <>
       <Grid2 container spacing={2} sx={{ mt: 1 }}>
         <Grid2 size={12}>
-          <Typography variant="subtitle1">Địa chỉ nhận thư</Typography>
+          <Typography variant="subtitle1">{t("mailingAddress")}</Typography>
         </Grid2>
         <Grid2
           size={{
@@ -31,10 +41,10 @@ function MailingAddress({ formik, countries, provinces, districtsMA, wardsMA }: 
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Quốc gia</InputLabel>
+            <InputLabel>{t("country")}</InputLabel>
             <Select
               id="mailingCountry"
-              label="Quốc gia"
+              label={t("country")}
               {...formik.getFieldProps("mailingCountry")}
             >
               {countries.map((country) => (
@@ -77,7 +87,7 @@ function MailingAddress({ formik, countries, provinces, districtsMA, wardsMA }: 
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Tỉnh/Thành phố"
+                label={t("province")}
                 error={
                   formik.touched.mailingProvince &&
                   Boolean(formik.errors.mailingProvince)
@@ -126,7 +136,7 @@ function MailingAddress({ formik, countries, provinces, districtsMA, wardsMA }: 
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Quận/Huyện"
+                label={t("district")}
                 error={
                   formik.touched.mailingDistrict &&
                   Boolean(formik.errors.mailingDistrict)
@@ -172,7 +182,7 @@ function MailingAddress({ formik, countries, provinces, districtsMA, wardsMA }: 
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Phường/Xã"
+                label={t("ward")}
                 error={
                   formik.touched.mailingWard &&
                   Boolean(formik.errors.mailingWard)
@@ -188,10 +198,10 @@ function MailingAddress({ formik, countries, provinces, districtsMA, wardsMA }: 
         <Grid2 size={12}>
           <TextField
             id="mailingDetail"
-            label="Địa chỉ chi tiết (số nhà, đường, thôn, xóm...)"
+            label={t("addressDetail")}
             fullWidth
             variant="outlined"
-            placeholder="Ví dụ: Tổ 2, thôn Vĩnh Xuân"
+            placeholder={t("addressDetailPlaceholder")}
             value={formik.values.mailingDetail}
             onChange={formik.handleChange}
             error={

@@ -17,6 +17,7 @@ import PermanentAddress from "./permanent-address";
 import TemporaryAddress from "./temporary-address";
 import MailingAddress from "./mailing-address";
 import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
 
 const AddressStudentForm = ({
   formik,
@@ -27,6 +28,7 @@ const AddressStudentForm = ({
   open: boolean;
   countries: Country[];
 }) => {
+  const t = useTranslations("dashboard.list");
   const { provinces } = useMainContext();
   const getDistrictOfProvincesPAApi = useFunction(
     AddressApi.getDistrictOfProvinces
@@ -138,7 +140,7 @@ const AddressStudentForm = ({
 
   return (
     <>
-      <Typography variant='h6'>Địa chỉ thường trú</Typography>
+      <Typography variant="h6">{t("permanentAddress")}</Typography>
       <PermanentAddress
         formik={formik}
         countries={countries}
@@ -160,14 +162,14 @@ const AddressStudentForm = ({
                   );
                   formik.validateForm();
                 }}
-                name='useTemporaryAddress'
+                name="useTemporaryAddress"
               />
             }
-            label='Thêm địa chỉ tạm trú'
+            label={t("temporaryAddress")}
           />
           <Tooltip
-            title='Địa chỉ tạm trú là địa chỉ bạn đang ở hiện tại, nếu khác với địa chỉ thường trú'
-            placement='top'
+            title="Địa chỉ tạm trú là địa chỉ bạn đang ở hiện tại, nếu khác với địa chỉ thường trú"
+            placement="top"
           >
             <InfoOutlined
               sx={{
@@ -202,14 +204,14 @@ const AddressStudentForm = ({
                   );
                   formik.validateForm();
                 }}
-                name='useMailingAddress'
+                name="useMailingAddress"
               />
             }
-            label='Thêm địa chỉ nhận thư'
+            label={t("mailingAddress")}
           />
           <Tooltip
-            title='Địa chỉ nhận thư là địa chỉ bạn nhận thư từ trường, nếu khác với địa chỉ thường trú'
-            placement='top'
+            title="Địa chỉ nhận thư là địa chỉ bạn nhận thư từ trường, nếu khác với địa chỉ thường trú"
+            placement="top"
           >
             <InfoOutlined
               sx={{

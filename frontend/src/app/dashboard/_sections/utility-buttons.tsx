@@ -35,6 +35,7 @@ import { objectToAddress } from "./table-config";
 import useDashboardSearch from "./use-dashboard-search";
 import DialogSettingsStatus from "../_components/dialog-settings-status";
 import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
 
 function parseAddress(address: string) {
   const parts = address.split(",").map((part) => part.trim());
@@ -61,16 +62,18 @@ function UtilityButtons({
   updateStudentsApi,
 }: UtilityButtonsProps) {
   const { showSnackbarSuccess, showSnackbarError } = useAppSnackbar();
+  const t = useTranslations("dashboard.actions");
+  const commonT = useTranslations("common");
 
   const handleAddStudent = useCallback(
     async (student: Student) => {
       const res = await createStudentsApi.call([student]);
       if (!res.error) {
-        showSnackbarSuccess("Thêm sinh viên thành công");
+        showSnackbarSuccess(t("addStudentSuccess"));
         dialog.handleClose();
       }
     },
-    [createStudentsApi, dialog, showSnackbarSuccess]
+    [createStudentsApi, dialog, showSnackbarSuccess, t]
   );
 
   const handleUpdateStudent = useCallback(
@@ -306,43 +309,43 @@ function UtilityButtons({
     <>
       <RowStack sx={{ gap: 1 }}>
         <Button
-          variant='outlined'
-          color='success'
+          variant="outlined"
+          color="success"
           startIcon={<AddIcon />}
           sx={{ borderRadius: "20px" }}
           onClick={() => dialogFaculty.handleOpen()}
         >
-          Thêm khoa
+          {t("addFaculty")}
         </Button>
         <Button
-          variant='contained'
-          color='primary'
+          variant="contained"
+          color="primary"
           startIcon={<AddIcon />}
           sx={{ borderRadius: "20px" }}
           onClick={() => dialogProgram.handleOpen()}
         >
-          Thêm chương trình
+          {t("addProgram")}
         </Button>
         <Button
-          variant='contained'
-          color='secondary'
+          variant="contained"
+          color="secondary"
           startIcon={<AddIcon />}
           sx={{ borderRadius: "20px" }}
           onClick={() => dialogStatus.handleOpen()}
         >
-          Thêm trạng thái
+          {t("addStatus")}
         </Button>
         <Button
-          variant='contained'
-          color='success'
+          variant="contained"
+          color="success"
           startIcon={<AddIcon />}
           sx={{ borderRadius: "20px" }}
           onClick={() => dialog.handleOpen()}
         >
-          Thêm sinh viên
+          {t("addStudent")}
         </Button>
         <IconButton
-          color='primary'
+          color="primary"
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             setMoreMenuAnchorEl(event.currentTarget);
           }}
@@ -364,8 +367,8 @@ function UtilityButtons({
               setMoreMenuAnchorEl(null);
             }}
           >
-            <FileUploadIcon fontSize='small' sx={{ mr: 1 }} />
-            <Typography> Import danh sách</Typography>
+            <FileUploadIcon fontSize="small" sx={{ mr: 1 }} />
+            <Typography>{t("importList")}</Typography>
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -373,8 +376,8 @@ function UtilityButtons({
               setMoreMenuAnchorEl(null);
             }}
           >
-            <FileDownloadIcon fontSize='small' sx={{ mr: 1 }} />
-            <Typography>Export danh sách</Typography>
+            <FileDownloadIcon fontSize="small" sx={{ mr: 1 }} />
+            <Typography>{t("exportList")}</Typography>
           </MenuItem>
         </Menu>
       </RowStack>

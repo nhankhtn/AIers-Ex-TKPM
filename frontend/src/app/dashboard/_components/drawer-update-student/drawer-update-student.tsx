@@ -22,6 +22,7 @@ import {
 } from "@/utils/phone-helper";
 import useFunction from "@/hooks/use-function";
 import { useMainContext } from "@/context/main/main-context";
+import { useTranslations } from "next-intl";
 
 const formatDate = (date: Date) => {
   return date && !isNaN(new Date(date).getTime())
@@ -65,15 +66,15 @@ interface DrawerUpdateStudentProps {
 export const IDENTITY_TYPES = [
   {
     key: "CCCD",
-    name: "Căn cước nhân dân",
+    translationKey: "CCCD",
   },
   {
     key: "CMND",
-    name: "Chứng minh nhân dân",
+    translationKey: "CMND",
   },
   {
     key: "Passport",
-    name: "Hộ chiếu",
+    translationKey: "Passport",
   },
 ];
 
@@ -87,6 +88,7 @@ function DrawerUpdateStudent({
   statuses,
   programs,
 }: DrawerUpdateStudentProps) {
+  const t = useTranslations("dashboard.drawer");
   const { countries, settings } = useMainContext();
   useEffect(() => {
     if (!open) {
@@ -246,7 +248,7 @@ function DrawerUpdateStudent({
     <Drawer
       open={open}
       onClose={onClose}
-      anchor='right'
+      anchor="right"
       slotProps={{
         paper: {
           sx: {
@@ -257,21 +259,21 @@ function DrawerUpdateStudent({
       }}
     >
       <Stack px={3} py={2} spacing={2} sx={{ overflowY: "auto" }}>
-        <RowStack justifyContent='space-between' alignItems='center'>
-          <Typography variant='h5'>
-            {student ? "Cập nhật sinh viên" : "Thêm sinh viên"}
+        <RowStack justifyContent="space-between" alignItems="center">
+          <Typography variant="h5">
+            {student ? t("editTitle") : t("addTitle")}
           </Typography>
           <RowStack gap={1.5}>
-            <Button onClick={onClose} color='inherit' variant='outlined'>
-              Hủy
+            <Button onClick={onClose} color="inherit" variant="outlined">
+              {t("cancel")}
             </Button>
             <Button
               onClick={() => formik.handleSubmit()}
-              color='primary'
-              variant='contained'
+              color="primary"
+              variant="contained"
               disabled={formik.isSubmitting}
             >
-              {student ? "Cập nhật" : "Thêm"}
+              {student ? t("update") : t("add")}
             </Button>
           </RowStack>
         </RowStack>

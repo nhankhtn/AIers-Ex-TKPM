@@ -11,6 +11,7 @@ import {
   Grid2,
   Autocomplete,
 } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 interface PermanentAddressProps {
   formik: any;
@@ -26,6 +27,7 @@ function PermanentAddress({
   districtsPA,
   wardsPA,
 }: PermanentAddressProps) {
+  const t = useTranslations("dashboard.list");
   return (
     <>
       <Grid2 container spacing={2}>
@@ -36,10 +38,10 @@ function PermanentAddress({
           }}
         >
           <FormControl fullWidth>
-            <InputLabel>Quốc gia</InputLabel>
+            <InputLabel>{t("country")}</InputLabel>
             <Select
               id="permanentCountry"
-              label="Quốc gia"
+              label={t("country")}
               {...formik.getFieldProps("permanentCountry")}
             >
               {countries.map((country) => (
@@ -83,7 +85,7 @@ function PermanentAddress({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Tỉnh/Thành phố"
+                label={t("province")}
                 error={
                   formik.touched.permanentProvince &&
                   Boolean(formik.errors.permanentProvince)
@@ -132,7 +134,7 @@ function PermanentAddress({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Quận/Huyện"
+                label={t("district")}
                 error={
                   formik.touched.permanentDistrict &&
                   Boolean(formik.errors.permanentDistrict)
@@ -179,7 +181,7 @@ function PermanentAddress({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Phường/Xã"
+                label={t("ward")}
                 error={
                   formik.touched.permanentWard &&
                   Boolean(formik.errors.permanentWard)
@@ -195,10 +197,10 @@ function PermanentAddress({
         <Grid2 size={12}>
           <TextField
             id="permanentDetail"
-            label="Địa chỉ chi tiết (số nhà, đường, thôn, xóm...)"
+            label={t("addressDetail")}
             fullWidth
             variant="outlined"
-            placeholder="Ví dụ: Tổ 2, thôn Vĩnh Xuân"
+            placeholder={t("addressDetailPlaceholder")}
             value={formik.values.permanentDetail}
             onChange={formik.handleChange}
             error={
