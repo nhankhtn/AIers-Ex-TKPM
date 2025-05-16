@@ -1,36 +1,36 @@
 import { CustomTableConfig } from "@/components/custom-table";
 import { StudentScore } from "@/types/student";
 import { TextField, Typography } from "@mui/material";
-import { useTranslations } from "next-intl";
 
 export const getGradesTableConfig = ({
   onGradeChange,
+  t,
 }: {
   onGradeChange: (
     studentId: string,
     field: "midTermScore" | "finalScore",
     value: string
   ) => void;
+  t: (key: string) => string;
 }): CustomTableConfig<string, StudentScore>[] => {
-  const t = useTranslations();
   return [
     {
       key: "studentId",
-      headerLabel: t("grades.table.studentId"),
+      headerLabel: t("table.studentId"),
       renderCell: (data) => (
         <Typography variant='body2'>{data.studentId}</Typography>
       ),
     },
     {
       key: "studentName",
-      headerLabel: t("grades.table.studentName"),
+      headerLabel: t("table.studentName"),
       renderCell: (data) => (
         <Typography variant='body2'>{data.studentName}</Typography>
       ),
     },
     {
       key: "midTermScore",
-      headerLabel: t("grades.table.midTermScore"),
+      headerLabel: t("table.midTermScore"),
       renderCell: (data) => (
         <TextField
           variant='outlined'
@@ -51,7 +51,7 @@ export const getGradesTableConfig = ({
     },
     {
       key: "finalScore",
-      headerLabel: t("grades.table.finalScore"),
+      headerLabel: t("table.finalScore"),
       renderCell: (data) => (
         <TextField
           variant='outlined'
@@ -72,24 +72,24 @@ export const getGradesTableConfig = ({
     },
     {
       key: "totalScore",
-      headerLabel: t("grades.table.totalScore"),
+      headerLabel: t("table.totalScore"),
       renderCell: (data) => (
         <Typography variant='body2'>{data.totalScore || "--"}</Typography>
       ),
     },
     {
       key: "grade",
-      headerLabel: t("grades.table.grade"),
+      headerLabel: t("table.grade"),
       renderCell: (data) => (
         <Typography variant='body2'>{data.grade || "--"}</Typography>
       ),
     },
     {
       key: "isPassed",
-      headerLabel: t("grades.table.status"),
+      headerLabel: t("table.status"),
       renderCell: (data) => (
         <Typography variant='body2'>
-          {data.isPassed ? t("grades.table.passed") : t("grades.table.failed")}
+          {data.isPassed ? t("table.passed") : t("table.failed")}
         </Typography>
       ),
     },

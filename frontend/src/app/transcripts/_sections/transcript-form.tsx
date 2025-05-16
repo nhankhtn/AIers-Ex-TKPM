@@ -33,7 +33,7 @@ export function TranscriptForm() {
   const componentRef = useRef<HTMLDivElement>(null);
   const locale = useLocale();
   const t = useTranslations("transcripts");
-  const commonT = useTranslations("common");
+  const componentT = useTranslations("components");
 
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
@@ -68,7 +68,7 @@ export function TranscriptForm() {
                     variant='outlined'
                   />
                 )}
-                noOptionsText={commonT("table.noData")}
+                noOptionsText={componentT("select.noOptions")}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
               />
             </FormControl>

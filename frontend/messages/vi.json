@@ -544,6 +544,9 @@
       "rowsPerPage": "Số dòng mỗi trang:",
       "of": "của",
       "page": "Trang"
+    },
+    "select": {
+      "noOptions": "Không có tùy chọn"
     }
   }
 }

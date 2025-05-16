@@ -533,6 +533,9 @@
       "rowsPerPage": "Rows per page:",
       "of": "of",
       "page": "Page"
+    },
+    "select": {
+      "noOptions": "No options available"
     }
   }
 }
