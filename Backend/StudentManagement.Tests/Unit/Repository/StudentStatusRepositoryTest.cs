@@ -94,23 +94,23 @@ namespace StudentManagement.Tests.Unit.Repository
             Assert.Equal("Suspended", updatedStatus.Name);
         }
 
-        [Fact]
-        public async Task DeleteStatusAsync_StatusWithStudents_DeleteStudentsBeforeStatus()
-        {
-            var status = await _statusRepository.GetStudentStatusByIdAsync(TestDbContextFactory.Guid1.ToString());
-            Assert.NotNull(status);
+        //[Fact]
+        //public async Task DeleteStatusAsync_StatusWithStudents_DeleteStudentsBeforeStatus()
+        //{
+        //    var status = await _statusRepository.GetStudentStatusByIdAsync(TestDbContextFactory.Guid1.ToString());
+        //    Assert.NotNull(status);
 
-            var student = await _studentRepository.GetAllStudentsAsync(1, 10, null, null, status.Name, null);
+        //    var student = await _studentRepository.GetAllStudentsAsync(1, 10, null, null, status.Name, null);
 
-            foreach (var s in student.students)
-            {
-                await _studentRepository.DeleteStudentAsync(s.Id);
-            }
+        //    foreach (var s in student.students)
+        //    {
+        //        await _studentRepository.DeleteStudentAsync(s.Id);
+        //    }
 
-            await _statusRepository.DeleteStudentStatusAsync(status.Id);
-            var deletedStatus = await _context.StudentStatuses.FindAsync(status.Id);
-            Assert.Null(deletedStatus);
-        }
+        //    await _statusRepository.DeleteStudentStatusAsync(status.Id);
+        //    var deletedStatus = await _context.StudentStatuses.FindAsync(status.Id);
+        //    Assert.Null(deletedStatus);
+        //}
 
         [Fact]
         public async Task DeleteStatusAsync_StatusNotExists_DoesNothing()

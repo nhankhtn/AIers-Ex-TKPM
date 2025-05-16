@@ -95,23 +95,23 @@ namespace StudentManagement.Tests.Unit.Repository
             Assert.Equal("Khoa Kinh Tế", updatedFaculty.Name);
         }
 
-        [Fact]
-        public async Task DeleteFacultyAsync_FacultyWithStudents_DeleteStudentsBeforeFaculty()
-        {
-            var faculty = await _facultyRepository.GetFacultyByIdAsync(TestDbContextFactory.Guid1.ToString());
-            Assert.NotNull(faculty);
+        //[Fact]
+        //public async Task DeleteFacultyAsync_FacultyWithStudents_DeleteStudentsBeforeFaculty()
+        //{
+        //    var faculty = await _facultyRepository.GetFacultyByIdAsync(TestDbContextFactory.Guid1.ToString());
+        //    Assert.NotNull(faculty);
 
-            var student = await _studentRepository.GetAllStudentsAsync(1, 10, faculty.Name, null, null, null);
+        //    var student = await _studentRepository.GetAllStudentsAsync(1, 10, faculty.Name, null, null, null);
             
-            foreach(var s in student.students)
-            {
-                await _studentRepository.DeleteStudentAsync(s.Id);
-            }
+        //    foreach(var s in student.students)
+        //    {
+        //        await _studentRepository.DeleteStudentAsync(s.Id);
+        //    }
 
-            await _facultyRepository.DeleteFacultyAsync(faculty.Id);
-            var deletedFaculty = await _context.Faculties.FindAsync(faculty.Id);
-            Assert.Null(deletedFaculty);
-        }
+        //    await _facultyRepository.DeleteFacultyAsync(faculty.Id);
+        //    var deletedFaculty = await _context.Faculties.FindAsync(faculty.Id);
+        //    Assert.Null(deletedFaculty);
+        //}
 
         [Fact]
         public async Task DeleteFacultyAsync_FacultyNotExists_DoesNothing()

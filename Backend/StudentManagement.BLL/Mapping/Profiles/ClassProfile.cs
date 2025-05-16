@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using StudentManagement.BLL.DTOs.Class;
 using StudentManagement.BLL.DTOs.ClassStudent;
+using StudentManagement.BLL.DTOs.Localize;
 using StudentManagement.BLL.DTOs.Score;
 using StudentManagement.Domain.Models;
 using System;
@@ -20,7 +21,11 @@ namespace StudentManagement.BLL.Mapping.Profiles
             CreateMap<Class, AddClassDTO>();
 
             CreateMap<Class, GetClassDTO>()
-                .ForMember(dest => dest.CourseName, act => act.MapFrom(src => src.Course.CourseName));
+                .ForMember(dest => dest.CourseName, act => act.MapFrom(src => new LocalizedName
+                {
+                    Vi = src.Course.CourseName,
+                    En = src.Course.CourseNameEng
+                }));
 
             CreateMap<UpdateClassDTO, Class>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>

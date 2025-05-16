@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.BLL.DTOs.Localize;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace StudentManagement.BLL.DTOs.Class
         public int? AcademicYear { get; set; }
         public string? CourseId { get; set; }
 
-        public string? CourseName { get; set; }
+        public LocalizedName? CourseName { get; set; }
         public int? Semester { get; set; }
         public string? TeacherName { get; set; } = null!;
 

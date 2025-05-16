@@ -3,6 +3,7 @@ using Azure;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.BLL.DTOs.Class;
 using StudentManagement.BLL.DTOs.ClassStudent;
+using StudentManagement.BLL.DTOs.Localize;
 using StudentManagement.BLL.DTOs.Score;
 using StudentManagement.BLL.DTOs.Students;
 using StudentManagement.DAL.Data.Repositories.ClassRepo;
@@ -82,11 +83,16 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                                 break;
                             }
                         }
+                        var courseName = await _classRepository.GetCourseNameAsync(classId);
                         if (isPassed) registerSuccessfulClasses.Add(new GetClassStudentDTO()
                         {
                             StudentId = studentId,
                             ClassId = classId,
-                            CourseName = await _classRepository.GetCourseNameAsync(classId),
+                            CourseName = new DTOs.Localize.LocalizedName
+                            {
+                                Vi = courseName.vi,
+                                En = courseName.en
+                            },
                             StudentName = await _studentRepository.GetStudentNameAsync(studentId)
                         });
                         else
@@ -96,11 +102,16 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                     }
                     else
                     {
+                        var courseName = await _classRepository.GetCourseNameAsync(classId);
                         registerSuccessfulClasses.Add(new GetClassStudentDTO()
                         {
                             StudentId = studentId,
                             ClassId = classId,
-                            CourseName = await _classRepository.GetCourseNameAsync(classId),
+                            CourseName = new DTOs.Localize.LocalizedName
+                            {
+                                Vi = courseName.vi,
+                                En = courseName.en
+                            },
                             StudentName = await _studentRepository.GetStudentNameAsync(studentId)
                         });
                     }
@@ -143,12 +154,15 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                 if (classStudent.Count() == 0)
                     return Result<RegisterCancelationDTO>.Fail("STUDENT_NOT_JOINED_CLASS_YET", "Sinh viên chưa đăng ký lớp này.");
 
+                var courseName = await _classRepository.GetCourseNameAsync(registerCancelationDTO.ClassId);
                 var registerCancellationHistory = _mapper.Map<RegisterCancellationHistory>(registerCancelationDTO);
                 registerCancellationHistory.Time = DateTime.Now;
                 registerCancellationHistory.Semester = _class.Semester;
                 registerCancellationHistory.StudentName = await _studentRepository.GetStudentNameAsync(registerCancelationDTO.StudentId);
                 registerCancellationHistory.AcademicYear = _class.AcademicYear;
-                registerCancellationHistory.CourseName = await _classRepository.GetCourseNameAsync(registerCancelationDTO.ClassId);
+                registerCancellationHistory.CourseName = courseName.vi;
+                registerCancellationHistory.CourseNameEng = courseName.en;
+
 
                 await _registerCancellationHistoryRepository.AddAsync(registerCancellationHistory);
                 await _classStudentRepository.DeleteClassStudentAsync(registerCancelationDTO.ClassId, registerCancelationDTO.StudentId);
@@ -169,7 +183,11 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                 var data = _mapper.Map<IEnumerable<GetClassStudentDTO>>(res);
                 foreach(var c in data)
                 {
-                    c.CourseName = await _classRepository.GetCourseNameAsync(c.ClassId);
+                    var courseName = await _classRepository.GetCourseNameAsync(c.ClassId);
+                    c.CourseName = new DTOs.Localize.LocalizedName                     {
+                        Vi = courseName.vi,
+                        En = courseName.en
+                    };
                     c.StudentName = await _studentRepository.GetStudentNameAsync(c.StudentId);
                 }
 
@@ -272,7 +290,11 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                 {
                     ClassId = c.ClassId,
                     CourseId = course != null ? course.CourseId : "",
-                    CourseName = course != null ? course.CourseName : "",
+                    CourseName = new LocalizedName 
+                    {
+                        Vi = course != null ? course.CourseName : "",
+                        En = course != null ? course.CourseNameEng : ""
+                    },
                     Credit = credit,
                     TotalScore = Math.Round(c.TotalScore, 2),
                     Grade = c.Grade
@@ -284,7 +306,11 @@ namespace StudentManagement.BLL.Services.ClassStudentService
                 Transcript = data,
                 StudentId = student.Id,
                 StudentName = student.Name,
-                FacultyName = student.Faculty.Name,
+                FacultyName = new LocalizedName
+                {
+                    Vi = student.Faculty.Name,
+                    En = student.Faculty.NameEng
+                },
                 Course = student.Course,
                 TotalCredit = totalCredit,
                 PassedCredit = passedCredit,

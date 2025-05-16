@@ -17,6 +17,6 @@ namespace StudentManagement.DAL.Data.Repositories.ClassRepo
         Task DeleteClassAsync(string id);
         Task<Course?> GetCourseByClassAsync(string classId);
         Task<int> GetCreditsAsync(string classId);
-        Task<string> GetCourseNameAsync(string classId);
+        Task<(string vi, string en)> GetCourseNameAsync(string classId);
     }
 }
