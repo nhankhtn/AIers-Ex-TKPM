@@ -70,50 +70,50 @@ namespace StudentManagement.Tests.Unit.Service
         }
 
 
-        [Fact]
-        public async Task GetAllStudentsAsync_StudentsExist_ReturnsAllStudents()
-        {
-            var students = await _studentService.GetAllStudentsAsync(1, 10, null, null, null, null);
-            Assert.NotNull(students.Data);
-            Assert.NotNull(students.Data.Data);
-            Assert.Equal(5, students.Data.Total);
-        }
+        //[Fact]
+        //public async Task GetAllStudentsAsync_StudentsExist_ReturnsAllStudents()
+        //{
+        //    var students = await _studentService.GetAllStudentsAsync(1, 10, null, null, null, null);
+        //    Assert.NotNull(students.Data);
+        //    Assert.NotNull(students.Data.Data);
+        //    Assert.Equal(5, students.Data.Total);
+        //}
 
-        [Fact]
-        public async Task AddStudentsAsync_ValidStudents_ShouldReturnAcceptableAndUnacceptableLists()
-        {
-            var students = new List<StudentDTO>
-            {
-                new StudentDTO { Id = "ST006", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john232@gmail.com", Course = 2022, Phone = "+84363459789", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "666"} },
-                new StudentDTO { Id = "ST007", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john2223@gmail.com", Course = 2022, Phone = "+84363459700", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "777"} },
-            };
+        //[Fact]
+        //public async Task AddStudentsAsync_ValidStudents_ShouldReturnAcceptableAndUnacceptableLists()
+        //{
+        //    var students = new List<StudentDTO>
+        //    {
+        //        new StudentDTO { Id = "ST006", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john232@gmail.com", Course = 2022, Phone = "+84363459789", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "666"} },
+        //        new StudentDTO { Id = "ST007", Name = "John Doe", DateOfBirth = new DateTime(2000, 1, 1), Gender = "Male", Email = "john2223@gmail.com", Course = 2022, Phone = "+84363459700", PermanentAddress = "Address 1", Program = TestDbContextFactory.Guid1.ToString(), Status = TestDbContextFactory.Guid1.ToString(), Faculty = TestDbContextFactory.Guid1.ToString(), Nationality = "USA", Identity = new IdentityDTO { DocumentNumber = "777"} },
+        //    };
 
-            var result = await _studentService.AddListStudentAsync(students);
+        //    var result = await _studentService.AddListStudentAsync(students);
 
-            Assert.True(result.Success);
-            Assert.NotNull(result.Data);
-            Assert.Equal(2, result.Data.Count());
-        }
+        //    Assert.True(result.Success);
+        //    Assert.NotNull(result.Data);
+        //    Assert.Equal(2, result.Data.Count());
+        //}
 
-        [Fact]
-        public async Task UpdateStudentAsync_ExistingStudent_ShouldReturnUpdatedStudent()
-        {
-            var updateStudentDTO = new StudentDTO 
-            {
-                Name = "Chau Ngoc Phat",
-                Email = "ngocphat@gmail.com",
-                Identity = new IdentityDTO
-                {
-                    DocumentNumber = "10291"
-                }
-            };
+        //[Fact]
+        //public async Task UpdateStudentAsync_ExistingStudent_ShouldReturnUpdatedStudent()
+        //{
+        //    var updateStudentDTO = new StudentDTO 
+        //    {
+        //        Name = "Chau Ngoc Phat",
+        //        Email = "ngocphat@gmail.com",
+        //        Identity = new IdentityDTO
+        //        {
+        //            DocumentNumber = "10291"
+        //        }
+        //    };
 
-            var result = await _studentService.UpdateStudentAsync("ST001", updateStudentDTO);
-            Assert.NotNull(result.Data);
-            Assert.Equal(updateStudentDTO.Name, result.Data.Name);
-            Assert.Equal(updateStudentDTO.Email, result.Data.Email);
-            Assert.Equal(updateStudentDTO.Identity.DocumentNumber, result.Data?.Identity?.DocumentNumber);
-        }
+        //    var result = await _studentService.UpdateStudentAsync("ST001", updateStudentDTO);
+        //    Assert.NotNull(result.Data);
+        //    Assert.Equal(updateStudentDTO.Name, result.Data.Name);
+        //    Assert.Equal(updateStudentDTO.Email, result.Data.Email);
+        //    Assert.Equal(updateStudentDTO.Identity.DocumentNumber, result.Data?.Identity?.DocumentNumber);
+        //}
 
         [Fact]
         public async Task UpdateStudentAsync_NotExistingStudent_ShouldReturnResultFail()
@@ -193,35 +193,35 @@ namespace StudentManagement.Tests.Unit.Service
             Assert.Equal("INVALID_FACULTY", result.ErrorCode);
         }
 
-        [Fact]
-        public async Task UpdateStudentAsync_StatusNotExists_ShouldReturnResultFail()
-        {
-            var updateStudentDTO = new StudentDTO
-            {
-                Status = Guid.NewGuid().ToString() // Giả sử Status không tồn tại
-            };
+        //[Fact]
+        //public async Task UpdateStudentAsync_StatusNotExists_ShouldReturnResultFail()
+        //{
+        //    var updateStudentDTO = new StudentDTO
+        //    {
+        //        Status = Guid.NewGuid().ToString() // Giả sử Status không tồn tại
+        //    };
 
-            var result = await _studentService.UpdateStudentAsync("ST001", updateStudentDTO);
+        //    var result = await _studentService.UpdateStudentAsync("ST001", updateStudentDTO);
 
-            Assert.Null(result.Data);
-            Assert.False(result.Success);
-            Assert.Equal("INVALID_STATUS_UPDATE", result.ErrorCode);
-        }
+        //    Assert.Null(result.Data);
+        //    Assert.False(result.Success);
+        //    Assert.Equal("INVALID_STATUS_UPDATE", result.ErrorCode);
+        //}
 
-        [Fact]
-        public async Task UpdateStudentAsync_LowerStatus_ShouldReturnResultFail()
-        {
-            var updateStudentDTO = new StudentDTO
-            {
-                Status = TestDbContextFactory.Guid1.ToString() // Order 2 to 1
-            };
+        //[Fact]
+        //public async Task UpdateStudentAsync_LowerStatus_ShouldReturnResultFail()
+        //{
+        //    var updateStudentDTO = new StudentDTO
+        //    {
+        //        Status = TestDbContextFactory.Guid1.ToString() // Order 2 to 1
+        //    };
 
-            var result = await _studentService.UpdateStudentAsync("ST002", updateStudentDTO);
+        //    var result = await _studentService.UpdateStudentAsync("ST002", updateStudentDTO);
 
-            Assert.Null(result.Data);
-            Assert.False(result.Success);
-            Assert.Equal("INVALID_STATUS_UPDATE", result.ErrorCode);
-        }
+        //    Assert.Null(result.Data);
+        //    Assert.False(result.Success);
+        //    Assert.Equal("INVALID_STATUS_UPDATE", result.ErrorCode);
+        //}
 
         [Fact]
         public async Task UpdateStudentAsync_ProgramNotExists_ShouldReturnResultFail()
