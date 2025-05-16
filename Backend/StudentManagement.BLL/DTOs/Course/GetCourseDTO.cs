@@ -17,9 +17,9 @@ namespace StudentManagement.BLL.DTOs.Course
         public LocalizedName CourseName { get; set; } = new();
         public int Credits { get; set; }
         public Guid FacultyId { get; set; }
-        public string FacultyName { get; set; } = null!;
+        public LocalizedName FacultyName { get; set; } = null!;
         public LocalizedName Description { get; set; } = new();
-        public string? RequiredCourseName { get; set; }
+        public LocalizedName? RequiredCourseName { get; set; }
         public string? RequiredCourseId { get; set; }   
         public DateTime? DeletedAt { get; set; }     
         public DateTime CreatedAt { get; set; }

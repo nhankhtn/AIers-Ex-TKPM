@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentManagement.BLL.DTOs.Localize;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace StudentManagement.BLL.DTOs.ClassStudent
     public class RegisterCancelationHistoryRow
     {
         public string ClassId { get; set; } = null!;
-        public string CourseName { get; set; } = null!;
+        public LocalizedName CourseName { get; set; } = null!;
         public string StudentId { get; set; } = null!;
         public string StudentName { get; set; } = null!;
         public int Semester { get; set; }

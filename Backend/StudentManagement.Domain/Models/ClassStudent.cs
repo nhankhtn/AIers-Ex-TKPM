@@ -50,6 +50,9 @@ namespace StudentManagement.Domain.Models
         [Column("course_name")]
         public string CourseName { get; set; } = null!;
 
+        [Column("course_name_eng")]
+        public string CourseNameEng { get; set; } = null!;
+
         [Column("student_id")]
         public string StudentId { get; set; } = null!;
 
