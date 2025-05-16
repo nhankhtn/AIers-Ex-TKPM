@@ -27,10 +27,111 @@ import useFunction from "@/hooks/use-function";
 import { ClassApi } from "@/api/class";
 import useAppSnackbar from "@/hooks/use-app-snackbar";
 import ClassFilter from "@/app/_components/class-filter";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+
+function GradesTable({
+  classScores,
+  onGradeChange,
+  loading,
+}: {
+  classScores: StudentScore[];
+  onGradeChange: (
+    studentId: string,
+    field: "midTermScore" | "finalScore",
+    value: string
+  ) => void;
+  loading: boolean;
+}) {
+  const t = useTranslations("grades");
+
+  const configs = [
+    {
+      key: "studentId",
+      headerLabel: t("table.studentId"),
+      renderCell: (data: StudentScore) => (
+        <Typography variant='body2'>{data.studentId}</Typography>
+      ),
+    },
+    {
+      key: "studentName",
+      headerLabel: t("table.studentName"),
+      renderCell: (data: StudentScore) => (
+        <Typography variant='body2'>{data.studentName}</Typography>
+      ),
+    },
+    {
+      key: "midTermScore",
+      headerLabel: t("table.midTermScore"),
+      renderCell: (data: StudentScore) => (
+        <TextField
+          variant='outlined'
+          size='small'
+          value={data.midTermScore}
+          onChange={(e) =>
+            onGradeChange(data.studentId, "midTermScore", e.target.value)
+          }
+          inputProps={{
+            style: { textAlign: "center" },
+            min: 0,
+            max: 10,
+            step: 0.1,
+          }}
+          sx={{ width: 80 }}
+        />
+      ),
+    },
+    {
+      key: "finalScore",
+      headerLabel: t("table.finalScore"),
+      renderCell: (data: StudentScore) => (
+        <TextField
+          variant='outlined'
+          size='small'
+          value={data.finalScore}
+          onChange={(e) =>
+            onGradeChange(data.studentId, "finalScore", e.target.value)
+          }
+          inputProps={{
+            style: { textAlign: "center" },
+            min: 0,
+            max: 10,
+            step: 0.1,
+          }}
+          sx={{ width: 80 }}
+        />
+      ),
+    },
+    {
+      key: "totalScore",
+      headerLabel: t("table.totalScore"),
+      renderCell: (data: StudentScore) => (
+        <Typography variant='body2'>{data.totalScore || "--"}</Typography>
+      ),
+    },
+    {
+      key: "grade",
+      headerLabel: t("table.grade"),
+      renderCell: (data: StudentScore) => (
+        <Typography variant='body2'>{data.grade || "--"}</Typography>
+      ),
+    },
+    {
+      key: "isPassed",
+      headerLabel: t("table.status"),
+      renderCell: (data: StudentScore) => (
+        <Typography variant='body2'>
+          {data.isPassed ? t("table.passed") : t("table.failed")}
+        </Typography>
+      ),
+    },
+  ];
+
+  return <CustomTable configs={configs} rows={classScores} loading={loading} />;
+}
 
 export function GradeEntryForm() {
-  const locale = useLocale() as "en" | "vi";  
+  const locale = useLocale() as "en" | "vi";
+  const t = useTranslations();
   const { showSnackbarError } = useAppSnackbar();
   const {
     getClassesApi,
@@ -112,8 +213,8 @@ export function GradeEntryForm() {
   return (
     <Card>
       <CardHeader
-        title='Nhập điểm cho sinh viên'
-        subheader='Chọn lớp học và nhập điểm giữa kỳ, cuối kỳ cho sinh viên.'
+        title={t("grades.form.title")}
+        subheader={t("grades.form.description")}
         action={
           <Button
             variant='contained'
@@ -121,7 +222,7 @@ export function GradeEntryForm() {
             onClick={handleSaveGrades}
             disabled={!selectedClass || classScores.length === 0}
           >
-            Lưu điểm
+            {t("grades.form.saveGrades")}
           </Button>
         }
       />
@@ -130,23 +231,30 @@ export function GradeEntryForm() {
           <RowStack gap={1}>
             <Box flex={1}>
               <FormControl fullWidth required>
-                <InputLabel id='class-select-label'>Lớp học</InputLabel>
+                <InputLabel id='class-select-label'>
+                  {t("grades.form.class")}
+                </InputLabel>
                 <Autocomplete
                   id='student-autocomplete'
                   options={classes}
                   getOptionLabel={(option) =>
-                    `${option.classId} - ${option.courseName}`
+                    `${option.classId} - ${option.courseName[locale]}`
                   }
                   value={selectedClass}
                   onChange={(event, newValue) => {
                     setSelectedClass(newValue);
                   }}
                   renderInput={(params) => (
-                    <TextField {...params} label='Lớp học' variant='outlined' />
+                    <TextField
+                      {...params}
+                      label={t("grades.form.class")}
+                      variant='outlined'
+                    />
                   )}
                   isOptionEqualToValue={(option, value) =>
                     option.id === value.id
                   }
+                  noOptionsText={t("components.select.noOptions")}
                 />
               </FormControl>
             </Box>
@@ -175,7 +283,7 @@ export function GradeEntryForm() {
                   fontWeight='medium'
                   gutterBottom
                 >
-                  Thông tin lớp học
+                  {t("grades.form.classInfo")}
                 </Typography>
                 <Box
                   sx={{
@@ -190,7 +298,7 @@ export function GradeEntryForm() {
                       color='text.secondary'
                       component='span'
                     >
-                      Mã lớp:
+                      {t("grades.form.classCode")}:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
                       {selectedClass.classId}
@@ -202,10 +310,10 @@ export function GradeEntryForm() {
                       color='text.secondary'
                       component='span'
                     >
-                      Khóa học:
+                      {t("grades.form.courseName")}:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
-                      {selectedClass.courseId}: {selectedClass.courseName[locale]}
+                      {selectedClass.courseName[locale]}
                     </Typography>
                   </Box>
                   <Box>
@@ -214,7 +322,7 @@ export function GradeEntryForm() {
                       color='text.secondary'
                       component='span'
                     >
-                      Giảng viên:
+                      {t("grades.form.teacher")}:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
                       {selectedClass.teacherName}
@@ -226,49 +334,23 @@ export function GradeEntryForm() {
                       color='text.secondary'
                       component='span'
                     >
-                      Học kỳ:
+                      {t("grades.form.schedule")}:
                     </Typography>{" "}
                     <Typography variant='body2' component='span'>
-                      {selectedClass.semester === 1
-                        ? "Học kỳ 1"
-                        : selectedClass.semester === 2
-                        ? "Học kỳ 2"
-                        : "Học kỳ hè"}
-                      , {selectedClass.academicYear}
+                      {t("grades.form.dayOfWeek", {
+                        day: selectedClass.dayOfWeek,
+                      })}{" "}
+                      ({selectedClass.startTime}:00 - {selectedClass.endTime}
+                      :00)
                     </Typography>
                   </Box>
                 </Box>
               </Paper>
-
-              <Box>
-                <RowStack
-                  sx={{
-                    justifyContent: "space-between",
-                    mb: 1,
-                  }}
-                >
-                  <Typography variant='subtitle1' fontWeight='medium'>
-                    Danh sách sinh viên và điểm số
-                  </Typography>
-                </RowStack>
-                <CustomTable
-                  configs={getGradesTableConfig({
-                    onGradeChange: handleGradeChange,
-                  })}
-                  rows={classScores}
-                  loading={getClassScoresApi.loading}
-                />
-                {classScores.length > 0 && (
-                  <CustomPagination
-                    pagination={pagination}
-                    justifyContent='end'
-                    p={2}
-                    borderTop={1}
-                    borderColor={"divider"}
-                    rowsPerPageOptions={[10, 15, 20]}
-                  />
-                )}
-              </Box>
+              <GradesTable
+                classScores={classScores}
+                onGradeChange={handleGradeChange}
+                loading={getClassScoresApi.loading}
+              />
             </>
           )}
         </Stack>

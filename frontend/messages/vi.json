@@ -36,7 +36,7 @@
     "filters": {
       "all": "Tất cả"
     },
-    "loading":"Đang tải..."
+    "loading": "Đang tải..."
   },
   "sidebar": {
     "title": "Quản lý đào tạo",
@@ -102,7 +102,9 @@
       "district": "Quận/Huyện",
       "ward": "Phường/Xã",
       "addressDetail": "Địa chỉ chi tiết (số nhà, đường, thôn, xóm...)",
-      "addressDetailPlaceholder": "Ví dụ: Số 123, Đường ABC, Khu vực XYZ"
+      "addressDetailPlaceholder": "Ví dụ: Số 123, Đường ABC, Khu vực XYZ",
+      "temporaryAddressTooltip": "Địa chỉ tạm trú là địa chỉ bạn đang ở hiện tại, nếu khác với địa chỉ thường trú",
+      "mailingAddressTooltip": "Địa chỉ nhận thư là địa chỉ bạn nhận thư từ trường, nếu khác với địa chỉ thường trú"
     },
     "dialogs": {
       "delete": {
@@ -176,7 +178,7 @@
       "course": "Khóa",
       "status": "Trạng thái",
       "semester": "Học kỳ",
-      "academicYear":"Năm học"
+      "academicYear": "Năm học"
     },
     "actions": {
       "addFaculty": "Thêm khoa",
@@ -283,7 +285,7 @@
         "confirmMessage": "Bạn có chắc chắn muốn xóa khóa học"
       }
     },
-    "messages":{
+    "messages": {
       "deleteCourseSuccess": "Xóa khóa học thành công",
       "addCourseSuccess": "Thêm khóa học thành công",
       "updateCourseSuccess": "Chỉnh sửa khóa học thành công"
@@ -464,31 +466,68 @@
       "status": "Trạng thái"
     },
     "form": {
-      "title": "Nhập điểm",
-      "midterm": "Điểm giữa kỳ",
-      "final": "Điểm cuối kỳ"
+      "title": "Nhập điểm cho sinh viên",
+      "description": "Chọn lớp học và nhập điểm giữa kỳ, cuối kỳ cho sinh viên.",
+      "saveGrades": "Lưu điểm",
+      "class": "Lớp học",
+      "classInfo": "Thông tin lớp học",
+      "classCode": "Mã lớp",
+      "courseName": "Khóa học",
+      "teacher": "Giảng viên",
+      "schedule": "Lịch học",
+      "dayOfWeek": "Thứ {day}"
+    },
+    "table": {
+      "studentId": "MSSV",
+      "studentName": "Họ và tên",
+      "midTermScore": "Điểm giữa kỳ",
+      "finalScore": "Điểm cuối kỳ",
+      "totalScore": "Tổng điểm",
+      "grade": "Xếp loại",
+      "status": "Trạng thái",
+      "passed": "Đã qua",
+      "failed": "Chưa qua"
     }
   },
   "transcripts": {
     "title": "Bảng điểm",
+    "printTranscript": "In bảng điểm chính thức",
+    "selectStudent": "Chọn sinh viên để in bảng điểm chính thức.",
     "studentInfo": {
-      "id": "Mã sinh viên",
-      "name": "Tên sinh viên",
-      "program": "Chương trình",
-      "faculty": "Khoa"
+      "title": "Thông tin sinh viên",
+      "studentId": "Mã sinh viên",
+      "fullName": "Họ tên",
+      "faculty": "Khoa",
+      "course": "Khóa"
     },
-    "academic": {
-      "semester": "Học kỳ",
-      "year": "Năm học",
-      "gpa": "Điểm trung bình",
-      "credits": "Tổng số tín chỉ"
+    "actions": {
+      "generateTranscript": "Tạo bảng điểm",
+      "printTranscript": "In bảng điểm"
     },
-    "table": {
-      "courseCode": "Mã môn học",
-      "courseName": "Tên môn học",
-      "credits": "Số tín chỉ",
-      "grade": "Điểm",
-      "status": "Trạng thái"
+    "form": {
+      "studentLabel": "Sinh viên"
+    },
+    "preview": {
+      "title": "BẢNG ĐIỂM CHÍNH THỨC",
+      "universityName": "Trường Đại học ABC",
+      "studentName": "Họ và tên",
+      "studentId": "Mã sinh viên",
+      "faculty": "Khoa",
+      "course": "Khóa",
+      "table": {
+        "courseId": "Mã học phần",
+        "courseName": "Tên học phần",
+        "credits": "Số tín chỉ",
+        "grade": "Điểm",
+        "gradeLetter": "Điểm chữ"
+      },
+      "totalCredits": "Tổng số tín chỉ",
+      "completedCredits": "Số tín chỉ đã hoàn thành",
+      "gpa": "Điểm trung bình tích lũy",
+      "student": "Sinh viên",
+      "registrar": "Trưởng phòng đào tạo",
+      "signature": "(Ký và ghi rõ họ tên)",
+      "registrarName": "TS. Nguyễn Văn X"
     }
   },
   "components": {
@@ -505,6 +544,9 @@
       "rowsPerPage": "Số dòng mỗi trang:",
       "of": "của",
       "page": "Trang"
+    },
+    "select": {
+      "noOptions": "Không có tùy chọn"
     }
   }
-} 
+}

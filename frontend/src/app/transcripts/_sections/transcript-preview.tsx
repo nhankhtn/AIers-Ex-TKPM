@@ -6,6 +6,7 @@ import { useEffect, useMemo } from "react";
 import { useMainContext } from "@/context/main/main-context";
 import { CustomTable } from "@/components/custom-table";
 import { getTranscriptTableConfig } from "./table-config";
+import { useTranslations, useLocale } from "next-intl";
 
 interface TranscriptPreviewProps {
   student: Student;
@@ -14,6 +15,8 @@ interface TranscriptPreviewProps {
 export function TranscriptPreview({ student }: TranscriptPreviewProps) {
   const { faculties } = useMainContext();
   const getTranscriptApi = useFunction(StudentApi.getStudentTranscript);
+  const t = useTranslations("transcripts");
+  const locale = useLocale() as "en" | "vi";
 
   useEffect(() => {
     getTranscriptApi.call(student.id);
@@ -24,6 +27,9 @@ export function TranscriptPreview({ student }: TranscriptPreviewProps) {
     () => getTranscriptApi.data,
     [getTranscriptApi.data]
   );
+
+  const faculty = faculties.find((f) => student.faculty === f.id);
+
   return (
     <Stack className='print:p-10' sx={{ gap: 3 }} px={3} pt={3}>
       <Box
@@ -35,10 +41,10 @@ export function TranscriptPreview({ student }: TranscriptPreviewProps) {
         }}
       >
         <Typography variant='h4' fontWeight='bold' gutterBottom>
-          BẢNG ĐIỂM CHÍNH THỨC
+          {t("preview.title")}
         </Typography>
         <Typography variant='subtitle1' color='text.secondary'>
-          Trường Đại học ABC
+          {t("preview.universityName")}
         </Typography>
       </Box>
 
@@ -46,13 +52,13 @@ export function TranscriptPreview({ student }: TranscriptPreviewProps) {
         <Grid2 size={{ xs: 12, md: 6 }}>
           <Typography variant='body1'>
             <Typography component='span' fontWeight='medium'>
-              Họ và tên:
+              {t("preview.studentName")}:
             </Typography>{" "}
             {student.name}
           </Typography>
           <Typography variant='body1'>
             <Typography component='span' fontWeight='medium'>
-              Mã sinh viên:
+              {t("preview.studentId")}:
             </Typography>{" "}
             {student.id}
           </Typography>
@@ -60,13 +66,13 @@ export function TranscriptPreview({ student }: TranscriptPreviewProps) {
         <Grid2 size={{ xs: 12, md: 6 }}>
           <Typography variant='body1'>
             <Typography component='span' fontWeight='medium'>
-              Khoa:
+              {t("preview.faculty")}:
             </Typography>{" "}
-            {faculties.find((f) => student.faculty === f.id)?.name}
+            {faculty?.name[locale]}
           </Typography>
           <Typography variant='body1'>
             <Typography component='span' fontWeight='medium'>
-              Khóa:
+              {t("preview.course")}:
             </Typography>{" "}
             {student.course}
           </Typography>
@@ -82,19 +88,19 @@ export function TranscriptPreview({ student }: TranscriptPreviewProps) {
       <Stack gap={1}>
         <Typography variant='body1'>
           <Typography component='span' fontWeight='medium'>
-            Tổng số tín chỉ:
+            {t("preview.totalCredits")}:
           </Typography>{" "}
           {transcriptData?.totalCredit}
         </Typography>
         <Typography variant='body1'>
           <Typography component='span' fontWeight='medium'>
-            Số tín chỉ đã hoàn thành:
+            {t("preview.completedCredits")}:
           </Typography>{" "}
           {transcriptData?.passedCredit}
         </Typography>
         <Typography variant='body1'>
           <Typography component='span' fontWeight='medium'>
-            Điểm trung bình tích lũy:
+            {t("preview.gpa")}:
           </Typography>{" "}
           {transcriptData?.gpa.toFixed(2)}
         </Typography>
@@ -103,23 +109,23 @@ export function TranscriptPreview({ student }: TranscriptPreviewProps) {
       <Grid2 container spacing={4} sx={{ mt: 4, print: { mt: 8 } }}>
         <Grid2 size={{ xs: 6 }} sx={{ textAlign: "center" }}>
           <Typography variant='body1' fontWeight='medium'>
-            Sinh viên
+            {t("preview.student")}
           </Typography>
           <Typography variant='body2' color='text.secondary'>
-            (Ký và ghi rõ họ tên)
+            {t("preview.signature")}
           </Typography>
           <Box sx={{ height: 80 }}></Box>
           <Typography variant='body1'>{student.name}</Typography>
         </Grid2>
         <Grid2 size={{ xs: 6 }} sx={{ textAlign: "center" }}>
           <Typography variant='body1' fontWeight='medium'>
-            Trưởng phòng đào tạo
+            {t("preview.registrar")}
           </Typography>
           <Typography variant='body2' color='text.secondary'>
-            (Ký và ghi rõ họ tên)
+            {t("preview.signature")}
           </Typography>
           <Box sx={{ height: 80 }}></Box>
-          <Typography variant='body1'>TS. Nguyễn Văn X</Typography>
+          <Typography variant='body1'>{t("preview.registrarName")}</Typography>
         </Grid2>
       </Grid2>
     </Stack>

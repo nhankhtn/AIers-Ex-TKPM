@@ -36,7 +36,7 @@
     "filters": {
       "all": "All"
     },
-    "loading":"Loading..."
+    "loading": "Loading..."
   },
   "sidebar": {
     "title": "Training Management",
@@ -102,7 +102,9 @@
       "district": "District",
       "ward": "Ward",
       "addressDetail": "Address Detail (house number, street, village...)",
-      "addressDetailPlaceholder": "Example: 123 Street Name, Area"
+      "addressDetailPlaceholder": "Example: 123 Street Name, Area",
+      "temporaryAddressTooltip": "Temporary address is your current residence address, if different from permanent address",
+      "mailingAddressTooltip": "Mailing address is where you receive mail from the university, if different from permanent address"
     },
     "dialogs": {
       "delete": {
@@ -176,7 +178,7 @@
       "course": "Course",
       "status": "Status",
       "semester": "Semester",
-      "academicYear":"Academic Year"
+      "academicYear": "Academic Year"
     },
     "actions": {
       "addFaculty": "Add Faculty",
@@ -283,7 +285,7 @@
         "confirmMessage": "Are you sure you want to delete the course"
       }
     },
-    "messages":{
+    "messages": {
       "deleteCourseSuccess": "Course deleted successfully",
       "addCourseSuccess": "Course added successfully",
       "updateCourseSuccess": "Course updated successfully"
@@ -452,43 +454,69 @@
   },
   "grades": {
     "title": "Grade Management",
-    "list": {
-      "title": "Grade List",
-      "studentId": "Student ID",
-      "studentName": "Student Name",
-      "course": "Course",
-      "midterm": "Midterm",
-      "final": "Final",
-      "total": "Total",
-      "grade": "Grade",
-      "status": "Status"
-    },
     "form": {
-      "title": "Enter Grades",
-      "midterm": "Midterm Score",
-      "final": "Final Score"
+      "title": "Enter Student Grades",
+      "description": "Select a class and enter midterm and final grades for students.",
+      "saveGrades": "Save Grades",
+      "class": "Class",
+      "classInfo": "Class Information",
+      "classCode": "Class Code",
+      "courseName": "Course",
+      "teacher": "Teacher",
+      "schedule": "Schedule",
+      "dayOfWeek": "Day {day}"
+    },
+    "table": {
+      "studentId": "Student ID",
+      "studentName": "Full Name",
+      "midTermScore": "Midterm Score",
+      "finalScore": "Final Score",
+      "totalScore": "Total Score",
+      "grade": "Grade",
+      "status": "Status",
+      "passed": "Passed",
+      "failed": "Failed"
     }
   },
   "transcripts": {
     "title": "Transcripts",
+    "printTranscript": "Print Official Transcript",
+    "selectStudent": "Select a student to print their official transcript.",
     "studentInfo": {
-      "id": "Student ID",
-      "name": "Student Name",
-      "program": "Program",
-      "faculty": "Faculty"
+      "title": "Student Information",
+      "studentId": "Student ID",
+      "fullName": "Full Name",
+      "faculty": "Faculty",
+      "course": "Course"
     },
-    "academic": {
-      "semester": "Semester",
-      "year": "Academic Year",
+    "actions": {
+      "generateTranscript": "Generate Transcript",
+      "printTranscript": "Print Transcript"
+    },
+    "form": {
+      "studentLabel": "Student"
+    },
+    "preview": {
+      "title": "OFFICIAL TRANSCRIPT",
+      "universityName": "ABC University",
+      "studentName": "Full Name",
+      "studentId": "Student ID",
+      "faculty": "Faculty",
+      "course": "Course",
+      "table": {
+        "courseId": "Course Code",
+        "courseName": "Course Name",
+        "credits": "Credits",
+        "grade": "Score",
+        "gradeLetter": "Grade"
+      },
+      "totalCredits": "Total Credits",
+      "completedCredits": "Completed Credits",
       "gpa": "GPA",
-      "credits": "Total Credits"
-    },
-    "table": {
-      "courseCode": "Course Code",
-      "courseName": "Course Name",
-      "credits": "Credits",
-      "grade": "Grade",
-      "status": "Status"
+      "student": "Student",
+      "registrar": "Registrar",
+      "signature": "(Sign and write full name)",
+      "registrarName": "Dr. Nguyen Van X"
     }
   },
   "components": {
@@ -505,6 +533,9 @@
       "rowsPerPage": "Rows per page:",
       "of": "of",
       "page": "Page"
+    },
+    "select": {
+      "noOptions": "No options available"
     }
   }
-} 
+}

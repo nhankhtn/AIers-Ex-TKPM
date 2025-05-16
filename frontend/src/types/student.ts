@@ -30,7 +30,10 @@ export interface Student {
 export interface StudentTranscript {
   id: string;
   classId: string;
-  courseName: string;
+  courseName: {
+    vi: string;
+    en: string;
+  };
   credit: number;
   totalScore: number;
   grade: string;
