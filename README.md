@@ -125,9 +125,25 @@
 ![In bảng điểm (ảnh 3)](Images/v5.0/print_scores_3.png)
 
 
+## Minh chứng các chức năng tag v6.0
+#### Đa ngôn ngữ
+
+#### Modal chỉnh sửa ngôn ngữ (bấm vào Settings bên SideBar)
+![Modal chọn ngôn ngữ](Images/v6.0/modal_setting.png)
+##### Trang khóa học (Tiếng Anh)
+![Trang Khóa học (en)](Images/v6.0/course_page_en.png)
+##### Trang khóa học (Tiếng Việt)
+![Trang Khóa học (vi)](Images/v6.0/course_page_vi.png)
+##### Trang thêm khóa học (Tiếng Việt)
+###### Các trường như Tên khóa học, Mô tả sẽ có 2 loại Tiếng Anh và Tiếng Việt
+![Thêm khóa học](Images/v6.0/add_course_vi.png)
+
+#### Tạo UnitTest
+##### Kết quả chạy các UnitTest
+![UnitTest](Images/v6.0/unit_test.png)
 
 
-#### In bảng điểm cho sinh viên
+
 ## Hướng dẫn cài đặt & chạy chương trình
 ### Backend:
 
