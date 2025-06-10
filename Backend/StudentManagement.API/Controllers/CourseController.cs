@@ -23,7 +23,7 @@ namespace StudentManagement.API.Controllers
             var result = await _courseService.AddCourseAsync(courseDTO);
             if (result.Success)
             {
-                return Ok(result.Data);
+                return Created(string.Empty, result.Data);
             }
             return BadRequest(ApiResponse<string>.BadRequest(
                 error: new ApiError()
