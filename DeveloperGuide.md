@@ -71,6 +71,45 @@ API ──▶ Application (BLL) ──▶ Domain
 </br>
 
 # 🚀 Getting Started with Your App Development
+Tải Source Code: `git clone https://github.com/nhankhtn/AIers-Ex-TKPM.git`
+
+### Setup Frontend
+```sh
+cd frontend                # Di chuyển vào thư mục frontend
+touch .env (Linux) hoặc New-Item -Path . -Name ".env" -ItemType "File" (Windows)       # Tạo file .env
+Trong file .env, định nghĩa biến 'NEXT_PUBLIC_HOST=http://localhost:5231' để gọi API với http
+npm install                # Cài đặt các dependencies cần thiết (thay thế bằng npm install --force hoặc yarn install nếu gặp lỗi)  
+npm run build              # Biên dịch mã nguồn frontend
+npm start                  # Khởi chạy ứng dụng
+```
+
+#### Cấu hình file `appsettings.json` trong thư mục `StudentManagement.API` với cấu hình database đã tạo
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost,1433;Database=StudentManagementDb;User Id=sa;Password=SqlServer@123;TrustServerCertificate=True;"
+  }
+}
+```
+### Setup Backend
+#### Chạy các migrations
+- Vào thư mục `Backend`
+```sh
+cd Backend
+```
+- Mở terminal và nhập lệnh sau để tạo table cho Database
+:
+```sh
+dotnet ef database update -s ./StudentManagement.API -p ./StudentManagement.DAL
+```
+#### Chạy script `data.sql` trong thư mục `Backend/scripts`
+
+#### Chạy Ctrl + F5 để Run Server
+Server hoạt động ở </br>
+`https://localhost:44324` với IIS Express </br>
+`http://localhost:5231` với http </br>
+`http://localhost:7143` với https
 
 </br>
 
