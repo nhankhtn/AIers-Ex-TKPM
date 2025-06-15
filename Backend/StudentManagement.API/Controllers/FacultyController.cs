@@ -20,7 +20,7 @@ namespace StudentManagement.API.Controllers
         public async Task<IActionResult> AddFaculty(FacultyDTO facultyDTO)
         {
             var result = await _facultyService.AddFacultyAsync(facultyDTO);
-            if (result.Success) return Ok(ApiResponse<FacultyDTO>.Success(
+            if (result.Success) return Created(string.Empty, ApiResponse<FacultyDTO>.Success(
                     data: result.Data,
                     message: result.Message
                 ));

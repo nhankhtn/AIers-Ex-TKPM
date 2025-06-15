@@ -41,7 +41,7 @@ namespace StudentManagement.API.Controllers
         public async Task<IActionResult> AddStudentStatus(StudentStatusDTO studentStatusDTO)
         {
             var result = await _studentStatusService.AddStudentStatusAsync(studentStatusDTO);
-            if (result.Success) return Ok(ApiResponse<StudentStatusDTO>.Success(
+            if (result.Success) return Created(string.Empty, ApiResponse<StudentStatusDTO>.Success(
                     data: result.Data,
                     message: result.Message
                 ));

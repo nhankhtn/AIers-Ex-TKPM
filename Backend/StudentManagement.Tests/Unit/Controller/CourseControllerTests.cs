@@ -36,7 +36,7 @@ namespace StudentManagement.Tests.Unit.Controller
             var result = await _controller.AddCourse(courseDTO);
 
             // Assert  
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            var okResult = Assert.IsType<CreatedResult>(result);
             Assert.Equal(courseDTO, okResult.Value);
         }
 

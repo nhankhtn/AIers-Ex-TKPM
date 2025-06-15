@@ -37,7 +37,7 @@ namespace StudentManagement.API.Controllers
                     }
                 });  
             }
-            return Ok(result.Data);
+            return Created(string.Empty, result.Data);
         }
 
 
