@@ -29,23 +29,27 @@ namespace StudentManagement.Tests.Unit.Service
             _courseService = new CourseService(_courseRepositoryMock.Object, _facultyRepositoryMock.Object,  _mapperMock.Object);
         }
 
-        //[Fact]
-        //public async Task AddCourseAsync_ValidCourse_ReturnsSuccess()
-        //{
-        //    // Arrange  
-        //    var courseDTO = new AddCourseDTO { CourseName = default, Credits = 3 };
-        //    var course = new Course { CourseName = "Test Course", Credits = 3 };
-        //    _mapperMock.Setup(m => m.Map<Course>(courseDTO)).Returns(course);
-        //    _courseRepositoryMock.Setup(r => r.AddCourseAsync(course)).ReturnsAsync(course);
-        //    _mapperMock.Setup(m => m.Map<AddCourseDTO>(course)).Returns(courseDTO);
+        [Fact]
+        public async Task AddCourseAsync_ValidCourse_ReturnsSuccess()
+        {
+            // Arrange  
+            var courseDTO = new AddCourseDTO { CourseName = new LocalizedName
+            {
+                En = "Test Course",
+                Vi = "Khóa học thử"
+            }, Credits = 3 };
+            var course = new Course { CourseName = "Test Course", Credits = 3 };
+            _mapperMock.Setup(m => m.Map<Course>(courseDTO)).Returns(course);
+            _courseRepositoryMock.Setup(r => r.AddCourseAsync(course)).ReturnsAsync(course);
+            _mapperMock.Setup(m => m.Map<AddCourseDTO>(course)).Returns(courseDTO);
 
-        //    // Act  
-        //    var result = await _courseService.AddCourseAsync(courseDTO);
+            // Act  
+            var result = await _courseService.AddCourseAsync(courseDTO);
 
-        //    // Assert  
-        //    Assert.True(result.Success);
-        //    Assert.Equal(courseDTO, result.Data);
-        //}
+            // Assert  
+            Assert.True(result.Success);
+            Assert.Equal(courseDTO, result.Data);
+        }
 
         [Fact]
         public async Task DeleteCourseAsync_CourseNotFound_ReturnsFail()
