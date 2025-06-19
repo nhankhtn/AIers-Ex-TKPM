@@ -75,16 +75,20 @@ Next.js → REST API → Controllers → Services → Repository → EF Core →
 
 # 📁 Source code organization
 ### Backend
-![alt text](Images/image.png)
+![alt text](Images/file.png)
 - `StudentManagement.API`: Project API cung cấp các endpoints để tương tác với hệ thống.
     - **`Controllers/`**: Chứa các controller định nghĩa các API endpoint.
+    - **`Middlewares/`**: Chứa cấu hình các Middleware.
+    - **`Startup/`**: Chứa các class Extension để cấu hình app.
     - **`appsettings.json`**: Tệp cấu hình chính của ứng dụng, lưu trữ thông tin về database, logging, các API bên thứ 3,...
     - **`Utils`**: Chứa class ApiResponse để chuẩn hóa phản hồi từ API
     - **`Program.cs`**: Entry point của ứng dụng API.
 - `StudentManagement.BLL`: Project Business Logic Layer (BLL) chứa các logic nghiệp vụ.
     - **`DTOs/`**: Chứa các Data Transfer Object (DTO) để trao đổi dữ liệu giữa các tầng.
+    - **`Checker/`**: Chứa class để thực hiện kiểm tra dữ liệu trước khi thực hiện CRUD.
+    - **`Validators/`**: Chứa class để thực hiện kiểm tra định dạng của dữ liệu.
     - **`Services/`**: Chứa các service xử lý logic nghiệp vụ.
-    - **`MappingProfile.cs`**: Cấu hình AutoMapper để ánh xạ dữ liệu giữa Enity và DTO.
+    - **`Mapping/`**: Cấu hình AutoMapper để ánh xạ dữ liệu giữa Enity và DTO.
 
 - `StudentManagement.DAL`: Project Data Access Layer (DAL) để truy xuất và quản lý dữ liệu.
     - **`Data/`**: Chứa các ApplicationDbcontext, AuditInterceptor, utils và repositories để làm việc với database.
