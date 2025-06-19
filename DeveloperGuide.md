@@ -185,7 +185,15 @@ Server hoạt động ở </br>
 
 </br>
 
-# 🧬 Database Schema
+# 📚 Database Schema
+
+<a href="https://gist.github.com/Phatdz2710/c1393fc2c78419dc843aa2282f05160f"
+   target="_blank"
+   style="color:#1e90ff; font-size:18px; font-weight:bold; text-decoration:none;">
+   👉 Click để xem FULL schema code trên Gist
+</a>
+
+<p style="color:#888; font-size:14px;">Chứa toàn bộ CREATE TABLE, constraint, comment,...</p>
 
 </br>
 
@@ -265,6 +273,7 @@ public class FacultyService : IFacultyService
 </br>
 
 # 🧪 Unit Testing
+#### Kết quả chạy Unit Test </br>
 ![alt text](Images/unittest.png)
 </br>
 
