@@ -272,6 +272,13 @@ public class FacultyService : IFacultyService
 ```
 </br>
 
+# 🛡️ Data Validation
+| Field   | Validation Rule                            | Error Code         | Message                             |
+|---------|---------------------------------------------|---------------------|--------------------------------------|
+| `Course` | Phải từ năm **2000 trở đi** (`>= 2000`)     | `INVALID_COURSE`   | Khóa học không hợp lệ.              |
+| `Email`  | Phải hợp lệ theo `ValidateEmailAsync()`    | `INVALID_EMAIL`    | Email không đúng định dạng.         |
+| `Phone`  | Phải là số điện thoại hợp lệ (qua lib libphonenumber) | `INVALID_PHONE`    | Số điện thoại không đúng dịnh dạng. |
+</br>
 # 🧪 Unit Testing
 #### Kết quả chạy Unit Test </br>
 ![alt text](Images/unittest.png)
