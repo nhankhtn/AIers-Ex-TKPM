@@ -135,11 +135,8 @@ cd frontend
 # Linux / macOS:
 touch .env
 # Windows (PowerShell):
-New-Item -Path . -Name ".env" -ItemType "File"
-
-# Trong file .env, thêm biến môi trường để gọi API:
-# NEXT_PUBLIC_HOST là URL backend
-echo "NEXT_PUBLIC_HOST=http://localhost:5231" >> .env
+New-Item -Path . -Name ".env" -ItemType "File" -Force
+Add-Content -Path ".env" -Value 'NEXT_PUBLIC_HOST=http://localhost:5231'
 
 # Cài dependencies
 npm install
