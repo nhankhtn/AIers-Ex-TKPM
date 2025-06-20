@@ -61,7 +61,11 @@ function PermanentAddress({
           <Autocomplete
             freeSolo={formik.values.permanentCountry !== COUNTRY_DEFAULT}
             id="permanentProvince"
-            options={provinces}
+            options={
+              formik.values.permanentCountry !== COUNTRY_DEFAULT
+                ? []
+                : provinces
+            }
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
             }
@@ -81,6 +85,11 @@ function PermanentAddress({
               );
               formik.setFieldValue("permanentDistrict", "");
               formik.setFieldValue("permanentWard", "");
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.permanentCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("permanentProvince", newInputValue);
+              }
             }}
             renderInput={(params) => (
               <TextField
@@ -107,7 +116,11 @@ function PermanentAddress({
           <Autocomplete
             freeSolo={formik.values.permanentCountry !== COUNTRY_DEFAULT}
             id="permanentDistrict"
-            options={districtsPA}
+            options={
+              formik.values.permanentCountry !== COUNTRY_DEFAULT
+                ? []
+                : districtsPA
+            }
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
             }
@@ -126,6 +139,11 @@ function PermanentAddress({
                   : ""
               );
               formik.setFieldValue("permanentWard", "");
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.permanentCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("permanentDistrict", newInputValue);
+              }
             }}
             disabled={
               !formik.values.permanentProvince &&
@@ -156,7 +174,9 @@ function PermanentAddress({
           <Autocomplete
             freeSolo={formik.values.permanentCountry !== COUNTRY_DEFAULT}
             id="permanentWard"
-            options={wardsPA}
+            options={
+              formik.values.permanentCountry !== COUNTRY_DEFAULT ? [] : wardsPA
+            }
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
             }
@@ -173,6 +193,11 @@ function PermanentAddress({
                     : newValue.name
                   : ""
               );
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.permanentCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("permanentWard", newInputValue);
+              }
             }}
             disabled={
               !formik.values.permanentDistrict &&

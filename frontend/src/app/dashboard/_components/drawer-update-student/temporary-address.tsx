@@ -63,7 +63,11 @@ function TemporaryAddress({
           <Autocomplete
             freeSolo={formik.values.temporaryCountry !== COUNTRY_DEFAULT}
             id="temporaryProvince"
-            options={provinces}
+            options={
+              formik.values.temporaryCountry !== COUNTRY_DEFAULT
+                ? []
+                : provinces
+            }
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
             }
@@ -83,6 +87,11 @@ function TemporaryAddress({
               );
               formik.setFieldValue("temporaryDistrict", "");
               formik.setFieldValue("temporaryWard", "");
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.temporaryCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("temporaryProvince", newInputValue);
+              }
             }}
             renderInput={(params) => (
               <TextField
@@ -108,7 +117,11 @@ function TemporaryAddress({
         >
           <Autocomplete
             id="temporaryDistrict"
-            options={districtsTA}
+            options={
+              formik.values.temporaryCountry !== COUNTRY_DEFAULT
+                ? []
+                : districtsTA
+            }
             freeSolo={formik.values.temporaryCountry !== COUNTRY_DEFAULT}
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
@@ -128,6 +141,11 @@ function TemporaryAddress({
                   : ""
               );
               formik.setFieldValue("temporaryWard", "");
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.temporaryCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("temporaryDistrict", newInputValue);
+              }
             }}
             disabled={
               !formik.values.temporaryProvince &&
@@ -153,7 +171,9 @@ function TemporaryAddress({
           <Autocomplete
             id="temporaryWard"
             freeSolo={formik.values.temporaryCountry !== COUNTRY_DEFAULT}
-            options={wardsTA}
+            options={
+              formik.values.temporaryCountry !== COUNTRY_DEFAULT ? [] : wardsTA
+            }
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
             }
@@ -170,6 +190,11 @@ function TemporaryAddress({
                     : newValue.name
                   : ""
               );
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.temporaryCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("temporaryWard", newInputValue);
+              }
             }}
             disabled={
               !formik.values.temporaryDistrict &&
