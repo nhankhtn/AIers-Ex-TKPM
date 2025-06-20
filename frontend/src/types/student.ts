@@ -200,7 +200,8 @@ export const getValidationStudent = ({
     faculty: Yup.string().required("Vui lòng chọn khoa"),
     course: Yup.number()
       .required("Vui lòng nhập khóa học")
-      .positive("Khóa học phải là số dương"),
+      .positive("Khóa học phải là số dương")
+      .min(2000, "Khóa học phải lớn hơn hoặc bằng 2000"),
     program: Yup.string().required("Vui lòng chọn chương trình"),
     phone: Yup.string().required("Vui lòng nhập số điện thoại"),
     status: Yup.string().required("Vui lòng chọn tình trạng sinh viên"),

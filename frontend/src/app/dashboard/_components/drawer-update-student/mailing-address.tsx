@@ -64,7 +64,9 @@ function MailingAddress({
           <Autocomplete
             id="mailingProvince"
             freeSolo={formik.values.mailingCountry !== COUNTRY_DEFAULT}
-            options={provinces}
+            options={
+              formik.values.mailingCountry !== COUNTRY_DEFAULT ? [] : provinces
+            }
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
             }
@@ -83,6 +85,11 @@ function MailingAddress({
               );
               formik.setFieldValue("mailingDistrict", "");
               formik.setFieldValue("mailingWard", "");
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.mailingCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("mailingProvince", newInputValue);
+              }
             }}
             renderInput={(params) => (
               <TextField
@@ -108,7 +115,11 @@ function MailingAddress({
         >
           <Autocomplete
             id="mailingDistrict"
-            options={districtsMA}
+            options={
+              formik.values.mailingCountry !== COUNTRY_DEFAULT
+                ? []
+                : districtsMA
+            }
             freeSolo={formik.values.mailingCountry !== COUNTRY_DEFAULT}
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
@@ -128,6 +139,11 @@ function MailingAddress({
                   : ""
               );
               formik.setFieldValue("mailingWard", "");
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.mailingCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("mailingDistrict", newInputValue);
+              }
             }}
             disabled={
               !formik.values.mailingProvince &&
@@ -157,7 +173,9 @@ function MailingAddress({
         >
           <Autocomplete
             id="mailingWard"
-            options={wardsMA}
+            options={
+              formik.values.mailingCountry !== COUNTRY_DEFAULT ? [] : wardsMA
+            }
             freeSolo={formik.values.mailingCountry !== COUNTRY_DEFAULT}
             getOptionLabel={(option) =>
               typeof option === "string" ? option : option.name
@@ -174,6 +192,11 @@ function MailingAddress({
                     : newValue.name
                   : ""
               );
+            }}
+            onInputChange={(_, newInputValue) => {
+              if (formik.values.mailingCountry !== COUNTRY_DEFAULT) {
+                formik.setFieldValue("mailingWard", newInputValue);
+              }
             }}
             disabled={
               !formik.values.mailingDistrict &&

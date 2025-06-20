@@ -41,7 +41,7 @@ namespace StudentManagement.API.Controllers
         public async Task<IActionResult> AddProgram(ProgramDTO programDTO)
         {
             var res = await _programService.AddProgramAsync(programDTO);
-            if (res.Success) return Ok(ApiResponse<ProgramDTO>.Success(
+            if (res.Success) return Created(string.Empty, ApiResponse<ProgramDTO>.Success(
                     data: res.Data,
                     message: res.ErrorMessage
                 ));

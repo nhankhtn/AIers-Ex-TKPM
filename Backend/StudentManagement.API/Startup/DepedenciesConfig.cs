@@ -50,8 +50,6 @@ namespace StudentManagement.API.Startup
             });
 
 
-
-
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
             //add http client

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.API.Utils;
 using StudentManagement.BLL.DTOs;
@@ -60,7 +61,7 @@ namespace StudentManagement.API.Controllers
 
             if (result.Success)
             {
-                return Ok(ApiResponse<IEnumerable<StudentDTO>>.Success(
+                return Created(string.Empty, ApiResponse<IEnumerable<StudentDTO>>.Success(
                     data: result.Data
                 ));
             }

@@ -73,9 +73,9 @@ namespace StudentManagement.BLL.Services.AddressService
         {
             try
             {
-                string responseBody = await _httpClient.GetStringAsync(_configuration["AddressApi:CountriesUrl"]);
-
-                List<Country> countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(responseBody);
+                string responseBody = await _httpClient.GetStringAsync(_configuration["AddressApi:CountriesUrl"] + "?fields=name");
+                
+                List<Country> countries = JsonSerializer.Deserialize<List<Country>>(responseBody);
                 var result = countries.Select(c => new { name = c.name.common });
                 string json = JsonSerializer.Serialize(result);
 
